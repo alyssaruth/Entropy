@@ -1,0 +1,22 @@
+Screen: 7182
+
+EntAchievementsDialog - 1016
+EntChangeLog - 160
+EntLoggingDialog - 45
+EntPreferencesDialog - 810
+EntReplayDialog - 726
+EntReplayInterface - 919
+EntSimulationDialog - 783
+EntropyScreen - 2723
+
+
+Util: 3160
+
+EntAchievementsUtil - 172
+EntCpuStrategies - 1002
+EntReplayFileUtil - 509
+EntSimulator - 788
+EntUtil - 689
+
+
+10342 total

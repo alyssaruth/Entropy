@@ -1,0 +1,37 @@
+Achievements:
+
+- Chatty (O): Chat lots whilst online
+- Multi-tabler (O): Play more than 2 tables simultaneously
+- Beta Tester (*): For Dave/Mark/people who have helped out
+- Launch Day (*): Be online during the launch weekend
+- Buwers bid: 15 spades
+- Bookworm: Something to do with reading the help pages. Spend x minutes on the help dialog?
+- Fussy: Change appearance preferences X times.
+- ??: Card reveal, e.g. have a round where 16 cards are on show
+
+Online:
+
+- Tournaments: Tables are sort of SNGs already, but could extend to multiple tables. Heads up ones could be cool.
+- Chiptropy: As an online exclusive. What I recall of the rules we came up with were:
+
+All start with X chips, SB/BB/BTN rotate around as in normal poker. Pot limit to avoid stupid stuff, or perhaps even fixed limit (zzz...). You raise along with an increased bid. The first player to 'call' challenges the bid, and subsequent players who are still in can either fold, or 'call' and opt to side EITHER with the challenger or the challengee.
+
+- Online replay browser - Write replays to DB and allow them to be 
+  searched for/watched online.
+- Online avatars (use DB to allow uploading pictures)
+
+General:
+
+- Up to 6 players: I don't actually think this would be too awful to implement but I'm probably wrong. Could either redesign HandPanelMk2 or have 4p/6p layouts that extend a common base. Replays would obviously also need to cope.
+- Interactive tutorial: Pah!
+- Splash screen would be neat
+
+CODE MAINTENANCE (non-functional changes):
+
+-Sort out direct references - MainScreen.listmodel etc. Doing these as I find them.
+-EntropyColour - make statics for other colours and get it sorted.
+-Make a central place for images, can be a list of statics so i don't have to do getClass().getResource...
+-Don't abuse the Registry so much. Needed for achievements/preferences, but when reading in replays or watching them from the replay viewer it would be better to just have an object in memory.
+-Change strategies so they have their own classes with an abstract structure? Make it harder to introduce bugs..?
+-Make abstract structure for XML messages. Abstract XmlMessageHandler class that has populateParameters(), validateMessage(), handleMessage(), getMessageName(). Load up a hm with these on start, then when we receive a message just find the right handler and call the methods on it.
+-Change hand arrays to be ArrayLists. Going to need to change a buttload of places...

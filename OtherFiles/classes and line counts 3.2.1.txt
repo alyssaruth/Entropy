@@ -1,0 +1,42 @@
+Help: 999
+
+Glossary - 43
+HelpPanel - 362
+MiscClearingSaveData - 56
+RulesBasics - 44
+RulesBidding - 97
+RulesChallenging - 44
+RulesTheDeck - 45
+ToolsGameplaySettings - 167
+ToolsReplayViewer - 141
+
+Screen: 9062
+
+AboutDialog - 93
+AchievementsDialog  - 804
+ChangeLog - 208
+ClearDataDialog - 293
+Debug - 235
+EntropyScreen - 1872
+HandPanel - 401
+HelpDialog - 318
+MainScreen - 894
+PreferencesDialog - 842
+ReplayDialog - 829
+ReplayFilterPanel - 388
+ReplayInterface - 997
+SimulationDialog - 758
+StatisticsDialog - 130
+
+Util: 4013
+
+AchievementsUtil - 432
+EntCpuStrategies - 1132
+EntropyUtil - 747
+EntSimulator - 742
+FlagImage - 93
+Registry - 195
+ReplayFileUtil - 672
+
+
+total: 14074

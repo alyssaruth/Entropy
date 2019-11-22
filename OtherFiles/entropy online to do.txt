@@ -1,0 +1,178 @@
+Screens:
+
+http://prntscr.com/3vguf7
+http://prntscr.com/3vgwhz
+http://prntscr.com/4bi9e6
+
+Bugs:
+
+-Saved online replays aren't correct when a player has left - always show as grey/incomplete
+
+FUNCTIONALITY:
+
+-Online help pages
+-Make own 'refresh' button for the Leaderboard
+-When you sit down in a room that already has players, the screen should repaint locally rather than blanking out then waiting for a PlayerRequest. So with the usernames you already have, repaint the table based on the seat you chose. Might need a 'repainting' synch object or something to make sure we don't run conflict with the player response handling.
+
+ACHIEVEMENTS:
+
+-Allow citizen's arrest online, check everything is online that should be
+
+REWARDS:
+
+-Need a good replay flag for cheats having been used.
+
+OTHER:
+
+-Display strategies in replay viewer? (These are in the XML)
+
+DONE:
+
+-Get Server fully online
+-Write XML handler stuff
+-Figure out scrolling for messages
+-Fix copy/paste for messages (so don't copy html tags)
+-Add text wrapping - http://stackoverflow.com/questions/7861724/is-there-a-word-wrap-property-for-jlabel/7861833#7861833
+-Figure out why messaging just stops working randomly
+-Sort out MessageQueue - why do we get double the response over time??
+-Add 'Debug' equivalent to EntropyServer for proper error-handling. The console should show by default.
+-'ConnectRequest' message, to store who's connected.
+-Make basic lobby screen, so that new 'rooms' can be created with their own IDs.
+-Make chatRequest/newChat messages include Room ID so that multiple chats can be happening at once.
+-Add 'users online' to lobby (can be included in the room request - make this a general 'lobby request')
+-Make closing Entropy itself send the disconnect if necessary
+-Validation on how long room names can be, how long usernames can be...
+-Make room creator include game mode and number of players, send this in the XML
+-Include 'current players' and 'observers' - give appropriate options on joining and update as necessary
+-Make the accepting of client sockets multi-threaded. Will speed up server and deal with people's crap internet
+ connections (hopefully).
+-Decrease observer/player count when a chat room is closed. Make sure this works when closing through main lobby
+ or through main application. 
+-Make server properly exit when you close it
+-Add server command line
+-Add server-side code to remove users from 'users online' if they havent sent a message in x minutes
+-Deal with ReadTimeOuts properly (need to look at message that was SENT not what was received - we might not have read enough of it!!)
+-Make rooms actually look like ent/vect, with chat panel in bottom right etc...
+-Factor out bidPanel, make it fire super.actionPerformed when 'bid' or 'challenge' are pressed
+-Need to make EntropyRoom - extend GameRoom and just have Entropy specific stuff like the bid panel etc. 
+-Make chat command like /admin ... which sends a message to ALL rooms.
+-Server stats stuff - update numbers every second with how many messages it's handling etc
+-Only send PlayerRequests when the room isn't full? (Need to be careful - still want to know about people leaving).
+-Then send a request for the game info, which will include the hands and who is starting. Update the screen accordingly.
+-Factor out vectropyBidPanel, make VectropyRoom
+-Read InputStream as a whole line rather than one character at a time to speed up performance
+-For the others, they should be sending a bidRequest for your player#. Server responds with "no bid", "no user", "bid X", "challenge". Repeat.
+-On challenge, server subtracts card for next round and prepares the new hands. Each client does displayAndHighlight... 
+ then pauses for a few seconds before messaging the server to say it's seen the result. It then initialises for the next
+ round.
+-Disallow <> characters from chat
+-Make in-game replay for online games. This should look almost the same as normal, but needs to include chat.
+-Save the online replays after each game (if the preference is turned on). 
+-Make Vectropy work
+-Fire appearance preferences change
+-Perfect bid achievements
+-Online stats
+-warning when closing a table
+-Handle a player leaving mid-game. They should disappear, the bid thing should say they've left but cards should stay.
+ On subsequent rounds they should not be present at all.
+-Jokers online
+-Connected achievement
+-Perfect game achievements
+-Playing blind + achievements
+-Have a Registry node server-side to store usernames/hashed passwords. This way the same person can log on from anywhere.
+-'Piggyback' lobby updates onto other messages to eliminate constant lobby polling if other rooms are open.
+-New card back colour every 5
+-Split 'Room' into ServerRoom and RoomWrapper (for RoomTable)
+-Store the usernames against the stats counts server-side. 
+-Clients send up achievement count when they connect, and then send update messages when this changes. Use this to be 
+ able to hover over a player and see how many achievements they've earned.
+-Make hard-coded list of rooms, with all the information needed. Then get rid of NewRoomDialog and the button.
+ The server can just read in from the list whenever it comes up and create the rooms that way.
+-Server needs to automatically create a copy of a room when it becomes full
+-Sort out ordering of RoomTable by player count
+-Add some way of knowing that a room includes jokers to the RoomTable
+-Make filters work for the RoomTable
+-Spruce up leaderboard and decide how points system will work.
+-Sort out leaving/coming back (chat madness)
+-Extra suits for 45 - did loads of work for this
+-Speed up Replay Interface
+-Make the game work for observers. Totally sorted this - even falling a game behind.
+-Use JVM Bind to track multiple instances rather than dodgy Registry frig
+-Make debugDump() print everything nicely
+-LobbyRequest stuff stopped working - piggybacking didnt seem to be working for a player request?
+ Add a heartbeat/last lobbyrequest timer or something to the client to fix this/make it properly robust.
+-Write code to unlock railbird
+-Draw test tubes for 51/52
+-Overnight job to clear down extra rooms from online - i.e. anything '2' or higher. Could run at 3am or something, and should
+ check that no one is online before running
+-Bug Report option under Help
+-Rainbow backs bug - images wrongly named
+-Preference to turn off auto popping up online
+-Improve the 'server asked to stack trace' - currently client side is NOT helpful. Cache a stack trace when you send a
+ message to the server of where you came from, then dump THAT out if you get the response.
+-Email so you can reset your password. Mostly done, just need to implement making the password temporary so you're forced
+ to change it after logging in.
+-Account settings button/dialog in the lobby. Allows you to change your password/email for an account.
+-2p game. Opponent can leave and come back before other player knows that they've left. Piggyback a player leaving
+ onto chat requests? This would make people leaving more 'instant' to others. Leave the bid method in for redundancy.
+ Also due to how it's rewritten, you can get a NPE. If Player A leaves on Player B's turn, the server moves on to the next  game.
+ Then B makes a bid and the server's all whaaaaat, how r u on that round???
+-Bulk deletion of replays
+-EV Strategy for Vectropy, improve user friendliness of simulator
+-Make 'game time' a real-time stat, i.e. check for currently running games too
+-Get rid of client-side online stats. Make new statistics request so they're centralised and always consistent.
+-Global stats, e.g. # of games played, most popular rooms, total messages handled... the possibilities are endless!
+-Set up virtual box through AWS, get to a point where it's possible to connect to the server
+-(Q) Remove unnecessary 'Communicating with server...' dialogs, e.g. when changing password.
+-(Q) Leaderboard doesn't auto-close on exit
+-(Q) Make 'clear stats' actually work - need to clear them in memory too
+-Make DisconnectRequest automatically remove you from all rooms. Then closing the lobby
+ should ALWAYS force close on the rooms so we don't need to send the CloseRoomRequests
+-Change the KickOffRunnable code. We don't need one per user - there should just be one thread
+ that always runs and does the check for everyone who's online.
+-Add room titles to replays, add as a configurable column
+-random NPE for lobbyrequest message (added logging, posted on StackOverflow). Think this actually might be to do with 
+ debugging through eclipse and hotswapping code etc.
+-Make the switch to a thread pool rather than spawning new threads all the time (ThreadPoolExecutor)
+-Make a queue for ChatRequests so they can be 'grouped' together and sent as one message
+-Fix observing empty rooms - "isGameInProgress" is broken
+-Spruce up leaderboard
+-Make a 'New game in...' countdown? Kick this off when the room becomes full and when a game ends.
+ Players can leave during countdown, and then it reverts to 'Waiting for players...'. Also tickboxes to auto-leave.
+-Make players leaving more instant by keeping the playerrequests going during games
+-Move emails to separate node rather than the friggy username+"Email" thing I have going on
+-Factor out port number for binding. Change port numbers to something safe using http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
+-Sometimes a person loses all their cards when they lose a round. Seen this twice - once in two player which caused the game to just end, then again in 3 player where weirdly the person was able to keep playing with no cards. I've since improved the hmHandSizeByPlayerNumber on the Server and made this get logged out in the debugDump so I'll have more information to go off if it happens again. Got this again!!
+-Logs from me and Jenny - node already removed.
+-Date filter just not working for replays
+-Games not ending properly, all ending up with a person with 0 cards and a new round...
+-Add 'ignore response' tickbox to test harness
+-Piggyback lobbyresponse onto connectsuccess to save the unnecessary server call to retrieve it
+-Add chat for the Lobby, assign players colours when they go online. 
+-Fix random uncaught exceptions with the online user list - invokeLater?
+-Sending up "" as GameId and getting kicked out of the room. This is a timing thing where a BidRequest comes back as 
+ 'waiting for player' but you've now sat down as a player and cleared GameId so you resend with it blank.
+-If first action is for a player to leave, need to disable challenge option (or lazily put something in server-side...)
+-Implement 'blacklist' with different settings, so I can block people for X minutes or for good. Check IP as first thing
+when handling a connection and if it's blacklisted just close the socket. This will stop me throwing away legit messages
+during a load attack because I won't actually use up threads in the worker pool for blacklisted IPs.
+-Blind button was broken online. Disabled when it shouldnt have been, etc.
+-Losses being double-counted? 
+-SIOOBE for '/admin'
+-Server unable to send stack trace response due to try-with-resource change
+-Lobby thought there were 3 observers in a room when there were just two. Using auto stand up.
+-Bid panel was enabled when dave left due to being removed for inactivity. 
+-Fix non thread-safe swing stuff
+-Apple Swing exceptions. Tried explicitly setting to metal as per stackoverflow.
+-Double-save of replay when dave had ticked 'leave after this game'. Also show as green in replays due to him leaving - there must be a way around this - e.g. on the server, don't add a LeftBid if the game is already over?
+-Leaving during the first round shouldnt count as a loss in your stats. The server will know when the person left so should be able to do this. Also for the others it should maybe count as an (n-1) player game?
+
+LOAD TEST:
+
+-Make a fun GUI load tester in a separate project
+-Create a 'load test' mode for the Server via a program argument. This should change the port number to something else
+ and perhaps suppress logging about unexpected messages.
+-Distribute the load tester, bring the server up in load test mode and test the crap out of it. How many messages can we get per second?
+ How much load before it slows down? Can we make it fall over completely?
+-Load test different legitimate messages - which are the most intensive?
+-Once done remove firewall rules etc on this port

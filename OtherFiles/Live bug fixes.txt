@@ -1,0 +1,35 @@
+5.2.1:
+
+ - NPE when handling a SocketTimeoutException on the client. We were calling into 'responseIsIgnored' with the encrypted message, and hence unable to construct the XML document and getting a NPE. Fixed this by making the MessageSender keep track of both the encrypted and unencrypted messages and using them appropriately.
+
+ - NPE when incrementing message count - timing issue:
+   * Thread A incremements the message count.
+   * Thread B clears the HashMap
+   * Thread A checks if the message count is over the threshold, gets a NPE.
+   Fixed by adding a null-check. If it's null we're not over the threshold.
+
+ - ClassCastException casting LeftBid to EntropyBid. 
+   Added to requestNextBidIfAppropriate() to do an instanceof check, then pass the checked bid through to the abstract method. This happened because a PlayerRequest came in and updated the hashmap in a different thread to add the LeftBid.
+
+
+5.2.2:
+
+ - Try-with-resource bug: Calling Thread.sleep() AFTER the socket was created in the try(). Moved the sleep outside so we don't have an open socket on the server for no reason.
+
+ - Added clearing down of chat histories. This happens when rooms become empty, as well as when the lobby becomes empty.
+
+ - Fixed memory leak on the server - wasn't closing sockets in MessageHandlerRunnable (duh!)
+
+ - Improved emailing of logs to not always append Part 2, Part 3... etc. Now only does this if the emails are within 10s of each other. Also made the sleeping cleverer, and made it wait for the stack trace to actually be written out before emailing.
+
+ - Fixed some non thread-safe swing stuff in EntropyLobby and the ChatPanel/StatsPanel
+
+ - Potentially fixed apple swing bug by detecting the OS and explicitly setting metal L&F
+
+6.0.0:
+
+ - Fixed NPE when creating room copies online
+
+ - Fixed non-thread safe code building up observer response. Now return vector copies when getting current players/observers from a room.
+
+ - Definitely fixed apple swing bug

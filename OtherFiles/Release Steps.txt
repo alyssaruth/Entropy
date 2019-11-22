@@ -1,0 +1,13 @@
+-Remove devMode, check that Registry, ServerRegistry and MessageUtil are pointing at the right places. 
+-Update change log, check version numbers in OnlineConstants. Up server version if necessary.
+-For the client: 
+-Obfuscate (UNTICK SWING UI) and put both versions and the mapping file in a folder. 
+-Copy across API documentation and make changes if necessary. Change the .odt file and re-export as PDF.
+-Copy across the update.bat and EntropyUpdater.jar files from previous version.
+-Create a shortcut to EntropyLive.jar, call it 'EntropyLive' and set the icon on it.
+-Zip up all files except the following with a password, put on dropbox:
+  -Entropy Strategy API.odt
+  -Entropy Live (Unobfuscated).jar
+  -Mapping.txt
+-Put EntropyLive.jar and Mapping.txt on the server for automatic updates/log deobfuscation. Up the client version in Version.txt and call 'reset version' or drop the server - this is so deobfuscation continues to work.
+-For the server, just export the jar and copy it to the aws server. 
