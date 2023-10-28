@@ -1,5 +1,3 @@
-package main;
-
 import java.net.ServerSocket;
 
 import javax.swing.UIManager;
