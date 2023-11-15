@@ -24,9 +24,8 @@ import util.Debug;
 import util.DialogUtil;
 import util.Registry;
 import util.ReplayFileUtil;
-import bean.DateFilterPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
@@ -52,13 +51,13 @@ public class ReplayFilterPanel extends JPanel
 					ColumnSpec.decode("78px"),
 					ColumnSpec.decode("340px:grow"),},
 				new RowSpec[] {
-					FormFactory.NARROW_LINE_GAP_ROWSPEC,
+					FormSpecs.NARROW_LINE_GAP_ROWSPEC,
 					RowSpec.decode("56px"),
 					RowSpec.decode("51px"),
 					RowSpec.decode("61px"),
 					RowSpec.decode("48px"),
 					RowSpec.decode("48px"),
-					FormFactory.DEFAULT_ROWSPEC,}));
+					FormSpecs.DEFAULT_ROWSPEC,}));
 			
 						JLabel lblFilters = new JLabel("Filters:");
 						add(lblFilters, "2, 2, center, fill");
@@ -80,10 +79,6 @@ public class ReplayFilterPanel extends JPanel
 			completenessGroup.add(radioComplete);
 			completenessGroup.add(radioIncomplete);
 			completenessGroup.add(radioBoth);
-			cbFilterByDate.setHorizontalAlignment(SwingConstants.LEFT);
-			add(cbFilterByDate, "2, 3, left, fill");
-			add(dateFilter, "3, 3, left, center");
-			dateFilter.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 			add(cbFilterByFlag, "2, 4, left, fill");
 			add(flagPanel, "3, 4, fill, fill");
 			flagPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -169,8 +164,7 @@ public class ReplayFilterPanel extends JPanel
 			panel_1.setLayout(new GridLayout(0, 4, 0, 0));
 			panel_1.add(chckbxEntropy);
 			panel_1.add(chckbxVectropy);
-			
-			dateFilter.enableComponents(false);
+
 			enableFlagBoxes(false);
 			enableFlags(false);
 			
@@ -181,15 +175,13 @@ public class ReplayFilterPanel extends JPanel
 			Debug.stackTrace(t);
 		}
 	}
-	
-	private final DateFilterPanel dateFilter = new DateFilterPanel();
+
 	private final JRadioButton radioComplete = new JRadioButton("Complete");
 	private final JRadioButton radioIncomplete = new JRadioButton("Incomplete");
 	private final JRadioButton radioBoth = new JRadioButton("Both");
 	private final JCheckBox cbWins = new JCheckBox("Wins");
 	private final JCheckBox cbLosses = new JCheckBox("Losses");
 	private final JCheckBox cbUnknown = new JCheckBox("Unknown");
-	private final JCheckBox cbFilterByDate = new JCheckBox("Date");
 	private final JCheckBox cbFilterByFlag = new JCheckBox("Flag");
 	private final JCheckBox cbHandicap4 = new JCheckBox("");
 	private final JCheckBox cbHandicap3 = new JCheckBox("");
@@ -307,16 +299,6 @@ public class ReplayFilterPanel extends JPanel
 			}
 		});
 		
-		cbFilterByDate.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent event)
-			{
-				boolean enabled = cbFilterByDate.isSelected();
-				dateFilter.enableComponents(enabled);
-			}
-		});
-		
 		cbFilterByRounds.addActionListener(new ActionListener()
 		{
 			@Override
@@ -397,11 +379,6 @@ public class ReplayFilterPanel extends JPanel
 		return cbUnknown.isSelected();
 	}
 	
-	public boolean getFilterByDate()
-	{
-		return cbFilterByDate.isSelected();
-	}
-	
 	public boolean getFilterByFlag()
 	{
 		return cbFilterByFlag.isSelected();
@@ -415,11 +392,6 @@ public class ReplayFilterPanel extends JPanel
 	public boolean getFilterByGameMode()
 	{
 		return cbFilterByGameMode.isSelected();
-	}
-	
-	public boolean filterDate(Date date)
-	{
-		return dateFilter.filter(date);
 	}
 	
 	public boolean includesFlag(FlagImage fi)
@@ -558,11 +530,6 @@ public class ReplayFilterPanel extends JPanel
 	
 	public boolean valid()
 	{
-		if (!dateFilter.valid())
-		{
-			return false;
-		}
-		
 		if (getFilterByFlag() && !atLeastOneFlagSelected())
 		{
 			DialogUtil.showError("You must select at least one flag option to filter by.");

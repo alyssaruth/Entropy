@@ -380,16 +380,16 @@ public class HelpDialog extends JFrame
 	{
 		searchBox.setText("");
 		refreshNodes("");
-		Enumeration<DefaultMutableTreeNode> children = root.children();
+		Enumeration<TreeNode> children = root.children();
 		setSelectionForWordRecursively(children, word);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setSelectionForWordRecursively(Enumeration<DefaultMutableTreeNode> nodes, String word)
+	private void setSelectionForWordRecursively(Enumeration<TreeNode> nodes, String word)
 	{
 		while (nodes.hasMoreElements())
 		{
-			DefaultMutableTreeNode node = nodes.nextElement();
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)nodes.nextElement();
 			if (node.isLeaf())
 			{
 				HelpPanel panel = (HelpPanel)node.getUserObject();
@@ -404,7 +404,7 @@ public class HelpDialog extends JFrame
 			}
 			else
 			{
-				Enumeration<DefaultMutableTreeNode> children = node.children();
+				Enumeration<TreeNode> children = node.children();
 				setSelectionForWordRecursively(children, word);
 			}
 		}
