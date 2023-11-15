@@ -390,29 +390,6 @@ public class ReplayTable extends JTable
 		String date = ReplayFileUtil.getFormattedDateFromFileName(filename);
 		FlagImage image = wrapper.getFlag();
 		
-		if (filterPanel.getFilterByDate())
-		{
-			//Strip off the time and convert to a Date for comparison
-			int spaceIndex = date.indexOf(' ');
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-			Date dateToCompare = null;
-			
-			try
-			{
-				dateToCompare = df.parse(date.substring(0, spaceIndex));
-			}
-			catch (Throwable t)
-			{
-				Debug.stackTrace(t);
-				return false;
-			}
-			
-			if (!filterPanel.filterDate(dateToCompare))
-			{
-				return false;
-			}
-		}
-		
 		if (filterPanel.getFilterByFlag() && !filterPanel.includesFlag(image))
 		{
 			return false;

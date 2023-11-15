@@ -51,9 +51,7 @@ public class EntropyMain implements Registry
 				System.exit(0);
 				return;
 			}
-			
-			//Need to initialise the xml-security library so we can use Base64 encoding and decoding
-			com.sun.org.apache.xml.internal.security.Init.init();
+
 			EncryptionUtil.failedDecryptionLogging = true;
 			
 			checkForUpdatesIfRequired();
