@@ -21,11 +21,11 @@ import org.w3c.dom.NodeList;
 
 public class MessageUtil implements OnlineConstants
 {	
-	public static final String LIVE_IP = "54.149.26.201"; //Live
-	public static final String LAPTOP_IP = "82.3.206.177"; //Laptop (in Leeds)
+	// public static final String LIVE_IP = "54.149.26.201"; //Live
+	// public static final String LAPTOP_IP = "82.3.206.177"; //Laptop (in Leeds)
 	public static final String LOCAL_IP = "localhost";
 	
-	public static final String SERVER_IP = LIVE_IP;
+	public static final String SERVER_IP = LOCAL_IP;
 	
 	private static final Random RAND = new Random();
 	

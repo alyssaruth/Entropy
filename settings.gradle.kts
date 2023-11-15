@@ -8,4 +8,4 @@
  */
 
 rootProject.name = "Entropy"
-include("core", "client")
+include("core", "client", "server")

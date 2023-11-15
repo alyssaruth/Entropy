@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 
 public class PasswordServerUtil 
 {
-	private static String passwordCharacters = "abcdefghijklmnopqrstuvwxyz0123456789$%!\"&*()£#@[]?";
+	private static String passwordCharacters = "abcdefghijklmnopqrstuvwxyz0123456789$%!\"&*()#@[]?";
 	
 	public static String generateRandomPassword()
 	{
