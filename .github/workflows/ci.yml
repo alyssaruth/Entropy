@@ -14,3 +14,5 @@ jobs:
         run: ./gradlew :core:build
       - name: Build Client
         run: ./gradlew :client:build
+      - name: Build Server
+        run: ./gradlew :server:build

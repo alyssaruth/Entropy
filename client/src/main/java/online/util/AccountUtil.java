@@ -1,7 +1,5 @@
 package online.util;
 
-import javax.mail.internet.InternetAddress;
-
 import util.DialogUtil;
 import util.EncryptionUtil;
 
@@ -23,15 +21,16 @@ public class AccountUtil
 			return false;
 		}
 		
-		try
-		{
-			InternetAddress.parse(email, true);
-		}
-		catch (Throwable t)
-		{
-			DialogUtil.showError("The email address you have entered is not valid.");
-			return false;
-		}
+//		try
+//		{
+//			InternetAddress.parse(email, true);
+//		}
+//		catch (Throwable t)
+//		{
+//			Debug.stackTraceSilently(t);
+//			DialogUtil.showError("The email address you have entered is not valid.");
+//			return false;
+//		}
 		
 		return true;
 	}

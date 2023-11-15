@@ -30,7 +30,7 @@ public class AccountUtil implements ServerRegistry
 				String body = "Hi " + username + "! This is a quick test message to check that the email you entered is valid.";
 				body += "\nIf you forget your password, the 'Reset Password' option will generate a new one";
 				body += " and send it to this address. \n\nEnjoy the game!";
-				EntropyEmailUtil.sendEmailNoReply(title, body, email);
+				// EntropyEmailUtil.sendEmailNoReply(title, body, email);
 				emailData.put(username, email);
 			}
 			catch (Throwable t)
