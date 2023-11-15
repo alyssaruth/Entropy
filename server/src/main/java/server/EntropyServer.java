@@ -216,9 +216,6 @@ public final class EntropyServer extends JFrame
 	
 	public static void main(String args[])
 	{
-		//Need to initialise the xml-security library so we can use Base64 encoding and decoding
-		com.sun.org.apache.xml.internal.security.Init.init();
-		
 		EntropyServer server = new EntropyServer();
 		Thread.setDefaultUncaughtExceptionHandler(new DebugUncaughtExceptionHandler());
 		
