@@ -4,17 +4,11 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 
-import object.EntropyClientDebugExtension;
+import logging.LoggerUncaughtExceptionHandler;
 import online.util.DesktopEntropyClient;
 import screen.MainScreen;
 import screen.ScreenCache;
-import util.AbstractClient;
-import util.Debug;
-import util.DebugUncaughtExceptionHandler;
-import util.DialogUtil;
-import util.EncryptionUtil;
-import util.OnlineConstants;
-import util.Registry;
+import util.*;
 
 public class EntropyMain implements Registry
 {
@@ -27,16 +21,12 @@ public class EntropyMain implements Registry
 		try
 		{
 			//Initialise interfaces etc
-			Debug.initialise(ScreenCache.getDebugConsole());
+			Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
+			MainUtilKt.setLoggingContextFields();
 			AbstractClient.setInstance(new DesktopEntropyClient());
 			
 			//Dev mode
 			AbstractClient.parseProgramArguments(args);
-			
-			//Set Debug variables
-			Debug.setProductDesc("Entropy " + OnlineConstants.ENTROPY_VERSION_NUMBER);
-			Debug.setDebugExtension(new EntropyClientDebugExtension());
-			Debug.setLogToSystemOut(AbstractClient.devMode);
 			
 			setLookAndFeel();
 			
@@ -62,8 +52,6 @@ public class EntropyMain implements Registry
 			application.setVisible(true);
 			application.setLocationRelativeTo(null);
 			application.setResizable(false);
-			
-			Thread.setDefaultUncaughtExceptionHandler(new DebugUncaughtExceptionHandler());
 			application.onStart();
 		}
 		catch (Throwable t)
@@ -71,7 +59,7 @@ public class EntropyMain implements Registry
 			Debug.stackTrace(t);
 		}
 	}
-	
+
 	private static void setLookAndFeel()
 	{
 		AbstractClient.setOs();
