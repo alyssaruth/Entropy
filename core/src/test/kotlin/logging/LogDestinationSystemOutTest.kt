@@ -29,7 +29,7 @@ class LogDestinationSystemOutTest : AbstractTest() {
     fun `Should log the record to system out`() {
         val dest = LogDestinationSystemOut()
 
-        val record = makeLogRecord(severity = Severity.INFO, loggingCode = LoggingCode("some.event"), message = "blah")
+        val record = makeLogRecord(severity = Severity.INFO, loggingCode = "some.event", message = "blah")
         dest.log(record)
 
         val output = newOut.toString()
@@ -41,7 +41,7 @@ class LogDestinationSystemOutTest : AbstractTest() {
         val dest = LogDestinationSystemOut()
 
         val error = Throwable("oh no")
-        val record = makeLogRecord(severity = Severity.ERROR, loggingCode = LoggingCode("some.event"), message = "blah", errorObject = error)
+        val record = makeLogRecord(severity = Severity.ERROR, loggingCode = "some.event", message = "blah", errorObject = error)
         dest.log(record)
 
         val output = newOut.toString()
@@ -55,9 +55,9 @@ class LogDestinationSystemOutTest : AbstractTest() {
 
         val record = makeLogRecord(
             severity = Severity.INFO,
-            loggingCode = LoggingCode("some.event"),
+            loggingCode = "some.event",
             message = "blah",
-            keyValuePairs = mapOf(KEY_STACK to "at Something.blah")
+            keyValuePairs = mapOf(KEY_STACK to "at Something.blah"),
         )
         dest.log(record)
 

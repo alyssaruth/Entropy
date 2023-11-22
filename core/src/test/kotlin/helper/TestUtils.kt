@@ -3,7 +3,6 @@ package helper
 import CURRENT_TIME
 import io.kotest.matchers.maps.shouldContainExactly
 import logging.LogRecord
-import logging.LoggingCode
 import logging.Severity
 import java.awt.Component
 import java.awt.Container
@@ -16,10 +15,10 @@ fun LogRecord.shouldContainKeyValues(vararg values: Pair<String, Any?>) {
 fun makeLogRecord(
     timestamp: Instant = CURRENT_TIME,
     severity: Severity = Severity.INFO,
-    loggingCode: LoggingCode = LoggingCode("log"),
+    loggingCode: String = "log",
     message: String = "A thing happened",
     errorObject: Throwable? = null,
-    keyValuePairs: Map<String, Any?> = mapOf()
+    keyValuePairs: Map<String, Any?> = mapOf(),
 ) =
     LogRecord(timestamp, severity, loggingCode, message, errorObject, keyValuePairs)
 

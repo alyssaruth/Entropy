@@ -10,6 +10,8 @@ import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
 
+import static utils.InjectedThings.logger;
+
 public class EntropyMain implements Registry
 {
 	private static final int BIND_PORT_NUMBER = 1321;
@@ -18,52 +20,45 @@ public class EntropyMain implements Registry
 	
 	public static void main(String[] args)
 	{
-		try
-		{
-			//Initialise interfaces etc
-			Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
-			MainUtilKt.setLoggingContextFields();
-			AbstractClient.setInstance(new DesktopEntropyClient());
-			
-			//Dev mode
-			AbstractClient.parseProgramArguments(args);
-			
-			setLookAndFeel();
-			
-			if (AbstractClient.devMode)
-			{
-				setInstanceNumber();
-			}
-			else if (!bindOnPort(BIND_PORT_NUMBER))
-			{
-				Debug.append("Multiple instances disabled in non-dev mode, exiting");
-				DialogUtil.showError("Entropy is already running.");
-				System.exit(0);
-				return;
-			}
+		//Initialise interfaces etc
+		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
+		MainUtilKt.setLoggingContextFields();
+		AbstractClient.setInstance(new DesktopEntropyClient());
 
-			EncryptionUtil.failedDecryptionLogging = true;
-			
-			checkForUpdatesIfRequired();
-			
-			MainScreen application = ScreenCache.getMainScreen();
-			application.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-			application.setSize(1050, 600);
-			application.setVisible(true);
-			application.setLocationRelativeTo(null);
-			application.setResizable(false);
-			application.onStart();
-		}
-		catch (Throwable t)
+		//Dev mode
+		AbstractClient.parseProgramArguments(args);
+
+		setLookAndFeel();
+
+		if (AbstractClient.devMode)
 		{
-			Debug.stackTrace(t);
+			setInstanceNumber();
 		}
+		else if (!bindOnPort(BIND_PORT_NUMBER))
+		{
+			logger.info("instanceCheck", "Multiple instances disabled in non-dev mode, exiting");
+			DialogUtil.showError("Entropy is already running.");
+			System.exit(0);
+			return;
+		}
+
+		EncryptionUtil.failedDecryptionLogging = true;
+
+		checkForUpdatesIfRequired();
+
+		MainScreen application = ScreenCache.getMainScreen();
+		application.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		application.setSize(1050, 600);
+		application.setVisible(true);
+		application.setLocationRelativeTo(null);
+		application.setResizable(false);
+		application.onStart();
 	}
 
 	private static void setLookAndFeel()
 	{
 		AbstractClient.setOs();
-		Debug.append("Initialising Look & Feel - Operating System: " + AbstractClient.operatingSystem);
+		logger.info("laf.init", "Initialising Look & Feel - Operating System: " + AbstractClient.operatingSystem);
 		
 		String lookAndFeel = null;
 		try 
@@ -87,7 +82,7 @@ public class EntropyMain implements Registry
 		} 
 		catch (Throwable e) 
 		{
-		    Debug.append("Failed to load LookAndFeel " + lookAndFeel + ". Caught " + e);
+			logger.warn("laf.failed", "Failed to load LookAndFeel " + lookAndFeel + ". Caught " + e);
 		    DialogUtil.showError("Failed to load Look & Feel '" + lookAndFeel + "'. \nEntropy will use the default instead.");
 		    prefs.put(PREFERENCES_STRING_LOOK_AND_FEEL, "Metal");
 		}
@@ -104,8 +99,8 @@ public class EntropyMain implements Registry
 			AbstractClient.instanceNumber++;
 			boundSuccessfully = bindOnPort(startingPortNumber);
 		}
-		
-		Debug.append("I am instance number " + AbstractClient.instanceNumber);
+
+		logger.info("instanceCheck", "I am instance number " + AbstractClient.instanceNumber);
 	}
 	
 	private static boolean bindOnPort(int portNumber)
@@ -116,7 +111,7 @@ public class EntropyMain implements Registry
 		}
 		catch (Throwable t)
 		{
-			Debug.append("Caught " + t + " trying to bind on port " + portNumber);
+			logger.info("instanceCheck", "Caught " + t + " trying to bind on port " + portNumber);
 			return false;
 		}
 		
@@ -129,7 +124,7 @@ public class EntropyMain implements Registry
 		if (!checkForUpdates
 		  || AbstractClient.devMode)
 		{
-			Debug.append("Not checking for updates as preference is disabled or I'm in dev mode");
+			logger.info("updateCheck", "Not checking for updates as preference is disabled or I'm in dev mode");
 			return;
 		}
 		

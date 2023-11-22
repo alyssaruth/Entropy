@@ -8,7 +8,6 @@ import io.mockk.clearAllMocks
 import logging.LogDestinationSystemOut
 import logging.LogRecord
 import logging.Logger
-import logging.LoggingCode
 import logging.Severity
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -46,7 +45,7 @@ open class AbstractTest {
 
     fun getLastLog() = flushAndGetLogRecords().last()
 
-    fun verifyLog(code: LoggingCode, severity: Severity = Severity.INFO): LogRecord {
+    fun verifyLog(code: String, severity: Severity = Severity.INFO): LogRecord {
         val record = flushAndGetLogRecords().findLast { it.loggingCode == code && it.severity == severity }
         record.shouldNotBeNull()
 
@@ -57,10 +56,10 @@ open class AbstractTest {
         return record
     }
 
-    protected fun findLog(code: LoggingCode, severity: Severity = Severity.INFO) =
+    protected fun findLog(code: String, severity: Severity = Severity.INFO) =
         getLogRecordsSoFar().findLast { it.loggingCode == code && it.severity == severity }
 
-    fun verifyNoLogs(code: LoggingCode) {
+    fun verifyNoLogs(code: String) {
         flushAndGetLogRecords().any { it.loggingCode == code } shouldBe false
     }
 

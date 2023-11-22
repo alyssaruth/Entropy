@@ -17,8 +17,8 @@ import javax.swing.text.StyleConstants
 class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should separate log records with a new line`() {
-        val recordOne = makeLogRecord(loggingCode = LoggingCode("foo"), message = "log one")
-        val recordTwo = makeLogRecord(loggingCode = LoggingCode("bar"), message = "log two")
+        val recordOne = makeLogRecord(loggingCode = "foo", message = "log one")
+        val recordTwo = makeLogRecord(loggingCode = "bar", message = "log two")
 
         val console = LoggingConsole()
         console.log(recordOne)

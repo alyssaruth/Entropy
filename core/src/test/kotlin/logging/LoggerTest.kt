@@ -17,7 +17,7 @@ class LoggerTest : AbstractTest() {
         val destination = FakeLogDestination()
         val logger = Logger(listOf(destination))
 
-        val loggingCode = LoggingCode("some.event")
+        val loggingCode = "some.event"
         logger.info(loggingCode, "A thing happened")
         logger.waitUntilLoggingFinished()
 
@@ -35,7 +35,7 @@ class LoggerTest : AbstractTest() {
         val destination = FakeLogDestination()
         val logger = Logger(listOf(destination))
 
-        val loggingCode = LoggingCode("some.event")
+        val loggingCode = "some.event"
         logger.info(loggingCode, "A thing happened", "Key" to "Value")
         logger.waitUntilLoggingFinished()
 
@@ -53,7 +53,7 @@ class LoggerTest : AbstractTest() {
         val destination = FakeLogDestination()
         val logger = Logger(listOf(destination))
 
-        val loggingCode = LoggingCode("some.event")
+        val loggingCode = "some.event"
         logger.warn(loggingCode, "A slightly bad thing happened")
         logger.waitUntilLoggingFinished()
 
@@ -71,9 +71,9 @@ class LoggerTest : AbstractTest() {
         val destination = FakeLogDestination()
         val logger = Logger(listOf(destination))
 
-        val loggingCode = LoggingCode("bad.thing")
+        val loggingCode = "bad.thing"
         val throwable = Throwable("Boo")
-        logger.error(LoggingCode("bad.thing"), "An exception happened!", throwable, "other.info" to 60)
+        logger.error(loggingCode, "An exception happened!", throwable, "other.info" to 60)
         logger.waitUntilLoggingFinished()
 
         val record = destination.logRecords.first()
@@ -88,12 +88,12 @@ class LoggerTest : AbstractTest() {
     fun `Should log progress correctly`() {
         val destination = FakeLogDestination()
         val logger = Logger(listOf(destination))
-        logger.logProgress(LoggingCode("progress"), 9, 100)
-        logger.logProgress(LoggingCode("progress"), 11, 100)
+        logger.logProgress("progress", 9, 100)
+        logger.logProgress("progress", 11, 100)
         logger.waitUntilLoggingFinished()
         destination.logRecords.shouldBeEmpty()
 
-        logger.logProgress(LoggingCode("progress"), 10, 100)
+        logger.logProgress("progress", 10, 100)
         logger.waitUntilLoggingFinished()
         val log = destination.logRecords.last()
         log.message shouldBe "Done 10/100 (10.0%)"
@@ -104,7 +104,7 @@ class LoggerTest : AbstractTest() {
         val destinationOne = FakeLogDestination()
         val destinationTwo = FakeLogDestination()
         val logger = Logger(listOf(destinationOne, destinationTwo))
-        logger.info(LoggingCode("foo"), "bar")
+        logger.info("foo", "bar")
         logger.waitUntilLoggingFinished()
 
         destinationOne.logRecords.shouldHaveSize(1)
@@ -116,7 +116,7 @@ class LoggerTest : AbstractTest() {
         val destination = SleepyLogDestination()
         val logger = Logger(listOf(destination))
 
-        logger.info(LoggingCode("foo"), "bar")
+        logger.info("foo", "bar")
 
         destination.logRecords.shouldBeEmpty()
         logger.waitUntilLoggingFinished()
@@ -128,10 +128,10 @@ class LoggerTest : AbstractTest() {
         val destination = SleepyLogDestination()
         val logger = Logger(listOf(destination))
 
-        logger.info(LoggingCode("foo"), "bar")
+        logger.info("foo", "bar")
         logger.waitUntilLoggingFinished()
 
-        logger.info(LoggingCode("foo"), "baz")
+        logger.info("foo", "baz")
         logger.waitUntilLoggingFinished()
 
         destination.logRecords.shouldHaveSize(2)
@@ -143,7 +143,7 @@ class LoggerTest : AbstractTest() {
         val logger = Logger(listOf(destination))
 
         logger.addToContext("appVersion", "4.1.1")
-        logger.info(LoggingCode("foo"), "a thing happened", "otherKey" to "otherValue")
+        logger.info("foo", "a thing happened", "otherKey" to "otherValue")
         logger.waitUntilLoggingFinished()
 
         val record = destination.logRecords.last()
