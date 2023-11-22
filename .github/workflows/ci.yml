@@ -15,5 +15,7 @@ jobs:
           java-version: 11.0.18
       - name: Ktlint format
         run: ./gradlew :${{ matrix.project }}:ktlintFormat
-      - name: Build
-        run: xvfb-run --auto-servernum ./gradlew :${{ matrix.project }}:build
+      - name: Compile
+        run: ./gradlew :${{ matrix.project }}:compileKotlin
+      - name: Test
+        run: xvfb-run --auto-servernum ./gradlew :${{ matrix.project }}:test

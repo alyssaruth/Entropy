@@ -1,6 +1,5 @@
 package logging
 
-import logging.exceptions.ApplicationFault
 import utils.InjectedThings.logger
 import java.lang.Thread.UncaughtExceptionHandler
 
@@ -9,8 +8,6 @@ class LoggerUncaughtExceptionHandler : UncaughtExceptionHandler {
         if (isSuppressed(arg1)) {
             // Still stack trace, but don't show an error message or email a log
             logger.warn(CODE_UNCAUGHT_EXCEPTION, "Suppressing uncaught exception: $arg1", KEY_THREAD to arg0.toString(), KEY_EXCEPTION_MESSAGE to arg1.message)
-        } else if (arg1 is ApplicationFault) {
-            logger.error(arg1.loggingCode, "Uncaught exception: ${arg1.message}", arg1, KEY_THREAD to arg0.toString())
         } else {
             logger.error(CODE_UNCAUGHT_EXCEPTION, "Uncaught exception: $arg1 in thread $arg0", arg1, KEY_THREAD to arg0.toString())
         }

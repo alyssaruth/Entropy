@@ -1,8 +1,0 @@
-package logging.exceptions
-
-import logging.LoggingCode
-
-data class ApplicationFault(
-    val loggingCode: LoggingCode,
-    override val message: String,
-) : Exception()
