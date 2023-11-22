@@ -22,6 +22,6 @@ task<JavaExec>("runDev") {
             group = "run"
             classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
             args = listOf("devMode")
-        },
+        }
     )
 }
