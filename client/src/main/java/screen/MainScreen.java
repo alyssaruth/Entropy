@@ -64,8 +64,9 @@ import util.OnlineConstants;
 import util.Registry;
 import util.ReplayConverter;
 import util.ReplayFileUtil;
-import util.ThreadUtil;
 import bean.AbstractDevScreen;
+
+import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class MainScreen extends AbstractDevScreen
 							  implements WindowListener, 
@@ -787,7 +788,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (command.equals("stacks"))
 		{
-			ThreadUtil.dumpStacks();
+			dumpThreadStacks();
 		}
 		
 		return false;
