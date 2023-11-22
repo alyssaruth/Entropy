@@ -13,8 +13,8 @@ jobs:
         with:
           distribution: zulu
           java-version: 11.0.18
-      - name: Ktlint format
-        run: ./gradlew :${{ matrix.project }}:ktlintFormat
+      - name: Ktlint check
+        run: ./gradlew :${{ matrix.project }}:ktlintCheck
       - name: Compile
         run: ./gradlew :${{ matrix.project }}:compileKotlin
       - name: Test
