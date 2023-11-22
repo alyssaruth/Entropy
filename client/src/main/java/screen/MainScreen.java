@@ -65,6 +65,7 @@ import util.Registry;
 import util.ReplayConverter;
 import util.ReplayFileUtil;
 import bean.AbstractDevScreen;
+import utils.InjectedThings;
 
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -977,12 +978,8 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmViewLogs)
 		{
-			DebugConsole loggingDialog = ScreenCache.getDebugConsole();
-			loggingDialog.setTitle("Console");
-			loggingDialog.setSize(1000, 600);
-			loggingDialog.setLocationRelativeTo(null);
-			loggingDialog.setVisible(true);
-			loggingDialog.toFront();
+			InjectedThings.loggingConsole.setVisible(true);
+			InjectedThings.loggingConsole.toFront();
 		}
 		else if (source == mntmPreferences)
 		{

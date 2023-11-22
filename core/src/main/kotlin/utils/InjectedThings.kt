@@ -6,6 +6,7 @@ import logging.LoggingConsole
 import java.time.Clock
 
 object InjectedThings {
+    @JvmField
     val loggingConsole = LoggingConsole()
 
     @JvmField
