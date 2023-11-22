@@ -15,3 +15,13 @@ application {
     // Define the main class for the application.
     mainClass.set("EntropyMain")
 }
+
+task<JavaExec>("runDev") {
+    configure(
+        closureOf<JavaExec> {
+            group = "run"
+            classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
+            args = listOf("devMode")
+        },
+    )
+}

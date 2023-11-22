@@ -16,9 +16,7 @@ import org.w3c.dom.Document;
 public abstract class AbstractClient implements OnlineConstants
 {
 	public static boolean devMode = false;
-	public static boolean traceReadSql = true;
-	public static boolean traceWriteSql = false;
-	public static String operatingSystem = "";
+	public static String operatingSystem = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 	public static boolean justUpdated = false;
 	public static int instanceNumber = 1;
 	
@@ -70,21 +68,12 @@ public abstract class AbstractClient implements OnlineConstants
 		else if (arg.equals("devMode"))
 		{
 			devMode = true;
-			traceWriteSql = true;
 			Debug.appendBanner("Running in dev mode");
-		}
-		else if (arg.equals("traceSql"))
-		{
-			traceWriteSql = true;
 		}
 		else
 		{
 			Debug.append("Unexpected program argument: " + arg);
 		}
-	}
-	public static void setOs()
-	{
-		operatingSystem = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 	}
 	public static boolean isAppleOs()
 	{

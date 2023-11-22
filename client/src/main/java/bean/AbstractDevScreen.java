@@ -8,7 +8,7 @@ import javax.swing.KeyStroke;
 
 import util.Debug;
 
-public abstract class AbstractDevScreen extends JFrame
+public abstract class AbstractDevScreen extends FocusableWindow
 {
 	public AbstractDevScreen()
 	{

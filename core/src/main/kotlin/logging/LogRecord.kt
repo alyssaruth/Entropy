@@ -8,7 +8,7 @@ import java.util.*
 enum class Severity {
     INFO,
     WARN,
-    ERROR,
+    ERROR
 }
 
 data class LogRecord(
@@ -17,7 +17,7 @@ data class LogRecord(
     val loggingCode: String,
     val message: String,
     val errorObject: Throwable?,
-    val keyValuePairs: Map<String, Any?>,
+    val keyValuePairs: Map<String, Any?>
 ) {
     private val dateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         .withLocale(Locale.UK)

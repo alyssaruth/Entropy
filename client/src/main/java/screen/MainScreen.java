@@ -51,6 +51,7 @@ import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 
 import util.AbstractClient;
@@ -90,6 +91,11 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private int gameMode = -1;
 	private ArrayList<Integer> lastTenKeys = new ArrayList<>();
+
+	@Override
+	public String getWindowName() {
+		return "Entropy";
+	}
 
 	public MainScreen()
 	{
@@ -846,11 +852,8 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void setViewLogsVisibility()
 	{
-		if (AbstractClient.devMode)
-		{
-			mntmViewLogs.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
-			mnHelp.add(mntmViewLogs);
-		}
+		mntmViewLogs.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
+		mnHelp.add(mntmViewLogs);
 	}
 
 	public void exitApplication()

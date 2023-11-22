@@ -41,6 +41,8 @@ import util.ReplayFileUtil;
 import util.ReplayRowWrapper;
 import util.TableUtil;
 
+import static utils.InjectedThings.logger;
+
 public class ReplayTable extends JTable
 						 implements MouseListener,
 						 			Registry
@@ -198,8 +200,8 @@ public class ReplayTable extends JTable
 	
 	private void fillReplayList()
 	{
-		Debug.append("Filling " + folder + " replay list");
-		
+		logger.info("initReplayList", "Filling " + folder + " replay list");
+
 		String replayDirectory = ReplayFileUtil.getDirectoryFromPreferences();
 		String directoryStr = replayDirectory + "//Replays//" + folder;
 		
@@ -207,7 +209,7 @@ public class ReplayTable extends JTable
 		File directory = new File(directoryStr);
 		if (!directory.isDirectory())
 		{
-			Debug.append("Directory " + directory + " does not exist.");
+			logger.info("initReplayList", "Directory " + directory + " does not exist.");
 			return;
 		}
         
@@ -230,8 +232,8 @@ public class ReplayTable extends JTable
     			corruptFiles.add(file);
     		}
     	}
-        
-        Debug.append("Finished filling " + folder + " replay list [size: " + replayFilenames.size() + "]");
+
+		logger.info("initReplayList", "Finished filling " + folder + " replay list [size: " + replayFilenames.size() + "]");
         if (!corruptReplayMessage.isEmpty() )
 		{
 			promptToDeleteCorruptReplays(corruptReplayMessage);
@@ -269,14 +271,14 @@ public class ReplayTable extends JTable
 	{
 		if (!rowWrapperByFileName.isEmpty())
 		{
-			Debug.append("Not reading index file as rows are already cached.");
+			logger.info("replayListIndex", "Not reading index file as rows are already cached.");
 			return;
 		}
 		
 		File indexFile = getIndexFileIfExists();
 		if (indexFile == null)
 		{
-			Debug.append("No index file for " + folder + " replays");
+			logger.info("replayListIndex", "No index file for " + folder + " replays");
 			return;
 		}
 		
@@ -287,7 +289,7 @@ public class ReplayTable extends JTable
 		}
 		
 		String[] lines = contents.split("\n");
-		Debug.append("Found " + lines.length + " lines in index file.");
+		logger.info("replayListIndex", "Found " + lines.length + " lines in index file.");
 		for (int i=0; i<lines.length; i++)
 		{
 			String rowWrapperStr = lines[i];
@@ -295,7 +297,8 @@ public class ReplayTable extends JTable
 			String filename = wrapper.getFilename();
 			if (!replayFilenames.contains(filename))
 			{
-				Debug.append("Not caching " + filename + " as file no longer exists.");
+
+				logger.info("replayListIndex", "Not caching " + filename + " as file no longer exists.");
 				continue;
 			}
 			
@@ -328,7 +331,7 @@ public class ReplayTable extends JTable
 		File directory = new File(replayDirectory);
 		if (!directory.isDirectory())
 		{
-			Debug.append("Directory " + directory + " does not exist, not writing out index file.");
+			logger.info("replayListIndex", "Directory " + directory + " does not exist, not writing out index file.");
 			return;
 		}
 		
@@ -359,7 +362,9 @@ public class ReplayTable extends JTable
 		replayFilenamesFiltered.clear();
 
 		int fullSize = replayFilenames.size();
-		Debug.append("Populating filtered list for " + this + " - total files: " + fullSize, init);
+		if (init) {
+			logger.info("populateFilteredList", "Populating filtered list for " + this + " - total files: " + fullSize);
+		}
 		
 		int cachedCount = 0;
 		for (int i=0; i<fullSize; i++)
@@ -376,8 +381,10 @@ public class ReplayTable extends JTable
 				replayFilenamesFiltered.add(name);
 			}
 		}
-		
-		Debug.append("Finished populating filtered list for " + this + " - files found in cache: " + cachedCount, init);
+
+		if (init) {
+			logger.info("populateFilteredList", "Finished populating filtered list for " + this + " - files found in cache: " + cachedCount);
+		}
 	}
 	
 	private boolean includeRowBasedOnFilters(ReplayRowWrapper wrapper)
@@ -519,10 +526,8 @@ public class ReplayTable extends JTable
 		
 		//Confirm the deletion
 		int size = replaysToDelete.size();
-		Debug.append("Pressed delete for " + size + " files " + replaysToDelete);
 		if (!confirmDeletion(size))
 		{
-			Debug.append("Cancelled deletion.");
 			return;
 		}
 		
@@ -562,7 +567,7 @@ public class ReplayTable extends JTable
 	{
 		try
 		{
-			Debug.append("Deleting " + replayPath);
+			logger.info("deleteReplay", "Deleting " + replayPath);
 			Files.delete(Paths.get(replayPath));
 			
 			replayFilenames.remove(filename);
@@ -570,7 +575,7 @@ public class ReplayTable extends JTable
 		}
 		catch (IOException x)
 		{
-			Debug.append("Caught " + x + " deleting file " + replayPath);
+			logger.info("deleteReplay", "Caught " + x + " deleting file " + replayPath);
 			return false;
 		}
 		
@@ -602,33 +607,26 @@ public class ReplayTable extends JTable
 	
 	public void showReplay()
 	{
-		try
+		int viewRow = getSelectedRow();
+		if (viewRow == -1)
 		{
-			int viewRow = getSelectedRow();
-			if (viewRow == -1)
-			{
-				return;
-			}
-			
-			int internalRow = convertRowIndexToModel(viewRow);
+			return;
+		}
 
-			String filename = (String)model.getValueAt(internalRow, INDEX_OF_FILENAME_COLUMN);
-			Debug.append("Double clicked to open file " + filename, true);
-			if (!validateReplayContents(filename))
-			{
-				return;
-			}
-			
-			ReplayDialog replayDialog = ScreenCache.getFileReplayDialog();
-			replayDialog.setLocationRelativeTo(null);
-			replayDialog.setResizable(false);
-			replayDialog.initForFileReplay(filename, folder);
-			replayDialog.setVisible(true);
-		}
-		catch (Throwable t)
+		int internalRow = convertRowIndexToModel(viewRow);
+
+		String filename = (String)model.getValueAt(internalRow, INDEX_OF_FILENAME_COLUMN);
+		logger.info("showReplay", "Opening file " + filename);
+		if (!validateReplayContents(filename))
 		{
-			Debug.stackTrace(t);
+			return;
 		}
+
+		ReplayDialog replayDialog = ScreenCache.getFileReplayDialog();
+		replayDialog.setLocationRelativeTo(null);
+		replayDialog.setResizable(false);
+		replayDialog.initForFileReplay(filename, folder);
+		replayDialog.setVisible(true);
 	}
 	
 	private boolean validateReplayContents(String filename)
@@ -654,7 +652,6 @@ public class ReplayTable extends JTable
 	
 	private void dealWithCorruptReplay(String filePath, String filename, String question)
 	{
-		Debug.append(filename + " is corrupt, prompting user to delete it");
 		int option = DialogUtil.showQuestion(question, false);
 		if (option == JOptionPane.YES_OPTION)
 		{
@@ -672,13 +669,12 @@ public class ReplayTable extends JTable
 	
 	private boolean convertReplayToLatestVersion(String filePath, String filename, int replayVersion)
 	{
-		Debug.append(filename + " is out of date (version " + replayVersion + "), will convert it now");
 		String message = "The file you selected is in an out of date format - it will be updated now.";
 		DialogUtil.showInfo(message);
 		boolean success = ReplayConverter.convertReplay(filePath, replayVersion);
 		if (success)
 		{
-			Debug.append("Converted successfully, launching replay");
+			logger.info("replayConverted", "Successfully converted replay");
 			return true;
 		}
 		

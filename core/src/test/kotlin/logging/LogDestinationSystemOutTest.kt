@@ -57,7 +57,7 @@ class LogDestinationSystemOutTest : AbstractTest() {
             severity = Severity.INFO,
             loggingCode = "some.event",
             message = "blah",
-            keyValuePairs = mapOf(KEY_STACK to "at Something.blah"),
+            keyValuePairs = mapOf(KEY_STACK to "at Something.blah")
         )
         dest.log(record)
 

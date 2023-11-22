@@ -57,7 +57,6 @@ public class EntropyMain implements Registry
 
 	private static void setLookAndFeel()
 	{
-		AbstractClient.setOs();
 		logger.info("laf.init", "Initialising Look & Feel - Operating System: " + AbstractClient.operatingSystem);
 		
 		String lookAndFeel = null;
