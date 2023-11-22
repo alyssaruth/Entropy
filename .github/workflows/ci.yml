@@ -13,5 +13,7 @@ jobs:
         with:
           distribution: zulu
           java-version: 11.0.18
+      - name: Ktlint format
+        run: ./gradlew :${{ matrix.project }}:ktlintFormat
       - name: Build
-        run: ./gradlew :${{ matrix.project }}:build
+        run: xvfb-run --auto-servernum ./gradlew :${{ matrix.project }}:build
