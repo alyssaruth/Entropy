@@ -47,6 +47,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
+import logging.LoggerUncaughtExceptionHandler;
 import object.BlacklistEntry;
 import object.ExtendedConcurrentHashMap;
 import object.OnlineMessage;
@@ -62,7 +63,6 @@ import screen.DebugConsole;
 import util.Base64Desktop;
 import util.ColourGenerator;
 import util.Debug;
-import util.DebugUncaughtExceptionHandler;
 import util.EncryptionUtil;
 import util.EntropyThreadPoolExecutor;
 import util.FileUtil;
@@ -218,7 +218,7 @@ public final class EntropyServer extends JFrame
 	public static void main(String args[])
 	{
 		EntropyServer server = new EntropyServer();
-		Thread.setDefaultUncaughtExceptionHandler(new DebugUncaughtExceptionHandler());
+		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 		
 		//Initialise interfaces etc
 		EncryptionUtil.setBase64Interface(new Base64Desktop());
