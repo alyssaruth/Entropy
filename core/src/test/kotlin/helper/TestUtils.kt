@@ -19,7 +19,7 @@ fun makeLogRecord(
     loggingCode: LoggingCode = LoggingCode("log"),
     message: String = "A thing happened",
     errorObject: Throwable? = null,
-    keyValuePairs: Map<String, Any?> = mapOf(),
+    keyValuePairs: Map<String, Any?> = mapOf()
 ) =
     LogRecord(timestamp, severity, loggingCode, message, errorObject, keyValuePairs)
 

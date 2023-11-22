@@ -90,7 +90,7 @@ class WrapLayout : FlowLayout() {
             //  correctly. Removing the horizontal gap is an easy way to do this.
             val scrollPane = SwingUtilities.getAncestorOfClass(
                 JScrollPane::class.java,
-                target,
+                target
             )
             if (scrollPane != null && target.isValid) {
                 dim.width -= hgap + 1
