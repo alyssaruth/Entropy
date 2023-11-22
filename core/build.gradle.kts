@@ -1,5 +1,6 @@
 plugins {
     id("Entropy.kotlin-common-conventions")
+    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     `java-library`
 }
 

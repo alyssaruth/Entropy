@@ -47,6 +47,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
+import logging.LoggerUncaughtExceptionHandler;
 import object.BlacklistEntry;
 import object.ExtendedConcurrentHashMap;
 import object.OnlineMessage;
@@ -62,7 +63,6 @@ import screen.DebugConsole;
 import util.Base64Desktop;
 import util.ColourGenerator;
 import util.Debug;
-import util.DebugUncaughtExceptionHandler;
 import util.EncryptionUtil;
 import util.EntropyThreadPoolExecutor;
 import util.FileUtil;
@@ -71,10 +71,11 @@ import util.OnlineConstants;
 import util.ServerDebugExtension;
 import util.StatisticsUtil;
 import util.StringUtil;
-import util.ThreadUtil;
 import util.XmlBuilderServer;
 import util.XmlConstants;
 import util.XmlUtil;
+
+import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class EntropyServer extends JFrame
 						   implements ActionListener,
@@ -217,7 +218,7 @@ public final class EntropyServer extends JFrame
 	public static void main(String args[])
 	{
 		EntropyServer server = new EntropyServer();
-		Thread.setDefaultUncaughtExceptionHandler(new DebugUncaughtExceptionHandler());
+		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 		
 		//Initialise interfaces etc
 		EncryptionUtil.setBase64Interface(new Base64Desktop());
@@ -418,7 +419,6 @@ public final class EntropyServer extends JFrame
 		}
 		
 		startDownloadListener(FILE_NAME_ENTROPY_JAR, SERVER_PORT_NUMBER_DOWNLOAD);
-		startDownloadListener(FILE_NAME_DARTS, SERVER_PORT_NUMBER_DOWNLOAD_DARTS);
 	}
 	private void startDownloadListener(String filename, int port)
 	{
@@ -1364,7 +1364,7 @@ public final class EntropyServer extends JFrame
 		}
 		else if (command.equals(COMMAND_DUMP_THREAD_STACKS))
 		{
-			ThreadUtil.dumpStacks();
+			dumpThreadStacks();
 		}
 		else if (command.equals(COMMAND_DUMP_USERS))
 		{

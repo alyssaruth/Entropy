@@ -1,0 +1,20 @@
+import kotlin.math.pow
+
+fun getPercentage(count: Number, total: Number, digits: Int = 1) =
+    getPercentage(count.toDouble(), total.toDouble(), digits)
+
+fun getPercentage(count: Double, total: Double, digits: Int = 1): Double {
+    return if (count == 0.0) {
+        0.0
+    } else {
+        round(100 * count / total, digits)
+    }
+}
+
+private fun round(number: Double, decimalPlaces: Int): Double {
+    val powerOfTen = 10.0.pow(decimalPlaces.toDouble())
+
+    val rounded = Math.round(powerOfTen * number)
+
+    return rounded / powerOfTen
+}
