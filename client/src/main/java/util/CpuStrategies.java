@@ -1,14 +1,12 @@
 package util;
 
+import object.*;
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
-import object.ApiStrategy;
-import object.Bid;
-import object.EntropyBid;
-import object.Player;
-import object.VectropyBid;
+import static utils.InjectedThings.logger;
 
 public class CpuStrategies
 {
@@ -86,13 +84,10 @@ public class CpuStrategies
 				String strategyStr = opponent.getStrategy();
 				ApiUtil.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
 				DialogUtil.showError(msg);
-				Debug.append("API bid failed validation: " + error);
 			}
 			else
 			{
-				Debug.stackTrace("Error validating bid: " + error);
-				Debug.append("Bid was " + bid);
-				Debug.append("Strategy: " + opponent.getStrategy());
+				logger.error("invalidBid", "Error validating bid [" + bid + "]. Error: " + error);
 			}
 			
 			return null;

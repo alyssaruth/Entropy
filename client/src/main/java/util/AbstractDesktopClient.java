@@ -1,7 +1,5 @@
 package util;
 
-import javax.swing.JOptionPane;
-
 public abstract class AbstractDesktopClient extends AbstractClient
 											implements CoreRegistry
 {
@@ -10,7 +8,5 @@ public abstract class AbstractDesktopClient extends AbstractClient
 	{
 		EncryptionUtil.setBase64Interface(new Base64Desktop());
 		MessageUtil.generatePublicKey();
-		
-		ClientEmailer.tryToSendUnsentLogs();
 	}
 }

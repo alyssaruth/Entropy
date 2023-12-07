@@ -226,7 +226,6 @@ public final class EntropyServer extends JFrame
 		Debug.initialise(console);
 		
 		//Set other variables on Debug
-		Debug.setProductDesc("SERVER v" + OnlineConstants.SERVER_VERSION);
 		Debug.setLogToSystemOut(devMode);
 		
 		int length = args.length;
@@ -1042,11 +1041,6 @@ public final class EntropyServer extends JFrame
 					console.toFront();
 				}
 			}
-			else if (source == btnSendLogs)
-			{
-				Debug.append("Sending logs...");
-				Debug.sendContentsAsEmailInSeparateThread("Manual Server Logs", true, null);
-			}
 			else if (source == tglbtnScrollLock)
 			{
 				boolean scrollLock = tglbtnScrollLock.isSelected();
@@ -1205,7 +1199,6 @@ public final class EntropyServer extends JFrame
 		
 		loadTestMode = true;
 		usingBlacklist = false;
-		Debug.setSendingEmails(false);
 		setTitle("Entropy Server (LOAD TEST)");
 	}
 	

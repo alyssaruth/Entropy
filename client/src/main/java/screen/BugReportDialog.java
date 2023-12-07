@@ -108,18 +108,7 @@ public class BugReportDialog extends JFrame
 	
 	private void sendReport()
 	{
-		String description = "BUG REPORT: " +  descriptionField.getText();
-		String replication = textPaneReplicationSteps.getText();
-		
-		if (Debug.sendBugReport(description, replication))
-		{
-			DialogUtil.showInfo("Bug report submitted.");
-			dispose();
-		}
-		else
-		{
-			DialogUtil.showInfo("Unable to send bug report. Please check your internet connection and try again.");
-		}
+		DialogUtil.showError("This feature is not yet implemented.");
 	}
 
 	@Override
