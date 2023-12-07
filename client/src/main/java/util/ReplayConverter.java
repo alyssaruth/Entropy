@@ -1,17 +1,15 @@
 package util;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import screen.ProgressDialog;
+
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import screen.ProgressDialog;
-import utils.MainUtilKt;
 
 public class ReplayConverter implements Registry
 {
@@ -122,19 +120,7 @@ public class ReplayConverter implements Registry
 		int failedSize = filesFailed.size();
 		if (failedSize > 0)
 		{
-			String username = MainUtilKt.getUsername();
-			String subject = "Failed " + folder + " replay examples for " + username + " (" + OnlineConstants.ENTROPY_VERSION_NUMBER + ")";
-			
-			try
-			{
-				Debug.append("Emailing failed examples...");
-				ClientEmailer.sendClientEmail(subject, "Files attached", false, filesFailed);
-			}
-			catch (Throwable t)
-			{
-				Debug.append("Failed to send email containing failed files");
-			}
-			
+			// TODO: Dump failed replay files somehow. Upload to S3?
 			DialogUtil.invokeInfoLaterAndWait(failedSize + " replays failed to be converted.");
 		}
 		

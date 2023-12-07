@@ -3,12 +3,7 @@ package online.util;
 import online.screen.ConnectingDialog;
 import online.screen.EntropyLobby;
 import screen.ScreenCache;
-import util.AbstractDesktopClient;
-import util.ClientEmailer;
-import util.DialogUtil;
-import util.MessageSender;
-import util.MessageSenderParams;
-import util.UpdateChecker;
+import util.*;
 
 public class DesktopEntropyClient extends AbstractDesktopClient
 {
@@ -16,8 +11,6 @@ public class DesktopEntropyClient extends AbstractDesktopClient
 	public void init()
 	{
 		super.init();
-		
-		ClientEmailer.setObfuscationVersion(ENTROPY_VERSION_NUMBER);
 	}
 	
 	@Override
