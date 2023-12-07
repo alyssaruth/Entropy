@@ -1,5 +1,9 @@
 package util;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -7,11 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
-import javax.crypto.SecretKey;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 
 /**
@@ -35,11 +34,6 @@ public class ClientEmailer
 		String responseStr = sendEmailMessage(xml);
 		if (responseStr == null)
 		{
-			Debug.append("Failed to send client log, details follow:");
-			Debug.appendWithoutDate("Subject: " + subject);
-			Debug.appendWithoutDate("Attachments: " + files);
-			Debug.newLine();
-			
 			if (files.isEmpty())
 			{
 				writeEmailToFile(xml);
@@ -55,7 +49,6 @@ public class ClientEmailer
 		if (!tempDir.isDirectory()
 		  && !tempDir.mkdirs())
 		{
-			Debug.append("Failed to create temp directory " + tempDir);
 			return;
 		}
 		
@@ -102,7 +95,6 @@ public class ClientEmailer
 		}
 		catch (IOException ioe)
 		{
-			Debug.append("Caught " + ioe + " adding " + attachment.getName() + " attachment to mail message.");
 			return;
 		}
 		
@@ -126,7 +118,6 @@ public class ClientEmailer
 		File tempDir = new File(TEMP_DIRECTORY);
 		if (!tempDir.isDirectory())
 		{
-			Debug.append(TEMP_DIRECTORY + " does not exist, no logs to resend");
 			return;
 		}
 		
@@ -144,11 +135,9 @@ public class ClientEmailer
 		if (files == null
 		  || files.length == 0)
 		{
-			Debug.append("There are no logs to resend in " + TEMP_DIRECTORY);
 			return;
 		}
-		
-		Debug.append("Found " + files.length + " logs to send, will do this in background thread");
+
 		Runnable emailRunnable = new Runnable()
 		{
 			@Override
@@ -171,13 +160,8 @@ public class ClientEmailer
 		String xmlStr = FileUtil.getFileContentsAsString(file);
 		Document xml = XmlUtil.getDocumentFromXmlString(xmlStr);
 		String responseStr = sendEmailMessage(xml);
-		if (responseStr == null)
+		if (responseStr != null)
 		{
-			Debug.append("Failed to send " + file.getName() + ", leaving file for next start-up");
-		}
-		else
-		{
-			Debug.append("Sent " + file.getName() + " successfully");
 			FileUtil.deleteFileIfExists(file.getAbsolutePath());
 		}
 	}

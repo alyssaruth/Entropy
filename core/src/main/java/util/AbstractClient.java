@@ -1,14 +1,11 @@
 package util;
 
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
-import util.ClientNotificationRunnable;
-import util.MessageSender;
-import util.MessageSenderParams;
-import util.MessageUtil;
-
-import org.w3c.dom.Document;
+import static utils.InjectedThings.logger;
 
 /**
  * Interface used by Entropy Android & Desktop for anything to do with the online session
@@ -63,16 +60,16 @@ public abstract class AbstractClient implements OnlineConstants
 		if (arg.equals("justUpdated"))
 		{
 			justUpdated = true;
-			Debug.append("Running in justUpdated mode");
+			logger.info("justUpdated", "Running in justUpdated mode");
 		}
 		else if (arg.equals("devMode"))
 		{
 			devMode = true;
-			Debug.appendBanner("Running in dev mode");
+			logger.info("devMode", "Running in devMode");
 		}
 		else
 		{
-			Debug.append("Unexpected program argument: " + arg);
+			logger.info("unexpectedArgument", "Unexpected program argument: " + arg);
 		}
 	}
 	public static boolean isAppleOs()
@@ -84,7 +81,7 @@ public abstract class AbstractClient implements OnlineConstants
 	{
 		if (justUpdated)
 		{
-			Debug.append("Just updated - not checking for updates");
+			logger.info("justUpdated", "Just updated - not checking for updates");
 			return;
 		}
 		

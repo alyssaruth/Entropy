@@ -1,11 +1,8 @@
 
 package util;
 
-import utils.MainUtilKt;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -14,27 +11,14 @@ import java.util.concurrent.ThreadFactory;
 
 public class Debug implements CoreRegistry
 {
-	public static final String BUG_REPORT_ADDITONAL_INFO_LINE = "Additional Information:";
-	
-	private static final String SUCCESS_MESSAGE = "Email sent successfully";
 	private static final long ERROR_MESSAGE_DELAY_MILLIS = 10000; //10s
-	private static final long MINIMUM_EMAIL_GAP_MILLIS = 10000;
-	
-	private static Object emailSyncObject = new Object();
+
 	private static long lastErrorMillis = -1;
-	private static long lastEmailMillis = -1;
 	
 	private static DebugOutput output = null;
 	private static DebugExtension debugExtension = null;
-	
-	private static int positionLastEmailed = 0;
-	private static int emailsSentInSuccession = 1;
-	private static boolean sendingEmails = true;
 	private static boolean logToSystemOut = false;
-	
-	//For the email header - should contain a description of the application
-	private static String productDesc = "";
-	
+
 	private static ThreadFactory loggerFactory = new ThreadFactory()
 	{
 		@Override
@@ -161,11 +145,6 @@ public class Debug implements CoreRegistry
 	{
 		stackTrace(t, message, false);
 	}
-	public static void stackTraceNoError(String message)
-	{
-		Throwable t = new Throwable();
-		stackTrace(t, message, true);
-	}
 	public static void stackTraceNoError(Throwable t)
 	{
 		stackTrace(t, "", true);
@@ -202,21 +181,8 @@ public class Debug implements CoreRegistry
 		
 		BooleanWrapper haveAppendedStackTrace = new BooleanWrapper(false);
 		append(trace, true, false, haveAppendedStackTrace);
-		
-		String extraDetails = " (" + productDesc + ")";
-		
-		if (message.length() > 50)
-		{
-			message = message.substring(0, 50) + "...";
-		}
-		
-		sendContentsAsEmailInSeparateThread(t + " - " + message + extraDetails, false, haveAppendedStackTrace);
 	}
-	
-	public static void stackTraceSilently(String message)
-	{
-		stackTraceSilently(new Throwable(message));
-	}
+
 	public static void stackTraceSilently(Throwable t)
 	{
 		StringWriter sw = new StringWriter();
@@ -231,36 +197,6 @@ public class Debug implements CoreRegistry
 	public static void newLine()
 	{
 		appendWithoutDate("");
-	}
-	
-	public static void logProgress(int workDone, long workToDo, int percentageToLogAt)
-	{
-		double percentageOfTotal = Math.floor((double)workToDo / percentageToLogAt);
-		
-		double remainder = workDone % percentageOfTotal;
-		if (remainder == 0)
-		{
-			append("Done " + workDone + "/" + workToDo + " (" + (100*workDone/workToDo) + "%)");
-		}
-	}
-	
-	/**
-	 * SQLException
-	 */
-	public static void logSqlException(String query, SQLException sqle)
-	{
-		Debug.append("Caught SQLException for query: " + query);
-		
-		while (sqle != null)
-        {
-			append("\n----- SQLException -----");
-            append("  SQL State:  " + sqle.getSQLState());
-            append("  Error Code: " + sqle.getErrorCode());
-           	append("  Message:    " + sqle.getMessage());
-            stackTrace(sqle);
-            
-            sqle = sqle.getNextException();
-        }
 	}
 	
 	public static void dumpList(String name, List<?> list)
@@ -295,158 +231,6 @@ public class Debug implements CoreRegistry
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm:ss.SSS");
 		return sdf.format(time) + "   ";
 	}
-		
-	public static void sendContentsAsEmailInSeparateThread(final String title, final boolean manual, final BooleanWrapper readyToEmail)
-	{
-		boolean shouldSendEmail = debugExtension != null;
-		if (shouldSendEmail
-		  && !manual)
-		{
-			boolean emailsEnabled = instance.getBoolean(INSTANCE_BOOLEAN_ENABLE_EMAILS, true);
-			shouldSendEmail = emailsEnabled && sendingEmails;
-		}
-		
-		if (!shouldSendEmail)
-		{
-			return;
-		}
-		
-		String fullTitle = title;
-		String username = MainUtilKt.getUsername();
-		if (!username.equals(""))
-		{
-			fullTitle += " - " + username;
-		}
-		
-		final String titleToUse = fullTitle;
-		
-		Runnable emailRunnable = new Runnable()
-		{
-			@Override
-			public void run() 
-			{
-				while (readyToEmail != null
-				  && readyToEmail.getValue() == false)
-				{
-					//wait
-				}
-				
-				sendContentsAsEmail(titleToUse, manual);
-			}
-		};
-
-		(new Thread(emailRunnable)).start();
-	}
-	
-	private static void sendContentsAsEmail(String fullTitle, boolean manual)
-	{
-		try
-		{
-			synchronized (Debug.emailSyncObject)
-			{
-				if (!needToSendMoreLogs())
-				{
-					return;
-				}
-				
-				long timeSinceLastEmail = System.currentTimeMillis() - lastEmailMillis;
-				if (timeSinceLastEmail < MINIMUM_EMAIL_GAP_MILLIS)
-				{
-					if (!manual)
-					{
-						long timeToSleep = MINIMUM_EMAIL_GAP_MILLIS - timeSinceLastEmail;
-						Debug.append("Waiting " + timeToSleep + " millis before sending logs...");
-						Thread.sleep(timeToSleep);
-					}
-					
-					fullTitle += " (Part " + (emailsSentInSuccession+1) + ")";
-					emailsSentInSuccession++;
-				}
-				else
-				{
-					//reset this
-					emailsSentInSuccession = 1;
-				}
-
-				String totalLogs = output.getLogs();
-				String message = totalLogs.substring(positionLastEmailed);
-				
-				debugExtension.sendEmail(fullTitle, message);
-
-				Debug.append(SUCCESS_MESSAGE, true);
-				positionLastEmailed = positionLastEmailed + message.length();
-				lastEmailMillis = System.currentTimeMillis();
-			}
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTraceSilently(t);
-			sendingEmails = false;
-			
-			if (debugExtension != null)
-			{
-				debugExtension.unableToEmailLogs();
-			}
-		}
-	}
-	
-	public static boolean sendBugReport(String description, String replication)
-	{
-		try
-		{
-			String username = MainUtilKt.getUsername();
-			if (!username.equals(""))
-			{
-				description += " - " + username;
-			}
-			
-			String totalLogs = output.getLogs();
-			
-			String message = "";
-			if (replication != null && !replication.equals(""))
-			{
-				message += BUG_REPORT_ADDITONAL_INFO_LINE;
-				message += "\n\n";
-				message += replication;
-				message += "\n--------------------------\n";
-			}
-			
-			String logsToSend = totalLogs.substring(positionLastEmailed);
-			message += logsToSend;
-			
-			debugExtension.sendEmail(description, message);
-	
-			Debug.append(SUCCESS_MESSAGE, true);
-			positionLastEmailed = positionLastEmailed + logsToSend.length();
-			emailsSentInSuccession++;
-		}
-		catch (Throwable t)
-		{
-			Debug.append("Unable to send Bug Report. Exceptions follow.");
-			Debug.stackTraceSilently(t);
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private static boolean needToSendMoreLogs()
-	{
-		String ta = output.getLogs();
-		String m = ta.substring(positionLastEmailed);
-		if (m.contains(SUCCESS_MESSAGE) && m.length() < 100)
-		{
-			//last email was successful and only got 100 new characters to send, so don't bother
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public static void setSendingEmails(boolean sendingEmails)
-	{
-		Debug.sendingEmails = sendingEmails;
-	}
 	
 	public static void initialise(DebugOutput output)
 	{
@@ -460,9 +244,5 @@ public class Debug implements CoreRegistry
 	public static void setLogToSystemOut(boolean logToSystemOut)
 	{
 		Debug.logToSystemOut = logToSystemOut;
-	}
-	public static void setProductDesc(String productDesc)
-	{
-		Debug.productDesc = productDesc;
 	}
 }

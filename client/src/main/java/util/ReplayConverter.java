@@ -48,12 +48,10 @@ public class ReplayConverter implements Registry
 		{
 			Debug.appendBanner("Finished Replay Conversion");
 			instance.putInt(INSTANCE_INT_REPLAY_CONVERSION, REPLAY_VERSION);
-			Debug.sendContentsAsEmailInSeparateThread("Replay Conversion Results", true, null);
 			DialogUtil.showInfo("Conversion finished successfully!");
 		}
 		else
 		{
-			Debug.sendContentsAsEmailInSeparateThread("Replay Conversion Results", true, null);
 			DialogUtil.showError("Replay conversion failed - logs have been sent for investigation");
 		}
 	}

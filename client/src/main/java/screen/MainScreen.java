@@ -682,11 +682,7 @@ public final class MainScreen extends AbstractDevScreen
 			}
 		}
 		
-		if (command.equals("sendlogs"))
-		{
-			Debug.sendContentsAsEmailInSeparateThread("Manual logs (" + OnlineConstants.ENTROPY_VERSION_NUMBER + ")", true, null);
-		}
-		else if (command.equals("simulator"))
+		if (command.equals("simulator"))
 		{
 			SimulationDialog dialog = ScreenCache.getSimulationDialog();
 			dialog.initVariables();
