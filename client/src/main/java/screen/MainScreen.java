@@ -1,20 +1,23 @@
 package screen;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import bean.AbstractDevScreen;
+import object.Bid;
+import object.BidListCellRenderer;
+import object.Player;
+import online.screen.EntropyLobby;
+import online.screen.TestHarness;
+import online.util.XmlBuilderDesktop;
+import org.w3c.dom.Document;
+import util.*;
+import utils.InjectedThings;
+
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,51 +26,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
-import object.Bid;
-import object.BidListCellRenderer;
-import object.Player;
-import online.screen.EntropyLobby;
-import online.screen.TestHarness;
-import online.util.XmlBuilderDesktop;
-
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Document;
-
-import util.AbstractClient;
-import util.AchievementsUtil;
-import util.CoreRegistry;
-import util.Debug;
-import util.DialogUtil;
-import util.GameConstants;
-import util.MessageUtil;
-import util.OnlineConstants;
-import util.Registry;
-import util.ReplayConverter;
-import util.ReplayFileUtil;
-import bean.AbstractDevScreen;
-import utils.InjectedThings;
-
+import static utils.InjectedThings.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class MainScreen extends AbstractDevScreen
@@ -727,16 +686,6 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			Debug.sendContentsAsEmailInSeparateThread("Manual logs (" + OnlineConstants.ENTROPY_VERSION_NUMBER + ")", true, null);
 		}
-		else if (command.equals("emailsoff"))
-		{
-			Debug.append("Emails disabled");
-			instance.putBoolean(CoreRegistry.INSTANCE_BOOLEAN_ENABLE_EMAILS, false);
-		}
-		else if (command.equals("emailson"))
-		{
-			Debug.append("Emails enabled");
-			instance.putBoolean(CoreRegistry.INSTANCE_BOOLEAN_ENABLE_EMAILS, true);
-		}
 		else if (command.equals("simulator"))
 		{
 			SimulationDialog dialog = ScreenCache.getSimulationDialog();
@@ -838,7 +787,6 @@ public final class MainScreen extends AbstractDevScreen
 				String node = nodes[i];
 				if (node.startsWith(Registry.NODE_ONLINE_REPLAY))
 				{
-					Debug.appendWithoutDate("Removed replay node " + node);
 					Preferences replay = Preferences.userRoot().node(node);
 					replay.removeNode();
 				}
@@ -1110,7 +1058,7 @@ public final class MainScreen extends AbstractDevScreen
 			
 			if (AchievementsUtil.hasEnteredKonamiCode(lastTenKeys))
 			{
-				Debug.append("Entered konami code!");
+				logger.info("konami", "Entered konami code!");
 				AchievementsUtil.unlockKonamiCode();
 			}
 		}

@@ -8,10 +8,11 @@ import util.CoreRegistry.INSTANCE_STRING_DEVICE_ID
 import util.CoreRegistry.instance
 import util.OnlineConstants
 import utils.InjectedThings.logger
+import utils.getUsername
 import java.util.*
 
 fun setLoggingContextFields() {
-    logger.addToContext(KEY_USERNAME, System.getProperty("user.name"))
+    logger.addToContext(KEY_USERNAME, getUsername())
     logger.addToContext(KEY_APP_VERSION, OnlineConstants.ENTROPY_VERSION_NUMBER)
     logger.addToContext(KEY_OPERATING_SYSTEM, AbstractClient.operatingSystem)
     logger.addToContext(KEY_DEVICE_ID, getDeviceId())

@@ -1,71 +1,26 @@
 package online.screen;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.prefs.Preferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
+import object.*;
+import online.util.XmlBuilderClient;
+import org.w3c.dom.Document;
+import screen.*;
+import util.*;
+
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.prefs.Preferences;
 
-import object.Bid;
-import object.BidListCellRenderer;
-import object.ChallengeBid;
-import object.IllegalBid;
-import object.LeftBid;
-import object.Player;
-import object.PulsingTextLabel;
-import object.RoomWrapper;
-import online.util.XmlBuilderClient;
-
-import org.w3c.dom.Document;
-
-import screen.BackgroundPanel;
-import screen.BidPanel;
-import screen.HandPanelMk2;
-import screen.ReplayDialog;
-import screen.ScreenCache;
-import screen.TransparentPanel;
-import util.AchievementsUtil;
-import util.BidListener;
-import util.Debug;
-import util.DialogUtil;
-import util.EntropyUtil;
-import util.GameConstants;
-import util.GameUtil;
-import util.MessageUtil;
-import util.Registry;
-import util.ReplayFileUtil;
-import util.RevealListener;
+import static utils.InjectedThings.logger;
 
 /**
  * This is an actual room as seen by the player
@@ -788,8 +743,6 @@ public abstract class GameRoom extends RoomWrapper
 		}
 		else
 		{
-			Debug.append("Disabling bidPanel on start. personToStart = " + personToStart 
-						 + ", personToStartLocal = " + personToStartLocal);
 			enableBidPanel(false);
 		}
 	}
@@ -1225,7 +1178,7 @@ public abstract class GameRoom extends RoomWrapper
 		}
 		catch (Throwable t)
 		{
-			Debug.append("Caught " + t + " when deleting online replay node.");
+			logger.error("preferenceError", "Error deleting replay node", t);
 		}
 	}
 	

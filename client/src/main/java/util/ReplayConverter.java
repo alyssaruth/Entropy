@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import screen.ProgressDialog;
+import utils.MainUtilKt;
 
 public class ReplayConverter implements Registry
 {
@@ -123,7 +124,7 @@ public class ReplayConverter implements Registry
 		int failedSize = filesFailed.size();
 		if (failedSize > 0)
 		{
-			String username = instance.get(CoreRegistry.INSTANCE_STRING_USER_NAME, "");
+			String username = MainUtilKt.getUsername();
 			String subject = "Failed " + folder + " replay examples for " + username + " (" + OnlineConstants.ENTROPY_VERSION_NUMBER + ")";
 			
 			try

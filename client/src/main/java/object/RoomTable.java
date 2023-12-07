@@ -23,10 +23,11 @@ import online.util.XmlBuilderClient;
 
 import org.w3c.dom.Document;
 
-import util.Debug;
 import util.EntropyColour;
 import util.MessageUtil;
 import util.TableUtil;
+
+import static utils.InjectedThings.logger;
 
 public final class RoomTable extends JTable
 					   		 implements MouseListener
@@ -158,10 +159,7 @@ public final class RoomTable extends JTable
 			RoomWrapper tableRoom = lobby.getRoomForName(roomName);
 			if (tableRoom == null)
 			{
-				Debug.append("roomName: " + roomName);
-				Debug.append("rowCount: " + rowCount);
-				Debug.append("rooms from server: " + rooms);
-				Debug.stackTraceNoError("NULL room in lobby hashmap, despite it being in tablemodel");
+				logger.warn("missingRoom", roomName + " missing from lobby hashmap, despite being in our local table. Rooms from server: " + rooms);
 			}
 			
 			RoomWrapper listRoom = getListRoomForName(rooms, roomName);
