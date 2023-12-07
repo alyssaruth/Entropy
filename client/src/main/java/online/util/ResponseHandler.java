@@ -1,44 +1,24 @@
 
 package online.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.crypto.SecretKey;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import object.Bid;
 import object.OnlineMessage;
 import object.OnlineUsername;
 import object.RoomWrapper;
-import online.screen.AccountSettingsDialog;
-import online.screen.ChangePasswordDialog;
-import online.screen.ConnectingDialog;
-import online.screen.EntropyLobby;
-import online.screen.GameRoom;
-import online.screen.Leaderboard;
-import online.screen.LoginDialog;
-import online.screen.NewAccountDialog;
-import online.screen.OnlineChatPanel;
-import online.screen.OnlineStatsPanel;
-
+import online.screen.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import screen.ScreenCache;
-import util.AchievementsUtil;
-import util.Debug;
-import util.DialogUtil;
-import util.EncryptionUtil;
-import util.MessageUtil;
-import util.OnlineConstants;
-import util.Registry;
-import util.UpdateChecker;
-import util.XmlConstants;
-import util.XmlUtil;
+import util.*;
+
+import javax.crypto.SecretKey;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static utils.InjectedThings.logger;
 
 public class ResponseHandler implements XmlConstants
 {
@@ -155,7 +135,7 @@ public class ResponseHandler implements XmlConstants
 		}
 		else if (responseName.equals(RESPONSE_TAG_SOCKET_TIME_OUT))
 		{
-			Debug.append("Resending " + messageStr + " because Server had a SocketTimeout");
+			logger.info("resendingMessage", "Resending " + messageStr + " because Server had a SocketTimeout");
 			MessageUtil.sendMessage(messageStr, 0);
 		}
 		else

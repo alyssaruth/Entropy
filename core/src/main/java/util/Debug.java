@@ -1,6 +1,8 @@
 
 package util;
 
+import utils.MainUtilKt;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -310,7 +312,7 @@ public class Debug implements CoreRegistry
 		}
 		
 		String fullTitle = title;
-		String username = instance.get(INSTANCE_STRING_USER_NAME, "");
+		String username = MainUtilKt.getUsername();
 		if (!username.equals(""))
 		{
 			fullTitle += " - " + username;
@@ -392,7 +394,7 @@ public class Debug implements CoreRegistry
 	{
 		try
 		{
-			String username = instance.get(INSTANCE_STRING_USER_NAME, "");
+			String username = MainUtilKt.getUsername();
 			if (!username.equals(""))
 			{
 				description += " - " + username;

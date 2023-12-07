@@ -20,6 +20,7 @@ class Logger(private val destinations: List<ILogDestination>) {
         destinations.forEach { it.contextUpdated(loggingContext.toMap()) }
     }
 
+    @JvmOverloads
     fun logProgress(code: String, workDone: Long, workToDo: Long, percentageToLogAt: Int = 10) {
         // Convert 1 to 0.01, 50 to 0.5, etc.
         val percentageAsDecimal = percentageToLogAt.toDouble() / 100

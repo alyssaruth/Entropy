@@ -1,5 +1,11 @@
 package util;
 
+import object.FlagImage;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import screen.ReplayDialog;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,14 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import object.FlagImage;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import screen.ReplayDialog;
 
 public final class ReplayFileUtil implements Registry
 {
@@ -144,7 +142,7 @@ public final class ReplayFileUtil implements Registry
 		RegistryUtil.clearNode(tempReplayStore);
 	}
 	
-	public static String saveImportedReplay() throws Throwable
+	public static String saveImportedReplay()
 	{
 		String directory = getDirectoryFromPreferences();
 		String filename = factoryFileNameForReplay(tempReplayStore);

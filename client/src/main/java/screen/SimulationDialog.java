@@ -1,47 +1,16 @@
 package screen;
 
-import java.awt.Checkbox;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
+import bean.NumberField;
+import util.*;
+
+import javax.swing.*;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.table.JTableHeader;
-
-import util.CpuStrategies;
-import util.Debug;
-import util.DialogUtil;
-import util.GameConstants;
-import util.GameSimulator;
-import util.SimulationException;
-import util.SimulationParms;
-import util.SimulationResults;
-import bean.NumberField;
+import static utils.InjectedThings.logger;
 
 public class SimulationDialog extends JDialog
 {
@@ -315,10 +284,7 @@ public class SimulationDialog extends JDialog
 						simulator.startNewGame(i);
 						dialog.incrementProgressLater();
 						
-						if (i % tenPercentOfTotal == 0)
-						{
-							Debug.append("Done " + i + " games");
-						}
+						logger.logProgress("simulationProgress", i, numberOfGames);
 						
 						if (dialog.cancelPressed())
 						{
@@ -634,21 +600,21 @@ public class SimulationDialog extends JDialog
 	}
 	
 	private void dumpSimulationDetails(int i, int numberOfGames, SimulationParms parms)
-	{	
-		Debug.append("Dumping simulation details:");
-		Debug.append("Opponent 0: " + parms.getOpponentZeroStrategy());
-		Debug.append("Opponent 1: " + parms.getOpponentOneStrategy());
-		
+	{
+		logger.info("simulationDump", "Dumping simulation details");
+		logger.info("simulationDump", "Opponent 0: " + parms.getOpponentZeroStrategy());
+		logger.info("simulationDump", "Opponent 1: " + parms.getOpponentOneStrategy());
+
 		if (parms.getOpponentTwoEnabled())
 		{
-			Debug.append("Opponent 2: " + parms.getOpponentTwoStrategy());
+			logger.info("simulationDump", "Opponent 2: " + parms.getOpponentTwoStrategy());
 		}
 		
 		if (parms.getOpponentThreeEnabled())
 		{
-			Debug.append("Opponent 3: " + parms.getOpponentThreeStrategy());
+			logger.info("simulationDump", "Opponent 3: " + parms.getOpponentThreeStrategy());
 		}
-		
-		Debug.append("Was simulating game " + i + "/" + numberOfGames);
+
+		logger.info("simulationDump", "Was simulating game " + i + "/" + numberOfGames);
 	}
 }

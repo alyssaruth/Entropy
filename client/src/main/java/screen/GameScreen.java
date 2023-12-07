@@ -1,29 +1,16 @@
 package screen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.DefaultListModel;
-
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
 import object.Player;
-import util.AchievementsUtil;
-import util.BidListener;
-import util.CardsUtil;
-import util.CpuStrategies;
-import util.Debug;
-import util.DialogUtil;
-import util.GameUtil;
-import util.Registry;
-import util.RegistryUtil;
-import util.ReplayFileUtil;
-import util.RevealListener;
-import util.StrategyParms;
+import util.*;
+
+import javax.swing.*;
+import java.util.Timer;
+import java.util.*;
+
+import static utils.InjectedThings.logger;
 
 public abstract class GameScreen extends TransparentPanel
 								 implements BidListener,
@@ -815,10 +802,9 @@ public abstract class GameScreen extends TransparentPanel
 		{
 			Random random = new Random();
 			int jokersToAdd = random.nextInt(5) + 1; //1-5
-			Debug.append("Adding " + jokersToAdd + " jokers");
+			logger.info("rainingJokers", "Adding " + jokersToAdd + " jokers");
 			
 			String[] allCards = getConcatenatedHands();
-			Debug.append("allCards: " + CardsUtil.getHandStr(allCards));
 			
 			while (CardsUtil.containsNonJoker(allCards) && jokersToAdd > 0)
 			{
@@ -826,8 +812,7 @@ public abstract class GameScreen extends TransparentPanel
 				allCards = getConcatenatedHands();
 				jokersToAdd--;
 			}
-			
-			Debug.append("Done replacing. allCards = " + CardsUtil.getHandStr(allCards));
+
 			displayHands();
 		}
 	}
@@ -846,8 +831,7 @@ public abstract class GameScreen extends TransparentPanel
 			replaceRandomCardWithJoker();
 			return;
 		}
-		
-		Debug.append("Replacing " + hand[position] + " with " + jokerToAdd);
+
 		hand[position] = jokerToAdd;
 	}
 	
@@ -863,7 +847,6 @@ public abstract class GameScreen extends TransparentPanel
 		}
 		else
 		{
-			Debug.append("Picked " + CardsUtil.getHandStr(hand));
 			return hand;
 		}
 	}
