@@ -14,7 +14,7 @@ enum class Severity {
 data class LogRecord(
     val timestamp: Instant,
     val severity: Severity,
-    val loggingCode: LoggingCode,
+    val loggingCode: String,
     val message: String,
     val errorObject: Throwable?,
     val keyValuePairs: Map<String, Any?>

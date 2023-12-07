@@ -17,6 +17,8 @@ import javax.swing.filechooser.FileFilter;
 import util.Debug;
 import util.DialogUtil;
 
+import static utils.InjectedThings.logger;
+
 public class FileUploader extends JPanel
 						  implements ActionListener
 {
@@ -79,7 +81,7 @@ public class FileUploader extends JPanel
 			selectedFile = fc.getSelectedFile();
 			textField.setText(selectedFile.getPath());
 
-			Debug.append("Selected " + selectedFile.getName());
+			logger.info("fileSelected", "Selected " + selectedFile.getName());
 		}
 	}
 	

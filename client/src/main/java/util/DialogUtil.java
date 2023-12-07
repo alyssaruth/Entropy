@@ -5,6 +5,8 @@ import javax.swing.SwingUtilities;
 
 import screen.LoadingDialog;
 
+import static utils.InjectedThings.logger;
+
 public class DialogUtil 
 {
 	private static LoadingDialog loadingDialog = new LoadingDialog();
@@ -12,11 +14,13 @@ public class DialogUtil
 	
 	public static void showInfo(String infoText)
 	{
+		logger.info("infoShown", infoText);
 		JOptionPane.showMessageDialog(null, infoText, "Information", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public static void showError(String errorText)
 	{
+		logger.info("errorShown", errorText);
 		JOptionPane.showMessageDialog(null, errorText, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
@@ -47,7 +51,7 @@ public class DialogUtil
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTrace(t, "Failed to invokeAndWait for info message: " + infoText);
+			logger.error("showInfo", "Failed to invokeAndWait for info message: " + infoText);
 		}
 	}
 	
@@ -70,8 +74,26 @@ public class DialogUtil
 		{
 			option = JOptionPane.YES_NO_CANCEL_OPTION;
 		}
-		
-		return JOptionPane.showConfirmDialog(null, message, "Question", option, JOptionPane.QUESTION_MESSAGE);
+
+		logger.info("questionShown", message);
+		int choice = JOptionPane.showConfirmDialog(null, message, "Question", option, JOptionPane.QUESTION_MESSAGE);
+		logger.info("questionAnswered", "Answered " + translateOption(choice));
+		return choice;
+	}
+
+	private static String translateOption(int option)
+	{
+		switch (option)
+		{
+			case JOptionPane.YES_OPTION:
+				return "Yes";
+			case JOptionPane.NO_OPTION:
+				return "No";
+			case JOptionPane.CANCEL_OPTION:
+				return "Cancel";
+			default:
+				return "Unknown";
+		}
 	}
 	
 	public static void showConnectionLost()
@@ -85,15 +107,11 @@ public class DialogUtil
 	
 	public static void showLoadingDialog(String text)
 	{
+		logger.info("loaderShown", text);
 		loadingDialog.showDialog(text);
 	}
 	public static void dismissLoadingDialog()
 	{
 		loadingDialog.dismissDialog();
-	}
-	
-	public static void showDemoDialog()
-	{
-		showInfo("DEMO VERSION - This functionality isn't written yet.");
 	}
 }

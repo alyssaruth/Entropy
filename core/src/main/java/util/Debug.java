@@ -12,7 +12,6 @@ import java.util.concurrent.ThreadFactory;
 
 public class Debug implements CoreRegistry
 {
-	public static final String SQL_PREFIX = "[SQL] ";
 	public static final String BUG_REPORT_ADDITONAL_INFO_LINE = "Additional Information:";
 	
 	private static final String SUCCESS_MESSAGE = "Email sent successfully";
@@ -44,11 +43,7 @@ public class Debug implements CoreRegistry
 	};
 	private static ExecutorService logService = Executors.newFixedThreadPool(1, loggerFactory);
 	
-	
-	public static void appendSql(String text, boolean logging)
-	{
-		append(SQL_PREFIX + text, logging);
-	}
+
 	public static void append(String text)
 	{
 		append(text, true);
@@ -451,15 +446,9 @@ public class Debug implements CoreRegistry
 		Debug.sendingEmails = sendingEmails;
 	}
 	
-	
 	public static void initialise(DebugOutput output)
 	{
 		Debug.output = output;
-	}
-	
-	public static void clearLogs()
-	{
-		output.clear();
 	}
 	
 	public static void setDebugExtension(DebugExtension debugExtension)

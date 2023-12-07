@@ -7,9 +7,9 @@ class LoggerUncaughtExceptionHandler : UncaughtExceptionHandler {
     override fun uncaughtException(arg0: Thread, arg1: Throwable) {
         if (isSuppressed(arg1)) {
             // Still stack trace, but don't show an error message or email a log
-            logger.warn(CODE_UNCAUGHT_EXCEPTION, "Suppressing uncaught exception: $arg1", KEY_THREAD to arg0.toString(), KEY_EXCEPTION_MESSAGE to arg1.message)
+            logger.warn("uncaughtException", "Suppressing uncaught exception: $arg1", KEY_THREAD to arg0.toString(), KEY_EXCEPTION_MESSAGE to arg1.message)
         } else {
-            logger.error(CODE_UNCAUGHT_EXCEPTION, "Uncaught exception: $arg1 in thread $arg0", arg1, KEY_THREAD to arg0.toString())
+            logger.error("uncaughtException", "Uncaught exception: $arg1 in thread $arg0", arg1, KEY_THREAD to arg0.toString())
         }
     }
 
