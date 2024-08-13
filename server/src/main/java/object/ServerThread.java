@@ -40,7 +40,7 @@ public class ServerThread extends Thread
 		super.run();
 	}
 	
-	public void dumpDetails(long dumpTimeMillis)
+	public void dumpDetails(StringBuilder sb, long dumpTimeMillis)
 	{
 		String debugStr = "";
 		if (isAlive())
@@ -63,8 +63,9 @@ public class ServerThread extends Thread
 		{
 			debugStr = getName() + " (IDLE)";
 		}
-		
-		Debug.appendWithoutDate(debugStr);
+
+		sb.append(debugStr);
+		sb.append("\n");
 	}
 	
 	public void setStartMillis()

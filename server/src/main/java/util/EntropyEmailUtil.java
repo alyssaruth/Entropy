@@ -62,16 +62,6 @@ public class EntropyEmailUtil
 		
 		String subject = EncryptionUtil.decryptIfPossible(rootElement.getAttribute("Subject"), symmetricKey);
 		String body = EncryptionUtil.decryptIfPossible(rootElement.getAttribute("Body"), symmetricKey);
-		String clientVersion = rootElement.getAttribute("ClientVersion");
-		boolean obfuscated = XmlUtil.getAttributeBoolean(rootElement, "Obfuscated");
-		
-		//Only Entropy is currently obfuscated. If the versions are in sync, deobfuscate the log
-		if (obfuscated
-		  && clientVersion.equals(server.getClientVersion(OnlineConstants.FILE_NAME_ENTROPY_JAR))
-		  && !server.getDevMode())
-		{
-			body = LogDeobfuscator.deobfuscateStackTraces(body);
-		}
 		
 		ArrayList<File> attachments = new ArrayList<>();
 		NodeList attachmentElements = rootElement.getElementsByTagName("Attachment");

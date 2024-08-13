@@ -194,11 +194,6 @@ public class Debug implements CoreRegistry
 		append(trace, true);
 	}
 	
-	public static void newLine()
-	{
-		appendWithoutDate("");
-	}
-	
 	public static void dumpList(String name, List<?> list)
 	{
 		String s = name;
