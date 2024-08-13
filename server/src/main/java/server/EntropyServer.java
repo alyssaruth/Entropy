@@ -66,7 +66,6 @@ import util.Debug;
 import util.EncryptionUtil;
 import util.EntropyThreadPoolExecutor;
 import util.FileUtil;
-import util.LogDeobfuscator;
 import util.OnlineConstants;
 import util.ServerDebugExtension;
 import util.StatisticsUtil;
@@ -75,6 +74,8 @@ import util.XmlBuilderServer;
 import util.XmlConstants;
 import util.XmlUtil;
 
+import static util.LoggingUtilKt.dumpServerThreads;
+import static utils.InjectedThings.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class EntropyServer extends JFrame
@@ -91,7 +92,6 @@ public final class EntropyServer extends JFrame
 	
 	//Files
 	private static final Path FILE_PATH_USED_KEYS = Paths.get("C:\\EntropyServer\\UsedKeys.txt");
-	private static final Path FILE_PATH_OBFUSCATION_MAP = Paths.get("C:\\EntropyServer\\Mapping.txt");
 	private static final Path FILE_PATH_CLIENT_VERSION = Paths.get("C:\\EntropyServer\\Version.txt");
 	
 	//Console
@@ -270,7 +270,6 @@ public final class EntropyServer extends JFrame
 			mostFunctionsReceived = new AtomicInteger(StatisticsUtil.getMostFunctionsReceived());
 			
 			readInPrivateKey();
-			LogDeobfuscator.parseObfuscationMapFile(FILE_PATH_OBFUSCATION_MAP);
 			readUsedKeysFromFile();
 			readClientVersion();
 			registerDefaultRooms();
@@ -1222,122 +1221,6 @@ public final class EntropyServer extends JFrame
 		return false;
 	}
 	
-	/**
-	 * Dump out key information about the threads that are running
-	 */
-	private void dumpThreads()
-	{
-		long dumpTimeMillis = System.currentTimeMillis();
-		
-		ArrayList<Thread> backgroundThreads = new ArrayList<>();
-		ArrayList<ServerThread> nonUscThreads = new ArrayList<>();
-		HashMap<UserConnection, ArrayList<ServerThread>> hmUscToThreads = new HashMap<>();
-		Thread loggerThread = null;
-		int idleWorkers = 0;
-		
-		Map<Thread, StackTraceElement[]> threads = Thread.getAllStackTraces();
-		Iterator<Thread> it =  threads.keySet().iterator();
-		for (; it.hasNext();)
-		{
-			Thread t = it.next();
-			if (!(t instanceof ServerThread))
-			{
-				if (t.getName().equals("Logger"))
-				{
-					loggerThread = t;
-				}
-				else
-				{
-					backgroundThreads.add(t);
-				}
-				
-				continue;
-			}
-			
-			ServerThread serverThread = (ServerThread)t;
-			ServerRunnable r = serverThread.getRunnable();
-			UserConnection usc = r.getUserConnection();
-			if (usc != null)
-			{
-				ArrayList<ServerThread> hashedThreads = hmUscToThreads.get(usc);
-				if (hashedThreads == null)
-				{
-					hashedThreads = new ArrayList<>();
-					hmUscToThreads.put(usc, hashedThreads);
-				}
-				
-				hashedThreads.add(serverThread);
-			}
-			else if (r.getDetails().equals("No current task"))
-			{
-				idleWorkers++;
-			}
-			else
-			{
-				nonUscThreads.add(serverThread);
-			}
-		}
-		
-		//Now dump the threads, grouped together
-		Debug.appendBanner("Threads @ " + Debug.getCurrentTimeForLogging());
-		
-		Debug.newLine();
-		Debug.appendBannerWithoutDate("Permanent threads");
-		
-		//Dump the non-usc threads first. These are "permanent" threads, so not interested in time running
-		Debug.newLine();
-		dumpServerThreadDetails(nonUscThreads, -1);
-		dumpOrdinaryThreadDetails(loggerThread);
-		
-		//Idle worker count, nothing interesting to log for these so don't log a line for each
-		if (idleWorkers > 0)
-		{
-			Debug.newLine();
-			Debug.appendBannerWithoutDate("Idle workers: " + idleWorkers);
-		}
-		
-		//Dump the usc threads if we have some - these are the most interesting
-		if (!hmUscToThreads.isEmpty())
-		{
-			Debug.newLine();
-			Debug.appendBannerWithoutDate("Active workers");
-			Iterator<ArrayList<ServerThread>> itUsc = hmUscToThreads.values().iterator();
-			for (; itUsc.hasNext();)
-			{
-				ArrayList<ServerThread> serverThreadsForUsc = itUsc.next();
-				dumpServerThreadDetails(serverThreadsForUsc, dumpTimeMillis);
-			}
-		}
-		
-		//Dump basic info about other JVM threads
-		Debug.newLine();
-		Debug.appendBannerWithoutDate("JVM threads");
-		Debug.newLine();
-		
-		for (int i=0; i<backgroundThreads.size(); i++)
-		{
-			Thread t = backgroundThreads.get(i);
-			dumpOrdinaryThreadDetails(t);
-		}
-		
-		Debug.newLine();
-	}
-	
-	private void dumpServerThreadDetails(ArrayList<ServerThread> serverThreads, long dumpTimeMillis)
-	{
-		for (int i=0; i<serverThreads.size(); i++)
-		{
-			ServerThread t = serverThreads.get(i);
-			t.dumpDetails(dumpTimeMillis);
-		}
-	}
-	
-	private void dumpOrdinaryThreadDetails(Thread t)
-	{
-		String debugStr = t.getName() + " (" + t.getState() + ")";
-		Debug.appendWithoutDate(debugStr);
-	}
-	
 	private void toggleServerOnline()
 	{
 		ToggleAvailabilityRunnable runnable = new ToggleAvailabilityRunnable(this);
@@ -1353,7 +1236,7 @@ public final class EntropyServer extends JFrame
 		}
 		else if (command.equals(COMMAND_DUMP_THREADS))
 		{
-			dumpThreads();
+			dumpServerThreads();
 		}
 		else if (command.equals(COMMAND_DUMP_THREAD_STACKS))
 		{
