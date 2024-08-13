@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import util.Debug;
 
+import static utils.InjectedThings.logger;
+
 public class BidHistory 
 {
 	private HashMap<Integer, ArrayList<Bid>> hmBidVectorByPlayerNumber = new HashMap<>();
@@ -25,7 +27,7 @@ public class BidHistory
 		
 		if (bids.contains(bid))
 		{
-			Debug.append("Ignored duplicate bid from player " + playerNumber + ": " + bid);
+			logger.info("duplicateBid", "Ignored duplicate bid from player " + playerNumber + ": " + bid);
 			return false;
 		}
 		else
@@ -62,7 +64,7 @@ public class BidHistory
 			}
 		}
 		
-		Debug.stackTrace("Could not find bid " + currentBid + " in bidHistory for player " + playerNumber);
+		logger.error("bidNotFound", "Could not find bid " + currentBid + " in bidHistory for player " + playerNumber);
 		return null;
 	}
 	

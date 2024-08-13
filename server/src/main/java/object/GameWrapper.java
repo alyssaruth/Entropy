@@ -4,6 +4,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import util.Debug;
 
+import static utils.InjectedThings.logger;
+
 /**
  * Wrap up a single game
  */
@@ -99,7 +101,7 @@ public class GameWrapper
 		if (history == null)
 		{
 			//Returning null here will be like 'waiting for player'
-			Debug.stackTrace("Got NULL bid history for gameId " + gameId + " and round " + roundNumber + ". Dump follows.");
+			logger.error("noBidHistory", "Got NULL bid history for gameId " + gameId + " and round " + roundNumber + ". Dump follows.");
 			debugDump("Game");
 			return null;
 		}
@@ -168,29 +170,37 @@ public class GameWrapper
 	 */
 	public void debugDump(String description)
 	{
-		Debug.appendBannerWithoutDate(description + " ID: " + gameId);
-		Debug.appendWithoutDate("Countdown Start Time: " + countdownStartMillis);
-		Debug.appendWithoutDate("Start Time: " + gameStartMillis);
-		Debug.appendWithoutDate("End Time: " + gameEndMillis);
-		Debug.appendWithoutDate("Winning Player: " + winningPlayer);
+		StringBuilder sb = new StringBuilder();
+		sb.append(description);
+		sb.append(" ID: ");
+		sb.append(gameId);
+		sb.append("\n--------------\n\n");
+
+		sb.append("Countdown Start Time: " + countdownStartMillis + "\n");
+		sb.append("Start Time: " + gameStartMillis + "\n");
+		sb.append("End Time: " + gameEndMillis + "\n");
+		sb.append("Winning Player: " + winningPlayer + "\n");
 		
 		int totalRounds = hmBidHistoryByRoundNumber.size();
 		for (int i=1; i<=totalRounds; i++)
 		{
-			dumpRoundInformation(i);
+			dumpRoundInformation(sb, i);
 		}
+
+		logger.info("debugDump", sb.toString());
 	}
 	
-	private void dumpRoundInformation(int roundNumber)
+	private void dumpRoundInformation(StringBuilder sb, int roundNumber)
 	{
 		BidHistory history = hmBidHistoryByRoundNumber.get(roundNumber);
 		HandDetails details = hmRoundDetailsByRoundNumber.get(roundNumber);
-		
-		Debug.appendWithoutDate("");
-		Debug.appendWithoutDate("Round " + roundNumber);
-		Debug.appendTabbed("Last player to act: " + history.getLastPlayerToAct());
-		Debug.appendTabbed("BidHistory: " + history);
-		Debug.appendTabbed(details.getHandsForLogging());
-		Debug.appendTabbed("hmHandSizeByPlayerNumber: " + details.getHandSizes());
+
+		sb.append("\nRound" + roundNumber);
+		sb.append("\n-----------------------\n");
+
+		sb.append("\n	Last player to act: " + history.getLastPlayerToAct());
+		sb.append("\n	BidHistory: " + history);
+		sb.append("\n	" + details.getHandsForLogging());
+		sb.append("\n	hmHandSizeByPlayerNumber: " + details.getHandSizes());
 	}
 }
