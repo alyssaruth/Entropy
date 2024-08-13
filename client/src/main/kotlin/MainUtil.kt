@@ -1,3 +1,4 @@
+import java.util.*
 import logging.KEY_APP_VERSION
 import logging.KEY_DEVICE_ID
 import logging.KEY_DEV_MODE
@@ -9,7 +10,6 @@ import util.CoreRegistry.instance
 import util.OnlineConstants
 import utils.InjectedThings.logger
 import utils.getUsername
-import java.util.*
 
 fun setLoggingContextFields() {
     logger.addToContext(KEY_USERNAME, getUsername())
@@ -20,6 +20,7 @@ fun setLoggingContextFields() {
 }
 
 fun getDeviceId() = instance.get(INSTANCE_STRING_DEVICE_ID, null) ?: setDeviceId()
+
 private fun setDeviceId(): String {
     val deviceId = UUID.randomUUID().toString()
     instance.put(INSTANCE_STRING_DEVICE_ID, deviceId)

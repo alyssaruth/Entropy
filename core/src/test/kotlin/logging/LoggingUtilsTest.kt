@@ -19,7 +19,8 @@ class LoggingUtilsTest : AbstractTest() {
         thread.join()
 
         stackTrace shouldContain "java.lang.Throwable: Boom."
-        stackTrace shouldContain "\tat logging.LoggingUtilsTest\$Should extract stack trace\$runnable\$1.invoke"
+        stackTrace shouldContain
+            "\tat logging.LoggingUtilsTest\$Should extract stack trace\$runnable\$1.invoke"
     }
 
     @Test
@@ -34,7 +35,11 @@ class LoggingUtilsTest : AbstractTest() {
 
     @Test
     fun `Should extract a string from a stack trace array`() {
-        val stackTrace = arrayOf(StackTraceElement("SomeClass", "doStuff", "SomeClass.kt", 58), StackTraceElement("SomeClass", "maybeDoStuff", "SomeClass.kt", 40))
+        val stackTrace =
+            arrayOf(
+                StackTraceElement("SomeClass", "doStuff", "SomeClass.kt", 58),
+                StackTraceElement("SomeClass", "maybeDoStuff", "SomeClass.kt", 40)
+            )
 
         val result = extractThreadStack(stackTrace)
         val lines = result.lines()

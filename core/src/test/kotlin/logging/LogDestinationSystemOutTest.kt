@@ -4,11 +4,11 @@ import CURRENT_TIME_STRING
 import helper.AbstractTest
 import helper.makeLogRecord
 import io.kotest.matchers.string.shouldContain
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
 class LogDestinationSystemOutTest : AbstractTest() {
     private val originalOut = System.out
@@ -29,7 +29,8 @@ class LogDestinationSystemOutTest : AbstractTest() {
     fun `Should log the record to system out`() {
         val dest = LogDestinationSystemOut()
 
-        val record = makeLogRecord(severity = Severity.INFO, loggingCode = "some.event", message = "blah")
+        val record =
+            makeLogRecord(severity = Severity.INFO, loggingCode = "some.event", message = "blah")
         dest.log(record)
 
         val output = newOut.toString()
@@ -41,7 +42,13 @@ class LogDestinationSystemOutTest : AbstractTest() {
         val dest = LogDestinationSystemOut()
 
         val error = Throwable("oh no")
-        val record = makeLogRecord(severity = Severity.ERROR, loggingCode = "some.event", message = "blah", errorObject = error)
+        val record =
+            makeLogRecord(
+                severity = Severity.ERROR,
+                loggingCode = "some.event",
+                message = "blah",
+                errorObject = error
+            )
         dest.log(record)
 
         val output = newOut.toString()
@@ -53,12 +60,13 @@ class LogDestinationSystemOutTest : AbstractTest() {
     fun `Should print the stack for a thread dump`() {
         val dest = LogDestinationSystemOut()
 
-        val record = makeLogRecord(
-            severity = Severity.INFO,
-            loggingCode = "some.event",
-            message = "blah",
-            keyValuePairs = mapOf(KEY_STACK to "at Something.blah")
-        )
+        val record =
+            makeLogRecord(
+                severity = Severity.INFO,
+                loggingCode = "some.event",
+                message = "blah",
+                keyValuePairs = mapOf(KEY_STACK to "at Something.blah")
+            )
         dest.log(record)
 
         val output = newOut.toString()

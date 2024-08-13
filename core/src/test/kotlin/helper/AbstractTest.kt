@@ -34,7 +34,9 @@ open class AbstractTest {
         if (!checkedForExceptions) {
             val errors = getErrorsLogged()
             if (errors.isNotEmpty()) {
-                fail("Unexpected error(s) were logged during test: ${errors.map { it.getThrowableStr() } }")
+                fail(
+                    "Unexpected error(s) were logged during test: ${errors.map { it.getThrowableStr() } }"
+                )
             }
             errorLogged() shouldBe false
         }
@@ -46,7 +48,8 @@ open class AbstractTest {
     fun getLastLog() = flushAndGetLogRecords().last()
 
     fun verifyLog(code: String, severity: Severity = Severity.INFO): LogRecord {
-        val record = flushAndGetLogRecords().findLast { it.loggingCode == code && it.severity == severity }
+        val record =
+            flushAndGetLogRecords().findLast { it.loggingCode == code && it.severity == severity }
         record.shouldNotBeNull()
 
         if (severity == Severity.ERROR) {
@@ -76,6 +79,7 @@ open class AbstractTest {
         logger.waitUntilLoggingFinished()
         return logDestination.logRecords.toList()
     }
+
     fun clearLogs() {
         logger.waitUntilLoggingFinished()
         logDestination.clear()

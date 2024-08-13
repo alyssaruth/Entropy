@@ -18,7 +18,10 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         val log = verifyLog("uncaughtException", Severity.WARN)
         log.errorObject shouldBe null
         log.message shouldBe "Suppressing uncaught exception: $ex"
-        log.shouldContainKeyValues(KEY_THREAD to Thread.currentThread().toString(), KEY_EXCEPTION_MESSAGE to message)
+        log.shouldContainKeyValues(
+            KEY_THREAD to Thread.currentThread().toString(),
+            KEY_EXCEPTION_MESSAGE to message
+        )
     }
 
     @Test
@@ -30,7 +33,10 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
 
         val log = verifyLog("uncaughtException", Severity.ERROR)
         log.errorObject shouldBe ex
-        log.shouldContainKeyValues(KEY_THREAD to Thread.currentThread().toString(), KEY_EXCEPTION_MESSAGE to null)
+        log.shouldContainKeyValues(
+            KEY_THREAD to Thread.currentThread().toString(),
+            KEY_EXCEPTION_MESSAGE to null
+        )
         log.message shouldContain "Uncaught exception: $ex"
     }
 
