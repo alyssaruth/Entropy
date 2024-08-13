@@ -15,7 +15,6 @@ public interface ServerCommands
 	public static final String COMMAND_CLEAR_ROOMS = "clear rooms";
 	public static final String COMMAND_DUMP_STATS = "stats";
 	public static final String COMMAND_MESSAGE_STATS = "message stats";
-	public static final String COMMAND_INACTIVE_LOGGING = "inactive logging";
 	public static final String COMMAND_DECRYPTION_LOGGING = "decryption logging";
 	public static final String COMMAND_CLEAR_STATS = "clear stats";
 	public static final String COMMAND_LAUNCH_DAY = "launch day";

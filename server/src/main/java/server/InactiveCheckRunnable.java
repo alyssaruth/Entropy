@@ -6,6 +6,8 @@ import object.ServerRunnable;
 import object.UserConnection;
 import util.Debug;
 
+import static utils.InjectedThings.logger;
+
 public class InactiveCheckRunnable implements ServerRunnable
 {
 	private static int SLEEP_TIME_MILLIS = 5 * 1000; //10 seconds
@@ -37,16 +39,9 @@ public class InactiveCheckRunnable implements ServerRunnable
 	
 	private void runInactiveCheck() throws InterruptedException
 	{
-		boolean logging = server.getInactiveCheckLogging();
-		
 		List<UserConnection> userConnections = server.getUserConnections(false);
 		int size = userConnections.size();
-		if (size == 0)
-		{
-			logging = false;
-		}
-		
-		Debug.appendBanner("Starting inactive check for " + size + " users", logging);
+
 		statusText = "Running for " + size + " uscs";
 		
 		for (int i=size-1; i>=0; i--)
@@ -57,27 +52,21 @@ public class InactiveCheckRunnable implements ServerRunnable
 			long currentMillis = System.currentTimeMillis();
 			long timeSinceLastActive = currentMillis - lastActiveMillis;
 			
-			if (timeSinceLastActive < KICK_OFF_TIME_MILLIS)
-			{
-				Debug.appendWithoutDate(username + ": " + timeSinceLastActive + " < " + KICK_OFF_TIME_MILLIS, logging);
-				continue;
-			}
-			else
+			if (timeSinceLastActive >= KICK_OFF_TIME_MILLIS)
 			{
 				server.removeFromUsersOnline(usc);
 				
 				if (username != null)
 				{
-					Debug.append("Removed " + username + " due to inactivity.");
+					logger.info("removedInactiveUser", "Removed " + username + " due to inactivity.");
 				}
 				else
 				{
-					Debug.append("Removed unused connection for IP " + usc.getIpAddress());
+					logger.info("removedInactiveUser", "Removed unused connection for IP " + usc.getIpAddress());
 				}
 			}
 		}
-		
-		Debug.appendWithoutDate("Sleeping for " + SLEEP_TIME_MILLIS + " millis", logging);
+
 		statusText = "Sleeping between checks";
 		Thread.sleep(SLEEP_TIME_MILLIS);
 	}
