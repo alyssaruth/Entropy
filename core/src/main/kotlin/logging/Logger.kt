@@ -1,12 +1,12 @@
 package logging
 
 import getPercentage
-import utils.InjectedThings
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
+import utils.InjectedThings
 
 private const val LOGGER_THREAD = "Logger"
 
@@ -45,16 +45,45 @@ class Logger(private val destinations: List<ILogDestination>) {
         error(code, message, Throwable(message), keyValuePairs = keyValuePairs)
     }
 
-    fun error(code: String, message: String, errorObject: Throwable = Throwable(message), vararg keyValuePairs: Pair<String, Any?>) {
-        log(Severity.ERROR, code, message, errorObject, mapOf(*keyValuePairs, KEY_EXCEPTION_MESSAGE to errorObject.message))
+    fun error(
+        code: String,
+        message: String,
+        errorObject: Throwable = Throwable(message),
+        vararg keyValuePairs: Pair<String, Any?>
+    ) {
+        log(
+            Severity.ERROR,
+            code,
+            message,
+            errorObject,
+            mapOf(*keyValuePairs, KEY_EXCEPTION_MESSAGE to errorObject.message)
+        )
     }
 
-    private fun log(severity: Severity, code: String, message: String, errorObject: Throwable?, keyValuePairs: Map<String, Any?>) {
+    private fun log(
+        severity: Severity,
+        code: String,
+        message: String,
+        errorObject: Throwable?,
+        keyValuePairs: Map<String, Any?>
+    ) {
         val timestamp = InjectedThings.clock.instant()
-        val logRecord = LogRecord(timestamp, severity, code, message, errorObject, loggingContext + keyValuePairs)
+        val logRecord =
+            LogRecord(
+                timestamp,
+                severity,
+                code,
+                message,
+                errorObject,
+                loggingContext + keyValuePairs
+            )
 
         val runnable = Runnable { destinations.forEach { it.log(logRecord) } }
-        if (Thread.currentThread().name != LOGGER_THREAD && !logService.isShutdown && !logService.isTerminated) {
+        if (
+            Thread.currentThread().name != LOGGER_THREAD &&
+                !logService.isShutdown &&
+                !logService.isTerminated
+        ) {
             logService.execute(runnable)
         } else {
             runnable.run()
@@ -65,8 +94,7 @@ class Logger(private val destinations: List<ILogDestination>) {
         try {
             logService.shutdown()
             logService.awaitTermination(30, TimeUnit.SECONDS)
-        } catch (_: InterruptedException) { } finally
-        {
+        } catch (_: InterruptedException) {} finally {
             logService = Executors.newFixedThreadPool(1, loggerFactory)
         }
     }

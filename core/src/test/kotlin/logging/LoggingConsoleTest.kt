@@ -9,10 +9,10 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import org.junit.jupiter.api.Test
 import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.text.StyleConstants
+import org.junit.jupiter.api.Test
 
 class LoggingConsoleTest : AbstractTest() {
     @Test
@@ -51,7 +51,12 @@ class LoggingConsoleTest : AbstractTest() {
         val console = LoggingConsole()
         val t = Throwable("Boom")
 
-        val errorLog = makeLogRecord(severity = Severity.ERROR, message = "Failed to load screen", errorObject = t)
+        val errorLog =
+            makeLogRecord(
+                severity = Severity.ERROR,
+                message = "Failed to load screen",
+                errorObject = t
+            )
         console.log(errorLog)
 
         console.getText() shouldContain "Failed to load screen"
@@ -65,7 +70,12 @@ class LoggingConsoleTest : AbstractTest() {
     fun `Should log thread stacks`() {
         val console = LoggingConsole()
 
-        val threadStackLock = makeLogRecord(severity = Severity.INFO, message = "AWT Thread", keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)"))
+        val threadStackLock =
+            makeLogRecord(
+                severity = Severity.INFO,
+                message = "AWT Thread",
+                keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)")
+            )
         console.log(threadStackLock)
 
         console.getText() shouldContain "AWT Thread"
@@ -78,9 +88,7 @@ class LoggingConsoleTest : AbstractTest() {
         console.pack()
         console.scrollPane.verticalScrollBar.value shouldBe 0
 
-        repeat(50) {
-            console.log(makeLogRecord())
-        }
+        repeat(50) { console.log(makeLogRecord()) }
 
         flushEdt()
         console.scrollPane.verticalScrollBar.value shouldBeGreaterThan 0
@@ -125,6 +133,7 @@ class LoggingConsoleTest : AbstractTest() {
         val style = doc.getCharacterElement(position)
         return StyleConstants.getForeground(style.attributes)
     }
+
     private fun LoggingConsole.getBackgroundColour(): Color {
         val style = doc.getCharacterElement(0)
         return StyleConstants.getBackground(style.attributes)

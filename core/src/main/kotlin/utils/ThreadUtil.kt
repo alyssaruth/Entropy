@@ -1,9 +1,9 @@
 package utils
 
+import javax.swing.SwingUtilities
 import logging.KEY_STACK
 import logging.extractThreadStack
 import utils.InjectedThings.logger
-import javax.swing.SwingUtilities
 
 fun dumpThreadStacks() {
     logger.info("threadStacks", "Dumping thread stacks")
@@ -15,7 +15,11 @@ fun dumpThreadStacks() {
         val stack = thread.stackTrace
         val state = thread.state
         if (stack.isNotEmpty()) {
-            logger.info("threadStack", "${thread.name} ($state)", KEY_STACK to extractThreadStack(stack))
+            logger.info(
+                "threadStack",
+                "${thread.name} ($state)",
+                KEY_STACK to extractThreadStack(stack)
+            )
         }
     }
 }

@@ -1,8 +1,10 @@
 plugins {
     id("Entropy.kotlin-common-conventions")
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
+    id("com.ncorti.ktfmt.gradle") version "0.15.1"
     application
 }
+
+ktfmt { kotlinLangStyle() }
 
 dependencies {
     implementation("com.jgoodies:jgoodies-forms:1.6.0")

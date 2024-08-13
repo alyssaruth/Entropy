@@ -13,9 +13,7 @@ fun extractStackTrace(t: Throwable): String {
 fun extractThreadStack(stack: Array<StackTraceElement>): String {
     val sw = StringWriter()
     val pw = PrintWriter(sw)
-    stack.forEach {
-        pw.println("\tat $it")
-    }
+    stack.forEach { pw.println("\tat $it") }
 
     return sw.toString()
 }

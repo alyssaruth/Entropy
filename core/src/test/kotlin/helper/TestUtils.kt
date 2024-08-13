@@ -2,11 +2,11 @@ package helper
 
 import CURRENT_TIME
 import io.kotest.matchers.maps.shouldContainExactly
-import logging.LogRecord
-import logging.Severity
 import java.awt.Component
 import java.awt.Container
 import java.time.Instant
+import logging.LogRecord
+import logging.Severity
 
 fun LogRecord.shouldContainKeyValues(vararg values: Pair<String, Any?>) {
     keyValuePairs.shouldContainExactly(mapOf(*values))
@@ -19,11 +19,11 @@ fun makeLogRecord(
     message: String = "A thing happened",
     errorObject: Throwable? = null,
     keyValuePairs: Map<String, Any?> = mapOf()
-) =
-    LogRecord(timestamp, severity, loggingCode, message, errorObject, keyValuePairs)
+) = LogRecord(timestamp, severity, loggingCode, message, errorObject, keyValuePairs)
 
 /**
- * Recurses through all child components, returning an ArrayList of all children of the appropriate type
+ * Recurses through all child components, returning an ArrayList of all children of the appropriate
+ * type
  */
 inline fun <reified T> Container.getAllChildComponentsForType(): List<T> {
     val ret = mutableListOf<T>()

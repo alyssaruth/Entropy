@@ -1,16 +1,15 @@
 package bean
 
-import logging.KEY_ACTIVE_WINDOW
-import utils.InjectedThings
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
 import javax.swing.JFrame
+import logging.KEY_ACTIVE_WINDOW
+import utils.InjectedThings
 
 abstract class FocusableWindow : JFrame(), WindowFocusListener {
     abstract val windowName: String
 
-    init
-    {
+    init {
         addWindowFocusListener(this)
     }
 

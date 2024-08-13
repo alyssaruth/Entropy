@@ -19,10 +19,11 @@ data class LogRecord(
     val errorObject: Throwable?,
     val keyValuePairs: Map<String, Any?>
 ) {
-    private val dateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        .withLocale(Locale.UK)
-        .withZone(ZoneId.systemDefault())
-        .format(timestamp)
+    private val dateStr =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            .withLocale(Locale.UK)
+            .withZone(ZoneId.systemDefault())
+            .format(timestamp)
 
     override fun toString(): String {
         val durationStr = keyValuePairs[KEY_DURATION]?.let { " (${it}ms) " }.orEmpty()

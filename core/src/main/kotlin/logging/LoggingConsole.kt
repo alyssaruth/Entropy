@@ -2,7 +2,6 @@ package logging
 
 import bean.FocusableWindow
 import bean.WrapLayout
-import utils.runOnEventThread
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -18,6 +17,7 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.DefaultStyledDocument
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyleContext
+import utils.runOnEventThread
 
 class LoggingConsole : FocusableWindow(), ILogDestination {
     override val windowName = "Console"
@@ -27,8 +27,7 @@ class LoggingConsole : FocusableWindow(), ILogDestination {
     private val textArea = JTextPane(doc)
     private val contextPanel = JPanel()
 
-    init
-    {
+    init {
         title = "Console"
         setSize(1000, 600)
         setLocationRelativeTo(null)
