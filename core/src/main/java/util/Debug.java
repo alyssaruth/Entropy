@@ -79,36 +79,12 @@ public class Debug implements CoreRegistry
 	
 	public static void appendWithoutDate(String text)
 	{
-		appendWithoutDate(text, true);
-	}
-	public static void appendWithoutDate(String text, boolean logging)
-	{
-		append("                                      " + text, logging, false);
-	}
-	
-	public static void appendTabbed(String text)
-	{
-		appendWithoutDate("	" + text);
+		append("                                      " + text, true, false);
 	}
 	
 	public static void appendBanner(String text)
 	{
 		appendBanner(text, true);
-	}
-	
-	public static void appendBannerWithoutDate(String text)
-	{
-		int length = text.length();
-		
-		String starStr = "";
-		for (int i=0; i<length + 4; i++)
-		{
-			starStr += "*";
-		}
-		
-		appendWithoutDate(starStr);
-		appendWithoutDate(text);
-		appendWithoutDate(starStr);
 	}
 	
 	public static void appendBanner(String text, boolean logging)
@@ -148,10 +124,6 @@ public class Debug implements CoreRegistry
 	public static void stackTraceNoError(Throwable t)
 	{
 		stackTrace(t, "", true);
-	}
-	public static void stackTraceNoError(Throwable t, String message)
-	{
-		stackTrace(t, message, true);
 	}
 	public static void stackTrace(Throwable t, String message, boolean suppressError)
 	{

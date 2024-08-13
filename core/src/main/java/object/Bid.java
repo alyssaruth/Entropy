@@ -190,40 +190,32 @@ public abstract class Bid
 	
 	public String toHtmlString()
 	{
-		try
+		String playerName = player.getName();
+		playerName = StringUtil.escapeHtml(playerName);
+
+		String colour = player.getColour();
+		String playerNamePrefix = playerName + ":&nbsp";
+
+		if (blind)
 		{
-			String playerName = player.getName();
-			playerName = StringUtil.escapeHtml(playerName);
-			
-			String colour = player.getColour();
-			String playerNamePrefix = playerName + ":&nbsp";
-			
-			if (blind)
-			{
-				playerNamePrefix = "[" + playerName + "]:&nbsp";
-			}
-			
-			String text = "<html><b><font color=\"" + colour + "\">" + playerNamePrefix;
-			text += "</b></font>";
-			text += toHtmlStringSpecific();
-			
-			if (!cardToReveal.isEmpty()
-			  && !isChallenge()
-			  && !isIllegal())
-			{
-				text += "<i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font>";
-				text += CardsUtil.getCardHtml(cardToReveal);
-				text += "<i><font color=\"#5C5C3D\">)</i></font>";
-			}
-			
-			//The unicode for a moon doesn't work in HTML. Also shrink to match the size of the other suits.
-			text = text.replaceAll(CardsUtil.MOONS_SYMBOL, "<font size=\"2\">&#127769</font>");
-			return text;
+			playerNamePrefix = "[" + playerName + "]:&nbsp";
 		}
-		catch (Throwable t)
+
+		String text = "<html><b><font color=\"" + colour + "\">" + playerNamePrefix;
+		text += "</b></font>";
+		text += toHtmlStringSpecific();
+
+		if (!cardToReveal.isEmpty()
+		  && !isChallenge()
+		  && !isIllegal())
 		{
-			Debug.stackTraceNoError(t, "Caught exception rendering bid " + this);
-			return "<Error>";
+			text += "<i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font>";
+			text += CardsUtil.getCardHtml(cardToReveal);
+			text += "<i><font color=\"#5C5C3D\">)</i></font>";
 		}
+
+		//The unicode for a moon doesn't work in HTML. Also shrink to match the size of the other suits.
+		text = text.replaceAll(CardsUtil.MOONS_SYMBOL, "<font size=\"2\">&#127769</font>");
+		return text;
 	}
 }

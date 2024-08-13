@@ -291,45 +291,38 @@ public class HelpPanel extends JPanel
 
 	private void navigateToPageBasedOnKeyWord(String keyWord)
 	{
-		try
+		Debug.append("Navigated for word " + keyWord, true);
+		HelpDialog helpDialog = ScreenCache.getHelpDialog();
+
+		if (keyWord.startsWith("bidd"))
 		{
-			Debug.append("Navigated for word " + keyWord, true);
-			HelpDialog helpDialog = ScreenCache.getHelpDialog();
-			
-			if (keyWord.startsWith("bidd"))
+			if (panelName.contains("Entropy"))
 			{
-				if (panelName.contains("Entropy"))
-				{
-					helpDialog.setSelectionForWord("RulesEntropyBidding");
-				}
-				else if (panelName.contains("Vectropy"))
-				{
-					helpDialog.setSelectionForWord("RulesVectropyBidding");
-				}
+				helpDialog.setSelectionForWord("RulesEntropyBidding");
 			}
-			else if (keyWord.startsWith("chall"))
+			else if (panelName.contains("Vectropy"))
 			{
-				if (panelName.contains("Entropy"))
-				{
-					helpDialog.setSelectionForWord("RulesEntropyChallenging");
-				}
-				else if (panelName.contains("Vectropy"))
-				{
-					helpDialog.setSelectionForWord("RulesVectropyChallenging");
-				}
-			}
-			else if (keyWord.equals("order"))
-			{
-				helpDialog.setSelectionForWord("FundamentalsTheDeck");
-			}
-			else if (keyWord.equals("perfect"))
-			{
-				helpDialog.setSelectionForWord("FundamentalsGlossary");
+				helpDialog.setSelectionForWord("RulesVectropyBidding");
 			}
 		}
-		catch (Throwable t)
+		else if (keyWord.startsWith("chall"))
 		{
-			Debug.stackTrace(t);
+			if (panelName.contains("Entropy"))
+			{
+				helpDialog.setSelectionForWord("RulesEntropyChallenging");
+			}
+			else if (panelName.contains("Vectropy"))
+			{
+				helpDialog.setSelectionForWord("RulesVectropyChallenging");
+			}
+		}
+		else if (keyWord.equals("order"))
+		{
+			helpDialog.setSelectionForWord("FundamentalsTheDeck");
+		}
+		else if (keyWord.equals("perfect"))
+		{
+			helpDialog.setSelectionForWord("FundamentalsGlossary");
 		}
 	}
 

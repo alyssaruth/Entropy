@@ -8,6 +8,8 @@ import javax.swing.KeyStroke;
 
 import util.Debug;
 
+import static utils.InjectedThings.logger;
+
 public abstract class AbstractDevScreen extends FocusableWindow
 {
 	public AbstractDevScreen()
@@ -36,7 +38,7 @@ public abstract class AbstractDevScreen extends FocusableWindow
 	}
 	public String processCommandWithTry(String cmd)
 	{
-		Debug.append("[Command Entered: " + cmd + "]", true);
+		logger.info("commandEntered", "[Command Entered: " + cmd + "]");
 		
 		String result = "";
 		try
@@ -45,7 +47,7 @@ public abstract class AbstractDevScreen extends FocusableWindow
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTrace(t);
+			logger.error("commandError", "Error processing command [" + cmd + "]", t);
 		}
 		
 		return result;

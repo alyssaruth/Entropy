@@ -374,9 +374,14 @@ public class HelpDialog extends JFrame
 			Debug.stackTrace(t);
 		}
     }
-	
-	@SuppressWarnings("unchecked")
-	public void setSelectionForWord(String word) throws Throwable
+
+    @SuppressWarnings("unchecked")
+    public void setSelectionForWord() {
+        setSelectionForWord(null);
+    }
+
+    @SuppressWarnings("unchecked")
+	public void setSelectionForWord(String word)
 	{
 		searchBox.setText("");
 		refreshNodes("");

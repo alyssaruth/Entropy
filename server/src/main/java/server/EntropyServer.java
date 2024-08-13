@@ -90,7 +90,6 @@ public final class EntropyServer extends JFrame
 	//Properties
 	private static boolean devMode = false;
 	private boolean online = false;
-	private boolean loadTestMode = false;
 	private boolean notificationSocketLogging = false;
 	
 	//Seed
@@ -202,12 +201,7 @@ public final class EntropyServer extends JFrame
 	
 	private static void applyArgument(String arg, EntropyServer server)
 	{
-		if (arg.equals("loadTest"))
-		{
-			
-			server.setLoadTestMode();
-		}
-		else if (arg.equals("devMode"))
+		if (arg.equals("devMode"))
 		{
 			Debug.appendBanner("Running in DEV mode");
 			server.setTitle("Entropy Server (DEV)");
@@ -451,8 +445,7 @@ public final class EntropyServer extends JFrame
 		
 		AtomicInteger integer = hmMessagesReceivedByIp.get(ip);
 		if (integer != null
-		  && integer.intValue() > messagesPerSecondThreshold
-		  && !loadTestMode)
+		  && integer.intValue() > messagesPerSecondThreshold)
 		{
 			addToBlacklist(ip, ">" + messagesPerSecondThreshold + " msg/s");
 		}
@@ -938,11 +931,6 @@ public final class EntropyServer extends JFrame
 		return list;
 	}
 	
-	public boolean getLoadTestMode()
-	{
-		return loadTestMode;
-	}
-	
 	public boolean getDevMode()
 	{
 		return devMode;
@@ -1143,15 +1131,6 @@ public final class EntropyServer extends JFrame
 		
 		BlacklistEntry entry = blacklist.get(ipAddress);
 		return entry != null;
-	}
-	
-	private void setLoadTestMode()
-	{
-		Debug.appendBanner("Running in LOAD TEST mode");
-		
-		loadTestMode = true;
-		usingBlacklist = false;
-		setTitle("Entropy Server (LOAD TEST)");
 	}
 	
 	public boolean messageIsTraced(String nodeName, String username)
