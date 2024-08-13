@@ -41,8 +41,7 @@ fun dumpServerThreads() {
         }
     }
 
-
-    //Now dump the threads, grouped together
+    // Now dump the threads, grouped together
     sb.append("Threads @ ")
     sb.append(Debug.getCurrentTimeForLogging())
     sb.append("\n\n")
@@ -51,22 +50,20 @@ fun dumpServerThreads() {
     sb.append("-----------------")
     sb.append("\n\n")
 
-
-    //Dump the non-usc threads first. These are "permanent" threads, so not interested in time running
+    // Dump the non-usc threads first. These are "permanent" threads, so not interested in time
+    // running
     dumpServerThreadDetails(sb, nonUscThreads, -1)
     dumpOrdinaryThreadDetails(sb, loggerThread)
     sb.append("\n\n")
 
-
-    //Idle worker count, nothing interesting to log for these so don't log a line for each
+    // Idle worker count, nothing interesting to log for these so don't log a line for each
     if (idleWorkers > 0) {
         sb.append("Idle workers: ")
         sb.append(idleWorkers)
         sb.append("\n\n")
     }
 
-
-    //Dump the usc threads if we have some - these are the most interesting
+    // Dump the usc threads if we have some - these are the most interesting
     if (hmUscToThreads.isNotEmpty()) {
         sb.append("Active workers\n")
         sb.append("-----------------")
@@ -81,7 +78,7 @@ fun dumpServerThreads() {
         sb.append("\n\n")
     }
 
-    //Dump basic info about other JVM threads
+    // Dump basic info about other JVM threads
     sb.append("JVM threads\n")
     sb.append("-----------------")
     sb.append("\n\n")
@@ -94,7 +91,11 @@ fun dumpServerThreads() {
     logger.info("threads", sb.toString())
 }
 
-private fun dumpServerThreadDetails(sb: StringBuilder, serverThreads: List<ServerThread>, dumpTimeMillis: Long) {
+private fun dumpServerThreadDetails(
+    sb: StringBuilder,
+    serverThreads: List<ServerThread>,
+    dumpTimeMillis: Long
+) {
     for (i in serverThreads.indices) {
         val t: ServerThread = serverThreads[i]
         t.dumpDetails(sb, dumpTimeMillis)
