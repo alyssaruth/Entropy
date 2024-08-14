@@ -1,17 +1,19 @@
 package server;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
+import logging.LoggerUncaughtExceptionHandler;
+import object.*;
+import org.w3c.dom.Document;
+import screen.DebugConsole;
+import util.*;
+
+import javax.crypto.SecretKey;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
@@ -23,56 +25,13 @@ import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.RSAPrivateKeySpec;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.crypto.SecretKey;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-
-import logging.LoggerUncaughtExceptionHandler;
-import object.BlacklistEntry;
-import object.ExtendedConcurrentHashMap;
-import object.OnlineMessage;
-import object.Room;
-import object.ServerRunnable;
-import object.ServerThread;
-import object.SuperHashMap;
-import object.UserConnection;
-
-import org.w3c.dom.Document;
-
-import screen.DebugConsole;
-import util.Base64Desktop;
-import util.ColourGenerator;
-import util.Debug;
-import util.EncryptionUtil;
-import util.EntropyThreadPoolExecutor;
-import util.FileUtil;
-import util.OnlineConstants;
-import util.ServerDebugExtension;
-import util.StatisticsUtil;
-import util.StringUtil;
-import util.XmlBuilderServer;
-import util.XmlConstants;
-import util.XmlUtil;
 
 import static util.LoggingUtilKt.dumpServerThreads;
 import static utils.InjectedThings.logger;
@@ -132,8 +91,6 @@ public final class EntropyServer extends JFrame
 	//Properties
 	private static boolean devMode = false;
 	private boolean online = false;
-	private boolean loadTestMode = false;
-	private boolean inactiveCheckLogging = false;
 	private boolean notificationSocketLogging = false;
 	
 	//Seed
@@ -245,12 +202,7 @@ public final class EntropyServer extends JFrame
 	
 	private static void applyArgument(String arg, EntropyServer server)
 	{
-		if (arg.equals("loadTest"))
-		{
-			
-			server.setLoadTestMode();
-		}
-		else if (arg.equals("devMode"))
+		if (arg.equals("devMode"))
 		{
 			Debug.appendBanner("Running in DEV mode");
 			server.setTitle("Entropy Server (DEV)");
@@ -494,8 +446,7 @@ public final class EntropyServer extends JFrame
 		
 		AtomicInteger integer = hmMessagesReceivedByIp.get(ip);
 		if (integer != null
-		  && integer.intValue() > messagesPerSecondThreshold
-		  && !loadTestMode)
+		  && integer.intValue() > messagesPerSecondThreshold)
 		{
 			addToBlacklist(ip, ">" + messagesPerSecondThreshold + " msg/s");
 		}
@@ -980,15 +931,6 @@ public final class EntropyServer extends JFrame
 		
 		return list;
 	}
-	public boolean getInactiveCheckLogging()
-	{
-		return inactiveCheckLogging;
-	}
-	
-	public boolean getLoadTestMode()
-	{
-		return loadTestMode;
-	}
 	
 	public boolean getDevMode()
 	{
@@ -1192,15 +1134,6 @@ public final class EntropyServer extends JFrame
 		return entry != null;
 	}
 	
-	private void setLoadTestMode()
-	{
-		Debug.appendBanner("Running in LOAD TEST mode");
-		
-		loadTestMode = true;
-		usingBlacklist = false;
-		setTitle("Entropy Server (LOAD TEST)");
-	}
-	
 	public boolean messageIsTraced(String nodeName, String username)
 	{
 		if (traceAll)
@@ -1291,19 +1224,6 @@ public final class EntropyServer extends JFrame
 		{
 			toggleServerOnline();
 		}
-		else if (command.startsWith(COMMAND_DUMP_VARIABLES))
-		{
-			int length = COMMAND_DUMP_VARIABLES.length();
-			String roomName = command.substring(length);
-			Room room = hmRoomByName.get(roomName);
-			if (room == null)
-			{
-				Debug.append("No room found for name " + roomName);
-				return;
-			}
-			
-			room.dumpVariables();
-		}
 		else if (command.startsWith(COMMAND_RESET))
 		{
 			String roomIdStr = command.substring(COMMAND_RESET.length());
@@ -1346,11 +1266,6 @@ public final class EntropyServer extends JFrame
 		{
 			EncryptionUtil.failedDecryptionLogging = !EncryptionUtil.failedDecryptionLogging;
 			Debug.appendWithoutDate("Decryption logging: " + EncryptionUtil.failedDecryptionLogging);
-		}
-		else if (command.equals(COMMAND_INACTIVE_LOGGING))
-		{
-			inactiveCheckLogging = !inactiveCheckLogging;
-			Debug.appendWithoutDate("Inactive check logging: " + inactiveCheckLogging);
 		}
 		else if (command.equals(COMMAND_CLEAR_STATS))
 		{
@@ -1542,12 +1457,10 @@ public final class EntropyServer extends JFrame
 		Debug.appendWithoutDate(COMMAND_TRACE_USER + "<username>");
 		Debug.appendWithoutDate(COMMAND_TRACE_MESSAGE_AND_RESPONSE + "<MessageName>");
 		Debug.appendWithoutDate(COMMAND_SHUT_DOWN);
-		Debug.appendWithoutDate(COMMAND_DUMP_VARIABLES + "<RoomId>");
 		Debug.appendWithoutDate(COMMAND_RESET + "<RoomId>");
 		Debug.appendWithoutDate(COMMAND_CLEAR_ROOMS);
 		Debug.appendWithoutDate(COMMAND_DUMP_STATS);
 		Debug.appendWithoutDate(COMMAND_MESSAGE_STATS);
-		Debug.appendWithoutDate(COMMAND_INACTIVE_LOGGING);
 		Debug.appendWithoutDate(COMMAND_DECRYPTION_LOGGING);
 		Debug.appendWithoutDate(COMMAND_CLEAR_STATS);
 		Debug.appendWithoutDate(COMMAND_LAUNCH_DAY);
@@ -1662,9 +1575,6 @@ public final class EntropyServer extends JFrame
 		Debug.appendWithoutDate("hmNotificationsSentByNotificationType: " + hmNotificationsSentByNotificationType);
 		Debug.appendWithoutDate("hmMessagesReceivedByIp: " + hmMessagesReceivedByIp);
 		Debug.appendWithoutDate("blacklist: " + blacklist);
-		Debug.dumpList("usedSymmetricKeys", usedSymmetricKeys);
-		Debug.dumpList("tracedMessages", tracedMessages);
-		Debug.dumpList("tracedUsers", tracedUsers);
 	}
 	
 	private void dumpMemory(boolean forceGc)

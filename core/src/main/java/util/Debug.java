@@ -79,36 +79,12 @@ public class Debug implements CoreRegistry
 	
 	public static void appendWithoutDate(String text)
 	{
-		appendWithoutDate(text, true);
-	}
-	public static void appendWithoutDate(String text, boolean logging)
-	{
-		append("                                      " + text, logging, false);
-	}
-	
-	public static void appendTabbed(String text)
-	{
-		appendWithoutDate("	" + text);
+		append("                                      " + text, true, false);
 	}
 	
 	public static void appendBanner(String text)
 	{
 		appendBanner(text, true);
-	}
-	
-	public static void appendBannerWithoutDate(String text)
-	{
-		int length = text.length();
-		
-		String starStr = "";
-		for (int i=0; i<length + 4; i++)
-		{
-			starStr += "*";
-		}
-		
-		appendWithoutDate(starStr);
-		appendWithoutDate(text);
-		appendWithoutDate(starStr);
 	}
 	
 	public static void appendBanner(String text, boolean logging)
@@ -149,10 +125,6 @@ public class Debug implements CoreRegistry
 	{
 		stackTrace(t, "", true);
 	}
-	public static void stackTraceNoError(Throwable t, String message)
-	{
-		stackTrace(t, message, true);
-	}
 	public static void stackTrace(Throwable t, String message, boolean suppressError)
 	{
 		if (debugExtension != null
@@ -192,31 +164,6 @@ public class Debug implements CoreRegistry
 		t.printStackTrace();
 		
 		append(trace, true);
-	}
-	
-	public static void dumpList(String name, List<?> list)
-	{
-		String s = name;
-		if (list == null)
-		{
-			s += ": null";
-			appendWithoutDate(s);
-			return;
-		}
-		
-		s += "(size: " + list.size() + "): ";
-		
-		for (int i=0; i<list.size(); i++)
-		{
-			if (i > 0)
-			{
-				s += "\n";
-			}
-			
-			s += list.get(i);
-		}
-		
-		appendWithoutDate(s);
 	}
 	
 	public static String getCurrentTimeForLogging()

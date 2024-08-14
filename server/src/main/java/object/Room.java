@@ -485,12 +485,8 @@ public final class Room extends RoomWrapper
 		{
 			return previousGame;
 		}
-		
-		Debug.append("Got a null game for room " + roomName + " and gameId " + gameId);
-		Debug.appendWithoutDate("Previous: " + previousGame.getGameId());
-		Debug.appendWithoutDate("Current: " + currentGame.getGameId());
-		
-		return null;
+
+		throw new RuntimeException("Got a null game for room " + roomName + " and gameId " + gameId);
 	}
 	public GameWrapper getNextGameForId(String previousGameIdFromClient)
 	{
@@ -533,11 +529,6 @@ public final class Room extends RoomWrapper
 	public boolean addBidForPlayer(String gameId, int playerNumber, int roundNumber, Bid newBid)
 	{
 		GameWrapper game = getGameForId(gameId);
-		if (game == null)
-		{
-			Debug.stackTrace("Trying to process new bid [" + newBid + "] for a NULL game");
-			return false;
-		}
 		
 		BidHistory history = game.getBidHistoryForRound(roundNumber);
 		boolean added = history.addBidForPlayer(playerNumber, newBid);
@@ -569,57 +560,6 @@ public final class Room extends RoomWrapper
 	public ArrayList<OnlineMessage> getChatHistory()
 	{
 		return chatHistory;
-	}
-	
-	/** 
-	 * Debug stuff
-	 */
-	public void dumpVariables()
-	{
-		Debug.appendBanner("Variable Dump: " + roomName);
-		Debug.appendWithoutDate("hmPlayerByPlayerNumber: " + hmPlayerByPlayerNumber);
-		Debug.appendWithoutDate("hmFormerPlayerByPlayerNumber: " + hmFormerPlayerByPlayerNumber);
-		Debug.dumpList("currentPlayers", currentPlayers);
-		Debug.dumpList("observers", observers);
-		
-		Debug.appendWithoutDate("roomName = " + roomName);
-		Debug.appendWithoutDate("mode = " + mode);
-		Debug.appendWithoutDate("players = " + players);
-		Debug.appendWithoutDate("includeMoons = " + includeMoons);
-		Debug.appendWithoutDate("includeStars = " + includeStars);
-		Debug.appendWithoutDate("negativeJacks = " + negativeJacks);
-		Debug.appendWithoutDate("illegalAllowed = " + illegalAllowed);
-		Debug.appendWithoutDate("cardReveal = " + cardReveal);
-		Debug.appendWithoutDate("jokerQuantity = " + jokerQuantity);
-		Debug.appendWithoutDate("jokerValue = " + jokerValue);
-		Debug.appendWithoutDate("isCopy = " + isCopy);
-		
-		Debug.appendWithoutDate("");
-		Debug.dumpList("Chat History: ", chatHistory);
-		Debug.appendWithoutDate("");
-		
-		Debug.appendWithoutDate("");
-		if (previousGame == null)
-		{
-			Debug.appendWithoutDate("previousGame = null");
-		}
-		else
-		{
-			previousGame.debugDump("Previous Game");
-		}
-		
-		Debug.appendWithoutDate("");
-		
-		if (currentGame == null)
-		{
-			Debug.appendWithoutDate("currentGame = null");
-		}
-		else
-		{
-			currentGame.debugDump("Current Game");
-		}
-		
-		Debug.appendWithoutDate("");
 	}
 	
 	@Override
