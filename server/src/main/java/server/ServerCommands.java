@@ -10,7 +10,6 @@ public interface ServerCommands
 	public static final String COMMAND_TRACE_ALL = "trace all";
 	public static final String COMMAND_TRACE_USEFUL = "trace useful";
 	public static final String COMMAND_SHUT_DOWN = "shut down";
-	public static final String COMMAND_DUMP_VARIABLES = "dump var ";
 	public static final String COMMAND_RESET = "reset room ";
 	public static final String COMMAND_CLEAR_ROOMS = "clear rooms";
 	public static final String COMMAND_DUMP_STATS = "stats";

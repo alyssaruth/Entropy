@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static util.LoggingUtilKt.dumpServerThreads;
+import static utils.InjectedThings.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class EntropyServer extends JFrame
@@ -1223,19 +1224,6 @@ public final class EntropyServer extends JFrame
 		{
 			toggleServerOnline();
 		}
-		else if (command.startsWith(COMMAND_DUMP_VARIABLES))
-		{
-			int length = COMMAND_DUMP_VARIABLES.length();
-			String roomName = command.substring(length);
-			Room room = hmRoomByName.get(roomName);
-			if (room == null)
-			{
-				Debug.append("No room found for name " + roomName);
-				return;
-			}
-			
-			room.dumpVariables();
-		}
 		else if (command.startsWith(COMMAND_RESET))
 		{
 			String roomIdStr = command.substring(COMMAND_RESET.length());
@@ -1469,7 +1457,6 @@ public final class EntropyServer extends JFrame
 		Debug.appendWithoutDate(COMMAND_TRACE_USER + "<username>");
 		Debug.appendWithoutDate(COMMAND_TRACE_MESSAGE_AND_RESPONSE + "<MessageName>");
 		Debug.appendWithoutDate(COMMAND_SHUT_DOWN);
-		Debug.appendWithoutDate(COMMAND_DUMP_VARIABLES + "<RoomId>");
 		Debug.appendWithoutDate(COMMAND_RESET + "<RoomId>");
 		Debug.appendWithoutDate(COMMAND_CLEAR_ROOMS);
 		Debug.appendWithoutDate(COMMAND_DUMP_STATS);
@@ -1588,9 +1575,6 @@ public final class EntropyServer extends JFrame
 		Debug.appendWithoutDate("hmNotificationsSentByNotificationType: " + hmNotificationsSentByNotificationType);
 		Debug.appendWithoutDate("hmMessagesReceivedByIp: " + hmMessagesReceivedByIp);
 		Debug.appendWithoutDate("blacklist: " + blacklist);
-		Debug.dumpList("usedSymmetricKeys", usedSymmetricKeys);
-		Debug.dumpList("tracedMessages", tracedMessages);
-		Debug.dumpList("tracedUsers", tracedUsers);
 	}
 	
 	private void dumpMemory(boolean forceGc)

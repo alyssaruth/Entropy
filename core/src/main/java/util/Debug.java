@@ -166,31 +166,6 @@ public class Debug implements CoreRegistry
 		append(trace, true);
 	}
 	
-	public static void dumpList(String name, List<?> list)
-	{
-		String s = name;
-		if (list == null)
-		{
-			s += ": null";
-			appendWithoutDate(s);
-			return;
-		}
-		
-		s += "(size: " + list.size() + "): ";
-		
-		for (int i=0; i<list.size(); i++)
-		{
-			if (i > 0)
-			{
-				s += "\n";
-			}
-			
-			s += list.get(i);
-		}
-		
-		appendWithoutDate(s);
-	}
-	
 	public static String getCurrentTimeForLogging()
 	{
 		long time = System.currentTimeMillis();

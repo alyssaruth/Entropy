@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static utils.InjectedThings.logger;
+
 public class ReplayConverter implements Registry
 {
 	public static final int REPLAY_VERSION = 1;
@@ -21,7 +23,6 @@ public class ReplayConverter implements Registry
 		if (replayDirectory == null)
 		{
 			//Never ok'd the preferences dialog - basically a clean install. Nothing to do.
-			Debug.append("Replay directory has never been set - will skip conversion and save replay version [" + REPLAY_VERSION + "]");
 			instance.putInt(INSTANCE_INT_REPLAY_CONVERSION, REPLAY_VERSION);
 			return;
 		}
@@ -29,12 +30,12 @@ public class ReplayConverter implements Registry
 		int lastConvertedVersion = instance.getInt(INSTANCE_INT_REPLAY_CONVERSION, 0);
 		if (lastConvertedVersion >= REPLAY_VERSION)
 		{
-			Debug.append("Replays are up to date (" + REPLAY_VERSION + ")");
+			logger.info("replaysUpToDate", "Replays are up to date (" + REPLAY_VERSION + ")");
 			return;
 		}
 		
 		DialogUtil.showInfo("Your replay files are in an out of date format - these will be converted now.");
-		Debug.appendBanner("Starting Replay Conversion to Verison " + REPLAY_VERSION);
+		logger.info("replayConversionStarted", "Starting Replay Conversion to Verison " + REPLAY_VERSION);
 		
 		boolean success = convertReplaysInSeparateThread(ReplayFileUtil.FOLDER_PERSONAL_REPLAYS);
 		if (success)
@@ -44,7 +45,7 @@ public class ReplayConverter implements Registry
 		
 		if (success)
 		{
-			Debug.appendBanner("Finished Replay Conversion");
+			logger.info("replayConversionFinished", "Replays were converted successfully");
 			instance.putInt(INSTANCE_INT_REPLAY_CONVERSION, REPLAY_VERSION);
 			DialogUtil.showInfo("Conversion finished successfully!");
 		}
@@ -72,8 +73,7 @@ public class ReplayConverter implements Registry
 		}
 		catch (Throwable t)
 		{
-			Debug.appendBanner("Failing Conversion");
-			Debug.stackTraceSilently(t);
+			logger.error("replayConversionFailed", "Replay conversion failed", t);
 			return false;
 		}
 		
@@ -87,7 +87,7 @@ public class ReplayConverter implements Registry
 		final File[] replayFiles = new File(directoryStr).listFiles();
 		if (replayFiles == null)
 		{
-			Debug.append("No " + folder + " replays to convert");
+			logger.info("noReplaysFound", "No " + folder + " replays to convert");
 			return;
 		}
 		
@@ -103,7 +103,7 @@ public class ReplayConverter implements Registry
 		ArrayList<File> filesFailed = new ArrayList<>();
 		
 		//Loop through and convert each file, adding it to the appropriate list
-		Debug.append("Converting " + replayFiles.length + " " + folder + " replays...");
+		logger.info("replayConversion", "Converting " + replayFiles.length + " " + folder + " replays...");
 		for (int i=0; i<replayFiles.length; i++)
 		{
 			convertReplay(replayFiles[i], filesConverted, filesSkipped, filesFailed);
@@ -111,10 +111,8 @@ public class ReplayConverter implements Registry
 		}
 		
 		//Log out the results
-		Debug.append("Finished conversion, results:");
-		Debug.appendWithoutDate("Successful: " + filesConverted.size());
-		Debug.appendWithoutDate("Skipped: " + filesSkipped.size());
-		Debug.appendWithoutDate("Failed: " + filesFailed.size());
+		logger.info("replayConversionFinished",
+				"Successful [" + filesConverted.size() + "], Skipped [" + filesSkipped.size() + "], Failed [" + filesFailed.size() + "]");
 		
 		//If we have failed replays, show an error and email examples
 		int failedSize = filesFailed.size();
@@ -188,7 +186,7 @@ public class ReplayConverter implements Registry
 		}
 		else
 		{
-			Debug.stackTrace("Trying to convert from unexpected version: " + version);
+			logger.error("unexpectedReplayVersion", "Trying to convert from unexpected version: " + version);
 		}
 		
 		//Increment the version and save the replay
