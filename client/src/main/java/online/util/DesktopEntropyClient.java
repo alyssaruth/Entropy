@@ -75,13 +75,6 @@ public class DesktopEntropyClient extends AbstractDesktopClient
 		senderThread.start();
 	}
 	
-	/*public void sendAsync(MessageSenderParams message)
-	{
-		MessageSender senderRunnable = new MessageSender(this, message);
-		Thread senderThread = new Thread(senderRunnable, "MessageSender");
-		senderThread.start();
-	}*/
-	
 	@Override
 	public String sendSyncOnDevice(MessageSender runnable)
 	{
@@ -91,6 +84,6 @@ public class DesktopEntropyClient extends AbstractDesktopClient
 	@Override
 	public void checkForUpdates()
 	{
-		UpdateChecker.checkForUpdates(FILE_NAME_ENTROPY_JAR, SERVER_PORT_NUMBER_DOWNLOAD);
+		UpdateManager.INSTANCE.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
 	}
 }

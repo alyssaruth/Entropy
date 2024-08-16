@@ -4,29 +4,16 @@ package util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 public class Debug implements CoreRegistry
 {
-	private static final long ERROR_MESSAGE_DELAY_MILLIS = 10000; //10s
-
-	private static long lastErrorMillis = -1;
-	
 	private static DebugOutput output = null;
-	private static DebugExtension debugExtension = null;
 	private static boolean logToSystemOut = false;
 
-	private static ThreadFactory loggerFactory = new ThreadFactory()
-	{
-		@Override
-		public Thread newThread(Runnable r)
-		{
-			return new Thread(r, "Logger");
-		}
-	};
+	private static ThreadFactory loggerFactory = r -> new Thread(r, "Logger");
 	private static ExecutorService logService = Executors.newFixedThreadPool(1, loggerFactory);
 	
 
@@ -117,27 +104,12 @@ public class Debug implements CoreRegistry
 	{
 		stackTrace(t, "");
 	}
-	public static void stackTrace(Throwable t, String message)
-	{
-		stackTrace(t, message, false);
-	}
 	public static void stackTraceNoError(Throwable t)
 	{
-		stackTrace(t, "", true);
+		stackTrace(t, "");
 	}
-	public static void stackTrace(Throwable t, String message, boolean suppressError)
+	public static void stackTrace(Throwable t, String message)
 	{
-		if (debugExtension != null
-		  && !suppressError)
-		{
-			boolean showError = System.currentTimeMillis() - lastErrorMillis > ERROR_MESSAGE_DELAY_MILLIS;
-			debugExtension.exceptionCaught(showError);
-			if (showError)
-			{
-				lastErrorMillis = System.currentTimeMillis();
-			}
-		}
-		
 		String datetime = getCurrentTimeForLogging();
 		
 		String trace = "";
@@ -178,11 +150,7 @@ public class Debug implements CoreRegistry
 	{
 		Debug.output = output;
 	}
-	
-	public static void setDebugExtension(DebugExtension debugExtension)
-	{
-		Debug.debugExtension = debugExtension;
-	}
+
 	public static void setLogToSystemOut(boolean logToSystemOut)
 	{
 		Debug.logToSystemOut = logToSystemOut;

@@ -76,6 +76,10 @@ public abstract class AbstractClient implements OnlineConstants
 	{
 		return operatingSystem.contains("mac") || operatingSystem.contains("darwin");
 	}
+	public static boolean isWindowsOs()
+	{
+		return operatingSystem.contains("windows");
+	}
 	
 	public void checkForUpdatesIfRequired()
 	{

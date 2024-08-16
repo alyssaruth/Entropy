@@ -265,7 +265,7 @@ public class ResponseHandler implements XmlConstants
 		
 		if (failureReason.contains("out of date"))
 		{
-			promptForUpdate(root);
+			promptForUpdate();
 		}
 		else
 		{
@@ -273,20 +273,15 @@ public class ResponseHandler implements XmlConstants
 		}
 	}
 	
-	private static void promptForUpdate(final Element rootElement)
+	private static void promptForUpdate()
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				int answer = DialogUtil.showQuestion("Entropy needs to update in order to connect. \n\nUpdate now?", false);
-				if (answer == JOptionPane.YES_OPTION)
-				{
-					UpdateChecker.startUpdate(rootElement, OnlineConstants.FILE_NAME_ENTROPY_JAR, OnlineConstants.SERVER_PORT_NUMBER_DOWNLOAD);
-				}
-			}
-		});
+		SwingUtilities.invokeLater(() -> {
+            int answer = DialogUtil.showQuestion("Entropy needs to update in order to connect. \n\nUpdate now?", false);
+            if (answer == JOptionPane.YES_OPTION)
+            {
+                UpdateManager.INSTANCE.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
+            }
+        });
 	}
 	
 	private static void handleKickOff(Element root)

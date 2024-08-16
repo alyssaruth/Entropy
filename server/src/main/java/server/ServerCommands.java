@@ -34,5 +34,4 @@ public interface ServerCommands
 	public static final String COMMAND_NOTIFICATION_LOGGING = "notification logging";
 	public static final String COMMAND_NOTIFY_USER = "notify ";
 	public static final String COMMAND_SERVER_VERSION = "version";
-	public static final String COMMAND_SERVER_RESET_CLIENT_VERSION = "reset version";
 }

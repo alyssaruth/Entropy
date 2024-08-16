@@ -5,6 +5,8 @@ import javax.swing.SwingUtilities;
 
 import screen.LoadingDialog;
 
+import java.awt.*;
+
 import static utils.InjectedThings.logger;
 
 public class DialogUtil 
@@ -113,5 +115,14 @@ public class DialogUtil
 	public static void dismissLoadingDialog()
 	{
 		loadingDialog.dismissDialog();
+	}
+
+	public static void showCustomMessage(Object message) {
+		JOptionPane.showMessageDialog(
+				null,
+				message,
+				"Information",
+				JOptionPane.INFORMATION_MESSAGE
+		);
 	}
 }

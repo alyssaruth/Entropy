@@ -103,7 +103,6 @@ public final class EntropyServer extends JFrame
 	
 	//Other
 	private String lastCommand = "";
-	private SuperHashMap<String, String> hmClientJarToVersion = new SuperHashMap<>();
 	
 	private PrivateKey privateKey = null;
 	
@@ -179,7 +178,6 @@ public final class EntropyServer extends JFrame
 		
 		//Initialise interfaces etc
 		EncryptionUtil.setBase64Interface(new Base64Desktop());
-		Debug.setDebugExtension(new ServerDebugExtension());
 		Debug.initialise(console);
 		
 		//Set other variables on Debug
@@ -223,7 +221,6 @@ public final class EntropyServer extends JFrame
 			
 			readInPrivateKey();
 			readUsedKeysFromFile();
-			readClientVersion();
 			registerDefaultRooms();
 			
 			Debug.append("Starting permanent threads");
@@ -367,14 +364,6 @@ public final class EntropyServer extends JFrame
 				Debug.stackTrace(t, "Unable to start listener thread on port " + i);
 			}
 		}
-		
-		startDownloadListener(FILE_NAME_ENTROPY_JAR, SERVER_PORT_NUMBER_DOWNLOAD);
-	}
-	private void startDownloadListener(String filename, int port)
-	{
-		DownloadListener listener = new DownloadListener(this, port, filename);
-		ServerThread downloadListener = new ServerThread(listener, "DownloadListener-" + port);
-		downloadListener.start();
 	}
 	
 	private void startFunctionThread()
@@ -857,10 +846,6 @@ public final class EntropyServer extends JFrame
 	{
 		return hmRoomByName.get(name);
 	}
-	public String getClientVersion(String jar)
-	{
-		return hmClientJarToVersion.get(jar);
-	}
 	public void toggleOnline()
 	{
 		online = !online;
@@ -1058,45 +1043,6 @@ public final class EntropyServer extends JFrame
 		catch (Throwable t)
 		{
 			Debug.append("Caught " + t + " trying to read in used keys");
-		}
-	}
-	
-	private void readClientVersion()
-	{
-		try
-		{
-			Charset charset = Charset.forName("US-ASCII");
-			List<String> jarsAndVersions = Files.readAllLines(FILE_PATH_CLIENT_VERSION, charset);
-			
-			for (int i=0; i<jarsAndVersions.size(); i++)
-			{
-				String jarAndVersionStr = jarsAndVersions.get(i);
-				ArrayList<String> jarAndVersion = StringUtil.getListFromDelims(jarAndVersionStr, ";");
-				
-				String jar = jarAndVersion.get(0);
-				String version = jarAndVersion.get(1);
-				
-				hmClientJarToVersion.put(jar, version);
-			}
-			
-			logClientVersions();
-		}
-		catch (Throwable t)
-		{
-			Debug.append("Caught " + t + " trying to read in client version");
-		}
-	}
-	private void logClientVersions()
-	{
-		Iterator<Map.Entry<String, String>> it = hmClientJarToVersion.entrySet().iterator();
-		for (; it.hasNext(); )
-		{
-			Map.Entry<String, String> jarAndVersion = it.next();
-			
-			String jar = jarAndVersion.getKey();
-			String version = jarAndVersion.getValue();
-			
-			Debug.append(FileUtil.stripFileExtension(jar) + " Version: " + version);
 		}
 	}
 	
@@ -1415,11 +1361,6 @@ public final class EntropyServer extends JFrame
 		else if (command.equals(COMMAND_SERVER_VERSION))
 		{
 			Debug.append("Server version: " + OnlineConstants.SERVER_VERSION);
-			logClientVersions();
-		}
-		else if (command.equals(COMMAND_SERVER_RESET_CLIENT_VERSION))
-		{
-			readClientVersion();
 		}
 		else
 		{
@@ -1480,7 +1421,6 @@ public final class EntropyServer extends JFrame
 		Debug.appendWithoutDate(COMMAND_NOTIFICATION_LOGGING);
 		Debug.appendWithoutDate(COMMAND_NOTIFY_USER + "<username>");
 		Debug.appendWithoutDate(COMMAND_SERVER_VERSION);
-		Debug.appendWithoutDate(COMMAND_SERVER_RESET_CLIENT_VERSION);
 	}
 	
 	private void dumpMessageStats()

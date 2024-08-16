@@ -2,6 +2,7 @@ plugins {
     id("Entropy.kotlin-common-conventions")
     id("com.ncorti.ktfmt.gradle") version "0.15.1"
     `java-library`
+    `java-test-fixtures`
 }
 
 ktfmt { kotlinLangStyle() }

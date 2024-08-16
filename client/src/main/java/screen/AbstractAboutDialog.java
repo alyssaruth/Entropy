@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import bean.HyperlinkAdaptor;
-import bean.HyperlinkListener;
+import bean.IHyperlinkListener;
 
 public abstract class AbstractAboutDialog extends JDialog 
-						 		  		  implements HyperlinkListener,
+						 		  		  implements IHyperlinkListener,
 						 		  			         ActionListener
 {
 	public AbstractAboutDialog() 

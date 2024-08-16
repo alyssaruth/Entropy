@@ -7,6 +7,9 @@ public interface OnlineConstants
 	
 	//Used in the AboutDialog and for sending logs
 	public static final String ENTROPY_VERSION_NUMBER = "v7.0.0";
+
+	public static final String ENTROPY_REPOSITORY_URL = "https://api.github.com/repos/alyssaruth/Entropy";
+	public static final String ENTROPY_MANUAL_DOWNLOAD_URL = "https://github.com/alyssaruth/Entropy/releases";
 	
 	//Filenames - for automatic updates
 	public static final String FILE_NAME_ENTROPY_JAR = "EntropyLive.jar";

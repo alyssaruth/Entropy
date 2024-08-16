@@ -101,8 +101,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 				Debug.appendWithoutDate("Response: " + responseStr);
 			}
 
-			if (symmetricKey != null
-			  && !DownloadHandler.isDownloadMessage(name))
+			if (symmetricKey != null)
 			{
 				responseStr = EncryptionUtil.encrypt(responseStr, symmetricKey);
 			}
@@ -225,15 +224,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		
 		Element root = message.getDocumentElement();
 		String name = root.getNodeName();
-		if (DownloadHandler.isDownloadMessage(name))
-		{
-			return DownloadHandler.processMessage(message, server);
-		}
-		
-		if (name.equals(ROOT_TAG_CLIENT_MAIL))
-		{
-			return EntropyEmailUtil.handleClientMail(server, root);
-		}
 		
 		if (!name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY))
 		{
