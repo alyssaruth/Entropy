@@ -1,14 +1,14 @@
 package logging
 
-import main.kotlin.testCore.CURRENT_TIME
-import main.kotlin.testCore.AbstractTest
-import main.kotlin.testCore.FakeLogDestination
-import main.kotlin.testCore.shouldContainKeyValues
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.CURRENT_TIME
+import main.kotlin.testCore.FakeLogDestination
+import main.kotlin.testCore.shouldContainKeyValues
 import org.junit.jupiter.api.Test
 
 class LoggerTest : AbstractTest() {

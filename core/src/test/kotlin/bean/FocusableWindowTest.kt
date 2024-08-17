@@ -1,9 +1,9 @@
 package bean
 
-import main.kotlin.testCore.AbstractTest
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import logging.KEY_ACTIVE_WINDOW
+import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
 import utils.InjectedThings.logger
 

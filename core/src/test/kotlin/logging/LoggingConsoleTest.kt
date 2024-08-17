@@ -1,9 +1,6 @@
 package logging
 
 import com.github.alyssaburlton.swingtest.flushEdt
-import main.kotlin.testCore.AbstractTest
-import main.kotlin.testCore.getAllChildComponentsForType
-import main.kotlin.testCore.makeLogRecord
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.comparables.shouldBeGreaterThan
@@ -12,6 +9,9 @@ import io.kotest.matchers.string.shouldContain
 import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.text.StyleConstants
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.getAllChildComponentsForType
+import main.kotlin.testCore.makeLogRecord
 import org.junit.jupiter.api.Test
 
 class LoggingConsoleTest : AbstractTest() {

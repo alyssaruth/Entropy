@@ -1,11 +1,11 @@
 package logging
 
-import main.kotlin.testCore.CURRENT_TIME_STRING
-import main.kotlin.testCore.AbstractTest
-import main.kotlin.testCore.makeLogRecord
 import io.kotest.matchers.string.shouldContain
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.CURRENT_TIME_STRING
+import main.kotlin.testCore.makeLogRecord
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

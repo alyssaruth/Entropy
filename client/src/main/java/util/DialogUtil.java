@@ -3,15 +3,11 @@ package util;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import screen.LoadingDialog;
-
-import java.awt.*;
-
 import static utils.InjectedThings.logger;
 
+@Deprecated()
 public class DialogUtil 
 {
-	private static LoadingDialog loadingDialog = new LoadingDialog();
 	private static boolean shownConnectionLost = false;
 	
 	public static void showInfo(String infoText)
@@ -105,24 +101,5 @@ public class DialogUtil
 			showErrorLater("The connection has been lost - EntropyOnline will now exit.");
 			shownConnectionLost = true;
 		}
-	}
-	
-	public static void showLoadingDialog(String text)
-	{
-		logger.info("loaderShown", text);
-		loadingDialog.showDialog(text);
-	}
-	public static void dismissLoadingDialog()
-	{
-		loadingDialog.dismissDialog();
-	}
-
-	public static void showCustomMessage(Object message) {
-		JOptionPane.showMessageDialog(
-				null,
-				message,
-				"Information",
-				JOptionPane.INFORMATION_MESSAGE
-		);
 	}
 }

@@ -1,9 +1,9 @@
 package logging
 
-import main.kotlin.testCore.AbstractTest
-import main.kotlin.testCore.shouldContainKeyValues
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.shouldContainKeyValues
 import org.junit.jupiter.api.Test
 
 class LoggerUncaughtExceptionHandlerTest : AbstractTest() {

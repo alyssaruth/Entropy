@@ -8,8 +8,8 @@ import javax.swing.JOptionPane
 import javax.swing.JPanel
 import kong.unirest.Unirest
 import kong.unirest.json.JSONObject
-import utils.InjectedThings.logger
 import kotlin.system.exitProcess
+import utils.InjectedThings.logger
 
 /**
  * Automatically check for and download updates using the Github API
@@ -34,7 +34,7 @@ object UpdateManager {
 
     fun queryLatestReleaseJson(repositoryUrl: String): JSONObject? {
         try {
-            DialogUtil.showLoadingDialog("Checking for updates...")
+            DialogUtilNew.showLoadingDialog("Checking for updates...")
 
             val response = Unirest.get("$repositoryUrl/releases/latest").asJson()
             if (response.status != 200) {
@@ -43,17 +43,17 @@ object UpdateManager {
                     "Received non-success HTTP status: ${response.status} - ${response.statusText}",
                     "responseBody" to response.body,
                 )
-                DialogUtil.showError("Failed to check for updates (unable to connect).")
+                DialogUtilNew.showError("Failed to check for updates (unable to connect).")
                 return null
             }
 
             return response.body.`object`
         } catch (t: Throwable) {
             logger.error("updateError", "Caught $t checking for updates", t)
-            DialogUtil.showError("Failed to check for updates (unable to connect).")
+            DialogUtilNew.showError("Failed to check for updates (unable to connect).")
             return null
         } finally {
-            DialogUtil.dismissLoadingDialog()
+            DialogUtilNew.dismissLoadingDialog()
         }
     }
 
@@ -73,7 +73,7 @@ object UpdateManager {
         }
 
         val answer =
-            DialogUtil.showQuestion(
+            DialogUtilNew.showQuestion(
                 "An update is available (${metadata.version}). Would you like to download it now?",
                 false
             )
@@ -91,7 +91,7 @@ object UpdateManager {
         panel.add(lblOne, BorderLayout.NORTH)
         panel.add(linkLabel, BorderLayout.SOUTH)
 
-        DialogUtil.showCustomMessage(panel)
+        DialogUtilNew.showCustomMessage(panel)
     }
 
     fun parseUpdateMetadata(responseJson: JSONObject): UpdateMetadata? {
@@ -126,7 +126,7 @@ object UpdateManager {
 
             val msg =
                 "Failed to launch update.bat - call the following manually to perform the update: \n\n$manualCommand"
-            DialogUtil.showError(msg)
+            DialogUtilNew.showError(msg)
             return
         }
 

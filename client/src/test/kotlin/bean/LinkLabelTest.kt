@@ -1,6 +1,5 @@
 package bean
 
-import main.kotlin.testCore.AbstractTest
 import com.github.alyssaburlton.swingtest.doClick
 import com.github.alyssaburlton.swingtest.doHover
 import com.github.alyssaburlton.swingtest.doHoverAway
@@ -9,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.awt.Color
 import java.awt.Cursor
+import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
 
 class LinkLabelTest : AbstractTest() {
