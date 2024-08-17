@@ -24,11 +24,7 @@ public class FileUploader extends JPanel
 {
 	private File selectedFile = null;
 	private ArrayList<FileUploadListener> listeners = new ArrayList<>();
-	
-	public FileUploader(FileFilter ff)
-	{
-		this(ff, "Upload");
-	}
+
 	public FileUploader(FileFilter ff, String buttonName)
 	{
 		setLayout(new BorderLayout(0, 0));

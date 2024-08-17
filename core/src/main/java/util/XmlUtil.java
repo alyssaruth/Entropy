@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,8 +17,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import object.SuperHashMap;
 
 public class XmlUtil 
 {
@@ -150,17 +146,6 @@ public class XmlUtil
 		return Long.parseLong(attribute);
 	}
 	
-	public static double getAttributeDouble(Element rootElement, String attributeName)
-	{
-		String attribute = rootElement.getAttribute(attributeName);
-		if (attribute.equals(""))
-		{
-			return 0;
-		}
-		
-		return Double.parseDouble(attribute);
-	}
-	
 	public static boolean getAttributeBoolean(Element rootElement, String attributeName)
 	{
 		String value = rootElement.getAttribute(attributeName);
@@ -225,39 +210,5 @@ public class XmlUtil
 		
 		message.appendChild(rootElement);
 		return message;
-	}
-	
-	public static SuperHashMap<Integer, Integer> readIntegerHashMap(Element rootElement, String tagName, String keyTag, String valueTag)
-	{
-		SuperHashMap<Integer, Integer> hm = new SuperHashMap<>();
-		
-		NodeList children = rootElement.getElementsByTagName(tagName);
-		int size = children.getLength();
-		for (int i=0; i<size; i++)
-		{
-			Element child = (Element)children.item(i);
-			int key = XmlUtil.getAttributeInt(child, keyTag);
-			int value = XmlUtil.getAttributeInt(child, valueTag);
-			
-			hm.put(key, value);
-		}
-		
-		return hm;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void writeHashMap(SuperHashMap hm, Document xmlDoc, Element rootElement, 
-	  String tagName, String keyTag, String valueTag)
-	{
-		Iterator<Map.Entry> it = hm.entrySet().iterator();
-		for (; it.hasNext(); )
-		{
-			Map.Entry entry = it.next();
-			
-			Element child = xmlDoc.createElement(tagName);
-			child.setAttribute(keyTag, "" + entry.getKey());
-			child.setAttribute(valueTag, "" + entry.getValue());
-			rootElement.appendChild(child);
-		}
 	}
 }

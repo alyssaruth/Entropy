@@ -17,10 +17,7 @@ import util.XmlConstants;
 import util.XmlUtil;
 
 public class XmlBuilderClient implements XmlConstants
-{	
-	public static final int CHAT_REQUEST_POLL_MILLIS				= 1000;
-	public static final int LOBBY_REQUEST_POLL_MILLIS				= 500;
-	
+{
 	/**
 	 * Used for symmetricKey requests
 	 */
