@@ -18,7 +18,6 @@ import object.UserConnection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import server.DownloadHandler;
 import server.EntropyServer;
 
 public class XmlBuilderServer implements XmlConstants,
@@ -126,7 +125,6 @@ public class XmlBuilderServer implements XmlConstants,
 			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
 			rootElement.setAttribute("FailureReason", "Your version of Entropy is out of date.\nDownload the newest version and try again.");
 			rootElement.setAttribute("VersionNumber", OnlineConstants.ENTROPY_VERSION_NUMBER);
-			rootElement.setAttribute("FileSize", "" + DownloadHandler.getLatestVersionFileSize(OnlineConstants.FILE_NAME_ENTROPY_JAR));
 			response.appendChild(rootElement);
 		}
 		else if (!AccountUtil.usernameExists(username))
@@ -861,7 +859,6 @@ public class XmlBuilderServer implements XmlConstants,
 		return !name.equals(ROOT_TAG_CONNECTION_REQUEST)
 		  && !name.equals(ROOT_TAG_NEW_ACCOUNT_REQUEST)
 		  && !name.equals(ROOT_TAG_RESET_PASSWORD_REQUEST)
-		  && !name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY)
-		  && !DownloadHandler.isDownloadMessage(name);
+		  && !name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY);
 	}
 }

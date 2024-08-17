@@ -1,3 +1,5 @@
+package main.kotlin.testCore
+
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

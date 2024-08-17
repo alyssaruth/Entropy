@@ -1,8 +1,8 @@
 package utils
 
 import getPercentage
-import helper.AbstractTest
 import io.kotest.matchers.shouldBe
+import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
 
 class MathsUtilTest : AbstractTest() {

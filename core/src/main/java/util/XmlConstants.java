@@ -7,8 +7,6 @@ public interface XmlConstants
 {
 	//Client
 	public static final String ROOT_TAG_NEW_SYMMETRIC_KEY			= "NewSymmetricKey";
-	public static final String ROOT_TAG_CRC_CHECK 					= "CrcCheck";
-	public static final String ROOT_TAG_CLIENT_MAIL					= "ClientMail";
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
 	public static final String ROOT_TAG_NEW_ACCOUNT_REQUEST 		= "NewAccountRequest";
 	public static final String ROOT_TAG_CHANGE_EMAIL_REQUEST		= "ChangeEmailRequest";

@@ -1,10 +1,15 @@
-package helper
+package main.kotlin.testCore
 
-import CURRENT_TIME
+import com.github.alyssaburlton.swingtest.findAll
+import com.github.alyssaburlton.swingtest.findWindow
+import com.github.alyssaburlton.swingtest.flushEdt
 import io.kotest.matchers.maps.shouldContainExactly
 import java.awt.Component
 import java.awt.Container
 import java.time.Instant
+import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.SwingUtilities
 import logging.LogRecord
 import logging.Severity
 
@@ -46,4 +51,25 @@ fun <T> addComponents(ret: MutableList<T>, components: Array<Component>, desired
             addComponents(ret, subComponents, desiredClazz)
         }
     }
+}
+
+fun getInfoDialog() = getOptionPaneDialog("Information")
+
+fun getQuestionDialog() = getOptionPaneDialog("Question")
+
+fun getErrorDialog() = getOptionPaneDialog("Error")
+
+private fun getOptionPaneDialog(title: String) = findWindow<JDialog> { it.title == title }!!
+
+fun JDialog.getDialogMessage(): String {
+    val messageLabels = findAll<JLabel>().filter { it.name == "OptionPane.label" }
+    return messageLabels.joinToString("\n\n") { it.text }
+}
+
+fun <T> runAsync(block: () -> T?): T? {
+    var result: T? = null
+    SwingUtilities.invokeLater { result = block() }
+
+    flushEdt()
+    return result
 }

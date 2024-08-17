@@ -1,6 +1,5 @@
-package helper
+package main.kotlin.testCore
 
-import CURRENT_TIME
 import java.time.Clock
 import java.time.ZoneId
 import logging.LoggerUncaughtExceptionHandler

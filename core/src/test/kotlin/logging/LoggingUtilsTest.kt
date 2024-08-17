@@ -1,8 +1,8 @@
 package logging
 
-import helper.AbstractTest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
 
 class LoggingUtilsTest : AbstractTest() {
