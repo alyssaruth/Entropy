@@ -11,6 +11,8 @@ import object.VectropyBid;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import static utils.InjectedThings.logger;
+
 public class ReplayConverterVersion0
 {
 	public static boolean convertReplay(Element root)
@@ -37,7 +39,7 @@ public class ReplayConverterVersion0
 		catch (Throwable t)
 		{
 			//We're going to email logs at the end of the conversion anyway
-			Debug.stackTraceSilently(t);
+			logger.error("conversionFailed", "Failed to convert replay");
 		}
 		
 		return success;

@@ -15,10 +15,13 @@ import java.util.Random;
 
 import javax.crypto.SecretKey;
 
+import kotlin.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import utils.InjectedThings;
+
+import static utils.InjectedThings.logger;
 
 public class MessageUtil implements OnlineConstants
 {	
@@ -171,10 +174,12 @@ public class MessageUtil implements OnlineConstants
 	  String encryptedResponseStr)
 	{
 		AbstractClient.getInstance().finishServerCommunication();
-		
-		Debug.stackTraceSilently(t);
-		Debug.stackTrace(clientStackTrace, "Previous stack:");
-		Debug.append("messageString was: " + messageStr);
+
+		logger.error("messageFailure",
+				"Failed to send message",
+				t,
+				new Pair<>("message", messageStr),
+				new Pair<>("previousStack", clientStackTrace));
 		
 		String responseStr = null;
 		if (symmetricKey != null)

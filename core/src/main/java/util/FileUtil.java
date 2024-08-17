@@ -24,43 +24,6 @@ import javax.swing.JFileChooser;
 
 public class FileUtil
 {
-	public static String getMd5Crc(String filePath)
-	{
-		String crc = null;
-		
-		try
-		{
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(Files.readAllBytes(Paths.get(filePath)));
-			byte[] digest = md.digest();
-			
-			crc = EncryptionUtil.base64Interface.encode(digest);
-		}
-		catch (Throwable t)
-		{
-			Debug.append("Caught " + t + " trying to get CRC of file");
-		}
-		
-		return crc;
-	}
-	
-	public static long getFileSize(String filePath)
-	{
-		long fileSize = -1;
-		File f = new File(filePath);
-		
-		try (FileInputStream fis = new FileInputStream(f))
-		{
-			fileSize = fis.getChannel().size();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t, "Couldn't obtain file size for path " + filePath);
-		}
-		
-		return fileSize;
-	}
-	
 	public static void saveTextToFile(String text, Path destinationPath)
 	{
 		Charset charset = Charset.forName("US-ASCII");
@@ -100,11 +63,5 @@ public class FileUtil
 	{
 		String encodedStringToWrite = EncryptionUtil.base64Interface.encode(stringToWrite.getBytes());
 		saveTextToFile(encodedStringToWrite, destinationPath);
-	}
-	
-	public static String stripFileExtension(String filename)
-	{
-		int ix = filename.indexOf('.');
-		return filename.substring(0, ix);
 	}
 }

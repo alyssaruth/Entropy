@@ -8,8 +8,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import kotlin.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import static utils.InjectedThings.logger;
 
 public class MessageSender implements Runnable
 {
@@ -152,7 +155,7 @@ public class MessageSender implements Runnable
 		  && messageParms.getAlwaysRetryOnSoTimeout())
 		{
 			//Always retry, don't bother logging a line
-			Debug.append("Had SocketTimeoutException for " + messageName + ", retrying", !AbstractClient.devMode);
+			logger.info("messageFailure", "Had SocketTimeoutException for " + messageName + ", retrying");
 			return sendMessage();
 		}
 		
@@ -161,16 +164,16 @@ public class MessageSender implements Runnable
 		{
 			currentRetries++;
 			messageParms.setMillis(0);
-			Debug.append(t.getMessage() + " for " + messageName + ", will retry (" + currentRetries + "/" + retries + ")");
+			logger.info("messageFailure", t.getMessage() + " for " + messageName + ", will retry (" + currentRetries + "/" + retries + ")");
 			return sendMessage();
 		}
 		else
 		{
-			Debug.append("Failed to send message after " + retries + " retries.");
-			Debug.append("Message: " + messageParms.getMessageString());
-			Debug.stackTraceSilently(t);
-			Debug.append("Previous stack:");
-			Debug.stackTraceSilently(messageParms.getCreationStack());
+			logger.error("messageFailure",
+					"Failed to send message after " + retries + " retries",
+					t,
+					new Pair<>("message", messageParms.getMessageString()),
+					new Pair<>("previousStack", messageParms.getCreationStack()));
 			
 			if (client.isCommunicatingWithServer())
 			{

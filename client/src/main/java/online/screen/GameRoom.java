@@ -706,7 +706,7 @@ public abstract class GameRoom extends RoomWrapper
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTraceNoError(t);
+			logger.error("replayClearError", "Error clearing replay", t);
 		}
 		
 		adjustPlayersBasedOnHands();
