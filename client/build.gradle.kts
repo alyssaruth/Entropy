@@ -11,7 +11,7 @@ dependencies {
     implementation("com.miglayout:miglayout-swing:5.2")
     implementation("com.konghq:unirest-java:3.14.2")
     implementation(project(":core"))
-    testImplementation(testFixtures(project(":core")))
+    testImplementation(project(":test-core"))
 }
 
 application {

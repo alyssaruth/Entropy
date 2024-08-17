@@ -1,6 +1,6 @@
 package bean
 
-import helper.AbstractTest
+import main.kotlin.testCore.AbstractTest
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import logging.KEY_ACTIVE_WINDOW

@@ -1,9 +1,9 @@
 package logging
 
 import com.github.alyssaburlton.swingtest.flushEdt
-import helper.AbstractTest
-import helper.getAllChildComponentsForType
-import helper.makeLogRecord
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.getAllChildComponentsForType
+import main.kotlin.testCore.makeLogRecord
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.comparables.shouldBeGreaterThan

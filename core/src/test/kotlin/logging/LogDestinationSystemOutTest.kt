@@ -1,8 +1,8 @@
 package logging
 
-import CURRENT_TIME_STRING
-import helper.AbstractTest
-import helper.makeLogRecord
+import main.kotlin.testCore.CURRENT_TIME_STRING
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.makeLogRecord
 import io.kotest.matchers.string.shouldContain
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream

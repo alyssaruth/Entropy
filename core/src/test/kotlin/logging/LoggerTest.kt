@@ -1,9 +1,9 @@
 package logging
 
-import CURRENT_TIME
-import helper.AbstractTest
-import helper.FakeLogDestination
-import helper.shouldContainKeyValues
+import main.kotlin.testCore.CURRENT_TIME
+import main.kotlin.testCore.AbstractTest
+import main.kotlin.testCore.FakeLogDestination
+import main.kotlin.testCore.shouldContainKeyValues
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe

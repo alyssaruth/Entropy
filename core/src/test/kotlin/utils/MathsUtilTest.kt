@@ -1,7 +1,7 @@
 package utils
 
 import getPercentage
-import helper.AbstractTest
+import main.kotlin.testCore.AbstractTest
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 

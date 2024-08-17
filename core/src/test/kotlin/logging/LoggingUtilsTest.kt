@@ -1,6 +1,6 @@
 package logging
 
-import helper.AbstractTest
+import main.kotlin.testCore.AbstractTest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import org.junit.jupiter.api.Test

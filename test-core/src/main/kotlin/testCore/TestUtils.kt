@@ -1,6 +1,5 @@
-package helper
+package main.kotlin.testCore
 
-import CURRENT_TIME
 import io.kotest.matchers.maps.shouldContainExactly
 import java.awt.Component
 import java.awt.Container

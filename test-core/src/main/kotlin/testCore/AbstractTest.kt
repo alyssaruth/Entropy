@@ -1,4 +1,4 @@
-package helper
+package main.kotlin.testCore
 
 import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.assertions.fail

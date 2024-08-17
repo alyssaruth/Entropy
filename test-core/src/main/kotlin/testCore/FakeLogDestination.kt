@@ -1,4 +1,4 @@
-package helper
+package main.kotlin.testCore
 
 import logging.ILogDestination
 import logging.LogRecord
