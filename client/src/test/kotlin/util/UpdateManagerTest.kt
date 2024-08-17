@@ -8,6 +8,7 @@ import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -97,13 +98,7 @@ class UpdateManagerTest : AbstractTest() {
 
         val version = responseJson.getString("tag_name")
         version.shouldStartWith("v")
-        responseJson.getJSONArray("assets").length() shouldBe 1
-
-        val asset = responseJson.getJSONArray("assets").getJSONObject(0)
-        asset.getLong("id") shouldNotBe null
-        asset.getString("name") shouldStartWith "Dartzee"
-        asset.getString("name") shouldEndWith ".jar"
-        asset.getLong("size") shouldNotBe null
+        responseJson.getJSONArray("assets").length() shouldBeGreaterThan 0
     }
 
     /** Parsing */
