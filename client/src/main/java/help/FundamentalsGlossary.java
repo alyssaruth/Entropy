@@ -5,43 +5,34 @@ import java.awt.Font;
 
 import javax.swing.JTextPane;
 
-import util.Debug;
 import util.EntropyColour;
 import util.Registry;
 
-@SuppressWarnings("serial")
 public class FundamentalsGlossary extends HelpPanel
 								  implements Registry
 {
 	private String panelName = "FundamentalsGlossary";
 	private JTextPane title = new JTextPane();
 	private JTextPane paneOne = new JTextPane();
-	private JTextPane[] textFields = {title, paneOne};
 	
 	public FundamentalsGlossary()
 	{
-		try
-		{
-			setBackground(Color.WHITE);
-			setPanelName(panelName);
-			setTextFields(textFields);
-			addMouseListeners("perfect", "challenge");
-			setNodeName("Glossary");
-			setLayout(null);
-			paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneOne.setContentType("text/html");
-			paneOne.setBounds(21, 54, 429, 282);
-			add(paneOne);
-			title.setText("Glossary");
-			title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
-			title.setFont(new Font("Tahoma", Font.BOLD, 18));
-			title.setBounds(21, 25, 159, 30);
-			add(title);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setBackground(Color.WHITE);
+		setPanelName(panelName);
+		addMouseListeners("perfect", "challenge");
+		setNodeName("Glossary");
+		setLayout(null);
+		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneOne.setContentType("text/html");
+		paneOne.setBounds(21, 54, 429, 282);
+		add(paneOne);
+		title.setText("Glossary");
+		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
+		title.setFont(new Font("Tahoma", Font.BOLD, 18));
+		title.setBounds(21, 25, 159, 30);
+		add(title);
+
+		setTextFieldsEditable(false);
 	}
 	
 	@Override

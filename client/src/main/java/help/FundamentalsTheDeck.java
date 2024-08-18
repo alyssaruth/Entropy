@@ -1,19 +1,13 @@
 package help;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JLabel;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
-
 import screen.ScreenCache;
 import util.CardsUtil;
-import util.Debug;
 import util.EntropyColour;
 import util.Registry;
 
-@SuppressWarnings("serial")
+import javax.swing.*;
+import java.awt.*;
+
 public class FundamentalsTheDeck extends HelpPanel
 								 implements Registry
 {
@@ -24,7 +18,6 @@ public class FundamentalsTheDeck extends HelpPanel
 	private String panelName = "FundamentalsTheDeck";
 	private JTextPane title = new JTextPane();
 	private JTextPane paneOne = new JTextPane();
-	private JTextPane[] textFields = {title, paneOne};
 	
 	private final JLabel clubLabel = new JLabel("\u2663");
 	private final JLabel diamondLabel = new JLabel("\u2666");
@@ -40,77 +33,70 @@ public class FundamentalsTheDeck extends HelpPanel
 	
 	public FundamentalsTheDeck()
 	{
-		try
-		{
-			setBackground(Color.WHITE);
-			setPanelName(panelName);
-			setTextFields(textFields);
-			addMouseListeners("bidding");
-			setNodeName("The Deck");
-			setLayout(null);
-			paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneOne.setContentType("text/html");
-			paneOne.setBounds(21, 54, 429, 310);
-			add(paneOne);
-			title.setText("The Deck");
-			title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
-			title.setFont(new Font("Tahoma", Font.BOLD, 18));
-			title.setEditable(false);
-			title.setBounds(21, 25, 165, 30);
-			add(title);
-			clubLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			clubLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
-			clubLabel.setBounds(80, 360, 65, 60);
-			add(clubLabel);
-			label_4.setHorizontalAlignment(SwingConstants.CENTER);
-			label_4.setFont(new Font("Arial", Font.PLAIN, 40));
-			label_4.setBounds(120, 360, 65, 60);
-			add(label_4);
-			diamondLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			diamondLabel.setForeground(Color.RED);
-			diamondLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
-			diamondLabel.setBounds(160, 360, 65, 60);
-			add(diamondLabel);
-			label_3.setHorizontalAlignment(SwingConstants.CENTER);
-			label_3.setFont(new Font("Arial", Font.PLAIN, 40));
-			label_3.setBounds(200, 360, 65, 60);
-			add(label_3);
-			heartLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			heartLabel.setForeground(Color.RED);
-			heartLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
-			heartLabel.setBounds(240, 360, 65, 60);
-			add(heartLabel);
-			moonLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			moonLabel.setForeground(EntropyColour.COLOUR_SUIT_PURPLE);
-			moonLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 32));
-			moonLabel.setBounds(240, 360, 65, 60);
-			add(moonLabel);
-			label_5.setHorizontalAlignment(SwingConstants.CENTER);
-			label_5.setFont(new Font("Arial", Font.PLAIN, 40));
-			label_5.setBounds(280, 360, 65, 60);
-			add(label_5);
-			spadeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			spadeLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
-			spadeLabel.setBounds(320, 360, 65, 60);
-			add(spadeLabel);
-			rightmostLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			rightmostLabel.setFont(new Font("Arial", Font.PLAIN, 40));
-			rightmostLabel.setBounds(360, 360, 65, 60);
-			add(rightmostLabel);
-			leftmostLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			leftmostLabel.setFont(new Font("Arial", Font.PLAIN, 40));
-			leftmostLabel.setBounds(40, 360, 65, 60);
-			add(leftmostLabel);
-			starLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			starLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
-			starLabel.setBounds(400, 360, 65, 60);
-			starLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
-			add(starLabel);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setBackground(Color.WHITE);
+		setPanelName(panelName);
+		addMouseListeners("bidding");
+		setNodeName("The Deck");
+		setLayout(null);
+		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneOne.setContentType("text/html");
+		paneOne.setBounds(21, 54, 429, 310);
+		add(paneOne);
+		title.setText("The Deck");
+		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
+		title.setFont(new Font("Tahoma", Font.BOLD, 18));
+		title.setEditable(false);
+		title.setBounds(21, 25, 165, 30);
+		add(title);
+		clubLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		clubLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
+		clubLabel.setBounds(80, 360, 65, 60);
+		add(clubLabel);
+		label_4.setHorizontalAlignment(SwingConstants.CENTER);
+		label_4.setFont(new Font("Arial", Font.PLAIN, 40));
+		label_4.setBounds(120, 360, 65, 60);
+		add(label_4);
+		diamondLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		diamondLabel.setForeground(Color.RED);
+		diamondLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
+		diamondLabel.setBounds(160, 360, 65, 60);
+		add(diamondLabel);
+		label_3.setHorizontalAlignment(SwingConstants.CENTER);
+		label_3.setFont(new Font("Arial", Font.PLAIN, 40));
+		label_3.setBounds(200, 360, 65, 60);
+		add(label_3);
+		heartLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		heartLabel.setForeground(Color.RED);
+		heartLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
+		heartLabel.setBounds(240, 360, 65, 60);
+		add(heartLabel);
+		moonLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		moonLabel.setForeground(EntropyColour.COLOUR_SUIT_PURPLE);
+		moonLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 32));
+		moonLabel.setBounds(240, 360, 65, 60);
+		add(moonLabel);
+		label_5.setHorizontalAlignment(SwingConstants.CENTER);
+		label_5.setFont(new Font("Arial", Font.PLAIN, 40));
+		label_5.setBounds(280, 360, 65, 60);
+		add(label_5);
+		spadeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		spadeLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
+		spadeLabel.setBounds(320, 360, 65, 60);
+		add(spadeLabel);
+		rightmostLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		rightmostLabel.setFont(new Font("Arial", Font.PLAIN, 40));
+		rightmostLabel.setBounds(360, 360, 65, 60);
+		add(rightmostLabel);
+		leftmostLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		leftmostLabel.setFont(new Font("Arial", Font.PLAIN, 40));
+		leftmostLabel.setBounds(40, 360, 65, 60);
+		add(leftmostLabel);
+		starLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		starLabel.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 40));
+		starLabel.setBounds(400, 360, 65, 60);
+		starLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
+		add(starLabel);
+		setTextFieldsEditable(false);
 	}
 	
 	private void setPaneOneText(boolean moonsAndStars)

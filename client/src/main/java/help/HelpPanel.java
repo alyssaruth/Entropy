@@ -6,48 +6,43 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
 import screen.HelpDialog;
 import screen.ScreenCache;
-import util.Debug;
+import utils.SwingUtilsKt;
 
-@SuppressWarnings("serial")
+import static utils.InjectedThings.logger;
+
 /**
  * Object representing a 'page' of the help dialog.
  */
-public class HelpPanel extends JPanel
+public abstract class HelpPanel extends JPanel
 {
 	private String panelName = null;
 	private String nodeName = null;
-	private JTextPane[] textFields = null;
 
 	public HelpPanel()
 	{
 
 	}
 
+	private List<JTextPane> getTextFields() {
+		return SwingUtilsKt.getAllChildComponentsForType(this, JTextPane.class);
+	}
+
 	public boolean contains(String searchStr)
 	{
-		if (textFields == null)
-		{
-			Debug.stackTrace("NULL textFields for panel " + panelName);
-			return false;
-		}
-		int length = textFields.length;
-
 		String searchStrLowerCase = searchStr.toLowerCase();
 
-		for (int i=0; i<length; i++)
-		{
+		for (var fieldToCheck : getTextFields()) {
 			try
 			{
-				JTextPane fieldToCheck = textFields[i];
 				int fieldLength = fieldToCheck.getDocument().getLength();
 				String fieldText = fieldToCheck.getDocument().getText(0, fieldLength);
 				String fieldTextLowerCase = fieldText.toLowerCase();
@@ -59,7 +54,7 @@ public class HelpPanel extends JPanel
 			}
 			catch (Throwable t)
 			{
-				Debug.stackTrace(t);
+				logger.error("searchError", "Encountered error searching for " + searchStr, t);
 			}
 		}
 
@@ -70,32 +65,17 @@ public class HelpPanel extends JPanel
 	{
 		int termLength = searchStr.length();
 
-		if (textFields == null)
-		{
-			Debug.stackTrace("NULL textFields for panel " + panelName);
-			return;
-		}
-
-		int length = textFields.length;
 		HighlightPainter hlp = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 
-		for (int j=0; j<length; j++)
+		for (var pane : getTextFields())
 		{
-			JTextPane pane = textFields[j];
-
-			if (pane == null)
-			{
-				Debug.stackTrace("NULL pane for panel " + panelName + " at index " + j);
-				return;
-			}
-
 			Highlighter highlighter = pane.getHighlighter();
 			int paneLength = pane.getDocument().getLength();
 
 			try
 			{
 				highlighter.removeAllHighlights();
-				String paneText = pane.getDocument().getText(0, paneLength);
+				String paneText = getDocumentText(pane);
 
 				for (int i=0; i<paneLength - termLength + 1; i++)
 				{
@@ -109,51 +89,35 @@ public class HelpPanel extends JPanel
 			}
 			catch (Throwable e)
 			{
-				Debug.stackTrace(e);
+				logger.error("highlightError", "Error highlighting pane", e);
 			}
 		}
 	}
 
-	public void setTextFieldsEditable(boolean editable) throws Throwable
+	public void setTextFieldsEditable(boolean editable)
 	{
-		int size = textFields.length;
-
-		for (int i=0; i<size; i++)
-		{
-			JTextPane pane = textFields[i];
+		for (var pane: getTextFields()) {
 			pane.setEditable(editable);
 		}
 	}
 
-	public void addMouseListeners(final String... wordsToExclude) throws Throwable
+	public void addMouseListeners(final String... wordsToExclude)
 	{
-		int size = textFields.length;
-
-		for (int i=0; i<size; i++)
-		{
-			final JTextPane pane = textFields[i];
-
+		for (var pane: getTextFields()) {
 			pane.addMouseListener(new MouseListener()
 			{
 				@Override
 				public void mouseClicked(MouseEvent arg0) 
 				{
-					try
-					{
-						String text = getDocumentText(pane);
-						Point pt = arg0.getPoint();
-						int pos = pane.viewToModel(pt);
+					String text = getDocumentText(pane);
+					Point pt = arg0.getPoint();
+					int pos = pane.viewToModel(pt);
 
-						String word = getWordFromPosition(text, pos);
+					String word = getWordFromPosition(text, pos);
 
-						if (isKeyWord(word, wordsToExclude))
-						{
-							navigateToPageBasedOnKeyWord(word);
-						}
-					}
-					catch (Throwable t)
+					if (isKeyWord(word, wordsToExclude))
 					{
-						Debug.stackTrace(t);
+						navigateToPageBasedOnKeyWord(word);
 					}
 				}
 
@@ -184,10 +148,6 @@ public class HelpPanel extends JPanel
 			});
 
 			pane.addMouseMotionListener(new MouseMotionAdapter() {
-
-				@Override
-				public void mouseDragged(MouseEvent arg0) { }
-
 				@Override
 				public void mouseMoved(MouseEvent arg0) 
 				{
@@ -200,30 +160,23 @@ public class HelpPanel extends JPanel
 
 	private void mouseHovered(JTextPane pane, MouseEvent arg0, String[] wordsToExclude)
 	{
-		try
+		String text = getDocumentText(pane);
+		Point pt = arg0.getPoint();
+		int pos = pane.viewToModel(pt);
+
+		String word = getWordFromPosition(text, pos);
+
+		if (isKeyWord(word, wordsToExclude))
 		{
-			String text = getDocumentText(pane);
-			Point pt = arg0.getPoint();
-			int pos = pane.viewToModel(pt);
-
-			String word = getWordFromPosition(text, pos);
-
-			if (isKeyWord(word, wordsToExclude))
-			{
-				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			}
-			else
-			{
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		}
-		catch (Throwable t)
+		else
 		{
-			Debug.stackTrace(t);
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
-	private String getWordFromPosition(String text, int position) throws Throwable
+	private String getWordFromPosition(String text, int position)
 	{
 		if (position < 1)
 		{
@@ -291,7 +244,7 @@ public class HelpPanel extends JPanel
 
 	private void navigateToPageBasedOnKeyWord(String keyWord)
 	{
-		Debug.append("Navigated for word " + keyWord, true);
+		logger.info("navigatedForWord", "Navigated for word " + keyWord);
 		HelpDialog helpDialog = ScreenCache.getHelpDialog();
 
 		if (keyWord.startsWith("bidd"))
@@ -331,27 +284,22 @@ public class HelpPanel extends JPanel
 		try
 		{
 			int length = pane.getDocument().getLength();
-			String documentText = pane.getDocument().getText(0, length);
-			return documentText;
+			return pane.getDocument().getText(0, length);
 		}
 		catch (Throwable e)
 		{
-			Debug.stackTrace(e);
+			logger.error("textPaneError", "Error getting text from pane", e);
 			return null;
 		}
 	}
 
 	private boolean isKeyWord(String word, String[] wordsToExclude)
 	{
-		int size = wordsToExclude.length;
-		for (int i=0; i<size; i++)
-		{
-			String wordToExclude = wordsToExclude[i];
-			if (word.startsWith(wordToExclude) && !wordToExclude.isEmpty())
-			{
-				return false;
-			}
-		}
+		for (String wordToExclude : wordsToExclude) {
+            if (word.startsWith(wordToExclude) && !wordToExclude.isEmpty()) {
+                return false;
+            }
+        }
 
 		return word.equals("bidding") 
 		  || word.startsWith("challeng") 
@@ -377,16 +325,9 @@ public class HelpPanel extends JPanel
 	{
 		this.nodeName = nodeName;
 	}
-	protected void setTextFields(JTextPane[] textFields) throws Throwable
-	{
-		this.textFields = textFields;
-		setTextFieldsEditable(false);
-	}
 
-	public void fireAppearancePreferencesChange()
-	{
-		//should never be called into directly
-		Debug.stackTrace("Calling into HelpPanel.fireAppearancePreferencesChange - this should not be used!");
+	public void fireAppearancePreferencesChange() {
+
 	}
 	
 	public void refresh()

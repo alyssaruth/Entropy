@@ -1,14 +1,11 @@
 package help;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JTextPane;
-
 import screen.ScreenCache;
-import util.Debug;
 import util.EntropyColour;
 import util.Registry;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class RulesVectropyBidding extends HelpPanel
@@ -19,50 +16,42 @@ public class RulesVectropyBidding extends HelpPanel
 	private JTextPane paneOne = new JTextPane();
 	private JTextPane subtitle = new JTextPane();
 	private JTextPane paneTwo = new JTextPane();
-	private JTextPane[] textFields = {title, paneOne, subtitle, paneTwo};
 	
 	private String clubsColour = "black";
 	private String diamondsColour = "red";
 	
 	public RulesVectropyBidding()
 	{
-		try
-		{
-			setBackground(Color.WHITE);
-			setPanelName(panelName);
-			setTextFields(textFields);
-			addMouseListeners("bidding");
-			setNodeName("Bidding");
-			setLayout(null);
-			paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneOne.setContentType("text/html");
-			paneOne.setBounds(21, 54, 429, 230);
-			paneOne.setEditable(false);
-			add(paneOne);
-			paneTwo.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneTwo.setContentType("text/html");
-			paneTwo.setText("<html>A bid is higher than another if the sum of its elements is higher, with the added restriction that each bid must include at least as many of each individual suit as the one before it. For example, if faced with a bid of (0, 0, 0, 2):\r\n\r\n<ul style=\"margin-left:10px; padding:0px\">\r\n<li style=\"margin-bottom: 6px;\"> (1, 0, 0, 2) is a valid higher bid because it includes (0, 0, 0, 2).</li>\r\n<li style=\"margin-bottom:6px;\"> (5, 5, 5, 0) is a higher bid, but this is <b>not</b> legal because it contains fewer spades than the bid before it.</li></ul></html>");
-			paneTwo.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			paneTwo.setBounds(21, 320, 429, 156);
-			paneTwo.setEditable(false);
-			add(paneTwo);
-			title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
-			title.setFont(new Font("Tahoma", Font.BOLD, 18));
-			title.setText("Bidding");
-			title.setBounds(21, 25, 159, 30);
-			title.setEditable(false);
-			add(title);
-			subtitle.setText("Bid Hierarchy");
-			subtitle.setForeground(EntropyColour.COLOUR_HELP_TITLE);
-			subtitle.setFont(new Font("Tahoma", Font.BOLD, 18));
-			subtitle.setBounds(21, 290, 159, 30);
-			subtitle.setEditable(false);
-			add(subtitle);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setBackground(Color.WHITE);
+		setPanelName(panelName);
+		addMouseListeners("bidding");
+		setNodeName("Bidding");
+		setLayout(null);
+		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneOne.setContentType("text/html");
+		paneOne.setBounds(21, 54, 429, 230);
+		paneOne.setEditable(false);
+		add(paneOne);
+		paneTwo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneTwo.setContentType("text/html");
+		paneTwo.setText("<html>A bid is higher than another if the sum of its elements is higher, with the added restriction that each bid must include at least as many of each individual suit as the one before it. For example, if faced with a bid of (0, 0, 0, 2):\r\n\r\n<ul style=\"margin-left:10px; padding:0px\">\r\n<li style=\"margin-bottom: 6px;\"> (1, 0, 0, 2) is a valid higher bid because it includes (0, 0, 0, 2).</li>\r\n<li style=\"margin-bottom:6px;\"> (5, 5, 5, 0) is a higher bid, but this is <b>not</b> legal because it contains fewer spades than the bid before it.</li></ul></html>");
+		paneTwo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		paneTwo.setBounds(21, 320, 429, 156);
+		paneTwo.setEditable(false);
+		add(paneTwo);
+		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
+		title.setFont(new Font("Tahoma", Font.BOLD, 18));
+		title.setText("Bidding");
+		title.setBounds(21, 25, 159, 30);
+		title.setEditable(false);
+		add(title);
+		subtitle.setText("Bid Hierarchy");
+		subtitle.setForeground(EntropyColour.COLOUR_HELP_TITLE);
+		subtitle.setFont(new Font("Tahoma", Font.BOLD, 18));
+		subtitle.setBounds(21, 290, 159, 30);
+		subtitle.setEditable(false);
+		add(subtitle);
+		setTextFieldsEditable(false);
 	}
 	
 	@Override

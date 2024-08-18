@@ -1,12 +1,9 @@
 package help;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.JTextPane;
-
-import util.Debug;
 import util.EntropyColour;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class MiscCheatCodes extends HelpPanel
 {
@@ -14,7 +11,6 @@ public class MiscCheatCodes extends HelpPanel
 	private JTextPane title = new JTextPane();
 	private JTextPane paneIntro = new JTextPane();
 	private JTextPane paneOne = new JTextPane();
-	private JTextPane[] textFields = {title, paneIntro, paneOne};
 	
 	private static String cheatsText = "<html><b>- showmethecards: </b>Turn all hands face-up!<br><br>"
 									 + "<b>- maxbids: </b> Lists the amount of each suit present in the current game.<br><br>"
@@ -25,34 +21,27 @@ public class MiscCheatCodes extends HelpPanel
 	
 	public MiscCheatCodes()
 	{
-		try
-		{
-			setBackground(Color.WHITE);
-			setPanelName(panelName);
-			setTextFields(textFields);
-			addMouseListeners("");
-			setNodeName("Cheat Codes");
-			setLayout(null);
-			paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneOne.setContentType("text/html");
-			paneOne.setText(cheatsText);
-			paneOne.setBounds(21, 156, 429, 317);
-			add(paneOne);
-			title.setText("Cheat Codes");
-			title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
-			title.setFont(new Font("Tahoma", Font.BOLD, 18));
-			title.setEditable(false);
-			title.setBounds(21, 25, 192, 30);
-			add(title);
-			paneIntro.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			paneIntro.setContentType("text/html");
-			paneIntro.setText("<html>Congratulations on reaching 50 achievements! Here are some cheats you can enter whilst playing the game, which I originally created to make testing easier. Whilst in the main window, press CTRL+; to bring up the command bar, then enter any of the following commands:</html>");
-			paneIntro.setBounds(21, 54, 429, 91);
-			add(paneIntro);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setBackground(Color.WHITE);
+		setPanelName(panelName);
+		addMouseListeners("");
+		setNodeName("Cheat Codes");
+		setLayout(null);
+		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneOne.setContentType("text/html");
+		paneOne.setText(cheatsText);
+		paneOne.setBounds(21, 156, 429, 317);
+		add(paneOne);
+		title.setText("Cheat Codes");
+		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
+		title.setFont(new Font("Tahoma", Font.BOLD, 18));
+		title.setEditable(false);
+		title.setBounds(21, 25, 192, 30);
+		add(title);
+		paneIntro.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		paneIntro.setContentType("text/html");
+		paneIntro.setText("<html>Congratulations on reaching 50 achievements! Here are some cheats you can enter whilst playing the game, which I originally created to make testing easier. Whilst in the main window, press CTRL+; to bring up the command bar, then enter any of the following commands:</html>");
+		paneIntro.setBounds(21, 54, 429, 91);
+		add(paneIntro);
+		setTextFieldsEditable(false);
 	}
 }
