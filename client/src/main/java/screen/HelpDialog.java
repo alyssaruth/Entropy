@@ -47,26 +47,25 @@ import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
 
-@SuppressWarnings("serial")
 public class HelpDialog extends JFrame
 						implements TreeSelectionListener,
 								   WindowListener,
 								   Registry
 {
-	private HelpPanel fundamentalsTheDeck = new FundamentalsTheDeck();
-	private HelpPanel fundamentalsGlossary = new FundamentalsGlossary();
-	private HelpPanel rulesEntropyIntroduction = new RulesEntropyIntroduction();
-	private HelpPanel rulesEntropyBidding = new RulesEntropyBidding();
-	private HelpPanel rulesEntropyChallenging = new RulesEntropyChallenging();
-	private HelpPanel rulesVectropyIntroduction = new RulesVectropyIntroduction();
-	private HelpPanel rulesVectropyBidding = new RulesVectropyBidding();
-	private HelpPanel rulesVectropyChallenging = new RulesVectropyChallenging();
-	private HelpPanel rulesIllegal = new RulesIllegal();
-	private HelpPanel toolsGameplaySettings = new ToolsGameplaySettings();
-	private HelpPanel toolsReplayViewer = new ToolsReplayViewer();
-	private HelpPanel miscBugReport = new MiscBugReport();
-	private HelpPanel miscClearingSaveData = new MiscClearingSaveData();
-	private HelpPanel miscCheatCodes = new MiscCheatCodes();
+	private final HelpPanel fundamentalsTheDeck = new FundamentalsTheDeck();
+	private final HelpPanel fundamentalsGlossary = new FundamentalsGlossary();
+	private final HelpPanel rulesEntropyIntroduction = new RulesEntropyIntroduction();
+	private final HelpPanel rulesEntropyBidding = new RulesEntropyBidding();
+	private final HelpPanel rulesEntropyChallenging = new RulesEntropyChallenging();
+	private final HelpPanel rulesVectropyIntroduction = new RulesVectropyIntroduction();
+	private final HelpPanel rulesVectropyBidding = new RulesVectropyBidding();
+	private final HelpPanel rulesVectropyChallenging = new RulesVectropyChallenging();
+	private final HelpPanel rulesIllegal = new RulesIllegal();
+	private final HelpPanel toolsGameplaySettings = new ToolsGameplaySettings();
+	private final HelpPanel toolsReplayViewer = new ToolsReplayViewer();
+	private final HelpPanel miscBugReport = new MiscBugReport();
+	private final HelpPanel miscClearingSaveData = new MiscClearingSaveData();
+	private final HelpPanel miscCheatCodes = new MiscCheatCodes();
 	
 	private DefaultMutableTreeNode nodeToHighlightAfterSearch = null;
 	private DefaultMutableTreeNode currentNode = new DefaultMutableTreeNode();
@@ -92,7 +91,8 @@ public class HelpDialog extends JFrame
 		searchBox.setBounds(62, 11, 178, 20);
 		leftPane.add(searchBox);
 		searchBox.setColumns(10);
-		lblSearch.setBounds(10, 14, 46, 14);
+        JLabel lblSearch = new JLabel("Search:");
+        lblSearch.setBounds(10, 14, 46, 14);
 		leftPane.add(lblSearch);
 		JPanel selectionTreePanel = new JPanel();
 		selectionTreePanel.setBorder(null);
@@ -141,13 +141,12 @@ public class HelpDialog extends JFrame
 		addWindowListener(this);
 	}
 	
-	private JFormattedTextField searchBox = new JFormattedTextField();
-	private JLabel lblSearch = new JLabel("Search:");
-	private DefaultMutableTreeNode root = new DefaultMutableTreeNode("Index");
+	private final JFormattedTextField searchBox = new JFormattedTextField();
+    private DefaultMutableTreeNode root = new DefaultMutableTreeNode("Index");
 	private JTree tree = new JTree(root);
-	private JScrollPane helpPane = new JScrollPane();
-	private JScrollPane treePane = new JScrollPane();
-	private JLabel noSearchResults = new JLabel("There are no results to display.");
+	private final JScrollPane helpPane = new JScrollPane();
+	private final JScrollPane treePane = new JScrollPane();
+	private final JLabel noSearchResults = new JLabel("There are no results to display.");
 	
 	public void initVariables()
 	{
@@ -375,12 +374,6 @@ public class HelpDialog extends JFrame
 		}
     }
 
-    @SuppressWarnings("unchecked")
-    public void setSelectionForWord() {
-        setSelectionForWord(null);
-    }
-
-    @SuppressWarnings("unchecked")
 	public void setSelectionForWord(String word)
 	{
 		searchBox.setText("");
@@ -388,8 +381,7 @@ public class HelpDialog extends JFrame
 		Enumeration<TreeNode> children = root.children();
 		setSelectionForWordRecursively(children, word);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private void setSelectionForWordRecursively(Enumeration<TreeNode> nodes, String word)
 	{
 		while (nodes.hasMoreElements())

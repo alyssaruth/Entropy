@@ -14,10 +14,9 @@ public class FundamentalsTheDeck extends HelpPanel
 	private String clubString = "clubs (<font color = \"black\">\u2663</font>)";
 	private String diamondString = "diamonds (<font color=\"red\">\u2666</font>)";
 	private String moonString = null;
-	
-	private String panelName = "FundamentalsTheDeck";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
+
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
 	
 	private final JLabel clubLabel = new JLabel("\u2663");
 	private final JLabel diamondLabel = new JLabel("\u2666");
@@ -30,12 +29,9 @@ public class FundamentalsTheDeck extends HelpPanel
 	private final JLabel label_5 = new JLabel("<");
 	private final JLabel rightmostLabel = new JLabel("<");
 	private final JLabel leftmostLabel = new JLabel("<");
-	
-	public FundamentalsTheDeck()
-	{
+
+	public FundamentalsTheDeck() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("bidding");
 		setNodeName("The Deck");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -96,9 +92,20 @@ public class FundamentalsTheDeck extends HelpPanel
 		starLabel.setBounds(400, 360, 65, 60);
 		starLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
 		add(starLabel);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
 	}
-	
+
+	@Override
+	public String getPanelName() {
+		return "FundamentalsTheDeck";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"bidding"};
+	}
+
 	private void setPaneOneText(boolean moonsAndStars)
 	{
 		String paneOneText = "<html>For the standard game, a normal deck of 52 cards is used. This deck is made up of four suits: "
@@ -113,7 +120,7 @@ public class FundamentalsTheDeck extends HelpPanel
 		
 		paneOneText += "The 13 cards in each suit are the 13 ranks of cards: ace (A), two (2), three (3), four (4), "
 					+ "five (5), six (6), seven (7), eight (8), nine (9), ten (T), jack (J), queen (Q) and king (K). "
-					+ "\r\n<br><br>\r\nWhen playing Entropy and its variants, the focus is on the suit as that\u2019s what is used during the bidding. "
+					+ "\r\n<br><br>\r\nWhen playing Entropy and its variants, the focus is on the suit as that’s what is used during the bidding. "
 					+ "Each card is worth one of its own suit, irrespective of rank. For example, the five of hearts (5<font color=\"red\">\u2665</font>) "
 					+ "is worth one heart. However, aces are special cards. Not only are they worth one of their own suit, but they are also worth an extra one of all the suits. "
 					+ "This means that the ace of spades (A\u2660) is worth one club, one diamond, one heart and two spades (one for being a spade and one for being an ace)."

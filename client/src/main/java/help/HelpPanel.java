@@ -3,8 +3,8 @@ package help;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 
@@ -24,12 +24,17 @@ import static utils.InjectedThings.logger;
  */
 public abstract class HelpPanel extends JPanel
 {
-	private String panelName = null;
 	private String nodeName = null;
 
-	public HelpPanel()
-	{
+	public abstract String getPanelName();
 
+	protected String[] searchTermsToExclude() {
+		return new String[0];
+	}
+
+	protected void finaliseComponents() {
+		addMouseListeners(searchTermsToExclude());
+		setTextFieldsReadOnly();
 	}
 
 	private List<JTextPane> getTextFields() {
@@ -94,17 +99,17 @@ public abstract class HelpPanel extends JPanel
 		}
 	}
 
-	public void setTextFieldsEditable(boolean editable)
+	private void setTextFieldsReadOnly()
 	{
 		for (var pane: getTextFields()) {
-			pane.setEditable(editable);
+			pane.setEditable(false);
 		}
 	}
 
-	public void addMouseListeners(final String... wordsToExclude)
+	private void addMouseListeners(String[] wordsToExclude)
 	{
 		for (var pane: getTextFields()) {
-			pane.addMouseListener(new MouseListener()
+			pane.addMouseListener(new MouseAdapter()
 			{
 				@Override
 				public void mouseClicked(MouseEvent arg0) 
@@ -126,25 +131,6 @@ public abstract class HelpPanel extends JPanel
 				{
 					mouseHovered(pane, arg0, wordsToExclude);
 				}
-
-				@Override
-				public void mouseExited(MouseEvent arg0) 
-				{
-
-				}
-
-				@Override
-				public void mousePressed(MouseEvent arg0) 
-				{
-
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent arg0) 
-				{
-
-				}
-
 			});
 
 			pane.addMouseMotionListener(new MouseMotionAdapter() {
@@ -249,22 +235,22 @@ public abstract class HelpPanel extends JPanel
 
 		if (keyWord.startsWith("bidd"))
 		{
-			if (panelName.contains("Entropy"))
+			if (getPanelName().contains("Entropy"))
 			{
 				helpDialog.setSelectionForWord("RulesEntropyBidding");
 			}
-			else if (panelName.contains("Vectropy"))
+			else if (getPanelName().contains("Vectropy"))
 			{
 				helpDialog.setSelectionForWord("RulesVectropyBidding");
 			}
 		}
 		else if (keyWord.startsWith("chall"))
 		{
-			if (panelName.contains("Entropy"))
+			if (getPanelName().contains("Entropy"))
 			{
 				helpDialog.setSelectionForWord("RulesEntropyChallenging");
 			}
-			else if (panelName.contains("Vectropy"))
+			else if (getPanelName().contains("Vectropy"))
 			{
 				helpDialog.setSelectionForWord("RulesVectropyChallenging");
 			}
@@ -313,14 +299,6 @@ public abstract class HelpPanel extends JPanel
 		return nodeName;
 	}
 
-	public String getPanelName()
-	{
-		return panelName;
-	}
-	public void setPanelName(String panelName)
-	{
-		this.panelName = panelName;
-	}
 	public void setNodeName(String nodeName)
 	{
 		this.nodeName = nodeName;

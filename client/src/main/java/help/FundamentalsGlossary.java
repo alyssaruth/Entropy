@@ -11,15 +11,11 @@ import util.Registry;
 public class FundamentalsGlossary extends HelpPanel
 								  implements Registry
 {
-	private String panelName = "FundamentalsGlossary";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	
-	public FundamentalsGlossary()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+
+	public FundamentalsGlossary() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("perfect", "challenge");
 		setNodeName("Glossary");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -32,9 +28,19 @@ public class FundamentalsGlossary extends HelpPanel
 		title.setBounds(21, 25, 159, 30);
 		add(title);
 
-		setTextFieldsEditable(false);
+		finaliseComponents();
 	}
-	
+
+	@Override
+	public String getPanelName() {
+		return "FundamentalsGlossary";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"perfect", "challenge"};
+	}
+
 	@Override
 	public void refresh() 
 	{

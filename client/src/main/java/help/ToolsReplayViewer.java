@@ -7,8 +7,6 @@ import java.awt.*;
 
 public class ToolsReplayViewer extends HelpPanel
 {
-	private String panelName = "ToolsReplayViewer";
-	
 	private final JTextPane title = new JTextPane();
 	private final JLabel lblReplayTable = new JLabel("");
 	private final JTextPane txtpnIntroduction = new JTextPane();
@@ -25,12 +23,9 @@ public class ToolsReplayViewer extends HelpPanel
 	private final JTextPane titleImportingExporting = new JTextPane();
 	private final JTextPane txtpnImportingExporting = new JTextPane();
 	private final JPanel panel_2 = new JPanel();
-		
-	public ToolsReplayViewer()
-	{
+
+	public ToolsReplayViewer() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("");
 		setNodeName("Replay Viewer");
 		setLayout(null);
 		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
@@ -126,6 +121,12 @@ public class ToolsReplayViewer extends HelpPanel
 		txtpnImportingExporting.setText("Replays are divided into 'Personal' and 'Imported' categories. The Personal category corresponds to the replays you have recorded yourself, whilst the Imported category provides you with a way to view the replays of other people. \r\n<br><br>\r\nExporting: If you have a replay you want to show to someone else, you will first need to export it. To do this, select the row in your replay table and click the 'Export' button. This will allow you to choose a name for the file and save it somewhere on your PC.\r\n<br><br>\r\nImporting: Once you have a file to import, go to the 'Imported' tab of the Replay Viewer, find the file and click 'Import'. You shouldn't try to move it manually into the 'Imported' folder as this will skip the conversion process and so the file won't be readable.");
 		txtpnImportingExporting.setBounds(10, 40, 423, 280);
 		panel_2.add(txtpnImportingExporting);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "ToolsReplayViewer";
 	}
 }

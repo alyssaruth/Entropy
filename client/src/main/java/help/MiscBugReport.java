@@ -7,15 +7,11 @@ import java.awt.*;
 
 public class MiscBugReport extends HelpPanel
 {
-	private String panelName = "MiscBugReport";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneIntro = new JTextPane();
-	
-	public MiscBugReport()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneIntro = new JTextPane();
+
+	public MiscBugReport() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("");
 		setNodeName("Bug Report");
 		setLayout(null);
 		title.setText("Bug Report");
@@ -40,6 +36,11 @@ public class MiscBugReport extends HelpPanel
 		label.setBounds(35, 610, 379, 105);
 		add(label);
 
-		setTextFieldsEditable(false);
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "MiscBugReport";
 	}
 }

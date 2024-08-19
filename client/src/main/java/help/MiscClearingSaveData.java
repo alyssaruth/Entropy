@@ -7,16 +7,12 @@ import java.awt.*;
 
 public class MiscClearingSaveData extends HelpPanel
 {
-	private String panelName = "MiscClearingSaveData";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneIntro = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	
-	public MiscClearingSaveData()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneIntro = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+
+	public MiscClearingSaveData() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("");
 		setNodeName("Clearing Data");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -39,6 +35,12 @@ public class MiscClearingSaveData extends HelpPanel
 		paneIntro.setText("<html>Options to clear saved data can be found under File > Clear Data. This will bring up the following dialog: </html>");
 		paneIntro.setBounds(21, 54, 429, 50);
 		add(paneIntro);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "MiscClearingSaveData";
 	}
 }

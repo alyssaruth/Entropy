@@ -7,24 +7,19 @@ import util.Registry;
 import javax.swing.*;
 import java.awt.*;
 
-@SuppressWarnings("serial")
 public class RulesVectropyBidding extends HelpPanel
 								  implements Registry
 {
-	private String panelName = "RulesVectropyBidding";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	private JTextPane subtitle = new JTextPane();
-	private JTextPane paneTwo = new JTextPane();
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+	private final JTextPane subtitle = new JTextPane();
+	private final JTextPane paneTwo = new JTextPane();
 	
 	private String clubsColour = "black";
 	private String diamondsColour = "red";
-	
-	public RulesVectropyBidding()
-	{
+
+	public RulesVectropyBidding() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("bidding");
 		setNodeName("Bidding");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -51,9 +46,20 @@ public class RulesVectropyBidding extends HelpPanel
 		subtitle.setBounds(21, 290, 159, 30);
 		subtitle.setEditable(false);
 		add(subtitle);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
 	}
-	
+
+	@Override
+	public String getPanelName() {
+		return "RulesVectropyBidding";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"bidding"};
+	}
+
 	@Override
 	public void fireAppearancePreferencesChange()
 	{

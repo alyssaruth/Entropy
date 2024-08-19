@@ -7,15 +7,11 @@ import java.awt.*;
 
 public class RulesEntropyIntroduction extends HelpPanel
 {
-	private String panelName = "RulesEntropyIntroduction";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	
-	public RulesEntropyIntroduction()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+
+	public RulesEntropyIntroduction() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("");
 		setNodeName("Introduction");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -28,6 +24,12 @@ public class RulesEntropyIntroduction extends HelpPanel
 		title.setFont(new Font("Tahoma", Font.BOLD, 18));
 		title.setBounds(21, 25, 159, 30);
 		add(title);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "RulesEntropyIntroduction";
 	}
 }

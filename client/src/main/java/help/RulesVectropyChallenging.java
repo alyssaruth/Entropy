@@ -7,15 +7,11 @@ import java.awt.*;
 
 public class RulesVectropyChallenging extends HelpPanel
 {
-	private String panelName = "RulesVectropyChallenging";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	
-	public RulesVectropyChallenging()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+
+	public RulesVectropyChallenging() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("challeng");
 		setNodeName("Challenging");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -29,6 +25,17 @@ public class RulesVectropyChallenging extends HelpPanel
 		title.setEditable(false);
 		title.setBounds(21, 25, 216, 30);
 		add(title);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "RulesVectropyChallenging";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"challeng"};
 	}
 }

@@ -7,17 +7,13 @@ import java.awt.*;
 
 public class RulesEntropyBidding extends HelpPanel
 {
-	private String panelName = "RulesEntropyBidding";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	private JTextPane subtitle = new JTextPane();
-	private JTextPane paneTwo = new JTextPane();
-	
-	public RulesEntropyBidding()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+	private final JTextPane subtitle = new JTextPane();
+	private final JTextPane paneTwo = new JTextPane();
+
+	public RulesEntropyBidding() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("bidding");
 		setNodeName("Bidding");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -44,6 +40,17 @@ public class RulesEntropyBidding extends HelpPanel
 		subtitle.setBounds(21, 284, 159, 30);
 		subtitle.setEditable(false);
 		add(subtitle);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "RulesEntropyBidding";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"bidding"};
 	}
 }

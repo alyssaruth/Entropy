@@ -7,15 +7,11 @@ import java.awt.*;
 
 public class RulesIllegal extends HelpPanel
 {
-	private String panelName = "RulesIllegal";
-	private JTextPane title = new JTextPane();
-	private JTextPane paneOne = new JTextPane();
-	
-	public RulesIllegal()
-	{
+	private final JTextPane title = new JTextPane();
+	private final JTextPane paneOne = new JTextPane();
+
+	public RulesIllegal() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("bid");
 		setNodeName("Illegal!");
 		setLayout(null);
 		paneOne.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -30,6 +26,17 @@ public class RulesIllegal extends HelpPanel
 		title.setBounds(21, 25, 159, 30);
 		title.setEditable(false);
 		add(title);
-		setTextFieldsEditable(false);
+
+		finaliseComponents();
+	}
+
+	@Override
+	public String getPanelName() {
+		return "RulesIllegal";
+	}
+
+	@Override
+	protected String[] searchTermsToExclude() {
+		return new String[]{"bid"};
 	}
 }

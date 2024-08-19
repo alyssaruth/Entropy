@@ -9,8 +9,7 @@ import java.awt.*;
 public class ToolsGameplaySettings extends HelpPanel
 								   implements Registry
 {
-	private String panelName = "ToolsGameplaySettings";
-	private JTextPane title = new JTextPane();
+	private final JTextPane title = new JTextPane();
 	private final JLabel bulletThree = new JLabel("");
 	private final JLabel bulletFour = new JLabel("");
 	private final JLabel playBlindImage = new JLabel("");
@@ -28,13 +27,9 @@ public class ToolsGameplaySettings extends HelpPanel
 	private final JPanel blindPanel = new JPanel();
 	private final JPanel panel = new JPanel();
 	private final JLabel label = new JLabel("");
-	
-	
-	public ToolsGameplaySettings()
-	{
+
+	public ToolsGameplaySettings() {
 		setBackground(Color.WHITE);
-		setPanelName(panelName);
-		addMouseListeners("");
 		setNodeName("Gameplay Settings");
 		setLayout(null);
 		title.setForeground(EntropyColour.COLOUR_HELP_TITLE);
@@ -118,7 +113,11 @@ public class ToolsGameplaySettings extends HelpPanel
 		playBlindImage.setIcon(new ImageIcon(ToolsGameplaySettings.class.getResource("/help/playingBlind_backBlue.png")));
 		playBlindImage.setBounds(128, 114, 199, 157);
 		blindPanel.add(playBlindImage);
-		setTextFieldsEditable(false);
+	}
+
+	@Override
+	public String getPanelName() {
+		return "ToolsGameplaySettings";
 	}
 	
 	@Override
