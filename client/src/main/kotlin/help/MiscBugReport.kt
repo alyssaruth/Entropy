@@ -9,7 +9,6 @@ import util.EntropyColour
 
 class MiscBugReport : HelpPanel() {
     override val nodeName = "Bug Report"
-    override val panelName = "MiscBugReport"
 
     private val title = JTextPane()
     private val paneIntro = JTextPane()

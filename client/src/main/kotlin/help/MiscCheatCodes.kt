@@ -7,7 +7,6 @@ import util.EntropyColour
 
 class MiscCheatCodes : HelpPanel() {
     override val nodeName = "Cheat Codes"
-    override val panelName = "MiscCheatCodes"
 
     private val title = JTextPane()
     private val paneIntro = JTextPane()

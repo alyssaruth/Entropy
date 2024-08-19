@@ -7,7 +7,6 @@ import util.EntropyColour
 
 class RulesIllegal : HelpPanel() {
     override val nodeName = "Illegal!"
-    override val panelName = "RulesIllegal"
 
     private val title = JTextPane()
     private val paneOne = JTextPane()

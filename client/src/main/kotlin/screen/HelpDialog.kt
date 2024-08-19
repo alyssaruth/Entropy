@@ -192,13 +192,11 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
         tree.selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
         tree.addTreeSelectionListener(this)
 
-        val count = tree.rowCount
-
-        if (count == 1) {
+        if (root.childCount == 0) {
             treePane.setViewportView(noSearchResults)
             helpPane.setViewportView(JPanel())
         } else {
-            for (i in 0 ..< tree.rowCount) {
+            for (i in 0 ..< 50) {
                 tree.expandRow(i)
             }
 
@@ -326,20 +324,25 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
         }
     }
 
-    fun setSelectionForWord(word: String) {
+    inline fun <reified T : HelpPanel> selectPane() {
+        selectPane(T::class.java)
+    }
+
+    fun <T : HelpPanel> selectPane(clazz: Class<T>) {
         searchBox.text = ""
         refreshNodes("")
         val children = root.children()
-        setSelectionForWordRecursively(children, word)
+        selectPaneRecursively(children, clazz)
     }
 
-    private fun setSelectionForWordRecursively(nodes: Enumeration<TreeNode>, word: String) {
+    private fun <T : HelpPanel> selectPaneRecursively(
+        nodes: Enumeration<TreeNode>,
+        clazz: Class<T>
+    ) {
         while (nodes.hasMoreElements()) {
             val node = nodes.nextElement() as DefaultMutableTreeNode
             if (node.isLeaf) {
-                val panel = node.userObject as HelpPanel
-                val panelName = panel.panelName
-                if (panelName == word) {
+                if (node.userObject.javaClass == clazz) {
                     val model = tree.model as DefaultTreeModel
                     val nodePath = model.getPathToRoot(node)
                     tree.selectionPath = TreePath(nodePath)
@@ -347,7 +350,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
                 }
             } else {
                 val children = node.children()
-                setSelectionForWordRecursively(children, word)
+                selectPaneRecursively(children, clazz)
             }
         }
     }

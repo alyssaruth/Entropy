@@ -12,7 +12,6 @@ import util.Registry
 
 class ToolsGameplaySettings : HelpPanel(), Registry {
     override val nodeName = "Gameplay Settings"
-    override val panelName = "ToolsGameplaySettings"
 
     private val title = JTextPane()
     private val bulletThree = JLabel("")

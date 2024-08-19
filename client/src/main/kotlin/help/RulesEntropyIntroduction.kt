@@ -7,7 +7,6 @@ import util.EntropyColour
 
 class RulesEntropyIntroduction : HelpPanel() {
     override val nodeName = "Introduction"
-    override val panelName = "RulesEntropyIntroduction"
 
     private val title = JTextPane()
     private val paneOne = JTextPane()

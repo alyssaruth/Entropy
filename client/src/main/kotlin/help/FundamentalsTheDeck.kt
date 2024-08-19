@@ -11,7 +11,6 @@ import util.Registry
 
 class FundamentalsTheDeck : HelpPanel(), Registry {
     override val nodeName = "The Deck"
-    override val panelName = "FundamentalsTheDeck"
 
     private var clubString = "clubs (<font color = \"black\">\u2663</font>)"
     private var diamondString = "diamonds (<font color=\"red\">\u2666</font>)"

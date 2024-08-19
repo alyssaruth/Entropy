@@ -10,7 +10,6 @@ import util.EntropyColour
 
 class ToolsReplayViewer : HelpPanel() {
     override val nodeName = "Replay Viewer"
-    override val panelName = "ToolsReplayViewer"
 
     private val title = JTextPane()
     private val lblReplayTable = JLabel("")

@@ -8,7 +8,6 @@ import util.Registry
 
 class RulesVectropyBidding : HelpPanel(), Registry {
     override val nodeName = "Bidding"
-    override val panelName = "RulesVectropyBidding"
 
     private val title = JTextPane()
     private val paneOne = JTextPane()

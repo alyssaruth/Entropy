@@ -9,7 +9,6 @@ import util.EntropyColour
 
 class MiscClearingSaveData : HelpPanel() {
     override val nodeName = "Clearing Data"
-    override val panelName = "MiscClearingSaveData"
 
     private val title = JTextPane()
     private val paneIntro = JTextPane()

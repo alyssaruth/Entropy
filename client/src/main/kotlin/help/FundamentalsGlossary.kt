@@ -7,7 +7,6 @@ import util.EntropyColour
 import util.Registry
 
 class FundamentalsGlossary : HelpPanel(), Registry {
-    override val panelName = "FundamentalsGlossary"
     override val nodeName = "Glossary"
 
     private val title = JTextPane()

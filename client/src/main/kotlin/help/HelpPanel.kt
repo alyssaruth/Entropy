@@ -17,7 +17,6 @@ import utils.getAllChildComponentsForType
 
 /** Object representing a 'page' of the help dialog. */
 abstract class HelpPanel : JPanel() {
-    abstract val panelName: String
     abstract val nodeName: String
 
     protected open fun searchTermsToExclude(): List<String> {
@@ -186,21 +185,21 @@ abstract class HelpPanel : JPanel() {
         val helpDialog = ScreenCache.getHelpDialog()
 
         if (keyWord.startsWith("bidd")) {
-            if (panelName.contains("Entropy")) {
-                helpDialog.setSelectionForWord("RulesEntropyBidding")
-            } else if (panelName.contains("Vectropy")) {
-                helpDialog.setSelectionForWord("RulesVectropyBidding")
+            if (javaClass.simpleName.contains("Entropy")) {
+                helpDialog.selectPane<RulesEntropyBidding>()
+            } else if (javaClass.simpleName.contains("Vectropy")) {
+                helpDialog.selectPane<RulesVectropyBidding>()
             }
         } else if (keyWord.startsWith("chall")) {
-            if (panelName.contains("Entropy")) {
-                helpDialog.setSelectionForWord("RulesEntropyChallenging")
-            } else if (panelName.contains("Vectropy")) {
-                helpDialog.setSelectionForWord("RulesVectropyChallenging")
+            if (javaClass.simpleName.contains("Entropy")) {
+                helpDialog.selectPane<RulesEntropyChallenging>()
+            } else if (javaClass.simpleName.contains("Vectropy")) {
+                helpDialog.selectPane<RulesVectropyChallenging>()
             }
         } else if (keyWord == "order") {
-            helpDialog.setSelectionForWord("FundamentalsTheDeck")
+            helpDialog.selectPane<FundamentalsTheDeck>()
         } else if (keyWord == "perfect") {
-            helpDialog.setSelectionForWord("FundamentalsGlossary")
+            helpDialog.selectPane<FundamentalsGlossary>()
         }
     }
 
