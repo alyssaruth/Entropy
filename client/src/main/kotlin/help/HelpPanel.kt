@@ -128,12 +128,10 @@ abstract class HelpPanel : JPanel() {
             }
     }
 
-    private fun getWordFromPosition(text: String?, position: Int): String {
+    private fun getWordFromPosition(text: String, position: Int): String {
         if (position < 1) {
             return ""
         }
-
-        val length = text!!.length
 
         val character = text.substring(position - 1, position)
 
@@ -158,7 +156,7 @@ abstract class HelpPanel : JPanel() {
             }
         }
 
-        if (position < length) {
+        if (position < text.length) {
             var i = 1
             var characterToTheRight = text.substring(position + i - 1, position + i)
 

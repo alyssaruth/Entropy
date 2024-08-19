@@ -19,13 +19,11 @@ class RulesIllegal : HelpPanel() {
         paneOne.text =
             "<html>The 'Illegal' option provides an alternative to bidding higher or challenging when facing a bid. If a player declares 'Illegal', they claim that the bid they were faced with was <font color=\"blue\"><u>perfect</u></font>. If they are right the opponent loses a card for the next round, else they lose a card - regardless of whether the bid they were faced with was an overbid or an underbid.</html>"
         paneOne.setBounds(21, 54, 429, 220)
-        paneOne.isEditable = false
         add(paneOne)
         title.foreground = EntropyColour.COLOUR_HELP_TITLE
         title.font = Font("Tahoma", Font.BOLD, 18)
         title.text = "Illegal!"
         title.setBounds(21, 25, 159, 30)
-        title.isEditable = false
         add(title)
 
         finaliseComponents()

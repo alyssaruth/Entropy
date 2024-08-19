@@ -23,7 +23,6 @@ class RulesVectropyBidding : HelpPanel(), Registry {
         paneOne.font = Font("SansSerif", Font.PLAIN, 14)
         paneOne.contentType = "text/html"
         paneOne.setBounds(21, 54, 429, 230)
-        paneOne.isEditable = false
         add(paneOne)
         paneTwo.font = Font("SansSerif", Font.PLAIN, 14)
         paneTwo.contentType = "text/html"
@@ -31,19 +30,16 @@ class RulesVectropyBidding : HelpPanel(), Registry {
             "<html>A bid is higher than another if the sum of its elements is higher, with the added restriction that each bid must include at least as many of each individual suit as the one before it. For example, if faced with a bid of (0, 0, 0, 2):\r\n\r\n<ul style=\"margin-left:10px; padding:0px\">\r\n<li style=\"margin-bottom: 6px;\"> (1, 0, 0, 2) is a valid higher bid because it includes (0, 0, 0, 2).</li>\r\n<li style=\"margin-bottom:6px;\"> (5, 5, 5, 0) is a higher bid, but this is <b>not</b> legal because it contains fewer spades than the bid before it.</li></ul></html>"
         paneTwo.font = Font("Tahoma", Font.PLAIN, 14)
         paneTwo.setBounds(21, 320, 429, 156)
-        paneTwo.isEditable = false
         add(paneTwo)
         title.foreground = EntropyColour.COLOUR_HELP_TITLE
         title.font = Font("Tahoma", Font.BOLD, 18)
         title.text = "Bidding"
         title.setBounds(21, 25, 159, 30)
-        title.isEditable = false
         add(title)
         subtitle.text = "Bid Hierarchy"
         subtitle.foreground = EntropyColour.COLOUR_HELP_TITLE
         subtitle.font = Font("Tahoma", Font.BOLD, 18)
         subtitle.setBounds(21, 290, 159, 30)
-        subtitle.isEditable = false
         add(subtitle)
 
         finaliseComponents()
