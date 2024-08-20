@@ -41,7 +41,6 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         title.text = "The Deck"
         title.foreground = EntropyColour.COLOUR_HELP_TITLE
         title.font = Font("Tahoma", Font.BOLD, 18)
-        title.isEditable = false
         title.setBounds(21, 25, 165, 30)
         add(title)
         clubLabel.horizontalAlignment = SwingConstants.CENTER

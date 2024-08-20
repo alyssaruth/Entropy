@@ -31,7 +31,6 @@ class MiscCheatCodes : HelpPanel() {
         title.text = "Cheat Codes"
         title.foreground = EntropyColour.COLOUR_HELP_TITLE
         title.font = Font("Tahoma", Font.BOLD, 18)
-        title.isEditable = false
         title.setBounds(21, 25, 192, 30)
         add(title)
         paneIntro.font = Font("SansSerif", Font.PLAIN, 14)

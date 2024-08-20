@@ -127,6 +127,8 @@ class ToolsGameplaySettings : HelpPanel(), Registry {
             )
         playBlindImage.setBounds(128, 114, 199, 157)
         blindPanel.add(playBlindImage)
+
+        finaliseComponents()
     }
 
     override fun refresh() {

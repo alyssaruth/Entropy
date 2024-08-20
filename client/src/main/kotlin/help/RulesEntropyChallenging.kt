@@ -23,7 +23,6 @@ class RulesEntropyChallenging : HelpPanel() {
         title.text = "Challenging"
         title.foreground = EntropyColour.COLOUR_HELP_TITLE
         title.font = Font("Tahoma", Font.BOLD, 18)
-        title.isEditable = false
         title.setBounds(21, 25, 216, 30)
         add(title)
 
