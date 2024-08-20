@@ -10,9 +10,9 @@ import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.text.StyleConstants
 import main.kotlin.testCore.AbstractTest
-import main.kotlin.testCore.getAllChildComponentsForType
 import main.kotlin.testCore.makeLogRecord
 import org.junit.jupiter.api.Test
+import utils.getAllChildComponentsForType
 
 class LoggingConsoleTest : AbstractTest() {
     @Test
@@ -132,10 +132,5 @@ class LoggingConsoleTest : AbstractTest() {
     private fun LoggingConsole.getTextColour(position: Int = 0): Color {
         val style = doc.getCharacterElement(position)
         return StyleConstants.getForeground(style.attributes)
-    }
-
-    private fun LoggingConsole.getBackgroundColour(): Color {
-        val style = doc.getCharacterElement(0)
-        return StyleConstants.getBackground(style.attributes)
     }
 }
