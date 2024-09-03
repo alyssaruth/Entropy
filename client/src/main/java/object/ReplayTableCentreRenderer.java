@@ -17,9 +17,10 @@ public class ReplayTableCentreRenderer extends DefaultTableCellRenderer
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setFont(new Font("Arial",Font.BOLD,15));
 
-		if ((table instanceof ReplayTable replayTable))
+		if (table instanceof ReplayTable)
 		{
-            int modelRow = table.convertRowIndexToModel(row);
+			ReplayTable replayTable = (ReplayTable)table;
+			int modelRow = replayTable.convertRowIndexToModel(row);
 			setForeground(replayTable.getColorForRow(modelRow));
 		}
 
