@@ -9,10 +9,8 @@ public interface XmlConstants
 	public static final String ROOT_TAG_NEW_SYMMETRIC_KEY			= "NewSymmetricKey";
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
 	public static final String ROOT_TAG_NEW_ACCOUNT_REQUEST 		= "NewAccountRequest";
-	public static final String ROOT_TAG_CHANGE_EMAIL_REQUEST		= "ChangeEmailRequest";
 	public static final String ROOT_TAG_CHANGE_PASSWORD_REQUEST		= "ChangePasswordRequest";
 	public static final String ROOT_TAG_CONNECTION_REQUEST 			= "ConnectRequest";
-	public static final String ROOT_TAG_RESET_PASSWORD_REQUEST		= "ResetPasswordRequest";
 	public static final String ROOT_TAG_DISCONNECT_REQUEST			= "DisconnectRequest";
 	public static final String ROOT_TAG_ACHIEVEMENTS_UPDATE 		= "AchievementsUpdate";
 	public static final String ROOT_TAG_NEW_CHAT 					= "NewChat";
@@ -40,14 +38,11 @@ public interface XmlConstants
 	
 	//Server responses
 	public static final String RESPONSE_TAG_SYMMETRIC_KEY = "SymmetricKey";
-	public static final String RESPONSE_TAG_NO_UPDATES = "NoUpdates";
 	public static final String RESPONSE_TAG_UPDATE_AVAILABLE = "UpdateAvailable";
 	public static final String RESPONSE_TAG_CHANGE_PORT = "ChangePort";
 	public static final String RESPONSE_TAG_KICK_OFF = "KickOff";
 	public static final String RESPONSE_TAG_NEW_ACCOUNT = "NewAccountResponse";
-	public static final String RESPONSE_TAG_RESET_PASSWORD = "ResetPasswordResponse";
 	public static final String RESPONSE_TAG_CHANGE_PASSWORD = "ChangePasswordResponse";
-	public static final String RESPONSE_TAG_CHANGE_EMAIL = "ChangeEmailResponse";
 	public static final String RESPONSE_TAG_CONNECT_SUCCESS = "ConnectSuccess";
 	public static final String RESPONSE_TAG_CONNECT_FAILURE = "ConnectFailure";
 	public static final String RESPONSE_TAG_LEADERBOARD = "LeaderboardResponse";

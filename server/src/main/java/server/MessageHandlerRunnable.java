@@ -23,7 +23,6 @@ import org.w3c.dom.Element;
 import util.AccountUtil;
 import util.Debug;
 import util.EncryptionUtil;
-import util.EntropyEmailUtil;
 import util.XmlBuilderServer;
 import util.XmlConstants;
 import util.XmlUtil;
@@ -309,25 +308,12 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			String newPasswordHash = root.getAttribute("PasswordNew");
 			return XmlBuilderServer.getChangePasswordResponse(username, oldPasswordHash, newPasswordHash);
 		}
-		else if (name.equals(ROOT_TAG_CHANGE_EMAIL_REQUEST))
-		{
-			String oldEmail = root.getAttribute("EmailOld");
-			String newEmail = root.getAttribute("EmailNew");
-			boolean sendTest = XmlUtil.getAttributeBoolean(root, "SendTest");
-			return XmlBuilderServer.getChangeEmailResponse(username, oldEmail, newEmail, sendTest);
-		}
 		else if (name.equals(ROOT_TAG_CONNECTION_REQUEST))
 		{
 			String version = root.getAttribute("Version");
 			String hashedPassword = root.getAttribute("Password");
 			boolean mobile = XmlUtil.getAttributeBoolean(root, "Mobile");
 			return XmlBuilderServer.getConnectResponse(username, hashedPassword, version, usc, server, mobile);
-		}
-		
-		else if (name.equals(ROOT_TAG_RESET_PASSWORD_REQUEST))
-		{
-			String email = root.getAttribute("Email");
-			return XmlBuilderServer.getResetPasswordResponse(username, email);
 		}
 		else if (name.equals(ROOT_TAG_DISCONNECT_REQUEST))
 		{

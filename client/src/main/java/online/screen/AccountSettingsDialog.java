@@ -57,6 +57,7 @@ public class AccountSettingsDialog extends JDialog
 		okCancelPanel.add(btnChangePassword);
 		okCancelPanel.add(btnCancel);
 		textFieldUsername.setEditable(false);
+		textFieldEmail.setEditable(false);
 
 		btnChangePassword.addActionListener(this);
 		btnOk.addActionListener(this);
@@ -78,54 +79,6 @@ public class AccountSettingsDialog extends JDialog
 		textFieldEmail.setText(email);
 	}
 	
-	private boolean valid()
-	{
-		String newEmail = textFieldEmail.getText();
-		if (email.equals(newEmail))
-		{
-			return true;
-		}
-		
-		if (newEmail == null || newEmail.isEmpty())
-		{
-			String question = "Are you sure you want to unset your email address?";
-			question += "\n\nIf you forget your password you will not be able to regain access to your account.";
-			int option = DialogUtil.showQuestion(question, false);
-			return option == JOptionPane.YES_OPTION;
-		}
-		
-		return AccountUtil.validateEmail(newEmail);
-	}
-	
-	private void saveNewAccountDetails()
-	{
-		String newEmail = textFieldEmail.getText();
-		if (email.equals(newEmail))
-		{
-			dispose();
-			return;
-		}
-		
-		boolean sendTestEmail = false;
-		if (!newEmail.isEmpty())
-		{
-			String question = "Would you like to send a test email to your new account?";
-			int option = DialogUtil.showQuestion(question, false);
-			sendTestEmail = option == JOptionPane.YES_OPTION;
-		}
-		
-		Document message = XmlBuilderClient.factoryChangeEmailRequest(username, email, newEmail, sendTestEmail);
-		MessageUtil.sendMessage(message, 0);
-	}
-	
-	public void emailChangedSuccessfully()
-	{
-		EntropyLobby lobby = ScreenCache.getEntropyLobby();
-		lobby.setEmail(textFieldEmail.getText());
-		DialogUtil.showInfoLater("Account settings changed successfully.");
-		disposeLater();
-	}
-	
 	@Override
 	public void actionPerformed(ActionEvent arg0) 
 	{
@@ -140,10 +93,7 @@ public class AccountSettingsDialog extends JDialog
 		}
 		else if (source == btnOk)
 		{
-			if (valid())
-			{
-				saveNewAccountDetails();
-			}
+			dispose();
 		}
 		else if (source == btnCancel)
 		{
@@ -153,17 +103,5 @@ public class AccountSettingsDialog extends JDialog
 		{
 			Debug.stackTrace("Unexpected actionPerformed: " + source);
 		}
-	}
-	
-	private void disposeLater()
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				dispose();
-			}
-		});
 	}
 }

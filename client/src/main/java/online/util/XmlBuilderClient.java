@@ -130,19 +130,6 @@ public class XmlBuilderClient implements XmlConstants
 		return document;
 	}
 	
-	public static Document factoryChangeEmailRequest(String username, String oldEmail, String newEmail, boolean sendTest)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_CHANGE_EMAIL_REQUEST);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("EmailOld", oldEmail);
-		rootElement.setAttribute("EmailNew", newEmail);
-		XmlUtil.setAttributeBoolean(rootElement, "SendTest", sendTest);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryConnectionRequest(String username, String passwordHash, boolean mobile)
 	{
 		Document document = XmlUtil.factoryNewDocument();
@@ -151,17 +138,6 @@ public class XmlBuilderClient implements XmlConstants
 		rootElement.setAttribute("Password", passwordHash);
 		rootElement.setAttribute("Version", OnlineConstants.SERVER_VERSION);
 		XmlUtil.setAttributeBoolean(rootElement, "Mobile", mobile);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
-	public static Document factoryResetPasswordRequest(String username, String email)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_RESET_PASSWORD_REQUEST);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("Email", email);
 		
 		document.appendChild(rootElement);
 		return document;

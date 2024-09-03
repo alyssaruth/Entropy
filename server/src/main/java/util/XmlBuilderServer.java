@@ -91,28 +91,6 @@ public class XmlBuilderServer implements XmlConstants,
 		return response;
 	}
 	
-	public static Document getChangeEmailResponse(String username, String oldEmail, String newEmail, boolean sendTest)
-	{
-		String email = AccountUtil.getEmailForUser(username);
-		if (!email.equals(oldEmail))
-		{
-			return getKickOffResponse(username, "An error occurred validating your credentials.");
-		}
-		
-		String error = AccountUtil.changeEmail(username, newEmail, sendTest);
-		
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_CHANGE_EMAIL);
-		rootElement.setAttribute("Username", username);
-		if (!error.isEmpty())
-		{
-			rootElement.setAttribute("Error", error);
-		}
-		
-		response.appendChild(rootElement);
-		return response;
-	}
-	
 	public static Document getConnectResponse(String username, String hashedPassword, String version, 
 	  UserConnection usc, EntropyServer server, boolean mobile)
 	{
@@ -172,39 +150,6 @@ public class XmlBuilderServer implements XmlConstants,
 			appendStatisticsResponse(response, username);
 		}
 		
-		return response;
-	}
-	
-	public static Document getResetPasswordResponse(String username, String email)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_RESET_PASSWORD);
-		String actualEmail = AccountUtil.getEmailForUser(username);
-		
-		if (!AccountUtil.usernameExists(username))
-		{
-			rootElement.setAttribute("FailureReason", "The username you entered does not exist.");
-		}
-		else if (actualEmail.isEmpty())
-		{
-			String failureReason = "The account specified does not have an email address associated with it."
-								 + "\n\nYou will not be able to reset your password for this account.";
-			rootElement.setAttribute("FailureReason", failureReason);
-		}
-		else if (!email.equals(actualEmail))
-		{
-			rootElement.setAttribute("FailureReason", "The email you entered was incorrect.");
-		}
-		else
-		{
-			boolean success = AccountUtil.resetPassword(username, email);
-			if (!success)
-			{
-				rootElement.setAttribute("FailureReason", "There was an error resetting your password.");
-			}
-		}
-		
-		response.appendChild(rootElement);
 		return response;
 	}
 	
@@ -858,7 +803,6 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		return !name.equals(ROOT_TAG_CONNECTION_REQUEST)
 		  && !name.equals(ROOT_TAG_NEW_ACCOUNT_REQUEST)
-		  && !name.equals(ROOT_TAG_RESET_PASSWORD_REQUEST)
 		  && !name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY);
 	}
 }
