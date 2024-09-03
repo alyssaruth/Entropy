@@ -168,8 +168,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		{
 			symmetricKey = usc.getSymmetricKey();
 		}
-		
-		server.incrementMessageCountForIp(ipAddress);
 	}
 	
 	/**
@@ -250,15 +248,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			return null;
 		}
 		
-		if (server.keyHasAlreadyBeenUsed(symmetricKeyPassedUp))
-		{
-			Debug.append("Possible attempt at replay attack - received request to re-use key " 
-						 + symmetricKeyStr + ". IP: " + ipAddress);
-
-			server.addToBlacklist(ipAddress, "Re-used key");
-			return null;
-		}
-		
 		if (symmetricKey != null)
 		{
 			//An IP we already have has requested a new symmetric key. Tell them to use another port.
@@ -299,8 +288,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 				Debug.stackTrace("Failed username check for IP " + ipAddress + ": client passed up " + username 
 						   	   + " but connected as " + usernameForThisConnection);
 				Debug.appendWithoutDate("Message passed up: " + messageStr);
-				
-				server.addToBlacklist(ipAddress, "Username mismatch");
+
 				server.removeFromUsersOnline(usc);
 				
 				return XmlBuilderServer.getKickOffResponse(usernameForThisConnection, REMOVAL_REASON_FAILED_USERNAME_CHECK);

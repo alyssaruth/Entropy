@@ -8,6 +8,8 @@ import java.util.prefs.BackingStoreException;
 
 import object.GameWrapper;
 
+import static utils.InjectedThings.logger;
+
 public class StatisticsUtil implements ServerRegistry
 {
 	public static int getAchievementCount(String username)
@@ -255,7 +257,7 @@ public class StatisticsUtil implements ServerRegistry
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTrace(t, "Error trying to clear global stats");
+			logger.error("statsError", "Failed to clear global stats", t);
 		}
 	}
 }

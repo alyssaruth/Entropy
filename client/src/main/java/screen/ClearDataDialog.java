@@ -30,33 +30,26 @@ public class ClearDataDialog extends JDialog
 	
 	public ClearDataDialog() 
 	{
-		try
-		{
-			getContentPane().setLayout(null);
-			chckbxOnlyStatistics.setBounds(18, 20, 159, 23);
-			getContentPane().add(chckbxOnlyStatistics);
-			chckbxAchievementsAndStatistics.setBounds(18, 49, 204, 23);
-			getContentPane().add(chckbxAchievementsAndStatistics);
-			chckbxMyReplays.setBounds(18, 78, 159, 23);
-			getContentPane().add(chckbxMyReplays);
-			chckbxImportedReplays.setBounds(18, 107, 159, 23);
-			getContentPane().add(chckbxImportedReplays);
-			JPanel panel = new JPanel();
-			panel.setBounds(0, 145, 222, 33);
-			getContentPane().add(panel);
-			panel.add(btnOk);
-			panel.add(btnCancel);
-			initVariables();
-			
-			btnOk.addActionListener(this);
-			btnCancel.addActionListener(this);
-			chckbxOnlyStatistics.addActionListener(this);
-			chckbxAchievementsAndStatistics.addActionListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		getContentPane().setLayout(null);
+		chckbxOnlyStatistics.setBounds(18, 20, 159, 23);
+		getContentPane().add(chckbxOnlyStatistics);
+		chckbxAchievementsAndStatistics.setBounds(18, 49, 204, 23);
+		getContentPane().add(chckbxAchievementsAndStatistics);
+		chckbxMyReplays.setBounds(18, 78, 159, 23);
+		getContentPane().add(chckbxMyReplays);
+		chckbxImportedReplays.setBounds(18, 107, 159, 23);
+		getContentPane().add(chckbxImportedReplays);
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 145, 222, 33);
+		getContentPane().add(panel);
+		panel.add(btnOk);
+		panel.add(btnCancel);
+		initVariables();
+
+		btnOk.addActionListener(this);
+		btnCancel.addActionListener(this);
+		chckbxOnlyStatistics.addActionListener(this);
+		chckbxAchievementsAndStatistics.addActionListener(this);
 	}
 	
 	private void initVariables()

@@ -22,38 +22,31 @@ public class TestHarness extends JFrame
 						 implements ActionListener
 {
 	public TestHarness() 
-	{	
-		try
-		{
-			setTitle("Test Harness");
-			setSize(451, 390);
-			getRootPane().setDefaultButton(btnSend);
-			JPanel panel = new JPanel();
-			getContentPane().add(panel, BorderLayout.SOUTH);
-			panel.add(btnSend);
-			JScrollPane scrollPane = new JScrollPane();
-			getContentPane().add(scrollPane, BorderLayout.CENTER);
-			textPane.setLineWrap(true);
-			scrollPane.setViewportView(textPane);
-			
-			spinner.setModel(new SpinnerNumberModel(5, 1, 5, 1));
-			lblTimes.setEnabled(false);
-			spinner.setEnabled(false);
-			
-			getContentPane().add(panel_1, BorderLayout.NORTH);
-			panel_1.add(chckbxIgnoreResponse);
-			panel_1.add(chckbxEncrypt);
-			panel_1.add(chckbxRetry);
-			panel_1.add(spinner);
-			panel_1.add(lblTimes);
-			
-			chckbxRetry.addActionListener(this);
-			btnSend.addActionListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+	{
+		setTitle("Test Harness");
+		setSize(451, 390);
+		getRootPane().setDefaultButton(btnSend);
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.SOUTH);
+		panel.add(btnSend);
+		JScrollPane scrollPane = new JScrollPane();
+		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		textPane.setLineWrap(true);
+		scrollPane.setViewportView(textPane);
+
+		spinner.setModel(new SpinnerNumberModel(5, 1, 5, 1));
+		lblTimes.setEnabled(false);
+		spinner.setEnabled(false);
+
+		getContentPane().add(panel_1, BorderLayout.NORTH);
+		panel_1.add(chckbxIgnoreResponse);
+		panel_1.add(chckbxEncrypt);
+		panel_1.add(chckbxRetry);
+		panel_1.add(spinner);
+		panel_1.add(lblTimes);
+
+		chckbxRetry.addActionListener(this);
+		btnSend.addActionListener(this);
 	}
 	
 	private final JTextArea textPane = new JTextArea();

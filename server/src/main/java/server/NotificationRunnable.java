@@ -15,6 +15,8 @@ import util.Debug;
 import util.EncryptionUtil;
 import util.XmlUtil;
 
+import static utils.InjectedThings.logger;
+
 public class NotificationRunnable implements ServerRunnable
 {
 	private static final int MAX_RETRIES = 10;
@@ -121,8 +123,8 @@ public class NotificationRunnable implements ServerRunnable
 				{
 					debugStr += ". Retried " + retries + " times";
 				}
-				
-				Debug.stackTrace(t, debugStr);
+
+				logger.error("webSocketError", debugStr, t);
 			}
 		}
 	}

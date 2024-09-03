@@ -36,52 +36,45 @@ public class LoginDialog extends JDialog
 {
 	public LoginDialog() 
 	{
-		try
-		{
-			setTitle("Log In");
-			setSize(268, 216);
-			getRootPane().setDefaultButton(btnLogin);
-			getContentPane().setLayout(null);
-			JPanel panelOkCancel = new JPanel();
-			panelOkCancel.setBounds(0, 144, 252, 33);
-			getContentPane().add(panelOkCancel);
-			panelOkCancel.add(btnLogin);
-			panelOkCancel.add(btnCancel);
-			lblUsername.setSize(80, 22);
-			lblUsername.setLocation(10, 10);
-			getContentPane().add(lblUsername);
-			textFieldUsername.setLocation(100, 10);
-			textFieldUsername.setSize(130, 22);
-			textFieldUsername.setPreferredSize(new Dimension(100, 20));
-			getContentPane().add(textFieldUsername);
-			lblPassword.setLocation(10, 40);
-			lblPassword.setSize(80, 22);
-			getContentPane().add(lblPassword);
-			passwordField.setLocation(100, 40);
-			passwordField.setSize(130, 22);
-			passwordField.setPreferredSize(new Dimension(100, 20));
-			getContentPane().add(passwordField);
-			lblCreateAccount.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCreateAccount.setLocation(66, 80);
-			lblCreateAccount.setSize(120, 20);
-			getContentPane().add(lblCreateAccount);
-			lblCreateAccount.setForeground(Color.BLUE);
-			lblCreateAccount.setFont(new Font("Tahoma", Font.BOLD, 12));
-			lblForgottenPassword.setHorizontalAlignment(SwingConstants.CENTER);
-			lblForgottenPassword.setForeground(Color.BLUE);
-			lblForgottenPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
-			lblForgottenPassword.setBounds(51, 111, 150, 20);
-			getContentPane().add(lblForgottenPassword);
-			
-			lblCreateAccount.addMouseListener(this);
-			lblForgottenPassword.addMouseListener(this);
-			btnLogin.addActionListener(this);
-			btnCancel.addActionListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setTitle("Log In");
+		setSize(268, 216);
+		getRootPane().setDefaultButton(btnLogin);
+		getContentPane().setLayout(null);
+		JPanel panelOkCancel = new JPanel();
+		panelOkCancel.setBounds(0, 144, 252, 33);
+		getContentPane().add(panelOkCancel);
+		panelOkCancel.add(btnLogin);
+		panelOkCancel.add(btnCancel);
+		lblUsername.setSize(80, 22);
+		lblUsername.setLocation(10, 10);
+		getContentPane().add(lblUsername);
+		textFieldUsername.setLocation(100, 10);
+		textFieldUsername.setSize(130, 22);
+		textFieldUsername.setPreferredSize(new Dimension(100, 20));
+		getContentPane().add(textFieldUsername);
+		lblPassword.setLocation(10, 40);
+		lblPassword.setSize(80, 22);
+		getContentPane().add(lblPassword);
+		passwordField.setLocation(100, 40);
+		passwordField.setSize(130, 22);
+		passwordField.setPreferredSize(new Dimension(100, 20));
+		getContentPane().add(passwordField);
+		lblCreateAccount.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCreateAccount.setLocation(66, 80);
+		lblCreateAccount.setSize(120, 20);
+		getContentPane().add(lblCreateAccount);
+		lblCreateAccount.setForeground(Color.BLUE);
+		lblCreateAccount.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblForgottenPassword.setHorizontalAlignment(SwingConstants.CENTER);
+		lblForgottenPassword.setForeground(Color.BLUE);
+		lblForgottenPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblForgottenPassword.setBounds(51, 111, 150, 20);
+		getContentPane().add(lblForgottenPassword);
+
+		lblCreateAccount.addMouseListener(this);
+		lblForgottenPassword.addMouseListener(this);
+		btnLogin.addActionListener(this);
+		btnCancel.addActionListener(this);
 	}
 	
 	private final JLabel lblUsername = new JLabel("Username");

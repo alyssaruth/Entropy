@@ -29,58 +29,51 @@ public class BugReportDialog extends JFrame
 {
 	public BugReportDialog() 
 	{
-		try
-		{
-			setTitle("Bug Report");
-			setSize(400, 400);
-			setMinimumSize(new Dimension(400, 400));
-			JPanel panel = new JPanel();
-			getContentPane().add(panel, BorderLayout.SOUTH);
-			panel.add(btnSendReport);
-			panel.add(btnCancel);
-			JPanel panel_1 = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			getContentPane().add(panel_1, BorderLayout.NORTH);
-			
-			JLabel lblDescriptionconcise = new JLabel("Description*");
-			panel_1.add(lblDescriptionconcise);
-			
-			Component horizontalStrut = Box.createHorizontalStrut(5);
-			panel_1.add(horizontalStrut);
-			descriptionField.setPreferredSize(new Dimension(280, 22));
-			panel_1.add(descriptionField);
-			descriptionField.setDocument(new LimitedDocument(40));
-			JPanel panel_2 = new JPanel();
-			getContentPane().add(panel_2, BorderLayout.CENTER);
-			panel_2.setLayout(new BorderLayout(0, 0));
-			
-			JPanel panel_3 = new JPanel();
-			FlowLayout flowLayout_1 = (FlowLayout) panel_3.getLayout();
-			flowLayout_1.setAlignment(FlowLayout.LEFT);
-			panel_2.add(panel_3, BorderLayout.NORTH);
-			
-			JLabel lblReplicationSteps = new JLabel("Additional Information / Replication Steps:");
-			lblReplicationSteps.setHorizontalAlignment(SwingConstants.LEFT);
-			panel_3.add(lblReplicationSteps);
-			
-			JPanel panel_4 = new JPanel();
-			panel_4.setBorder(new EmptyBorder(5, 5, 5, 5));
-			panel_2.add(panel_4, BorderLayout.CENTER);
-			panel_4.setLayout(new BorderLayout(0, 0));
-			
-			textPaneReplicationSteps.setBorder(new LineBorder(Color.GRAY));
-			
-			JScrollPane scrollpane = new JScrollPane();
-			scrollpane.setViewportView(textPaneReplicationSteps);
-			panel_4.add(scrollpane, BorderLayout.CENTER);
-			btnSendReport.addActionListener(this);
-			btnCancel.addActionListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setTitle("Bug Report");
+		setSize(400, 400);
+		setMinimumSize(new Dimension(400, 400));
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.SOUTH);
+		panel.add(btnSendReport);
+		panel.add(btnCancel);
+		JPanel panel_1 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		getContentPane().add(panel_1, BorderLayout.NORTH);
+
+		JLabel lblDescriptionconcise = new JLabel("Description*");
+		panel_1.add(lblDescriptionconcise);
+
+		Component horizontalStrut = Box.createHorizontalStrut(5);
+		panel_1.add(horizontalStrut);
+		descriptionField.setPreferredSize(new Dimension(280, 22));
+		panel_1.add(descriptionField);
+		descriptionField.setDocument(new LimitedDocument(40));
+		JPanel panel_2 = new JPanel();
+		getContentPane().add(panel_2, BorderLayout.CENTER);
+		panel_2.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_3 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_3.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		panel_2.add(panel_3, BorderLayout.NORTH);
+
+		JLabel lblReplicationSteps = new JLabel("Additional Information / Replication Steps:");
+		lblReplicationSteps.setHorizontalAlignment(SwingConstants.LEFT);
+		panel_3.add(lblReplicationSteps);
+
+		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panel_2.add(panel_4, BorderLayout.CENTER);
+		panel_4.setLayout(new BorderLayout(0, 0));
+
+		textPaneReplicationSteps.setBorder(new LineBorder(Color.GRAY));
+
+		JScrollPane scrollpane = new JScrollPane();
+		scrollpane.setViewportView(textPaneReplicationSteps);
+		panel_4.add(scrollpane, BorderLayout.CENTER);
+		btnSendReport.addActionListener(this);
+		btnCancel.addActionListener(this);
 	}
 	
 	private final JButton btnSendReport = new JButton("Send Report");

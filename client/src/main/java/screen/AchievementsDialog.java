@@ -49,84 +49,77 @@ public class AchievementsDialog extends JFrame
 	
 	public AchievementsDialog() 
 	{
-		try
-		{
-			setTitle("Achievements");
-			setSize(860, 504);
-			addMouseMotionListener(this);
-			setIconImage(new ImageIcon(AchievementsDialog.class.getResource("/icons/achievements.png")).getImage());
-			getContentPane().setLayout(null);
-			separator.setBounds(0, 342, 878, 2);
-			getContentPane().add(separator);
-			title.setHorizontalAlignment(SwingConstants.CENTER);
-			title.setFont(new Font("Tahoma", Font.BOLD, 20));
-			title.setBounds(255, 16, 235, 25);
-			getContentPane().add(title);
-			panelDescriptions.setBounds(10, 345, 714, 131);
-			getContentPane().add(panelDescriptions);
-			panelDescriptions.setLayout(null);
-			achievementName.setBounds(0, 0, 714, 36);
-			achievementName.setFont(new Font("Tahoma", Font.BOLD, 15));
-			panelDescriptions.add(achievementName);
-			achievementExplanation.setBounds(0, 32, 714, 36);
-			panelDescriptions.add(achievementExplanation);
-			achievementDescription.setVerticalAlignment(SwingConstants.TOP);
-			achievementDescription.setBounds(0, 70, 714, 54);
-			achievementDescription.setFont(new Font("Tahoma", Font.ITALIC, 12));
-			panelDescriptions.add(achievementDescription);
-			
-			reward5.setBounds(820, 287, 17, 16);
-			getContentPane().add(reward5);
-			reward10.setBounds(715, 272, 17, 16);
-			getContentPane().add(reward10);
-			reward15.setBounds(820, 257, 17, 16);
-			getContentPane().add(reward15);
-			reward20.setBounds(715, 242, 17, 16);
-			getContentPane().add(reward20);
-			reward25.setBounds(820, 227, 17, 16);
-			getContentPane().add(reward25);
-			reward30.setBounds(715, 212, 17, 16);
-			getContentPane().add(reward30);
-			reward35.setBounds(820, 197, 17, 16);
-			getContentPane().add(reward35);
-			reward40.setBounds(715, 182, 17, 16);
-			getContentPane().add(reward40);
-			reward45.setBounds(820, 167, 17, 16);
-			getContentPane().add(reward45);
-			reward50.setBounds(715, 152, 17, 16);
-			getContentPane().add(reward50);
-			testTube.setIcon(new ImageIcon(AchievementsDialog.class.getResource("/tubes/t28.png")));
-			testTube.setBounds(730, -28, 92, 344);
-			getContentPane().add(testTube);
-			pageOne.setBounds(56, 56, 615, 255);
-			getContentPane().add(pageOne);
-			pageTwo.setBounds(56, 56, 615, 255);
-			getContentPane().add(pageTwo);
-			btnLeft.setBackground(Color.WHITE);
-			btnLeft.setOpaque(false);
-			btnLeft.setFont(new Font("Segoe UI Symbol", Font.BOLD, 24));
-			btnLeft.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnLeft.setBounds(11, 158, 30, 50);
-			getContentPane().add(btnLeft);
-			btnLeft.addActionListener(this);
-			btnRight.setOpaque(false);
-			btnRight.setBackground(Color.WHITE);
-			btnRight.setFont(new Font("Segoe UI Symbol", Font.BOLD, 24));
-			btnRight.setBorder(new EmptyBorder(0, 0, 0, 0));
-			btnRight.setBounds(680, 158, 30, 50);
-			getContentPane().add(btnRight);
-			btnRight.addActionListener(this);
-			
-			btnLeft.setEnabled(false);
-			pageTwo.setVisible(false);
-			
-			populateBadgeListAndAddMotionListeners();
-			populateStarListAndAddMouseListeners();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setTitle("Achievements");
+		setSize(860, 504);
+		addMouseMotionListener(this);
+		setIconImage(new ImageIcon(AchievementsDialog.class.getResource("/icons/achievements.png")).getImage());
+		getContentPane().setLayout(null);
+		separator.setBounds(0, 342, 878, 2);
+		getContentPane().add(separator);
+		title.setHorizontalAlignment(SwingConstants.CENTER);
+		title.setFont(new Font("Tahoma", Font.BOLD, 20));
+		title.setBounds(255, 16, 235, 25);
+		getContentPane().add(title);
+		panelDescriptions.setBounds(10, 345, 714, 131);
+		getContentPane().add(panelDescriptions);
+		panelDescriptions.setLayout(null);
+		achievementName.setBounds(0, 0, 714, 36);
+		achievementName.setFont(new Font("Tahoma", Font.BOLD, 15));
+		panelDescriptions.add(achievementName);
+		achievementExplanation.setBounds(0, 32, 714, 36);
+		panelDescriptions.add(achievementExplanation);
+		achievementDescription.setVerticalAlignment(SwingConstants.TOP);
+		achievementDescription.setBounds(0, 70, 714, 54);
+		achievementDescription.setFont(new Font("Tahoma", Font.ITALIC, 12));
+		panelDescriptions.add(achievementDescription);
+
+		reward5.setBounds(820, 287, 17, 16);
+		getContentPane().add(reward5);
+		reward10.setBounds(715, 272, 17, 16);
+		getContentPane().add(reward10);
+		reward15.setBounds(820, 257, 17, 16);
+		getContentPane().add(reward15);
+		reward20.setBounds(715, 242, 17, 16);
+		getContentPane().add(reward20);
+		reward25.setBounds(820, 227, 17, 16);
+		getContentPane().add(reward25);
+		reward30.setBounds(715, 212, 17, 16);
+		getContentPane().add(reward30);
+		reward35.setBounds(820, 197, 17, 16);
+		getContentPane().add(reward35);
+		reward40.setBounds(715, 182, 17, 16);
+		getContentPane().add(reward40);
+		reward45.setBounds(820, 167, 17, 16);
+		getContentPane().add(reward45);
+		reward50.setBounds(715, 152, 17, 16);
+		getContentPane().add(reward50);
+		testTube.setIcon(new ImageIcon(AchievementsDialog.class.getResource("/tubes/t28.png")));
+		testTube.setBounds(730, -28, 92, 344);
+		getContentPane().add(testTube);
+		pageOne.setBounds(56, 56, 615, 255);
+		getContentPane().add(pageOne);
+		pageTwo.setBounds(56, 56, 615, 255);
+		getContentPane().add(pageTwo);
+		btnLeft.setBackground(Color.WHITE);
+		btnLeft.setOpaque(false);
+		btnLeft.setFont(new Font("Segoe UI Symbol", Font.BOLD, 24));
+		btnLeft.setBorder(new EmptyBorder(0, 0, 0, 0));
+		btnLeft.setBounds(11, 158, 30, 50);
+		getContentPane().add(btnLeft);
+		btnLeft.addActionListener(this);
+		btnRight.setOpaque(false);
+		btnRight.setBackground(Color.WHITE);
+		btnRight.setFont(new Font("Segoe UI Symbol", Font.BOLD, 24));
+		btnRight.setBorder(new EmptyBorder(0, 0, 0, 0));
+		btnRight.setBounds(680, 158, 30, 50);
+		getContentPane().add(btnRight);
+		btnRight.addActionListener(this);
+
+		btnLeft.setEnabled(false);
+		pageTwo.setVisible(false);
+
+		populateBadgeListAndAddMotionListeners();
+		populateStarListAndAddMouseListeners();
 	}
 	
 	private final JPanel panelDescriptions = new JPanel();
@@ -414,22 +407,15 @@ public class AchievementsDialog extends JFrame
 	
 	public void refresh(boolean restartTube)
 	{
-		try
+		displayBadgesAndTitles();
+
+		if (restartTube)
 		{
-			displayBadgesAndTitles();
-			
-			if (restartTube)
-			{
-				animateTestTube();
-			}
-			else
-			{
-				updateTestTube();
-			}
+			animateTestTube();
 		}
-		catch (Throwable t)
+		else
 		{
-			Debug.stackTrace(t, "Error refreshing Achievements");
+			updateTestTube();
 		}
 	}
 

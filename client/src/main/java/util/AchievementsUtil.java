@@ -761,16 +761,8 @@ public class AchievementsUtil implements AchievementBadges
 	
 	public static ImageIcon getIconForAchievement(String registryLocation)
 	{
-		try
-		{
-			URL url = AchievementsUtil.class.getResource("/achievements/" + registryLocation + ".png");
-			return new ImageIcon(url);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t, "Failed to load icon for achievement " + registryLocation);
-			return lockedIcon;
-		}
+		URL url = AchievementsUtil.class.getResource("/achievements/" + registryLocation + ".png");
+		return new ImageIcon(url);
 	}
 	
 	public static String getAchievementName(String registryLocation)

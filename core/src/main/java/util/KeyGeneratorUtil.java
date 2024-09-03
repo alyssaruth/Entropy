@@ -3,6 +3,8 @@ package util;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import static utils.InjectedThings.logger;
+
 public class KeyGeneratorUtil 
 {
 	public static SecretKey generateSymmetricKey()
@@ -16,7 +18,7 @@ public class KeyGeneratorUtil
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTrace(t, "Failed to generate symmetric key.");
+			logger.error("keyError", "Failed to generate symmetric key", t);
 		}
 		
 	    return symmetricKey;

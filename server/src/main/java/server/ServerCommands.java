@@ -21,13 +21,6 @@ public interface ServerCommands
 	public static final String COMMAND_SET_CORE_POOL_SIZE = "set core size ";
 	public static final String COMMAND_SET_MAX_POOL_SIZE = "set max size ";
 	public static final String COMMAND_SET_KEEP_ALIVE_TIME = "set alive time ";
-	public static final String COMMAND_FAKE_USERS = "fake users ";
-	public static final String COMMAND_DUMP_BLACKLIST = "dump blacklist";
-	public static final String COMMAND_BLACKLIST_TIME = "set blacklist time ";
-	public static final String COMMAND_BLACKLIST_FULL = "set blacklist full";
-	public static final String COMMAND_BLACKLIST_OFF = "set blacklist off";
-	public static final String COMMAND_BLACKLIST = "blacklist ";
-	public static final String COMMAND_SET_BLACKLIST_THRESHOLD = "set blacklist threshold ";
 	public static final String COMMAND_USED_KEYS = "used keys";
 	public static final String COMMAND_DUMP_HASH_MAPS = "dump hm";
 	public static final String COMMAND_MEMORY = "memory";

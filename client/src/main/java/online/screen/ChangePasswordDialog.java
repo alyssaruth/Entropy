@@ -30,46 +30,39 @@ public class ChangePasswordDialog extends JDialog
 	
 	public ChangePasswordDialog(String username, boolean allowCancel) 
 	{
-		try
-		{
-			this.username = username;
-			this.allowCancel = allowCancel;
-			
-			setTitle("Change Password");
-			getRootPane().setDefaultButton(btnOk);
-			setSize(300, 200);
-			setResizable(false);
-			setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-			getContentPane().setLayout(null);
-			lblCurrentPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			lblCurrentPassword.setBounds(10, 10, 140, 22);
-			getContentPane().add(lblCurrentPassword);
-			passwordFieldOld.setBounds(150, 10, 130, 22);
-			getContentPane().add(passwordFieldOld);
-			lblNewPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			lblNewPassword.setBounds(10, 40, 140, 22);
-			getContentPane().add(lblNewPassword);
-			passwordFieldNew.setBounds(150, 40, 130, 22);
-			getContentPane().add(passwordFieldNew);
-			lblConfirmNewPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			lblConfirmNewPassword.setBounds(10, 70, 140, 22);
-			getContentPane().add(lblConfirmNewPassword);
-			passwordFieldConfirmNew.setBounds(150, 70, 130, 22);
-			getContentPane().add(passwordFieldConfirmNew);
-			buttonPanel.setBounds(0, 115, 294, 33);
-			getContentPane().add(buttonPanel);
-			buttonPanel.add(btnOk);
-			buttonPanel.add(btnCancel);
-			
-			btnOk.addActionListener(this);
-			btnCancel.addActionListener(this);
-			
-			init();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		this.username = username;
+		this.allowCancel = allowCancel;
+
+		setTitle("Change Password");
+		getRootPane().setDefaultButton(btnOk);
+		setSize(300, 200);
+		setResizable(false);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		getContentPane().setLayout(null);
+		lblCurrentPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblCurrentPassword.setBounds(10, 10, 140, 22);
+		getContentPane().add(lblCurrentPassword);
+		passwordFieldOld.setBounds(150, 10, 130, 22);
+		getContentPane().add(passwordFieldOld);
+		lblNewPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblNewPassword.setBounds(10, 40, 140, 22);
+		getContentPane().add(lblNewPassword);
+		passwordFieldNew.setBounds(150, 40, 130, 22);
+		getContentPane().add(passwordFieldNew);
+		lblConfirmNewPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblConfirmNewPassword.setBounds(10, 70, 140, 22);
+		getContentPane().add(lblConfirmNewPassword);
+		passwordFieldConfirmNew.setBounds(150, 70, 130, 22);
+		getContentPane().add(passwordFieldConfirmNew);
+		buttonPanel.setBounds(0, 115, 294, 33);
+		getContentPane().add(buttonPanel);
+		buttonPanel.add(btnOk);
+		buttonPanel.add(btnCancel);
+
+		btnOk.addActionListener(this);
+		btnCancel.addActionListener(this);
+
+		init();
 	}
 	
 	private final JLabel lblCurrentPassword = new JLabel("Current Password");
