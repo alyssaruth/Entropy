@@ -58,14 +58,6 @@ public class ResponseHandler implements XmlConstants
 		{
 			handleChangePasswordResponse(root);
 		}
-		else if (responseName.equals(RESPONSE_TAG_CHANGE_EMAIL))
-		{
-			handleChangeEmailResponse(root);
-		}
-		else if (responseName.equals(RESPONSE_TAG_RESET_PASSWORD))
-		{
-			handleResetPasswordResponse(root);
-		}
 		else if (responseName.equals(RESPONSE_TAG_CONNECT_SUCCESS))
 		{
 			handleConnectSuccess(root, lobby);
@@ -174,39 +166,6 @@ public class ResponseHandler implements XmlConstants
 		{
 			DialogUtil.showInfoLater("Password changed successfully.");
 			changePasswordDialog.disposeLater();
-		}
-	}
-	
-	private static void handleChangeEmailResponse(Element root)
-	{
-		AccountSettingsDialog changeEmailDialog = ScreenCache.getAccountSettingsDialog();
-		
-		String error = root.getAttribute("Error");
-		if (!error.isEmpty())
-		{
-			DialogUtil.showErrorLater(error);
-		}
-		else
-		{
-			changeEmailDialog.emailChangedSuccessfully();
-		}
-	}
-	
-	private static void handleResetPasswordResponse(Element root)
-	{
-		ScreenCache.dismissConnectingDialog();
-		
-		String failureReason = root.getAttribute("FailureReason");
-		if (!failureReason.isEmpty())
-		{
-			DialogUtil.showErrorLater(failureReason);
-		}
-		else
-		{
-			String successMessage = "Password reset successfully."
-								  + "\n\nYour new password has been sent to the email address provided.";
-			
-			DialogUtil.showInfoLater(successMessage);
 		}
 	}
 	

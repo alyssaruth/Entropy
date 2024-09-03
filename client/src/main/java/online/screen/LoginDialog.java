@@ -65,14 +65,8 @@ public class LoginDialog extends JDialog
 		getContentPane().add(lblCreateAccount);
 		lblCreateAccount.setForeground(Color.BLUE);
 		lblCreateAccount.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblForgottenPassword.setHorizontalAlignment(SwingConstants.CENTER);
-		lblForgottenPassword.setForeground(Color.BLUE);
-		lblForgottenPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblForgottenPassword.setBounds(51, 111, 150, 20);
-		getContentPane().add(lblForgottenPassword);
 
 		lblCreateAccount.addMouseListener(this);
-		lblForgottenPassword.addMouseListener(this);
 		btnLogin.addActionListener(this);
 		btnCancel.addActionListener(this);
 	}
@@ -82,7 +76,6 @@ public class LoginDialog extends JDialog
 	private final JLabel lblPassword = new JLabel("Password");
 	private final JPasswordField passwordField = new JPasswordField();
 	private final JLabel lblCreateAccount = new JLabel("<html><u>Create Account</u></html>");
-	private final JLabel lblForgottenPassword = new JLabel("<html><u>Forgotten Password</u></html>");
 	private final JButton btnLogin = new JButton("Log In");
 	private final JButton btnCancel = new JButton("Cancel");
 	
@@ -140,46 +133,7 @@ public class LoginDialog extends JDialog
 			DialogUtil.showErrorLater("Unable to initiate request.");
 		}
 	}
-	
-	private void resetPassword()
-	{
-		String username = "";
-		while (username == null || username.isEmpty())
-		{
-			if (username == null)
-			{
-				return;
-			}
-			
-			username = JOptionPane.showInputDialog(this, "Please enter your username", "Reset Password", JOptionPane.PLAIN_MESSAGE);
-		}
-		
-		String email = "";
-		while (email == null || email.isEmpty())
-		{
-			if (email == null)
-			{
-				return;
-			}
-			
-			email = JOptionPane.showInputDialog(this, "Please enter the email for this account", "Reset Password", JOptionPane.PLAIN_MESSAGE);
-		}
-		
-		boolean success = XmlBuilderClient.sendSymmetricKeyRequest();
-		if (success)
-		{
-			ScreenCache.showConnectingDialog();
-			Document resetPasswordRequest = XmlBuilderClient.factoryResetPasswordRequest(username, email);
-			MessageUtil.sendMessage(resetPasswordRequest, 0, 0);
-		}
-		else
-		{
-			DialogUtil.showErrorLater("Unable to initiate request.");
-		}
-	}
-	
-	
-	
+
 	/**
 	 * MouseListener
 	 */
@@ -197,10 +151,6 @@ public class LoginDialog extends JDialog
 			dialog.setModal(true);
 			dialog.setResizable(false);
 			dialog.setVisible(true);
-		}
-		else if (source == lblForgottenPassword)
-		{
-			resetPassword();
 		}
 	}
 	@Override
@@ -240,17 +190,5 @@ public class LoginDialog extends JDialog
 		{
 			Debug.stackTrace("Unexpected source for ActionListener: " + source);
 		}
-	}
-	
-	public void disposeLater()
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				dispose();
-			}
-		});
 	}
 }
