@@ -50,7 +50,6 @@ public final class EntropyServer extends JFrame
 
     //Files
     private static final Path FILE_PATH_USED_KEYS = Paths.get("C:\\EntropyServer\\UsedKeys.txt");
-    private static final Path FILE_PATH_CLIENT_VERSION = Paths.get("C:\\EntropyServer\\Version.txt");
 
     //Console
     private static DebugConsole console = new DebugConsole();
@@ -74,13 +73,6 @@ public final class EntropyServer extends JFrame
     private AtomicInteger totalNotificationsSent = new AtomicInteger(0);
     private AtomicInteger mostFunctionsReceived = new AtomicInteger(0);
     private AtomicInteger mostFunctionsHandled = new AtomicInteger(0);
-
-    //Blacklist
-    private ConcurrentHashMap<String, AtomicInteger> hmMessagesReceivedByIp = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, BlacklistEntry> blacklist = new ConcurrentHashMap<>();
-    private boolean usingBlacklist = true;
-    private int blacklistMinutes = 15;
-    private int messagesPerSecondThreshold = 15;
 
     //Tracing
     private ArrayList<String> tracedMessages = new ArrayList<>();
@@ -197,31 +189,26 @@ public final class EntropyServer extends JFrame
     }
 
     private void onStart() {
-        try {
-            Debug.appendBanner("Start-Up");
+        Debug.appendBanner("Start-Up");
 
-            totalNotificationsSent = new AtomicInteger(StatisticsUtil.getTotalNotificationsSent());
-            totalFunctionsHandled = new AtomicInteger(StatisticsUtil.getTotalFunctionsHandled());
-            mostFunctionsHandled = new AtomicInteger(StatisticsUtil.getMostFunctionsHandled());
-            mostFunctionsReceived = new AtomicInteger(StatisticsUtil.getMostFunctionsReceived());
+        totalNotificationsSent = new AtomicInteger(StatisticsUtil.getTotalNotificationsSent());
+        totalFunctionsHandled = new AtomicInteger(StatisticsUtil.getTotalFunctionsHandled());
+        mostFunctionsHandled = new AtomicInteger(StatisticsUtil.getMostFunctionsHandled());
+        mostFunctionsReceived = new AtomicInteger(StatisticsUtil.getMostFunctionsReceived());
 
-            readInPrivateKey();
-            readUsedKeysFromFile();
-            registerDefaultRooms();
+        readInPrivateKey();
+        readUsedKeysFromFile();
+        registerDefaultRooms();
 
-            Debug.append("Starting permanent threads");
+        Debug.append("Starting permanent threads");
 
-            startInactiveCheckRunnable();
-            startBlacklistRunnable();
-            startListenerThreads();
-            startFunctionThread();
+        startInactiveCheckRunnable();
+        startListenerThreads();
+        startFunctionThread();
 
-            toggleOnline();
+        toggleOnline();
 
-            Debug.appendBanner("Server is ready - accepting connections");
-        } catch (Throwable t) {
-            Debug.stackTrace(t, "Caught a thrown exception in onStart()");
-        }
+        Debug.appendBanner("Server is ready - accepting connections");
     }
 
     private void onStop() {
@@ -242,7 +229,7 @@ public final class EntropyServer extends JFrame
             KeyFactory fact = KeyFactory.getInstance("RSA");
             privateKey = fact.generatePrivate(keySpec);
         } catch (Throwable e) {
-            Debug.stackTrace(e, "COULD NOT READ PRIVATE KEY - SERVER WILL NOT FUNCTION CORRECTLY");
+            logger.error("keyError", "Failed to read in private key, server is borked :(", e);
         }
     }
 
@@ -315,13 +302,6 @@ public final class EntropyServer extends JFrame
         inactiveCheckThread.start();
     }
 
-    private void startBlacklistRunnable() {
-        BlacklistRunnable runnable = new BlacklistRunnable(this);
-
-        ServerThread inactiveCheckThread = new ServerThread(runnable, "BlacklistCheck");
-        inactiveCheckThread.start();
-    }
-
     private void startListenerThreads() {
         int lowerBound = SERVER_PORT_NUMBER_LOWER_BOUND;
         int upperBound = SERVER_PORT_NUMBER_UPPER_BOUND;
@@ -332,7 +312,7 @@ public final class EntropyServer extends JFrame
                 listenerThread.setName("Listener-" + i);
                 listenerThread.start();
             } catch (Throwable t) {
-                Debug.stackTrace(t, "Unable to start listener thread on port " + i);
+                logger.error("listenerError", "Unable to start listener thread on port " + i, t);
             }
         }
     }
@@ -354,12 +334,8 @@ public final class EntropyServer extends JFrame
 
                     clearFunctionStats();
 
-                    try {
-                        statusText = "Sleeping between updates";
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Debug.stackTrace(e);
-                    }
+                    statusText = "Sleeping between updates";
+                    try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
                 }
             }
 
@@ -378,30 +354,8 @@ public final class EntropyServer extends JFrame
         functionThread.start();
     }
 
-    public int getBlacklistDurationMinutes() {
-        return blacklistMinutes;
-    }
-
     public void executeInWorkerPool(ServerRunnable runnable) {
         tpe.executeServerRunnable(runnable);
-    }
-
-    /**
-     * Blacklist
-     */
-    public void incrementMessageCountForIp(String ip) {
-        incrementStatForMessage(ip, hmMessagesReceivedByIp);
-
-        AtomicInteger integer = hmMessagesReceivedByIp.get(ip);
-        if (integer != null
-                && integer.intValue() > messagesPerSecondThreshold) {
-            addToBlacklist(ip, ">" + messagesPerSecondThreshold + " msg/s");
-        }
-
-    }
-
-    private void clearIpMessageCounts() {
-        hmMessagesReceivedByIp = new ConcurrentHashMap<>();
     }
 
     public void incrementFunctionsReceived() {
@@ -468,8 +422,6 @@ public final class EntropyServer extends JFrame
         int newNotificationsAttempted = notificationsAttemptedInt - notificationsSentInt;
         notificationsAttempted.set(newNotificationsAttempted);
         notificationsSent.set(0);
-
-        clearIpMessageCounts();
     }
 
     public boolean isAlreadyOnline(String username) {
@@ -921,33 +873,6 @@ public final class EntropyServer extends JFrame
         }
     }
 
-    public ConcurrentHashMap<String, BlacklistEntry> getBlacklist() {
-        return blacklist;
-    }
-
-    public void addToBlacklist(String ipAndPort, String reason) {
-        ArrayList<String> tokens = StringUtil.getListFromDelims(ipAndPort, "_");
-        String ip = tokens.get(0);
-
-        if (usingBlacklist) {
-            BlacklistEntry entry = new BlacklistEntry(reason);
-            blacklist.put(ip, entry);
-
-            Debug.append("Blacklisted " + ip + ". Reason: " + reason);
-        } else {
-            Debug.append("Not blacklisting " + ip + " because this is turned off. Reason: " + reason);
-        }
-    }
-
-    public boolean isBlacklisted(String ipAddress) {
-        if (!usingBlacklist) {
-            return false;
-        }
-
-        BlacklistEntry entry = blacklist.get(ipAddress);
-        return entry != null;
-    }
-
     public boolean messageIsTraced(String nodeName, String username) {
         if (traceAll) {
             return true;
@@ -1058,10 +983,6 @@ public final class EntropyServer extends JFrame
                 tpe.setMaximumPoolSize(newMaxSize);
                 Debug.append("Max pool size is now " + newMaxSize);
             }
-        } else if (command.startsWith(COMMAND_SET_KEEP_ALIVE_TIME)) {
-            String newKeepAliveTime = command.substring(COMMAND_SET_KEEP_ALIVE_TIME.length());
-            tpe.setKeepAliveTime(Integer.parseInt(newKeepAliveTime), TimeUnit.SECONDS);
-            Debug.append("Keep Alive Time is now " + newKeepAliveTime + "s");
         } else if (command.equals(COMMAND_POOL_STATS)) {
             Debug.appendWithoutDate("-----------------------------------------");
             Debug.appendWithoutDate("Max size: " + tpe.getMaximumPoolSize());
@@ -1075,44 +996,6 @@ public final class EntropyServer extends JFrame
             Debug.appendWithoutDate("Largest pool size: " + tpe.getLargestPoolSize());
             Debug.appendWithoutDate("Completion status: " + tpe.getCompletedTaskCount() + " / " + tpe.getTaskCount());
             Debug.appendWithoutDate("-----------------------------------------");
-        } else if (command.startsWith(COMMAND_FAKE_USERS)) {
-            if (!devMode) {
-                Debug.append("Not running command as not running in DEV mode");
-                return;
-            }
-
-            int users = parseArgumentAsInt(command, COMMAND_FAKE_USERS);
-            for (int i = 0; i < users; i++) {
-                UserConnection usc = new UserConnection(null, null);
-                usc.update("Fake " + i, false);
-                setUserConnectionForIpAndPort("" + i, usc);
-            }
-        } else if (command.equals(COMMAND_DUMP_BLACKLIST)) {
-            dumpBlacklist();
-        } else if (command.equals(COMMAND_BLACKLIST_FULL)) {
-            usingBlacklist = true;
-            blacklistMinutes = -1;
-            Debug.appendBanner("Blacklist is FULL");
-        } else if (command.equals(COMMAND_BLACKLIST_OFF)) {
-            usingBlacklist = false;
-            Debug.appendBanner("Blacklist is OFF");
-        } else if (command.startsWith(COMMAND_BLACKLIST_TIME)) {
-            int minutes = parseArgumentAsInt(command, COMMAND_BLACKLIST_TIME);
-
-            if (minutes > -1) {
-                blacklistMinutes = minutes;
-                usingBlacklist = true;
-                Debug.appendBanner("Blacklist is ON and set to " + minutes + " minutes");
-            }
-        } else if (command.startsWith(COMMAND_BLACKLIST)) {
-            String ip = command.substring(COMMAND_BLACKLIST.length());
-            addToBlacklist(ip, "Manual");
-        } else if (command.startsWith(COMMAND_SET_BLACKLIST_THRESHOLD)) {
-            int threshold = parseArgumentAsInt(command, COMMAND_SET_BLACKLIST_THRESHOLD);
-            if (threshold > -1) {
-                messagesPerSecondThreshold = threshold;
-                Debug.append("Will now blacklist anyone who sends more than " + threshold + " message/s");
-            }
         } else if (command.equals(COMMAND_USED_KEYS)) {
             for (SecretKey key : usedSymmetricKeys) {
                 String keyStr = EncryptionUtil.convertSecretKeyToString(key);
@@ -1185,12 +1068,6 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate(COMMAND_SET_CORE_POOL_SIZE + "<core pool size>");
         Debug.appendWithoutDate(COMMAND_SET_MAX_POOL_SIZE + "<max pool size>");
         Debug.appendWithoutDate(COMMAND_SET_KEEP_ALIVE_TIME + "<keep alive time>");
-        Debug.appendWithoutDate(COMMAND_DUMP_BLACKLIST);
-        Debug.appendWithoutDate(COMMAND_BLACKLIST_TIME + "<minutes to stay blacklisted>");
-        Debug.appendWithoutDate(COMMAND_BLACKLIST_FULL);
-        Debug.appendWithoutDate(COMMAND_BLACKLIST_OFF);
-        Debug.appendWithoutDate(COMMAND_BLACKLIST + "<IP address to blacklist>");
-        Debug.appendWithoutDate(COMMAND_SET_BLACKLIST_THRESHOLD + "<message/s>");
         Debug.appendWithoutDate(COMMAND_USED_KEYS);
         Debug.appendWithoutDate(COMMAND_DUMP_HASH_MAPS);
         Debug.appendWithoutDate(COMMAND_MEMORY + "<do gc>");
@@ -1245,33 +1122,6 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate("");
     }
 
-    private void dumpBlacklist() {
-        if (blacklist.isEmpty()) {
-            return;
-        }
-
-        Debug.appendWithoutDate("*********************************************************");
-        Debug.appendWithoutDate("IP		Reason	Time Remaining");
-        Debug.appendWithoutDate("*********************************************************");
-
-        Iterator<String> it = blacklist.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String ip = it.next();
-            BlacklistEntry entry = blacklist.get(ip);
-            String reason = entry.getBlacklistReason();
-            String timeRemaining = entry.getRenderedTimeRemainingOnBlacklist(blacklistMinutes);
-
-            if (ip.length() <= 10) {
-                ip += "	";
-            }
-
-            String row = ip + "	" + reason + "	" + timeRemaining;
-            Debug.appendWithoutDate(row);
-        }
-
-        Debug.appendWithoutDate("");
-    }
-
     private void dumpHashMaps() {
         Debug.appendWithoutDate("hmUserConnectionByIp: " + hmUserConnectionByIpAndPort);
         Debug.appendWithoutDate("hmRoomById: " + hmRoomByName);
@@ -1279,8 +1129,6 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate("hmFunctionsHandledByMessageType: " + hmFunctionsHandledByMessageType);
         Debug.appendWithoutDate("hmNotificationsAttemptedByNotificationType: " + hmNotificationsAttemptedByNotificationType);
         Debug.appendWithoutDate("hmNotificationsSentByNotificationType: " + hmNotificationsSentByNotificationType);
-        Debug.appendWithoutDate("hmMessagesReceivedByIp: " + hmMessagesReceivedByIp);
-        Debug.appendWithoutDate("blacklist: " + blacklist);
     }
 
     private void dumpMemory(boolean forceGc) {

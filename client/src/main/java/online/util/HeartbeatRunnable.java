@@ -5,8 +5,9 @@ import online.screen.EntropyLobby;
 import org.w3c.dom.Document;
 
 import util.AbstractClient;
-import util.Debug;
 import util.MessageUtil;
+
+import static utils.InjectedThings.logger;
 
 public class HeartbeatRunnable implements Runnable
 {
@@ -25,27 +26,17 @@ public class HeartbeatRunnable implements Runnable
 	{
 		while (lobby.isVisible())
 		{
-			try
+			long lastSentMessageMillis = AbstractClient.getInstance().getLastSentMessageMillis();
+			long currentMillis = System.currentTimeMillis();
+			long difference = currentMillis - lastSentMessageMillis;
+			if (difference >= HEARTBEAT_THREADHOLD)
 			{
-				long lastSentMessageMillis = AbstractClient.getInstance().getLastSentMessageMillis();
-				long currentMillis = System.currentTimeMillis();
-				long difference = currentMillis - lastSentMessageMillis;
-				if (difference < HEARTBEAT_THREADHOLD)
-				{
-					Thread.sleep(SLEEP_TIME_MILLIS);
-				}
-				else
-				{
-					Document lobbyRequest = XmlBuilderClient.factoryHeartbeat(lobby.getUsername());
-					MessageUtil.sendMessage(lobbyRequest, 0);
-					Debug.append("Sent message from the heartbeat thread. Difference was: " + difference, !AbstractClient.devMode);
-					Thread.sleep(SLEEP_TIME_MILLIS);
-				}
+				Document lobbyRequest = XmlBuilderClient.factoryHeartbeat(lobby.getUsername());
+				MessageUtil.sendMessage(lobbyRequest, 0);
+				logger.info("heartbeat", "Sent heartbeat message, time since last: " + difference);
 			}
-			catch (Throwable t)
-			{
-				Debug.stackTrace(t);
-			}
+
+			try { Thread.sleep(SLEEP_TIME_MILLIS); } catch (InterruptedException ignored) {}
 		}
 	}
 }

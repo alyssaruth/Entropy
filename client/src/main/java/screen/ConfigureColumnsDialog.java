@@ -23,34 +23,27 @@ public class ConfigureColumnsDialog extends JDialog
 	
 	public ConfigureColumnsDialog() 
 	{
-		try
-		{
-			setSize(220, 250);
-			setTitle("Configure Columns");
-			setResizable(false);
-			getContentPane().setLayout(null);
-			chckbxGameMode.setBounds(18, 20, 159, 23);
-			getContentPane().add(chckbxGameMode);
-			chckbxRounds.setBounds(18, 78, 204, 23);
-			getContentPane().add(chckbxRounds);
-			chckbxPlayers.setBounds(18, 107, 159, 23);
-			getContentPane().add(chckbxPlayers);
-			chckbxCards.setBounds(18, 136, 159, 23);
-			getContentPane().add(chckbxCards);
-			JPanel panel = new JPanel();
-			panel.setBounds(0, 174, 222, 33);
-			getContentPane().add(panel);
-			panel.add(btnOk);
-			panel.add(btnCancel);
-			chckbxRoomName.setBounds(18, 49, 204, 23);
-			getContentPane().add(chckbxRoomName);
-			initVariables();
-			setUpListeners();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setSize(220, 250);
+		setTitle("Configure Columns");
+		setResizable(false);
+		getContentPane().setLayout(null);
+		chckbxGameMode.setBounds(18, 20, 159, 23);
+		getContentPane().add(chckbxGameMode);
+		chckbxRounds.setBounds(18, 78, 204, 23);
+		getContentPane().add(chckbxRounds);
+		chckbxPlayers.setBounds(18, 107, 159, 23);
+		getContentPane().add(chckbxPlayers);
+		chckbxCards.setBounds(18, 136, 159, 23);
+		getContentPane().add(chckbxCards);
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 174, 222, 33);
+		getContentPane().add(panel);
+		panel.add(btnOk);
+		panel.add(btnCancel);
+		chckbxRoomName.setBounds(18, 49, 204, 23);
+		getContentPane().add(chckbxRoomName);
+		initVariables();
+		setUpListeners();
 	}
 	
 	private JCheckBox chckbxGameMode = new JCheckBox("Game Mode");

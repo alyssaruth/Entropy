@@ -113,16 +113,8 @@ public class FlagImage
 		return codeStr + "~" + toolTipText + "~" + iconNames;
 	}
 	
-	public static final ImageIcon getImageIconForFlagName(String flagName)
+	public static ImageIcon getImageIconForFlagName(String flagName)
 	{
-		try
-		{
-			return new ImageIcon(FlagImage.class.getResource("/flags/" + flagName + ".png"));
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t, "Unable to get image for " + flagName);
-			return null;
-		}
+		return new ImageIcon(FlagImage.class.getResource("/flags/" + flagName + ".png"));
 	}
 }

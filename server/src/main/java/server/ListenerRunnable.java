@@ -1,11 +1,11 @@
 package server;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import object.ServerRunnable;
 import object.UserConnection;
 import util.Debug;
+
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public abstract class ListenerRunnable implements ServerRunnable
 {
@@ -27,16 +27,7 @@ public abstract class ListenerRunnable implements ServerRunnable
 			while (!serverSocket.isClosed())
 			{
 				Socket clientSocket = serverSocket.accept();
-				
-				String ipAddress = clientSocket.getInetAddress().getHostAddress();
-				if (server.isBlacklisted(ipAddress))
-				{
-					clientSocket.close();
-				}
-				else
-				{
-					handleInboundMessage(server, clientSocket);
-				}
+				handleInboundMessage(server, clientSocket);
 			} 
 		}
 		catch (Throwable t)

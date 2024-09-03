@@ -1,6 +1,12 @@
 
 package util;
 
+import kotlin.Pair;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import javax.crypto.SecretKey;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -12,14 +18,6 @@ import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.crypto.SecretKey;
-
-import kotlin.Pair;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import utils.InjectedThings;
 
 import static utils.InjectedThings.logger;
 
@@ -55,9 +53,9 @@ public class MessageUtil implements OnlineConstants
 			MessageUtil.publicKey = fact.generatePublic(keySpec);
 			Debug.append("Key read successfully");
 		} 
-		catch (Throwable e) 
+		catch (Throwable t)
 		{
-			Debug.stackTrace(e, "Unable to read public key - won't be able to communicate with Server.");
+			logger.error("keyError", "Unable to read public key - won't be able to communicate with Server.", t);
 		} 
 	}
 	
@@ -147,13 +145,6 @@ public class MessageUtil implements OnlineConstants
 		return true;
 	}
 	
-	/*public static int getRandomLoadTestPortNumber()
-	{
-		Random rand = new Random();
-		int portsToChoose = LOAD_TEST_PORT_NUMBER_UPPER_BOUND - LOAD_TEST_PORT_NUMBER_LOWER_BOUND;
-		return LOAD_TEST_PORT_NUMBER_LOWER_BOUND + rand.nextInt(portsToChoose);
-	}*/
-	
 	public static InetAddress factoryInetAddress(String ipAddress)
 	{
 		InetAddress address = null;
@@ -164,7 +155,7 @@ public class MessageUtil implements OnlineConstants
 		}
 		catch (UnknownHostException uhe)
 		{
-			Debug.stackTrace(uhe, "Failed to create InetAddress");
+			logger.error("addressError", "Failed to create InetAddress", uhe);
 		}
 		
 		return address;

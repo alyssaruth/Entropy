@@ -23,16 +23,9 @@ public class DisabledComboBoxModel<E> extends DefaultComboBoxModel<ComboBoxItem<
 			Debug.stackTrace("Calling setSelectedItem on an object which is not a ComboBoxItem: " + arg0);
 			return;
 		}
-		
-		try
-		{
-			ComboBoxItem<E> item = (ComboBoxItem<E>)arg0;
-			setSelectedComboBoxItem(item);
-		}
-		catch (ClassCastException cce)
-		{
-			Debug.stackTrace(cce);
-		}
+
+		ComboBoxItem<E> item = (ComboBoxItem<E>)arg0;
+		setSelectedComboBoxItem(item);
 	}
 	public void setSelectedComboBoxItem(ComboBoxItem<E> comboBoxItem)
 	{

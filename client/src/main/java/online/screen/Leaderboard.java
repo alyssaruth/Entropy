@@ -49,87 +49,80 @@ public class Leaderboard extends JFrame
 	
 	public Leaderboard() 
 	{
-		try
-		{
-			setResizable(false);
-			setTitle("Leaderboard");
-			setSize(590, 500);
-			
-			getContentPane().add(panelRefresh, BorderLayout.NORTH);
-			panelRefresh.add(btnRefresh);
-			getContentPane().add(tabbedPane, BorderLayout.CENTER);
-			JPanel panelEntropy = new JPanel();
-			panelEntropy.setBackground(new Color(152, 251, 152));
-			tabbedPane.addTab("Entropy", null, panelEntropy, null);
-			panelEntropy.setLayout(new BorderLayout(0, 0));
-			scrollPaneEntropy.setBackground(new Color(152, 251, 152));
-			panelEntropy.add(scrollPaneEntropy);
-			tableEntropy.getTableHeader().setReorderingAllowed(false);
-			tableVectropy.getTableHeader().setReorderingAllowed(false);
-			scrollPaneEntropy.setViewportView(tableEntropy);
-			JPanel panelVectropy = new JPanel();
-			panelVectropy.setBackground(new Color(152, 251, 152));
-			tabbedPane.addTab("Vectropy", null, panelVectropy, null);
-			panelVectropy.setLayout(new BorderLayout(0, 0));
-			panelVectropy.add(scrollPaneVectropy);
-			scrollPaneVectropy.setViewportView(tableVectropy);
-			JPanel panelAchievements = new JPanel();
-			tabbedPane.addTab("Achievements", null, panelAchievements, null);
-			panelAchievements.setLayout(new BorderLayout(0, 0));
-			panelAchievements.add(scrollPaneAchievements);
-			scrollPaneAchievements.setViewportView(tableAchievements);
-			tabbedPane.addTab("Global Stats", null, panelGlobalStats, null);
-			panelGlobalStats.setLayout(null);
-			JLabel lblTotalGamesPlayed = new JLabel("Total games played:");
-			lblTotalGamesPlayed.setFont(new Font("Tahoma", Font.BOLD, 14));
-			lblTotalGamesPlayed.setBounds(12, 12, 173, 32);
-			panelGlobalStats.add(lblTotalGamesPlayed);
-			JLabel lblTotalGameDuration = new JLabel("Total game duration:");
-			lblTotalGameDuration.setFont(new Font("Tahoma", Font.BOLD, 14));
-			lblTotalGameDuration.setBounds(12, 54, 173, 32);
-			panelGlobalStats.add(lblTotalGameDuration);
-			JLabel lblMostUsersOnline = new JLabel("Most users online:");
-			lblMostUsersOnline.setFont(new Font("Tahoma", Font.BOLD, 14));
-			lblMostUsersOnline.setBounds(12, 96, 173, 32);
-			panelGlobalStats.add(lblMostUsersOnline);
-			lblGamesPlayed.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			lblGamesPlayed.setBounds(192, 12, 108, 32);
-			panelGlobalStats.add(lblGamesPlayed);
-			lblGameDuration.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			lblGameDuration.setBounds(192, 54, 108, 32);
-			panelGlobalStats.add(lblGameDuration);
-			lblUsersOnline.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			lblUsersOnline.setBounds(192, 96, 108, 32);
-			panelGlobalStats.add(lblUsersOnline);
-			
-			JSeparator separator = new JSeparator();
-			separator.setBounds(0, 184, 579, 7);
-			panelGlobalStats.add(separator);
-			
-			JLabel lblIndividualRooms = new JLabel("Individual Rooms");
-			lblIndividualRooms.setFont(new Font("Tahoma", Font.BOLD, 14));
-			lblIndividualRooms.setHorizontalAlignment(SwingConstants.CENTER);
-			lblIndividualRooms.setBounds(0, 154, 579, 24);
-			panelGlobalStats.add(lblIndividualRooms);
-			
-			JScrollPane scrollPane = new JScrollPane();
-			scrollPane.setBounds(10, 189, 559, 200);
-			panelGlobalStats.add(scrollPane);
-			scrollPane.setViewportView(tableRoomStats);
-			
-			tableEntropy.getTableHeader().setReorderingAllowed(false);
-			tableVectropy.getTableHeader().setReorderingAllowed(false);
-			tableAchievements.getTableHeader().setReorderingAllowed(false);
-			tableRoomStats.getTableHeader().setReorderingAllowed(false);
-			
-			btnRefresh.addActionListener(this);
-			
-			setColours();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setResizable(false);
+		setTitle("Leaderboard");
+		setSize(590, 500);
+
+		getContentPane().add(panelRefresh, BorderLayout.NORTH);
+		panelRefresh.add(btnRefresh);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		JPanel panelEntropy = new JPanel();
+		panelEntropy.setBackground(new Color(152, 251, 152));
+		tabbedPane.addTab("Entropy", null, panelEntropy, null);
+		panelEntropy.setLayout(new BorderLayout(0, 0));
+		scrollPaneEntropy.setBackground(new Color(152, 251, 152));
+		panelEntropy.add(scrollPaneEntropy);
+		tableEntropy.getTableHeader().setReorderingAllowed(false);
+		tableVectropy.getTableHeader().setReorderingAllowed(false);
+		scrollPaneEntropy.setViewportView(tableEntropy);
+		JPanel panelVectropy = new JPanel();
+		panelVectropy.setBackground(new Color(152, 251, 152));
+		tabbedPane.addTab("Vectropy", null, panelVectropy, null);
+		panelVectropy.setLayout(new BorderLayout(0, 0));
+		panelVectropy.add(scrollPaneVectropy);
+		scrollPaneVectropy.setViewportView(tableVectropy);
+		JPanel panelAchievements = new JPanel();
+		tabbedPane.addTab("Achievements", null, panelAchievements, null);
+		panelAchievements.setLayout(new BorderLayout(0, 0));
+		panelAchievements.add(scrollPaneAchievements);
+		scrollPaneAchievements.setViewportView(tableAchievements);
+		tabbedPane.addTab("Global Stats", null, panelGlobalStats, null);
+		panelGlobalStats.setLayout(null);
+		JLabel lblTotalGamesPlayed = new JLabel("Total games played:");
+		lblTotalGamesPlayed.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblTotalGamesPlayed.setBounds(12, 12, 173, 32);
+		panelGlobalStats.add(lblTotalGamesPlayed);
+		JLabel lblTotalGameDuration = new JLabel("Total game duration:");
+		lblTotalGameDuration.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblTotalGameDuration.setBounds(12, 54, 173, 32);
+		panelGlobalStats.add(lblTotalGameDuration);
+		JLabel lblMostUsersOnline = new JLabel("Most users online:");
+		lblMostUsersOnline.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblMostUsersOnline.setBounds(12, 96, 173, 32);
+		panelGlobalStats.add(lblMostUsersOnline);
+		lblGamesPlayed.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblGamesPlayed.setBounds(192, 12, 108, 32);
+		panelGlobalStats.add(lblGamesPlayed);
+		lblGameDuration.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblGameDuration.setBounds(192, 54, 108, 32);
+		panelGlobalStats.add(lblGameDuration);
+		lblUsersOnline.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblUsersOnline.setBounds(192, 96, 108, 32);
+		panelGlobalStats.add(lblUsersOnline);
+
+		JSeparator separator = new JSeparator();
+		separator.setBounds(0, 184, 579, 7);
+		panelGlobalStats.add(separator);
+
+		JLabel lblIndividualRooms = new JLabel("Individual Rooms");
+		lblIndividualRooms.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblIndividualRooms.setHorizontalAlignment(SwingConstants.CENTER);
+		lblIndividualRooms.setBounds(0, 154, 579, 24);
+		panelGlobalStats.add(lblIndividualRooms);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 189, 559, 200);
+		panelGlobalStats.add(scrollPane);
+		scrollPane.setViewportView(tableRoomStats);
+
+		tableEntropy.getTableHeader().setReorderingAllowed(false);
+		tableVectropy.getTableHeader().setReorderingAllowed(false);
+		tableAchievements.getTableHeader().setReorderingAllowed(false);
+		tableRoomStats.getTableHeader().setReorderingAllowed(false);
+
+		btnRefresh.addActionListener(this);
+
+		setColours();
 	}
 	
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);

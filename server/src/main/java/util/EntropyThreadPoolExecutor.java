@@ -1945,15 +1945,8 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
     	
     	public void rejectedExecution(Runnable arg0) 
     	{
-    		try
-    		{
-    			Debug.append("Too many functions queued - throwing away runnable " + arg0);
-    			server.incrementFunctionsReceivedAndHandledForMessage("REJECTED");
-    		}
-    		catch (Throwable t)
-    		{
-    			Debug.stackTrace(t);
-    		}
+            Debug.append("Too many functions queued - throwing away runnable " + arg0);
+            server.incrementFunctionsReceivedAndHandledForMessage("REJECTED");
     	}
     }
     

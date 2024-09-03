@@ -31,52 +31,45 @@ public class NewAccountDialog extends JDialog
 {
 	public NewAccountDialog() 
 	{
-		try
-		{
-			setTitle("Create Account");
-			setSize(290, 223);
-			getRootPane().setDefaultButton(btnOk);
-			getContentPane().setLayout(null);
-			JPanel okCancelPanel = new JPanel();
-			okCancelPanel.setBounds(0, 140, 284, 33);
-			getContentPane().add(okCancelPanel);
-			okCancelPanel.add(btnOk);
-			okCancelPanel.add(btnCancel);
-			lblUsername.setBounds(10, 10, 120, 22);
-			getContentPane().add(lblUsername);
-			textFieldUsername.setBounds(130, 10, 130, 22);
-			textFieldUsername.setPreferredSize(new Dimension(120, 20));
-			LimitedDocument document = new LimitedDocument(10);
-			textFieldUsername.setDocument(document);
-			getContentPane().add(textFieldUsername);
-			lblPassword.setBounds(10, 40, 120, 22);
-			getContentPane().add(lblPassword);
-			LimitedDocument passwordDocument = new LimitedDocument(20);
-			passwordField1.setBounds(130, 40, 130, 22);
-			passwordField1.setDocument(passwordDocument);
-			passwordField1.setPreferredSize(new Dimension(120, 20));
-			getContentPane().add(passwordField1);
-			lblConfirmPassword.setBounds(10, 70, 120, 22);
-			getContentPane().add(lblConfirmPassword);
-			LimitedDocument passwordDocument2 = new LimitedDocument(20);
-			passwordField2.setBounds(130, 70, 130, 22);
-			passwordField2.setDocument(passwordDocument2);
-			passwordField2.setPreferredSize(new Dimension(120, 20));
-			getContentPane().add(passwordField2);
-			
-			lblEmail.setBounds(10, 100, 120, 22);
-			getContentPane().add(lblEmail);
-			textFieldEmail.setBounds(130, 100, 130, 22);
-			textFieldEmail.setPreferredSize(new Dimension(120, 20));
-			textFieldEmail.setDocument(new LimitedDocument(80));
-			getContentPane().add(textFieldEmail);		
-			btnOk.addActionListener(this);
-			btnCancel.addActionListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		setTitle("Create Account");
+		setSize(290, 223);
+		getRootPane().setDefaultButton(btnOk);
+		getContentPane().setLayout(null);
+		JPanel okCancelPanel = new JPanel();
+		okCancelPanel.setBounds(0, 140, 284, 33);
+		getContentPane().add(okCancelPanel);
+		okCancelPanel.add(btnOk);
+		okCancelPanel.add(btnCancel);
+		lblUsername.setBounds(10, 10, 120, 22);
+		getContentPane().add(lblUsername);
+		textFieldUsername.setBounds(130, 10, 130, 22);
+		textFieldUsername.setPreferredSize(new Dimension(120, 20));
+		LimitedDocument document = new LimitedDocument(10);
+		textFieldUsername.setDocument(document);
+		getContentPane().add(textFieldUsername);
+		lblPassword.setBounds(10, 40, 120, 22);
+		getContentPane().add(lblPassword);
+		LimitedDocument passwordDocument = new LimitedDocument(20);
+		passwordField1.setBounds(130, 40, 130, 22);
+		passwordField1.setDocument(passwordDocument);
+		passwordField1.setPreferredSize(new Dimension(120, 20));
+		getContentPane().add(passwordField1);
+		lblConfirmPassword.setBounds(10, 70, 120, 22);
+		getContentPane().add(lblConfirmPassword);
+		LimitedDocument passwordDocument2 = new LimitedDocument(20);
+		passwordField2.setBounds(130, 70, 130, 22);
+		passwordField2.setDocument(passwordDocument2);
+		passwordField2.setPreferredSize(new Dimension(120, 20));
+		getContentPane().add(passwordField2);
+
+		lblEmail.setBounds(10, 100, 120, 22);
+		getContentPane().add(lblEmail);
+		textFieldEmail.setBounds(130, 100, 130, 22);
+		textFieldEmail.setPreferredSize(new Dimension(120, 20));
+		textFieldEmail.setDocument(new LimitedDocument(80));
+		getContentPane().add(textFieldEmail);
+		btnOk.addActionListener(this);
+		btnCancel.addActionListener(this);
 	}
 	
 	private final JLabel lblUsername = new JLabel("Username");

@@ -22,6 +22,8 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.swing.JFileChooser;
 
+import static utils.InjectedThings.logger;
+
 public class FileUtil
 {
 	public static void saveTextToFile(String text, Path destinationPath)
@@ -54,7 +56,7 @@ public class FileUtil
 		}
 		catch (Throwable t)
 		{
-			Debug.stackTrace(t, "Failed to decode contents of file " + file);
+			logger.error("decodeError", "Failed to decode contents of file " + file, t);
 			return null;
 		}
 	}

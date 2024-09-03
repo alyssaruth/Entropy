@@ -86,7 +86,7 @@ public class Debug implements CoreRegistry {
         stackTrace(t, "");
     }
 
-    public static void stackTrace(Throwable t, String message) {
+    private static void stackTrace(Throwable t, String message) {
         String datetime = getCurrentTimeForLogging();
 
         String trace = "";
