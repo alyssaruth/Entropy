@@ -60,119 +60,112 @@ public final class MainScreen extends AbstractDevScreen
 	{
 		super();
 		setTitle("Entropy");
-		
-		try
-		{
-			init();
-			
-			setFocusable(true);
-			addWindowListener(this);
-			getContentPane().setLayout(new BorderLayout(0, 0));
-			achievementMessageBottom.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-			achievementMessageBottom.setBounds(13, 460, 395, 80);
-			sidePanel.add(achievementMessageBottom);
-			achievementMessageBottom.setLayout(null);
-			achievementIconBottom.setBounds(45, 11, 56, 56);
-			achievementMessageBottom.add(achievementIconBottom);
-			achievementEarnedBottom.setHorizontalAlignment(SwingConstants.CENTER);
-			achievementEarnedBottom.setFont(new Font("Tahoma", Font.BOLD, 15));
-			achievementEarnedBottom.setBounds(128, 11, 169, 25);
-			achievementMessageBottom.add(achievementEarnedBottom);
-			achievementTitleBottom.setFont(new Font("Tahoma", Font.BOLD, 12));
-			achievementTitleBottom.setHorizontalAlignment(SwingConstants.CENTER);
-			achievementTitleBottom.setBounds(128, 43, 169, 20);
-			achievementMessageBottom.add(achievementTitleBottom);
-			xButtonBottom.setVerticalAlignment(SwingConstants.TOP);
-			xButtonBottom.setHorizontalAlignment(SwingConstants.RIGHT);
-			xButtonBottom.setFont(new Font("Tahoma", Font.BOLD, 15));
-			xButtonBottom.setBounds(368, 5, 16, 18);
-			achievementMessageBottom.add(xButtonBottom);
-			achievementMessageTop.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-			achievementMessageTop.setBounds(13, 373, 395, 80);
-			sidePanel.add(achievementMessageTop);
-			achievementMessageTop.setLayout(null);
-			achievementIconTop.setBounds(45, 11, 56, 56);
-			achievementMessageTop.add(achievementIconTop);
-			achievementEarnedTop.setHorizontalAlignment(SwingConstants.CENTER);
-			achievementEarnedTop.setFont(new Font("Tahoma", Font.BOLD, 15));
-			achievementEarnedTop.setBounds(128, 11, 169, 25);
-			achievementMessageTop.add(achievementEarnedTop);
-			xButtonTop.setFont(new Font("Tahoma", Font.BOLD, 15));
-			xButtonTop.setVerticalAlignment(SwingConstants.TOP);
-			xButtonTop.setHorizontalAlignment(SwingConstants.RIGHT);
-			xButtonTop.setBounds(368, 5, 16, 18);
-			achievementMessageTop.add(xButtonTop);
-			achievementTitleTop.setHorizontalAlignment(SwingConstants.CENTER);
-			achievementTitleTop.setFont(new Font("Tahoma", Font.BOLD, 12));
-			achievementTitleTop.setBounds(128, 43, 169, 20);
-			achievementMessageTop.add(achievementTitleTop);
-			scrollPane.setBounds(115, 72, 194, 144);
-			scrollPane.setVisible(false);
-			lblBidHistory.setVisible(false);
-			btnReplay.setVisible(false);
-			getContentPane().add(menuBar, BorderLayout.NORTH);
-			menuBar.add(mnFile);
-			mntmNewGame.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
-			mnFile.add(mntmNewGame);
-			mnFile.add(mntmContinueGame);
-			mnFile.add(mntmPlayOnline);
-			mnFile.add(mntmStatistics);
-			mnFile.add(mntmClearData);
-			mntmContinueGame.setEnabled(isGameToContinue);
-			mnFile.add(mntmExit);
-			menuBar.add(mnOptions);
-			mnOptions.add(mntmPreferences);
-			mnOptions.add(mntmViewReplays);
-			mnOptions.add(mntmAchievements);
-			menuBar.add(mnHelp);
-			mnHelp.add(mntmViewHelp);
-			mntmViewHelp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-			mnHelp.add(mntmAbout);
-			mnHelp.add(mntmReportBug);
-			history.setLocation(0, 119);
-			scrollPane.setViewportView(history);
-			history.setVisibleRowCount(4);
-			scrollPane.setBackground(new Color(0, 0, 0, 0));
-			scrollPane.setOpaque(false);
-			history.setBackground(new Color(0, 0, 0, 0));
-			history.setOpaque(false);
-			splitPane.setDividerLocation(622);
-			splitPane.setEnabled(false);
-			getContentPane().add(splitPane);
-			sidePanel.add(scrollPane);
-			splitPane.setRightComponent(sidePanel);
-			sidePanel.setLayout(null);
-			lblBidHistory.setBounds(172, 40, 80, 21);
-			sidePanel.add(lblBidHistory);
-			lblBidHistory.setHorizontalAlignment(SwingConstants.CENTER);
-			lblBidHistory.setFont(new Font("Tahoma", Font.PLAIN, 17));
-			btnNextRound.setBounds(155, 261, 115, 23);
-			sidePanel.add(btnNextRound);
-			lblResult.setContentType("text/html");
-			lblResult.setBounds(96, 296, 232, 56);
-			sidePanel.add(lblResult);
-			lblResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			lblResult.setVisible(false);
-			lblResult.setOpaque(false);
-			lblResult.setBorder(BorderFactory.createEmptyBorder());
-			lblResult.setBackground(new Color(0,0,0,0));
-			lblResult.setEditable(false);
-			lblResult.setFocusable(false);
-			btnNextRound.setVisible(false);
-			btnReplay.setBounds(116, 215, 192, 23);
-			sidePanel.add(btnReplay);
-			splitPane.setLeftComponent(leftPanel);
-			leftPanel.setLayout(new BorderLayout(0, 0));
-			leftPanel.add(commandBar, BorderLayout.SOUTH);
-			history.setCellRenderer(new BidListCellRenderer());
-			
-			addKeyListener(this);
-			commandBar.setCheatListener(this);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+
+		init();
+
+		setFocusable(true);
+		addWindowListener(this);
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		achievementMessageBottom.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		achievementMessageBottom.setBounds(13, 460, 395, 80);
+		sidePanel.add(achievementMessageBottom);
+		achievementMessageBottom.setLayout(null);
+		achievementIconBottom.setBounds(45, 11, 56, 56);
+		achievementMessageBottom.add(achievementIconBottom);
+		achievementEarnedBottom.setHorizontalAlignment(SwingConstants.CENTER);
+		achievementEarnedBottom.setFont(new Font("Tahoma", Font.BOLD, 15));
+		achievementEarnedBottom.setBounds(128, 11, 169, 25);
+		achievementMessageBottom.add(achievementEarnedBottom);
+		achievementTitleBottom.setFont(new Font("Tahoma", Font.BOLD, 12));
+		achievementTitleBottom.setHorizontalAlignment(SwingConstants.CENTER);
+		achievementTitleBottom.setBounds(128, 43, 169, 20);
+		achievementMessageBottom.add(achievementTitleBottom);
+		xButtonBottom.setVerticalAlignment(SwingConstants.TOP);
+		xButtonBottom.setHorizontalAlignment(SwingConstants.RIGHT);
+		xButtonBottom.setFont(new Font("Tahoma", Font.BOLD, 15));
+		xButtonBottom.setBounds(368, 5, 16, 18);
+		achievementMessageBottom.add(xButtonBottom);
+		achievementMessageTop.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		achievementMessageTop.setBounds(13, 373, 395, 80);
+		sidePanel.add(achievementMessageTop);
+		achievementMessageTop.setLayout(null);
+		achievementIconTop.setBounds(45, 11, 56, 56);
+		achievementMessageTop.add(achievementIconTop);
+		achievementEarnedTop.setHorizontalAlignment(SwingConstants.CENTER);
+		achievementEarnedTop.setFont(new Font("Tahoma", Font.BOLD, 15));
+		achievementEarnedTop.setBounds(128, 11, 169, 25);
+		achievementMessageTop.add(achievementEarnedTop);
+		xButtonTop.setFont(new Font("Tahoma", Font.BOLD, 15));
+		xButtonTop.setVerticalAlignment(SwingConstants.TOP);
+		xButtonTop.setHorizontalAlignment(SwingConstants.RIGHT);
+		xButtonTop.setBounds(368, 5, 16, 18);
+		achievementMessageTop.add(xButtonTop);
+		achievementTitleTop.setHorizontalAlignment(SwingConstants.CENTER);
+		achievementTitleTop.setFont(new Font("Tahoma", Font.BOLD, 12));
+		achievementTitleTop.setBounds(128, 43, 169, 20);
+		achievementMessageTop.add(achievementTitleTop);
+		scrollPane.setBounds(115, 72, 194, 144);
+		scrollPane.setVisible(false);
+		lblBidHistory.setVisible(false);
+		btnReplay.setVisible(false);
+		getContentPane().add(menuBar, BorderLayout.NORTH);
+		menuBar.add(mnFile);
+		mntmNewGame.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
+		mnFile.add(mntmNewGame);
+		mnFile.add(mntmContinueGame);
+		mnFile.add(mntmPlayOnline);
+		mnFile.add(mntmStatistics);
+		mnFile.add(mntmClearData);
+		mntmContinueGame.setEnabled(isGameToContinue);
+		mnFile.add(mntmExit);
+		menuBar.add(mnOptions);
+		mnOptions.add(mntmPreferences);
+		mnOptions.add(mntmViewReplays);
+		mnOptions.add(mntmAchievements);
+		menuBar.add(mnHelp);
+		mnHelp.add(mntmViewHelp);
+		mntmViewHelp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+		mnHelp.add(mntmAbout);
+		mnHelp.add(mntmReportBug);
+		history.setLocation(0, 119);
+		scrollPane.setViewportView(history);
+		history.setVisibleRowCount(4);
+		scrollPane.setBackground(new Color(0, 0, 0, 0));
+		scrollPane.setOpaque(false);
+		history.setBackground(new Color(0, 0, 0, 0));
+		history.setOpaque(false);
+		splitPane.setDividerLocation(622);
+		splitPane.setEnabled(false);
+		getContentPane().add(splitPane);
+		sidePanel.add(scrollPane);
+		splitPane.setRightComponent(sidePanel);
+		sidePanel.setLayout(null);
+		lblBidHistory.setBounds(172, 40, 80, 21);
+		sidePanel.add(lblBidHistory);
+		lblBidHistory.setHorizontalAlignment(SwingConstants.CENTER);
+		lblBidHistory.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		btnNextRound.setBounds(155, 261, 115, 23);
+		sidePanel.add(btnNextRound);
+		lblResult.setContentType("text/html");
+		lblResult.setBounds(96, 296, 232, 56);
+		sidePanel.add(lblResult);
+		lblResult.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblResult.setVisible(false);
+		lblResult.setOpaque(false);
+		lblResult.setBorder(BorderFactory.createEmptyBorder());
+		lblResult.setBackground(new Color(0,0,0,0));
+		lblResult.setEditable(false);
+		lblResult.setFocusable(false);
+		btnNextRound.setVisible(false);
+		btnReplay.setBounds(116, 215, 192, 23);
+		sidePanel.add(btnReplay);
+		splitPane.setLeftComponent(leftPanel);
+		leftPanel.setLayout(new BorderLayout(0, 0));
+		leftPanel.add(commandBar, BorderLayout.SOUTH);
+		history.setCellRenderer(new BidListCellRenderer());
+
+		addKeyListener(this);
+		commandBar.setCheatListener(this);
 
 		//Listeners
 		setUpMenuListeners();
@@ -681,8 +674,11 @@ public final class MainScreen extends AbstractDevScreen
 				return textToShow;
 			}
 		}
-		
-		if (command.equals("simulator"))
+
+		if (command.equals("health")) {
+			Globals.INSTANCE.getHealthCheckApi().doHealthCheck();
+		}
+		else if (command.equals("simulator"))
 		{
 			SimulationDialog dialog = ScreenCache.getSimulationDialog();
 			dialog.initVariables();

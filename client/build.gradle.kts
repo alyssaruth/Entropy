@@ -24,6 +24,7 @@ task<JavaExec>("runDev") {
         closureOf<JavaExec> {
             group = "run"
             classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
+            mainClass = "EntropyMain"
             args = listOf("devMode")
         }
     )

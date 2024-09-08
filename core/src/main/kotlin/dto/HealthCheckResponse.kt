@@ -1,3 +1,3 @@
-package routes.health.dto
+package dto
 
 data class HealthCheckResponse(val version: String)
