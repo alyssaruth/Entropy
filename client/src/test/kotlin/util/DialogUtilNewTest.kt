@@ -11,12 +11,12 @@ import io.kotest.matchers.shouldBe
 import javax.swing.JDialog
 import javax.swing.SwingUtilities
 import logging.Severity
-import main.kotlin.testCore.AbstractTest
 import main.kotlin.testCore.getErrorDialog
 import main.kotlin.testCore.getInfoDialog
 import main.kotlin.testCore.getQuestionDialog
 import main.kotlin.testCore.runAsync
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 
 class DialogUtilNewTest : AbstractTest() {
     @Test

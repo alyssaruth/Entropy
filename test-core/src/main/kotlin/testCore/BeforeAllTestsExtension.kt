@@ -5,6 +5,7 @@ import java.time.ZoneId
 import logging.LoggerUncaughtExceptionHandler
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import testCore.logger
 import utils.InjectedThings
 
 var doneOneTimeSetup = false

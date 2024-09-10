@@ -6,8 +6,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.io.IOException
 import logging.Severity
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 
 class UrlUtilTest : AbstractTest() {
     @Test

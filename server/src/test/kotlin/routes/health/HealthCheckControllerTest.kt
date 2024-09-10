@@ -5,9 +5,9 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
-import shouldMatchJson
+import testCore.AbstractTest
+import testCore.shouldMatchJson
 import util.OnlineConstants
 
 class HealthCheckControllerTest : AbstractTest() {

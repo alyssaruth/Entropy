@@ -24,7 +24,6 @@ import kong.unirest.UnirestException
 import kong.unirest.json.JSONException
 import kong.unirest.json.JSONObject
 import logging.Severity
-import main.kotlin.testCore.AbstractTest
 import main.kotlin.testCore.getDialogMessage
 import main.kotlin.testCore.getErrorDialog
 import main.kotlin.testCore.getInfoDialog
@@ -34,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import screen.LoadingDialog
+import testCore.AbstractTest
 import testCore.assertDoesNotExit
 import testCore.assertExits
 

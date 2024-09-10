@@ -9,9 +9,9 @@ import io.kotest.matchers.string.shouldContain
 import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.text.StyleConstants
-import main.kotlin.testCore.AbstractTest
 import main.kotlin.testCore.makeLogRecord
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 import utils.getAllChildComponentsForType
 
 class LoggingConsoleTest : AbstractTest() {

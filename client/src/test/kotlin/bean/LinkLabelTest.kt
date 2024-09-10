@@ -8,8 +8,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.awt.Color
 import java.awt.Cursor
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 
 class LinkLabelTest : AbstractTest() {
     @Test

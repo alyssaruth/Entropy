@@ -12,4 +12,5 @@ dependencies {
     implementation("io.mockk:mockk:1.13.4")
     implementation("io.kotest:kotest-assertions-core:5.5.4")
     implementation("com.github.alexburlton:swing-test:4.0.0")
+    implementation("org.skyscreamer:jsonassert:1.5.3")
 }
