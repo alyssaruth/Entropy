@@ -43,6 +43,12 @@ class RoutingTest : AbstractTest() {
 
         errorLogged() shouldBe true
     }
+
+    @Test
+    fun `Should 404 for non-existent route`() = testApplication {
+        val response = client.get("/non-existent-route")
+        response.status shouldBe HttpStatusCode.NotFound
+    }
 }
 
 private object ErrorThrowingController {
@@ -53,7 +59,7 @@ private object ErrorThrowingController {
                 throw ClientException(
                     HttpStatusCode.Conflict,
                     "conflictingEntity",
-                    "Entity conflicts with another"
+                    "Entity conflicts with another",
                 )
             }
         }
