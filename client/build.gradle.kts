@@ -12,7 +12,7 @@ dependencies {
     implementation("com.konghq:unirest-java:3.14.2")
     implementation(project(":core"))
     testImplementation(project(":test-core"))
-    testImplementation("com.konghq:unirest-mocks:3.14.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 application {

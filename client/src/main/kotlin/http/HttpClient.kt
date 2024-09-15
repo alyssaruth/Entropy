@@ -6,11 +6,13 @@ import kong.unirest.HttpMethod
 import kong.unirest.HttpResponse
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
+import kong.unirest.UnirestException
 import logging.Severity
-import util.Globals.baseUrl
+import org.apache.http.HttpHeaders
+import util.Globals
 import utils.InjectedThings.logger
 
-class HttpClient {
+class HttpClient(val baseUrl: String = Globals.baseUrl) {
     val jsonObjectMapper = JsonObjectMapper()
 
     inline fun <reified T : Any?> doCall(
@@ -28,14 +30,37 @@ class HttpClient {
             "requestBody" to requestJson,
         )
 
-        val request = Unirest.request(method.toString(), "${baseUrl}${route}")
-        payload?.let { request.body(requestJson) }
-        val response = request.asString()
+        val baseRequest =
+            Unirest.request(method.toString(), "${baseUrl}${route}")
+                .header("X-Request-ID", requestId.toString())
 
+        val request =
+            if (requestJson != null)
+                baseRequest
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8")
+                    .body(requestJson)
+            else baseRequest
+
+        try {
+            val response = request.asString()
+            return handleResponse(response, requestId, route, method, requestJson)
+        } catch (e: UnirestException) {
+            logUnirestError(requestId, route, method, requestJson, e)
+            return CommunicationError(e)
+        }
+    }
+
+    inline fun <reified T : Any?> handleResponse(
+        response: HttpResponse<String>,
+        requestId: UUID,
+        route: String,
+        method: HttpMethod,
+        requestJson: String?
+    ): ApiResponse<T> =
         if (response.isSuccess) {
             logResponse(Severity.INFO, requestId, route, method, requestJson, response)
             val body = jsonObjectMapper.readValue(response.body, T::class.java)
-            return SuccessResponse(response.status, body)
+            SuccessResponse(response.status, body)
         } else {
             val errorResponse = tryParseErrorResponse(response)
             logResponse(
@@ -47,13 +72,12 @@ class HttpClient {
                 response,
                 errorResponse,
             )
-            return FailureResponse(
+            FailureResponse(
                 response.status,
                 errorResponse?.errorCode,
                 errorResponse?.errorMessage,
             )
         }
-    }
 
     fun tryParseErrorResponse(response: HttpResponse<String>) =
         try {
@@ -61,6 +85,23 @@ class HttpClient {
         } catch (e: Exception) {
             null
         }
+
+    fun logUnirestError(
+        requestId: UUID,
+        route: String,
+        method: HttpMethod,
+        requestJson: String?,
+        e: UnirestException
+    ) {
+        logger.error(
+            "http.error",
+            "Caught ${e.message} for $method $route",
+            e,
+            "requestId" to requestId,
+            "requestBody" to requestJson,
+            "unirestError" to e.message
+        )
+    }
 
     fun logResponse(
         level: Severity,
