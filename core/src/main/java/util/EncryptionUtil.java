@@ -9,19 +9,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptionUtil 
 {
-	//public static final String DEV_MODE_SYMMETRIC_KEY_STR = "nISBSiWGpVInzurAhSc/Kg==";
 	public static final int MINIMUM_PASSWORD_LENGTH = 7;
 	
 	private static final String ALGORITHM_RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding";
 	private static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
-	
-	public static boolean failedDecryptionLogging = false;
 	public static Base64Interface base64Interface = null;
-	
-	/*public static SecretKey getDevModeKey()
-	{
-		return reconstructKeyFromString(DEV_MODE_SYMMETRIC_KEY_STR);
-	}*/
 	
 	public static String convertSecretKeyToString(SecretKey secretKey)
 	{
@@ -84,16 +76,7 @@ public class EncryptionUtil
 		
 		return encryptedString;
 	}
-	
-	public static String decryptIfPossible(String encryptedMessage, Key key)
-	{
-		if (key == null)
-		{
-			return encryptedMessage;
-		}
-		
-		return decrypt(encryptedMessage, key);
-	}
+
 	public static String decrypt(String encryptedMessage, Key key)
 	{
 		return decrypt(encryptedMessage, key, false);
@@ -115,9 +98,9 @@ public class EncryptionUtil
 			byte[] messageBytes = cipher.doFinal(cipherData);
 			messageString = new String(messageBytes);
 		}
-		catch (Throwable t)
+		catch (Throwable ignored)
 		{
-			Debug.append("Caught " + t + " trying to decrypt message: " + encryptedMessage, failedDecryptionLogging);
+
 		}
 		
 		if (messageString != null)

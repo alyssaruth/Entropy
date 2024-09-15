@@ -74,14 +74,8 @@ public final class EntropyServer extends JFrame
     private AtomicInteger mostFunctionsReceived = new AtomicInteger(0);
     private AtomicInteger mostFunctionsHandled = new AtomicInteger(0);
 
-    //Tracing
-    private ArrayList<String> tracedMessages = new ArrayList<>();
-    private ArrayList<String> tracedUsers = new ArrayList<>();
-    private boolean traceAll = false;
-
     //Properties
     private static boolean devMode = false;
-    private boolean online = false;
     private boolean notificationSocketLogging = false;
 
     //Seed
@@ -205,8 +199,6 @@ public final class EntropyServer extends JFrame
         startInactiveCheckRunnable();
         startListenerThreads();
         startFunctionThread();
-
-        toggleOnline();
 
         Debug.appendBanner("Server is ready - accepting connections");
     }
@@ -690,11 +682,6 @@ public final class EntropyServer extends JFrame
         }
     }
 
-    public void removeRoom(String roomName) {
-        hmRoomByName.remove(roomName);
-        lobbyChanged();
-    }
-
     public ArrayList<Room> getRooms() {
         ArrayList<Room> list = new ArrayList<>();
         Iterator<String> it = hmRoomByName.keySet().iterator();
@@ -710,14 +697,6 @@ public final class EntropyServer extends JFrame
 
     public Room getRoomForName(String name) {
         return hmRoomByName.get(name);
-    }
-
-    public void toggleOnline() {
-        online = !online;
-    }
-
-    public boolean isOnline() {
-        return online;
     }
 
     /**
@@ -873,22 +852,6 @@ public final class EntropyServer extends JFrame
         }
     }
 
-    public boolean messageIsTraced(String nodeName, String username) {
-        if (traceAll) {
-            return true;
-        }
-
-        if (tracedMessages.contains(nodeName)) {
-            return true;
-        }
-
-        if (tracedUsers.contains(username)) {
-            return true;
-        }
-
-        return false;
-    }
-
     private void toggleServerOnline() {
         ToggleAvailabilityRunnable runnable = new ToggleAvailabilityRunnable(this);
         executeInWorkerPool(runnable);
@@ -909,28 +872,6 @@ public final class EntropyServer extends JFrame
                 String ip = it.next();
                 UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
                 Debug.appendWithoutDate("" + usc);
-            }
-        } else if (command.equals(COMMAND_TRACE_ALL)) {
-            traceAll = !traceAll;
-            Debug.append("Tracing all messages: " + traceAll);
-        } else if (command.startsWith(COMMAND_TRACE_USER)) {
-            String username = command.substring(COMMAND_TRACE_USER.length());
-            if (tracedUsers.contains(username)) {
-                Debug.append("Stopped tracing user " + username);
-                tracedUsers.remove(username);
-            } else {
-                Debug.append("Tracing user " + username);
-                tracedUsers.add(username);
-            }
-        } else if (command.startsWith(COMMAND_TRACE_MESSAGE_AND_RESPONSE)) {
-            String messageStr = command.substring(COMMAND_TRACE_MESSAGE_AND_RESPONSE.length());
-
-            if (tracedMessages.contains(messageStr)) {
-                Debug.append("Stopped tracing " + messageStr + " and its responses");
-                tracedMessages.remove(messageStr);
-            } else {
-                Debug.append("Tracing message " + messageStr + " and its responses");
-                tracedMessages.add(messageStr);
             }
         } else if (command.equals(COMMAND_SHUT_DOWN)) {
             toggleServerOnline();
@@ -962,9 +903,6 @@ public final class EntropyServer extends JFrame
             Debug.appendWithoutDate("");
         } else if (command.equals(COMMAND_MESSAGE_STATS)) {
             dumpMessageStats();
-        } else if (command.equals(COMMAND_DECRYPTION_LOGGING)) {
-            EncryptionUtil.failedDecryptionLogging = !EncryptionUtil.failedDecryptionLogging;
-            Debug.appendWithoutDate("Decryption logging: " + EncryptionUtil.failedDecryptionLogging);
         } else if (command.equals(COMMAND_CLEAR_STATS)) {
             StatisticsUtil.clearServerData();
 
@@ -1001,8 +939,6 @@ public final class EntropyServer extends JFrame
                 String keyStr = EncryptionUtil.convertSecretKeyToString(key);
                 Debug.appendWithoutDate(keyStr);
             }
-        } else if (command.equals(COMMAND_DUMP_HASH_MAPS)) {
-            dumpHashMaps();
         } else if (command.startsWith(COMMAND_MEMORY)) {
             boolean forceGc = false;
 
@@ -1025,8 +961,6 @@ public final class EntropyServer extends JFrame
             }
 
             usc.notifySockets();
-        } else if (command.equals(COMMAND_SERVER_VERSION)) {
-            Debug.append("Server version: " + OnlineConstants.SERVER_VERSION);
         } else {
             Debug.append("Unrecognised command - type 'help' for a list of available commands");
             return;
@@ -1052,16 +986,11 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate(COMMAND_DUMP_THREADS);
         Debug.appendWithoutDate(COMMAND_DUMP_THREAD_STACKS);
         Debug.appendWithoutDate(COMMAND_DUMP_USERS);
-        Debug.appendWithoutDate(COMMAND_TRACE_ALL);
-        Debug.appendWithoutDate(COMMAND_TRACE_USEFUL);
-        Debug.appendWithoutDate(COMMAND_TRACE_USER + "<username>");
-        Debug.appendWithoutDate(COMMAND_TRACE_MESSAGE_AND_RESPONSE + "<MessageName>");
         Debug.appendWithoutDate(COMMAND_SHUT_DOWN);
         Debug.appendWithoutDate(COMMAND_RESET + "<RoomId>");
         Debug.appendWithoutDate(COMMAND_CLEAR_ROOMS);
         Debug.appendWithoutDate(COMMAND_DUMP_STATS);
         Debug.appendWithoutDate(COMMAND_MESSAGE_STATS);
-        Debug.appendWithoutDate(COMMAND_DECRYPTION_LOGGING);
         Debug.appendWithoutDate(COMMAND_CLEAR_STATS);
         Debug.appendWithoutDate(COMMAND_LAUNCH_DAY);
         Debug.appendWithoutDate(COMMAND_POOL_STATS);
@@ -1069,11 +998,9 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate(COMMAND_SET_MAX_POOL_SIZE + "<max pool size>");
         Debug.appendWithoutDate(COMMAND_SET_KEEP_ALIVE_TIME + "<keep alive time>");
         Debug.appendWithoutDate(COMMAND_USED_KEYS);
-        Debug.appendWithoutDate(COMMAND_DUMP_HASH_MAPS);
         Debug.appendWithoutDate(COMMAND_MEMORY + "<do gc>");
         Debug.appendWithoutDate(COMMAND_NOTIFICATION_LOGGING);
         Debug.appendWithoutDate(COMMAND_NOTIFY_USER + "<username>");
-        Debug.appendWithoutDate(COMMAND_SERVER_VERSION);
     }
 
     private void dumpMessageStats() {
@@ -1120,15 +1047,6 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate("*********************************************************");
 
         Debug.appendWithoutDate("");
-    }
-
-    private void dumpHashMaps() {
-        Debug.appendWithoutDate("hmUserConnectionByIp: " + hmUserConnectionByIpAndPort);
-        Debug.appendWithoutDate("hmRoomById: " + hmRoomByName);
-        Debug.appendWithoutDate("hmFunctionsReceivedByMessageType: " + hmFunctionsReceivedByMessageType);
-        Debug.appendWithoutDate("hmFunctionsHandledByMessageType: " + hmFunctionsHandledByMessageType);
-        Debug.appendWithoutDate("hmNotificationsAttemptedByNotificationType: " + hmNotificationsAttemptedByNotificationType);
-        Debug.appendWithoutDate("hmNotificationsSentByNotificationType: " + hmNotificationsSentByNotificationType);
     }
 
     private void dumpMemory(boolean forceGc) {

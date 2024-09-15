@@ -94,12 +94,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			}
 
 			String responseStr = XmlUtil.getStringFromDocument(response);
-			if (server.messageIsTraced(name, username))
-			{
-				Debug.append("Message: " + messageStr);
-				Debug.appendWithoutDate("Response: " + responseStr);
-			}
-
 			if (symmetricKey != null)
 			{
 				responseStr = EncryptionUtil.encrypt(responseStr, symmetricKey);
@@ -174,13 +168,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	 */
 	private Document getResponse(String encryptedMessage) throws Throwable
 	{
-		if (!server.isOnline())
-		{
-			//Don't send any kind of a response, they'll be getting a notification if they were online
-			//already and otherwise they'll just get "unable to connect"
-			return null;
-		}
-		
 		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage);
 		if (unencryptedDocument != null)
 		{
