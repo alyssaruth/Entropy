@@ -1,13 +1,15 @@
 package http
 
-interface ApiResponse<T> {
-    val statusCode: Int
-}
+import kong.unirest.UnirestException
 
-data class SuccessResponse<T>(override val statusCode: Int, val body: T) : ApiResponse<T>
+interface ApiResponse<T>
+
+data class SuccessResponse<T>(val statusCode: Int, val body: T) : ApiResponse<T>
 
 data class FailureResponse<T>(
-    override val statusCode: Int,
+    val statusCode: Int,
     val errorCode: String?,
     val errorMessage: String?
 ) : ApiResponse<T>
+
+data class CommunicationError<T>(val unirestException: UnirestException) : ApiResponse<T>
