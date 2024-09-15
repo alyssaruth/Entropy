@@ -49,8 +49,8 @@ class HttpClient {
             )
             return FailureResponse(
                 response.status,
-                errorResponse.errorCode,
-                errorResponse.errorMessage,
+                errorResponse?.errorCode,
+                errorResponse?.errorMessage,
             )
         }
     }

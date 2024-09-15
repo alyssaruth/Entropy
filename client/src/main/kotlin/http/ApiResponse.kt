@@ -8,6 +8,6 @@ data class SuccessResponse<T>(override val statusCode: Int, val body: T) : ApiRe
 
 data class FailureResponse<T>(
     override val statusCode: Int,
-    val errorCode: String,
-    val errorMessage: String
+    val errorCode: String?,
+    val errorMessage: String?
 ) : ApiResponse<T>

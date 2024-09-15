@@ -40,7 +40,24 @@ class HttpClientTest : AbstractTest() {
     }
 
     @Test
-    fun `GET with error response`() {
+    fun `GET with generic error response`() {
+        val mockClient = MockClient.register()
+
+        mockClient
+            .expect(HttpMethod.GET, "${Globals.baseUrl}/test-endpoint")
+            .thenReturn(MockResponse(HttpStatus.NOT_FOUND, "Not found", null))
+
+        val client = HttpClient()
+        val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
+        response shouldBe FailureResponse(HttpStatus.NOT_FOUND, null, null)
+
+        val responseLog = verifyLog("http.response", Severity.ERROR)
+        responseLog.message shouldBe "Received 404 for GET /test-endpoint"
+        responseLog.keyValuePairs["responseCode"] shouldBe 404
+    }
+
+    @Test
+    fun `GET with structured error response`() {
         val mockClient = MockClient.register()
         val errorResponse = ClientErrorResponse("oh.dear", "a bid already exists")
 
