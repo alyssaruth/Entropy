@@ -9,8 +9,8 @@ import java.awt.Cursor
 import java.awt.event.MouseEvent
 import javax.swing.JButton
 import javax.swing.JPanel
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 
 private val mouseEventOverLink = makeMouseEvent(JButton())
 private val mouseEventNotOverLink = makeMouseEvent(JButton())

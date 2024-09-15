@@ -60,7 +60,7 @@ class Logger(private val destinations: List<ILogDestination>) {
         )
     }
 
-    private fun log(
+    fun log(
         severity: Severity,
         code: String,
         message: String,

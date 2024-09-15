@@ -4,8 +4,8 @@ import io.kotest.matchers.shouldBe
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JTextPane
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 import util.EntropyColour
 
 class HelpPanelTest : AbstractTest() {

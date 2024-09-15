@@ -12,6 +12,7 @@ dependencies {
     implementation("com.konghq:unirest-java:3.14.2")
     implementation(project(":core"))
     testImplementation(project(":test-core"))
+    testImplementation("com.konghq:unirest-mocks:3.14.2")
 }
 
 application {
@@ -24,6 +25,7 @@ task<JavaExec>("runDev") {
         closureOf<JavaExec> {
             group = "run"
             classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
+            mainClass = "EntropyMain"
             args = listOf("devMode")
         }
     )

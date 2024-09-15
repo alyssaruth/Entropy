@@ -1,4 +1,4 @@
-package main.kotlin.testCore
+package testCore
 
 import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.assertions.fail
@@ -9,6 +9,8 @@ import logging.LogDestinationSystemOut
 import logging.LogRecord
 import logging.Logger
 import logging.Severity
+import main.kotlin.testCore.BeforeAllTestsExtension
+import main.kotlin.testCore.FakeLogDestination
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith

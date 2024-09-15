@@ -2,8 +2,8 @@ package help
 
 import io.kotest.matchers.shouldBe
 import javax.swing.JTextPane
-import main.kotlin.testCore.AbstractTest
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 import utils.getAllChildComponentsForType
 
 abstract class AbstractHelpPanelTest<T : HelpPanel> : AbstractTest() {
