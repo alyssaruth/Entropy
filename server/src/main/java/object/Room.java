@@ -245,10 +245,6 @@ public final class Room extends RoomWrapper
 			if (currentGame != null)
 			{
 				previousGame = currentGame.factoryCopy();
-				if (previousGame.getRoundNumber() > 1)
-				{
-					StatisticsUtil.saveGlobalStatistics(roomName, previousGame);
-				}
 			}
 			
 			currentGame = new GameWrapper(gameId);

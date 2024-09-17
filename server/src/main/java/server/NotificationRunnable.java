@@ -36,9 +36,7 @@ public class NotificationRunnable implements ServerRunnable
 		this.usc = usc;
 		this.counter = counter;
 		this.socketName = socketName;
-		
-		String messageName = message.getDocumentElement().getNodeName();
-		server.incrementNotificationsAttemptedForMessage(messageName);
+
 		usc.addNotificationToQueue(socketName, message);
 	}
 	
@@ -73,7 +71,6 @@ public class NotificationRunnable implements ServerRunnable
 			finally
 			{
 				decrementCounter();
-				server.incrementNotificationsSentForMessage(messageName);
 			}
 		}
 	}
@@ -100,11 +97,7 @@ public class NotificationRunnable implements ServerRunnable
 		Throwable t = notificationSocket.sendMessageViaSocket(encryptedXmlStr);
 		if (t != null)
 		{
-			if (!server.isOnline())
-			{
-				Debug.append("Caught " + t + " sending " + messageName + " to " + usc + " while shutting down");
-			}
-			else if (shouldResend(t))
+			if (shouldResend(t))
 			{
 				retries++;
 				

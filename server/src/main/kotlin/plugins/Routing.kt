@@ -7,6 +7,7 @@ import io.ktor.server.logging.toLogString
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import routes.ClientException
+import routes.dev.DevController
 import routes.health.HealthCheckController
 import utils.InjectedThings.logger
 
@@ -33,4 +34,5 @@ fun Application.configureRouting() {
     }
 
     HealthCheckController.installRoutes(this)
+    DevController.installRoutes(this)
 }

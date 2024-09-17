@@ -48,7 +48,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	@Override
 	public void run() 
 	{
-		server.incrementFunctionsReceived();
 		String encryptedMessage = null;
 		String name = "";
 		BufferedOutputStream os = null;
@@ -79,8 +78,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			Element root = message.getDocumentElement();
 			name = root.getNodeName();
 			String username = root.getAttribute("Username");
-
-			server.incrementFunctionsReceivedForMessage(name);
 			
 			if (notificationSocket)
 			{
@@ -119,13 +116,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		}
 		finally
 		{
-			server.incrementFunctionsHandled();
-			
-			if (!name.isEmpty())
-			{
-				server.incrementFunctionsHandledForMessage(name);
-			}
-			
 			if (!notificationSocket)
 			{
 				if (osw != null)
@@ -193,7 +183,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		if (messageStr == null)
 		{
 			Debug.append("Failed to decrypt message " + encryptedMessage + " from IP " + ipAddress);
-			server.incrementFunctionsReceivedAndHandledForMessage("DECRYPTION_ERROR");
 			return null;
 		}
 		
@@ -213,7 +202,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		{
 			Debug.append("Received unencrypted " + name + " message. Probably using out of date version? "
 					  + "Message: " + messageStr);
-			server.incrementFunctionsReceivedAndHandledForMessage("UNENCRYPTED");
 			return null;
 		}
 		
@@ -222,7 +210,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		if (symmetricKeyStr == null)
 		{
 			Debug.stackTrace("Failed to decrypt symmetricKeyStr " + encryptedKey + ". IP: " + ipAddress);
-			server.incrementFunctionsReceivedAndHandledForMessage(name);
 			return null;
 		}
 		
@@ -230,7 +217,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		if (symmetricKeyPassedUp == null)
 		{
 			Debug.appendWithoutDate("IP: " + ipAddress);
-			server.incrementFunctionsReceivedAndHandledForMessage(name);
 			return null;
 		}
 		
@@ -255,8 +241,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		if (document == null)
 		{
 			Debug.append("Received unexpected message: " + messageStr);
-			server.incrementFunctionsReceivedForMessage("???");
-			server.incrementFunctionsHandledForMessage("???");
 			return null;
 		}
 		

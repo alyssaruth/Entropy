@@ -1,24 +1,12 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.BackingStoreException;
-
-import object.Bid;
-import object.BidHistory;
-import object.GameWrapper;
-import object.HandDetails;
-import object.OnlineMessage;
-import object.Room;
-import object.UserConnection;
-
+import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import server.EntropyServer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XmlBuilderServer implements XmlConstants,
 										 ServerRegistry
@@ -126,7 +114,6 @@ public class XmlBuilderServer implements XmlConstants,
 		else
 		{
 			usc.update(username, mobile);
-			server.updateMostConcurrentUsers();
 			
 			//We won't have a notification socket for them yet, so don't bother trying to notify them
 			server.lobbyChanged(usc);
@@ -262,52 +249,21 @@ public class XmlBuilderServer implements XmlConstants,
 	
 	private static void addGlobalStats(Document response, Element rootElement, List<Room> rooms)
 	{
-		long gamesPlayed = StatisticsUtil.getTotalGamesPlayed();
-		long duration = StatisticsUtil.getTotalDuration();
-		int usersOnline = StatisticsUtil.getMostConcurrentUsers();
+		rootElement.setAttribute("TotalGames", "0");
+		rootElement.setAttribute("TotalDuration", "0");
+		rootElement.setAttribute("UsersOnline", "0" );
 		
-		int roomSize = rooms.size();
-		for (int i=0; i<roomSize; i++)
-		{
-			Room room = rooms.get(i);
-			duration += room.getCurrentGameDuration();
-		}
-		
-		rootElement.setAttribute("TotalGames", "" + gamesPlayed);
-		rootElement.setAttribute("TotalDuration", "" + duration);
-		rootElement.setAttribute("UsersOnline", "" + usersOnline);
-		
-		addRoomStats(response, rootElement);
+		addRoomStats(response, rootElement, rooms);
 	}
 	
-	private static void addRoomStats(Document response, Element root)
+	private static void addRoomStats(Document response, Element root, List<Room> rooms)
 	{
-		HashMap<String, RoomStatsWrapper> hmStatsByRoomName = null;
-		try
-		{
-			hmStatsByRoomName = StatisticsUtil.initialiseRoomStatsHm();
-		}
-		catch (BackingStoreException bse)
-		{
-			Debug.append("Failed to build up room stats for leaderboard response.");
-			Debug.stackTrace(bse);
-			return;
-		}
-		
-		Iterator<Map.Entry<String, RoomStatsWrapper>> it = hmStatsByRoomName.entrySet().iterator();
-		for (; it.hasNext(); )
-		{
-			Map.Entry<String, RoomStatsWrapper> entry = it.next();
-			String roomName = entry.getKey();
-			RoomStatsWrapper wrapper = entry.getValue();
+		for (Room room : rooms) {
 			Element roomStatsElement = response.createElement("RoomStats");
-			int gamesPlayed = wrapper.getGamesPlayed();
-			long totalDuration = wrapper.getTotalDuration();
-			
-			roomStatsElement.setAttribute("RoomName", roomName);
-			roomStatsElement.setAttribute("RoomGamesPlayed", "" + gamesPlayed);
-			roomStatsElement.setAttribute("RoomDuration", "" + totalDuration);
-			
+
+			roomStatsElement.setAttribute("RoomName", room.getRoomName());
+			roomStatsElement.setAttribute("RoomGamesPlayed", "0");
+			roomStatsElement.setAttribute("RoomDuration", "0");
 			root.appendChild(roomStatsElement);
 		}
 	}

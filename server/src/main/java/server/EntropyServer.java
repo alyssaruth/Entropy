@@ -6,27 +6,26 @@ import org.w3c.dom.Document;
 import screen.DebugConsole;
 import util.*;
 
-import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.RSAPrivateKeySpec;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,9 +47,6 @@ public final class EntropyServer extends JFrame
     private static final int MAX_QUEUE_SIZE = 100;
     private static final int KEEP_ALIVE_TIME = 20;
 
-    //Files
-    private static final Path FILE_PATH_USED_KEYS = Paths.get("C:\\EntropyServer\\UsedKeys.txt");
-
     //Console
     private static DebugConsole console = new DebugConsole();
 
@@ -58,21 +54,6 @@ public final class EntropyServer extends JFrame
     private ExtendedConcurrentHashMap<String, UserConnection> hmUserConnectionByIpAndPort = new ExtendedConcurrentHashMap<>();
     private ConcurrentHashMap<String, Room> hmRoomByName = new ConcurrentHashMap<>();
     private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
-    private ArrayList<SecretKey> usedSymmetricKeys = new ArrayList<>();
-
-    //Stats stuff
-    private ConcurrentHashMap<String, AtomicInteger> hmFunctionsReceivedByMessageType = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, AtomicInteger> hmFunctionsHandledByMessageType = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, AtomicInteger> hmNotificationsSentByNotificationType = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, AtomicInteger> hmNotificationsAttemptedByNotificationType = new ConcurrentHashMap<>();
-    private AtomicInteger functionsReceived = new AtomicInteger(0);
-    private AtomicInteger functionsHandled = new AtomicInteger(0);
-    private AtomicInteger notificationsAttempted = new AtomicInteger(0);
-    private AtomicInteger notificationsSent = new AtomicInteger(0);
-    private AtomicInteger totalFunctionsHandled = new AtomicInteger(0);
-    private AtomicInteger totalNotificationsSent = new AtomicInteger(0);
-    private AtomicInteger mostFunctionsReceived = new AtomicInteger(0);
-    private AtomicInteger mostFunctionsHandled = new AtomicInteger(0);
 
     //Properties
     private static boolean devMode = false;
@@ -115,14 +96,6 @@ public final class EntropyServer extends JFrame
             tglbtnScrollLock.setIcon(new ImageIcon(EntropyServer.class.getResource("/buttons/key.png")));
             tglbtnScrollLock.setSelectedIcon(new ImageIcon(EntropyServer.class.getResource("/buttons/keySelected.png")));
             panel_1.add(tglbtnScrollLock);
-            lblNotificationsAttempted.setPreferredSize(new Dimension(40, 20));
-            lblNotificationsAttempted.setHorizontalAlignment(SwingConstants.CENTER);
-
-            panel_1.add(lblNotificationsAttempted);
-            lblNotificationsSent.setPreferredSize(new Dimension(40, 20));
-            lblNotificationsSent.setHorizontalAlignment(SwingConstants.CENTER);
-
-            panel_1.add(lblNotificationsSent);
 
             tglbtnScrollLock.addActionListener(this);
             btnThreads.addActionListener(this);
@@ -149,22 +122,14 @@ public final class EntropyServer extends JFrame
     private final JButton btnSendLogs = new JButton("Send Logs");
     private final JToggleButton tglbtnScrollLock = new JToggleButton("");
     private final JButton btnMemory = new JButton("Memory");
-    private final JLabel lblNotificationsAttempted = new JLabel("");
-    private final JLabel lblNotificationsSent = new JLabel("");
 
-    public static void main(String args[]) {
+    public static void main() {
         EntropyServer server = new EntropyServer();
         Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 
         //Initialise interfaces etc
         EncryptionUtil.setBase64Interface(new Base64Desktop());
         Debug.initialise(console);
-
-        int length = args.length;
-        for (int i = 0; i < length; i++) {
-            String arg = args[i];
-            applyArgument(arg, server);
-        }
 
         server.setSize(420, 110);
         server.setResizable(false);
@@ -174,42 +139,18 @@ public final class EntropyServer extends JFrame
         server.onStart();
     }
 
-    private static void applyArgument(String arg, EntropyServer server) {
-        if (arg.equals("devMode")) {
-            Debug.appendBanner("Running in DEV mode");
-            server.setTitle("Entropy Server (DEV)");
-            devMode = true;
-        }
-    }
-
     private void onStart() {
         Debug.appendBanner("Start-Up");
 
-        totalNotificationsSent = new AtomicInteger(StatisticsUtil.getTotalNotificationsSent());
-        totalFunctionsHandled = new AtomicInteger(StatisticsUtil.getTotalFunctionsHandled());
-        mostFunctionsHandled = new AtomicInteger(StatisticsUtil.getMostFunctionsHandled());
-        mostFunctionsReceived = new AtomicInteger(StatisticsUtil.getMostFunctionsReceived());
-
         readInPrivateKey();
-        readUsedKeysFromFile();
         registerDefaultRooms();
 
         Debug.append("Starting permanent threads");
 
         startInactiveCheckRunnable();
         startListenerThreads();
-        startFunctionThread();
 
         Debug.appendBanner("Server is ready - accepting connections");
-    }
-
-    private void onStop() {
-        StatisticsUtil.saveTotalNotificationsSent(totalNotificationsSent);
-        StatisticsUtil.saveTotalFunctionsHandled(totalFunctionsHandled);
-        StatisticsUtil.saveMostFunctionsHandled(mostFunctionsHandled);
-        StatisticsUtil.saveMostFunctionsReceived(mostFunctionsReceived);
-
-        writeUsedKeysToFile();
     }
 
     private void readInPrivateKey() {
@@ -309,111 +250,8 @@ public final class EntropyServer extends JFrame
         }
     }
 
-    private void startFunctionThread() {
-        ServerRunnable functionRunnable = new ServerRunnable() {
-            private String statusText = "";
-
-            @Override
-            public void run() {
-                while (true) {
-                    statusText = "Updating labels";
-
-                    lblFunctionsReceived.setText("" + functionsReceived);
-                    lblFunctionsHandled.setText("" + functionsHandled);
-
-                    lblNotificationsAttempted.setText("" + notificationsAttempted);
-                    lblNotificationsSent.setText("" + notificationsSent);
-
-                    clearFunctionStats();
-
-                    statusText = "Sleeping between updates";
-                    try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-                }
-            }
-
-            @Override
-            public String getDetails() {
-                return statusText;
-            }
-
-            @Override
-            public UserConnection getUserConnection() {
-                return null;
-            }
-        };
-
-        ServerThread functionThread = new ServerThread(functionRunnable, "CounterThread");
-        functionThread.start();
-    }
-
     public void executeInWorkerPool(ServerRunnable runnable) {
         tpe.executeServerRunnable(runnable);
-    }
-
-    public void incrementFunctionsReceived() {
-        functionsReceived.addAndGet(1);
-    }
-
-    public void incrementFunctionsHandled() {
-        functionsHandled.addAndGet(1);
-        totalFunctionsHandled.addAndGet(1);
-    }
-
-    public void incrementFunctionsReceivedAndHandledForMessage(String message) {
-        incrementFunctionsReceivedForMessage(message);
-        incrementFunctionsHandledForMessage(message);
-    }
-
-    public void incrementFunctionsReceivedForMessage(String message) {
-        incrementStatForMessage(message, hmFunctionsReceivedByMessageType);
-    }
-
-    public void incrementFunctionsHandledForMessage(String message) {
-        incrementStatForMessage(message, hmFunctionsHandledByMessageType);
-    }
-
-    public void incrementNotificationsSentForMessage(String message) {
-        incrementStatForMessage(message, hmNotificationsSentByNotificationType);
-        notificationsSent.addAndGet(1);
-        totalNotificationsSent.addAndGet(1);
-    }
-
-    public void incrementNotificationsAttemptedForMessage(String message) {
-        incrementStatForMessage(message, hmNotificationsAttemptedByNotificationType);
-        notificationsAttempted.addAndGet(1);
-    }
-
-    private void incrementStatForMessage(String message, ConcurrentHashMap<String, AtomicInteger> statsHm) {
-        AtomicInteger functions = statsHm.get(message);
-        if (functions == null) {
-            functions = new AtomicInteger(0);
-        }
-
-        functions.incrementAndGet();
-        statsHm.put(message, functions);
-    }
-
-    private void clearFunctionStats() {
-        int functionsReceivedInt = functionsReceived.intValue();
-        int functionsHandledInt = functionsHandled.intValue();
-        int notificationsAttemptedInt = notificationsAttempted.intValue();
-        int notificationsSentInt = notificationsSent.intValue();
-
-        if (functionsReceivedInt > mostFunctionsReceived.intValue()) {
-            mostFunctionsReceived.set(functionsReceivedInt);
-        }
-
-        if (functionsHandledInt > mostFunctionsHandled.intValue()) {
-            mostFunctionsHandled.set(functionsHandledInt);
-        }
-
-        int newFunctionsReceived = functionsReceivedInt - functionsHandledInt;
-        functionsReceived.set(newFunctionsReceived);
-        functionsHandled.set(0);
-
-        int newNotificationsAttempted = notificationsAttemptedInt - notificationsSentInt;
-        notificationsAttempted.set(newNotificationsAttempted);
-        notificationsSent.set(0);
     }
 
     public boolean isAlreadyOnline(String username) {
@@ -454,10 +292,6 @@ public final class EntropyServer extends JFrame
         return null;
     }
 
-    public void updateMostConcurrentUsers() {
-        StatisticsUtil.updateMostConcurrentUsers(getCurrentUserCount());
-    }
-
     private int getCurrentUserCount() {
         int count = 0;
 
@@ -477,10 +311,6 @@ public final class EntropyServer extends JFrame
     public void removeFromUsersOnline(UserConnection usc) {
         //Null these out so we don't try to send any more notifications
         usc.destroyNotificationSockets();
-
-        //Cache this key as used so it can't be re-used by someone else in a replay attack
-        SecretKey symmetricKey = usc.getSymmetricKey();
-        cacheKeyAsUsed(symmetricKey);
 
         //Need to remove them from rooms too
         String username = usc.getUsername();
@@ -703,13 +533,11 @@ public final class EntropyServer extends JFrame
      * Generate a secure seed based on:
      * - Current time in nanos
      * - A private seed known to the Server which is incremented on each hit
-     * - The total number of notifications that have been sent (generate a random long from this)
      */
     public long generateSeed() {
         currentSeedLong++;
 
-        Random rand = new Random(totalNotificationsSent.get());
-        return System.nanoTime() + currentSeedLong + rand.nextLong();
+        return System.nanoTime() + currentSeedLong;
     }
 
     public ArrayList<UserConnection> getUserConnections(boolean onlyLoggedIn) {
@@ -768,8 +596,6 @@ public final class EntropyServer extends JFrame
         try {
             Component source = (Component) arg0.getSource();
             if (source == btnKill) {
-                onStop();
-
                 System.exit(0);
             } else if (source == btnThreads) {
                 processCommand(COMMAND_DUMP_THREADS);
@@ -797,66 +623,6 @@ public final class EntropyServer extends JFrame
         }
     }
 
-    public void cacheKeyAsUsed(SecretKey symmetricKey) {
-        usedSymmetricKeys.add(symmetricKey);
-    }
-
-    public boolean keyHasAlreadyBeenUsed(SecretKey symmetricKey) {
-        return usedSymmetricKeys.contains(symmetricKey);
-    }
-
-    private void writeUsedKeysToFile() {
-        Charset charset = Charset.forName("US-ASCII");
-        try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH_USED_KEYS, charset)) {
-            for (SecretKey key : usedSymmetricKeys) {
-                String word = EncryptionUtil.convertSecretKeyToString(key);
-                writer.write(word);
-                writer.newLine();
-            }
-
-            //Write out current ones as well
-            Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-            for (; it.hasNext(); ) {
-                String ip = it.next();
-                UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
-
-                SecretKey symmetricKey = usc.getSymmetricKey();
-                if (symmetricKey != null) {
-                    String word = EncryptionUtil.convertSecretKeyToString(symmetricKey);
-                    writer.write(word);
-                    writer.newLine();
-                }
-            }
-        } catch (IOException x) {
-            Debug.stackTrace(x);
-        }
-    }
-
-    private void readUsedKeysFromFile() {
-        try {
-            Charset charset = Charset.forName("US-ASCII");
-            List<String> usedKeys = Files.readAllLines(FILE_PATH_USED_KEYS, charset);
-
-            int keys = 0;
-            for (String key : usedKeys) {
-                SecretKey secretKey = EncryptionUtil.reconstructKeyFromString(key);
-                if (secretKey != null) {
-                    keys++;
-                    usedSymmetricKeys.add(secretKey);
-                }
-            }
-
-            Debug.append("Read in " + keys + " used keys");
-        } catch (Throwable t) {
-            Debug.append("Caught " + t + " trying to read in used keys");
-        }
-    }
-
-    private void toggleServerOnline() {
-        ToggleAvailabilityRunnable runnable = new ToggleAvailabilityRunnable(this);
-        executeInWorkerPool(runnable);
-    }
-
     private void processCommand(String command) {
         Debug.append("[Command entered: " + command + "]");
         if (command.equals("help")) {
@@ -873,42 +639,6 @@ public final class EntropyServer extends JFrame
                 UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
                 Debug.appendWithoutDate("" + usc);
             }
-        } else if (command.equals(COMMAND_SHUT_DOWN)) {
-            toggleServerOnline();
-        } else if (command.startsWith(COMMAND_RESET)) {
-            String roomIdStr = command.substring(COMMAND_RESET.length());
-            Room room = hmRoomByName.get(roomIdStr);
-            if (room == null) {
-                Debug.append("No room found for ID " + roomIdStr);
-                return;
-            }
-
-            Debug.append("Resetting currentPlayers for room " + roomIdStr);
-            room.resetCurrentPlayers();
-        } else if (command.equals(COMMAND_CLEAR_ROOMS)) {
-            if (!hmUserConnectionByIpAndPort.isEmpty()) {
-                Debug.append("Not clearing down rooms as there are active user connections.");
-                return;
-            }
-
-            resetLobby();
-        } else if (command.equals(COMMAND_DUMP_STATS)) {
-            Debug.appendBanner("STATS DUMP");
-            Debug.appendWithoutDate("Most messages received per second: " + mostFunctionsReceived.get());
-            Debug.appendWithoutDate("Most messages handled per second: " + mostFunctionsHandled.get());
-            Debug.appendWithoutDate("Total Messages Handled: " + totalFunctionsHandled.get());
-            Debug.appendWithoutDate("Total Notifications Sent: " + totalNotificationsSent.get());
-            Debug.appendWithoutDate("Most concurrent users: " + StatisticsUtil.getMostConcurrentUsers());
-            StatisticsUtil.doGlobalStatsDump();
-            Debug.appendWithoutDate("");
-        } else if (command.equals(COMMAND_MESSAGE_STATS)) {
-            dumpMessageStats();
-        } else if (command.equals(COMMAND_CLEAR_STATS)) {
-            StatisticsUtil.clearServerData();
-
-            totalFunctionsHandled.set(0);
-            mostFunctionsHandled.set(0);
-            mostFunctionsReceived.set(0);
         } else if (command.startsWith(COMMAND_SET_CORE_POOL_SIZE)) {
             int newCoreSize = parseArgumentAsInt(command, COMMAND_SET_CORE_POOL_SIZE);
             if (newCoreSize > -1) {
@@ -934,11 +664,6 @@ public final class EntropyServer extends JFrame
             Debug.appendWithoutDate("Largest pool size: " + tpe.getLargestPoolSize());
             Debug.appendWithoutDate("Completion status: " + tpe.getCompletedTaskCount() + " / " + tpe.getTaskCount());
             Debug.appendWithoutDate("-----------------------------------------");
-        } else if (command.equals(COMMAND_USED_KEYS)) {
-            for (SecretKey key : usedSymmetricKeys) {
-                String keyStr = EncryptionUtil.convertSecretKeyToString(key);
-                Debug.appendWithoutDate(keyStr);
-            }
         } else if (command.startsWith(COMMAND_MEMORY)) {
             boolean forceGc = false;
 
@@ -986,67 +711,13 @@ public final class EntropyServer extends JFrame
         Debug.appendWithoutDate(COMMAND_DUMP_THREADS);
         Debug.appendWithoutDate(COMMAND_DUMP_THREAD_STACKS);
         Debug.appendWithoutDate(COMMAND_DUMP_USERS);
-        Debug.appendWithoutDate(COMMAND_SHUT_DOWN);
-        Debug.appendWithoutDate(COMMAND_RESET + "<RoomId>");
-        Debug.appendWithoutDate(COMMAND_CLEAR_ROOMS);
-        Debug.appendWithoutDate(COMMAND_DUMP_STATS);
-        Debug.appendWithoutDate(COMMAND_MESSAGE_STATS);
-        Debug.appendWithoutDate(COMMAND_CLEAR_STATS);
-        Debug.appendWithoutDate(COMMAND_LAUNCH_DAY);
         Debug.appendWithoutDate(COMMAND_POOL_STATS);
         Debug.appendWithoutDate(COMMAND_SET_CORE_POOL_SIZE + "<core pool size>");
         Debug.appendWithoutDate(COMMAND_SET_MAX_POOL_SIZE + "<max pool size>");
         Debug.appendWithoutDate(COMMAND_SET_KEEP_ALIVE_TIME + "<keep alive time>");
-        Debug.appendWithoutDate(COMMAND_USED_KEYS);
         Debug.appendWithoutDate(COMMAND_MEMORY + "<do gc>");
         Debug.appendWithoutDate(COMMAND_NOTIFICATION_LOGGING);
         Debug.appendWithoutDate(COMMAND_NOTIFY_USER + "<username>");
-    }
-
-    private void dumpMessageStats() {
-        dumpMessageStats("Message		Received	Handled", hmFunctionsReceivedByMessageType, hmFunctionsHandledByMessageType);
-        dumpMessageStats("Notification		Attempted	Sent", hmNotificationsAttemptedByNotificationType, hmNotificationsSentByNotificationType);
-    }
-
-    private void dumpMessageStats(String titles, ConcurrentHashMap<String, AtomicInteger> hmReceived,
-                                  ConcurrentHashMap<String, AtomicInteger> hmHandled) {
-        if (hmReceived.isEmpty()) {
-            return;
-        }
-
-        Debug.appendWithoutDate("*********************************************************");
-        Debug.appendWithoutDate(titles);
-        Debug.appendWithoutDate("*********************************************************");
-
-        int totalReceived = 0;
-        int totalHandled = 0;
-
-        Iterator<String> it = hmReceived.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String message = it.next();
-            AtomicInteger functionsReceived = hmReceived.get(message);
-            AtomicInteger functionsHandled = hmHandled.get(message);
-            if (functionsHandled == null) {
-                functionsHandled = new AtomicInteger(0);
-            }
-
-            totalReceived += functionsReceived.get();
-            totalHandled += functionsHandled.get();
-
-            if (message.length() < 10
-                    || message.equals("ClientMail")) {
-                message += "	";
-            }
-
-            String row = message + "	" + functionsReceived + "	" + functionsHandled;
-            Debug.appendWithoutDate(row);
-        }
-
-        Debug.appendWithoutDate("*********************************************************");
-        Debug.appendWithoutDate("Total		" + totalReceived + "	" + totalHandled);
-        Debug.appendWithoutDate("*********************************************************");
-
-        Debug.appendWithoutDate("");
     }
 
     private void dumpMemory(boolean forceGc) {
