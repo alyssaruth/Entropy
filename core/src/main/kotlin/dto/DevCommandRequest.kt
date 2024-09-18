@@ -1,3 +1,3 @@
 package dto
 
-data class DevCommandRequest(val command: DevCommand)
+data class DevCommandRequest(val command: String)

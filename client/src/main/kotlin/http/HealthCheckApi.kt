@@ -5,6 +5,6 @@ import kong.unirest.HttpMethod
 
 class HealthCheckApi(private val httpClient: HttpClient) {
     fun doHealthCheck() {
-        httpClient.doCall<HealthCheckResponse>(HttpMethod.GET, "/health-check")
+        httpClient.doCall<HealthCheckResponse>(HttpMethod.GET, Routes.HEALTH_CHECK)
     }
 }

@@ -6,18 +6,9 @@ import org.w3c.dom.Document;
 import screen.DebugConsole;
 import util.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MemoryUsage;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -26,27 +17,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static util.LoggingUtilKt.dumpServerThreads;
 import static utils.InjectedThings.logger;
-import static utils.ThreadUtilKt.dumpThreadStacks;
 
-public final class EntropyServer extends JFrame
-        implements ActionListener,
-        KeyListener,
-        OnlineConstants,
-        ServerCommands {
-    //Statics
-    private static final int CORE_POOL_SIZE = 50;
-    private static final int MAX_POOL_SIZE = 500;
-    private static final int MAX_QUEUE_SIZE = 100;
-    private static final int KEEP_ALIVE_TIME = 20;
-
+public final class EntropyServer implements OnlineConstants {
     //Console
     private static DebugConsole console = new DebugConsole();
 
@@ -58,66 +34,8 @@ public final class EntropyServer extends JFrame
     //Seed
     private static long currentSeedLong = 4613352884640512L;
 
-    //Thread Pool
-    private BlockingQueue<ServerRunnable> blockQueue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-    private EntropyThreadPoolExecutor tpe = new EntropyThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE,
-            KEEP_ALIVE_TIME, TimeUnit.SECONDS, blockQueue, this);
-
     //Other
-    private String lastCommand = "";
-
     private PrivateKey privateKey = null;
-
-    public EntropyServer() {
-        try {
-            setTitle("Entropy Server");
-            getContentPane().setLayout(new BorderLayout(0, 0));
-            getContentPane().add(panel, BorderLayout.NORTH);
-            panel.add(commandLine);
-            commandLine.setColumns(13);
-            panel.add(btnKill);
-            panel.add(btnThreads);
-            panel.add(lblFunctionsReceived);
-            lblFunctionsReceived.setHorizontalAlignment(SwingConstants.CENTER);
-            lblFunctionsReceived.setPreferredSize(new Dimension(40, 20));
-            panel.add(lblFunctionsHandled);
-            lblFunctionsHandled.setHorizontalAlignment(SwingConstants.CENTER);
-            lblFunctionsHandled.setPreferredSize(new Dimension(40, 20));
-            getContentPane().add(panel_1, BorderLayout.CENTER);
-
-            panel_1.add(btnMemory);
-            panel_1.add(btnConsole);
-            panel_1.add(btnSendLogs);
-            tglbtnScrollLock.setPreferredSize(new Dimension(26, 26));
-            tglbtnScrollLock.setIcon(new ImageIcon(EntropyServer.class.getResource("/buttons/key.png")));
-            tglbtnScrollLock.setSelectedIcon(new ImageIcon(EntropyServer.class.getResource("/buttons/keySelected.png")));
-            panel_1.add(tglbtnScrollLock);
-
-            tglbtnScrollLock.addActionListener(this);
-            btnThreads.addActionListener(this);
-            btnKill.addActionListener(this);
-            commandLine.addActionListener(this);
-            btnConsole.addActionListener(this);
-            btnSendLogs.addActionListener(this);
-            btnMemory.addActionListener(this);
-
-            commandLine.addKeyListener(this);
-        } catch (Throwable t) {
-            Debug.stackTrace(t);
-        }
-    }
-
-    private final JButton btnKill = new JButton("Kill");
-    private final JButton btnThreads = new JButton("Threads");
-    private final JTextField commandLine = new JTextField();
-    private final JLabel lblFunctionsHandled = new JLabel("");
-    private final JLabel lblFunctionsReceived = new JLabel("");
-    private final JPanel panel = new JPanel();
-    private final JPanel panel_1 = new JPanel();
-    private final JButton btnConsole = new JButton("Console");
-    private final JButton btnSendLogs = new JButton("Send Logs");
-    private final JToggleButton tglbtnScrollLock = new JToggleButton("");
-    private final JButton btnMemory = new JButton("Memory");
 
     public static void main() {
         EntropyServer server = new EntropyServer();
@@ -126,11 +44,6 @@ public final class EntropyServer extends JFrame
         //Initialise interfaces etc
         EncryptionUtil.setBase64Interface(new Base64Desktop());
         Debug.initialise(console);
-
-        server.setSize(420, 110);
-        server.setResizable(false);
-        server.setVisible(true);
-        server.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         server.onStart();
     }
@@ -247,7 +160,7 @@ public final class EntropyServer extends JFrame
     }
 
     public void executeInWorkerPool(ServerRunnable runnable) {
-        tpe.executeServerRunnable(runnable);
+        Globals.workerPool.executeServerRunnable(runnable);
     }
 
     public boolean isAlreadyOnline(String username) {
@@ -286,22 +199,6 @@ public final class EntropyServer extends JFrame
         }
 
         return null;
-    }
-
-    private int getCurrentUserCount() {
-        int count = 0;
-
-        Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String ip = it.next();
-            UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
-            String usernameOnUsc = usc.getUsername();
-            if (usernameOnUsc != null) {
-                count++;
-            }
-        }
-
-        return count;
     }
 
     public void removeFromUsersOnline(UserConnection usc) {
@@ -577,94 +474,5 @@ public final class EntropyServer extends JFrame
         }
 
         return list;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-        try {
-            Component source = (Component) arg0.getSource();
-            if (source == btnKill) {
-                System.exit(0);
-            } else if (source == btnMemory) {
-                processCommand("memory");
-            } else if (source == commandLine) {
-                String command = commandLine.getText();
-                commandLine.setText("");
-                processCommand(command);
-            } else if (source == btnConsole) {
-                if (!console.isVisible()) {
-                    console.setTitle("Console");
-                    console.setSize(1000, 600);
-                    console.setLocationRelativeTo(null);
-                    console.setVisible(true);
-                } else {
-                    console.toFront();
-                }
-            } else if (source == tglbtnScrollLock) {
-                boolean scrollLock = tglbtnScrollLock.isSelected();
-                console.setScrollLock(scrollLock);
-            }
-        } catch (Throwable t) {
-            Debug.stackTrace(t);
-        }
-    }
-
-    private void processCommand(String command) {
-        Debug.append("[Command entered: " + command + "]");
-        if (command.equals("help")) {
-            printCommands();
-        } else if (command.equals(COMMAND_DUMP_USERS)) {
-            Debug.append(getCurrentUserCount() + " user(s) online:");
-            Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-            for (; it.hasNext(); ) {
-                String ip = it.next();
-                UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
-                Debug.appendWithoutDate("" + usc);
-            }
-        } else if (command.equals(COMMAND_POOL_STATS)) {
-            Debug.appendWithoutDate("-----------------------------------------");
-            Debug.appendWithoutDate("Max size: " + tpe.getMaximumPoolSize());
-            Debug.appendWithoutDate("Core size: " + tpe.getCorePoolSize());
-            Debug.appendWithoutDate("Alive time: " + tpe.getKeepAliveTime(TimeUnit.SECONDS));
-            Debug.appendWithoutDate("-----------------------------------------");
-            Debug.appendWithoutDate("Current queue size: " + blockQueue.size());
-            Debug.appendWithoutDate("Remaining queue capacity: " + blockQueue.remainingCapacity());
-            Debug.appendWithoutDate("Active threads: " + tpe.getActiveCount());
-            Debug.appendWithoutDate("Pool size: " + tpe.getPoolSize());
-            Debug.appendWithoutDate("Largest pool size: " + tpe.getLargestPoolSize());
-            Debug.appendWithoutDate("Completion status: " + tpe.getCompletedTaskCount() + " / " + tpe.getTaskCount());
-            Debug.appendWithoutDate("-----------------------------------------");
-        } else {
-            Debug.append("Unrecognised command - type 'help' for a list of available commands");
-            return;
-        }
-
-        lastCommand = command;
-    }
-
-    private void printCommands() {
-        Debug.append("The available commands are:");
-        Debug.appendWithoutDate(COMMAND_DUMP_USERS);
-        Debug.appendWithoutDate(COMMAND_POOL_STATS);
-    }
-
-    /**
-     * KeyListener
-     */
-    @Override
-    public void keyPressed(KeyEvent arg0) {
-        KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(arg0);
-        int keyCode = keyStroke.getKeyCode();
-        if (keyCode == 38) {
-            commandLine.setText(lastCommand);
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent arg0) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent arg0) {
     }
 }

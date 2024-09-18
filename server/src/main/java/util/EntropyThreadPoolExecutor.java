@@ -57,7 +57,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import object.ServerRunnable;
 import object.ServerThread;
 import object.UserConnection;
-import server.EntropyServer;
 import utils.InjectedThings;
 
 /**
@@ -1235,8 +1234,7 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
                               int maximumPoolSize,
                               long keepAliveTime,
                               TimeUnit unit,
-                              BlockingQueue<ServerRunnable> workQueue,
-                              EntropyServer server) 
+                              BlockingQueue<ServerRunnable> workQueue)
     {
         if (corePoolSize < 0 
           || maximumPoolSize <= 0 

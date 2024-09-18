@@ -1,4 +1,4 @@
-package dto
+package routes.dev
 
 enum class DevCommand(val value: String) {
     DUMP_THREADS("threads"),

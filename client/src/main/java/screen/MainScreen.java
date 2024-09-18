@@ -677,6 +677,9 @@ public final class MainScreen extends AbstractDevScreen
 
 		if (command.equals("health")) {
 			Globals.INSTANCE.getHealthCheckApi().doHealthCheck();
+		} else if (command.startsWith("server ")) {
+			var serverCommand = command.replace("server ", "");
+			Globals.INSTANCE.getDevApi().doServerCommand(serverCommand);
 		}
 		else if (command.equals("simulator"))
 		{
