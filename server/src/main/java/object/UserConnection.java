@@ -124,24 +124,6 @@ public class UserConnection
 		}
 	}
 	
-	/**
-	 * This is here to allow us to notify from the command line in case there is a bug with the synchronization.
-	 * If I haven't got the wait/notify stuff right everything can get stuck!
-	 */
-	public void notifySockets()
-	{
-		Iterator<Map.Entry<String, Object>> it = hmWaitObjBySocketName.entrySet().iterator();
-		for (; it.hasNext();)
-		{
-			Map.Entry<String, Object> entry = it.next();
-			Object waitObj = entry.getValue();
-			synchronized (waitObj)
-			{
-				waitObj.notify();
-			}
-		}
-	}
-	
 	public NotificationSocket getNotificationSocket(String socketType)
 	{
 		return hmSocketBySocketName.get(socketType);

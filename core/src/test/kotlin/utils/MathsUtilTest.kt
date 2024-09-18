@@ -1,5 +1,6 @@
 package utils
 
+import formatAsFileSize
 import getPercentage
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -35,5 +36,13 @@ class MathsUtilTest : AbstractTest() {
         getPercentage(0, total) shouldBe 0.0
         getPercentage(1, total) shouldBe 33.3
         getPercentage(2, total) shouldBe 66.7
+    }
+
+    @Test
+    fun `Format as file size`() {
+        568L.formatAsFileSize() shouldBe "568 B"
+        1024L.formatAsFileSize() shouldBe "1.0 KB"
+        34304L.formatAsFileSize() shouldBe "33.5 KB"
+        5242880L.formatAsFileSize() shouldBe "5.0 MB"
     }
 }

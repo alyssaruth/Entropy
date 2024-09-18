@@ -55,10 +55,6 @@ public final class EntropyServer extends JFrame
     private ConcurrentHashMap<String, Room> hmRoomByName = new ConcurrentHashMap<>();
     private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
 
-    //Properties
-    private static boolean devMode = false;
-    private boolean notificationSocketLogging = false;
-
     //Seed
     private static long currentSeedLong = 4613352884640512L;
 
@@ -583,22 +579,12 @@ public final class EntropyServer extends JFrame
         return list;
     }
 
-    public boolean getDevMode() {
-        return devMode;
-    }
-
-    public boolean getNotificationSocketLogging() {
-        return notificationSocketLogging;
-    }
-
     @Override
     public void actionPerformed(ActionEvent arg0) {
         try {
             Component source = (Component) arg0.getSource();
             if (source == btnKill) {
                 System.exit(0);
-            } else if (source == btnThreads) {
-                processCommand(COMMAND_DUMP_THREADS);
             } else if (source == btnMemory) {
                 processCommand("memory");
             } else if (source == commandLine) {
@@ -627,10 +613,6 @@ public final class EntropyServer extends JFrame
         Debug.append("[Command entered: " + command + "]");
         if (command.equals("help")) {
             printCommands();
-        } else if (command.equals(COMMAND_DUMP_THREADS)) {
-            dumpServerThreads();
-        } else if (command.equals(COMMAND_DUMP_THREAD_STACKS)) {
-            dumpThreadStacks();
         } else if (command.equals(COMMAND_DUMP_USERS)) {
             Debug.append(getCurrentUserCount() + " user(s) online:");
             Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
@@ -638,18 +620,6 @@ public final class EntropyServer extends JFrame
                 String ip = it.next();
                 UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
                 Debug.appendWithoutDate("" + usc);
-            }
-        } else if (command.startsWith(COMMAND_SET_CORE_POOL_SIZE)) {
-            int newCoreSize = parseArgumentAsInt(command, COMMAND_SET_CORE_POOL_SIZE);
-            if (newCoreSize > -1) {
-                tpe.setCorePoolSize(newCoreSize);
-                Debug.append("Core pool size is now " + newCoreSize);
-            }
-        } else if (command.startsWith(COMMAND_SET_MAX_POOL_SIZE)) {
-            int newMaxSize = parseArgumentAsInt(command, COMMAND_SET_MAX_POOL_SIZE);
-            if (newMaxSize > -1) {
-                tpe.setMaximumPoolSize(newMaxSize);
-                Debug.append("Max pool size is now " + newMaxSize);
             }
         } else if (command.equals(COMMAND_POOL_STATS)) {
             Debug.appendWithoutDate("-----------------------------------------");
@@ -664,28 +634,6 @@ public final class EntropyServer extends JFrame
             Debug.appendWithoutDate("Largest pool size: " + tpe.getLargestPoolSize());
             Debug.appendWithoutDate("Completion status: " + tpe.getCompletedTaskCount() + " / " + tpe.getTaskCount());
             Debug.appendWithoutDate("-----------------------------------------");
-        } else if (command.startsWith(COMMAND_MEMORY)) {
-            boolean forceGc = false;
-
-            int index = command.indexOf(" ");
-            if (index > -1) {
-                String gcBool = command.substring((COMMAND_MEMORY + " ").length());
-                forceGc = gcBool.equals("true");
-            }
-
-            dumpMemory(forceGc);
-        } else if (command.startsWith(COMMAND_NOTIFICATION_LOGGING)) {
-            notificationSocketLogging = !notificationSocketLogging;
-            Debug.append("Notification logging: " + notificationSocketLogging);
-        } else if (command.startsWith(COMMAND_NOTIFY_USER)) {
-            String username = command.substring(COMMAND_NOTIFY_USER.length());
-            UserConnection usc = getUserConnectionForUsername(username);
-            if (usc == null) {
-                Debug.append("Failed to find usc for " + username);
-                return;
-            }
-
-            usc.notifySockets();
         } else {
             Debug.append("Unrecognised command - type 'help' for a list of available commands");
             return;
@@ -694,75 +642,10 @@ public final class EntropyServer extends JFrame
         lastCommand = command;
     }
 
-    private int parseArgumentAsInt(String fullCommand, String prefix) {
-        int ret = -1;
-        String integerStr = fullCommand.substring(prefix.length());
-        try {
-            ret = Integer.parseInt(integerStr);
-        } catch (NumberFormatException nfe) {
-            Debug.append("Failed to parse " + integerStr + " as int");
-        }
-
-        return ret;
-    }
-
     private void printCommands() {
         Debug.append("The available commands are:");
-        Debug.appendWithoutDate(COMMAND_DUMP_THREADS);
-        Debug.appendWithoutDate(COMMAND_DUMP_THREAD_STACKS);
         Debug.appendWithoutDate(COMMAND_DUMP_USERS);
         Debug.appendWithoutDate(COMMAND_POOL_STATS);
-        Debug.appendWithoutDate(COMMAND_SET_CORE_POOL_SIZE + "<core pool size>");
-        Debug.appendWithoutDate(COMMAND_SET_MAX_POOL_SIZE + "<max pool size>");
-        Debug.appendWithoutDate(COMMAND_SET_KEEP_ALIVE_TIME + "<keep alive time>");
-        Debug.appendWithoutDate(COMMAND_MEMORY + "<do gc>");
-        Debug.appendWithoutDate(COMMAND_NOTIFICATION_LOGGING);
-        Debug.appendWithoutDate(COMMAND_NOTIFY_USER + "<username>");
-    }
-
-    private void dumpMemory(boolean forceGc) {
-        if (forceGc) {
-            Debug.append("Forcing a GC before dumping memory...");
-            System.gc();
-        }
-
-        Debug.appendWithoutDate("-------------------------------------------------------------------------------------------------");
-        Debug.appendWithoutDate("Name		Max	Used	Remaining");
-        Debug.appendWithoutDate("-------------------------------------------------------------------------------------------------");
-
-        List<MemoryPoolMXBean> memoryList = ManagementFactory.getMemoryPoolMXBeans();
-        for (MemoryPoolMXBean tmpMem : memoryList) {
-            String name = tmpMem.getName();
-            MemoryUsage usage = tmpMem.getUsage();
-            long max = usage.getMax();
-            long used = usage.getUsed();
-            long remaining = max - used;
-
-            String maxStr = (max / (1024 * 1024)) + "Mb";
-            String usedStr = (used / (1024 * 1024)) + "Mb";
-            String remainingStr = (remaining / (1024 * 1024)) + "Mb";
-
-            //Metaspace is Java8's version of PermGen. It doesn't have a fixed maximum, it grows to what's needed.
-            if (name.equals("Metaspace")) {
-                maxStr = "N/A";
-                remainingStr = "N/A";
-            }
-
-            //Don't need everything to end " Space"...
-            if (name.endsWith(" Space")) {
-                int length = name.length();
-                name = name.substring(0, length - 6);
-            }
-
-            //Sort out tabbing so it's a nice looking table
-            if (name.length() < 10) {
-                name += "	";
-            }
-
-            Debug.appendWithoutDate(name + "	" + maxStr + "	" + usedStr + "	" + remainingStr);
-        }
-
-        Debug.appendWithoutDate("");
     }
 
     /**

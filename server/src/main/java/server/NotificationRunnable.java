@@ -83,13 +83,11 @@ public class NotificationRunnable implements ServerRunnable
 			return;
 		}
 		
-		boolean logging = server.getNotificationSocketLogging();
-		
 		String xmlStr = XmlUtil.getStringFromDocument(message);
 		NotificationSocket notificationSocket = usc.getNotificationSocket(socketName);
 		if (notificationSocket == null)
 		{
-			Debug.append("Not sending " + messageName + " as NotificationSocket is NULL. Usc: " + usc, logging);
+			Debug.append("Not sending " + messageName + " as NotificationSocket is NULL. Usc: " + usc);
 			return;
 		}
 		
@@ -103,7 +101,7 @@ public class NotificationRunnable implements ServerRunnable
 				
 				String debugStr = "Caught " + t + " sending " + messageName + " to usc " + usc;
 				debugStr += ", will retry (" + retries + "/" + MAX_RETRIES + ")";
-				Debug.append(debugStr, logging);
+				Debug.append(debugStr);
 				
 				//Sleep before retrying
 				try {Thread.sleep(SLEEP_TIME_MILLIS);} catch (Throwable t2){}
@@ -132,13 +130,7 @@ public class NotificationRunnable implements ServerRunnable
 	
 	private boolean shouldResend(Throwable t)
 	{
-		int maxRetries = MAX_RETRIES;
-		if (server.getDevMode())
-		{
-			maxRetries = 30;
-		}
-		
-		if (retries >= maxRetries)
+		if (retries >= MAX_RETRIES)
 		{
 			return false;
 		}
