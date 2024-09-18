@@ -40,9 +40,11 @@ class MathsUtilTest : AbstractTest() {
 
     @Test
     fun `Format as file size`() {
+        0L.formatAsFileSize() shouldBe "0 B"
         568L.formatAsFileSize() shouldBe "568 B"
         1024L.formatAsFileSize() shouldBe "1.0 KB"
         34304L.formatAsFileSize() shouldBe "33.5 KB"
         5242880L.formatAsFileSize() shouldBe "5.0 MB"
+        107374182400L.formatAsFileSize() shouldBe "100.0 GB"
     }
 }
