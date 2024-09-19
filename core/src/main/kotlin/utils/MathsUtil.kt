@@ -1,3 +1,4 @@
+import kotlin.math.log
 import kotlin.math.pow
 
 fun getPercentage(count: Number, total: Number, digits: Int = 1) =
@@ -17,4 +18,17 @@ private fun round(number: Double, decimalPlaces: Int): Double {
     val rounded = Math.round(powerOfTen * number)
 
     return rounded / powerOfTen
+}
+
+fun Long.formatAsFileSize(): String {
+    if (this == 0L) return "0 B"
+
+    val magnitudeIndex = log(toDouble(), 1024.0).toInt()
+    val precision = if (magnitudeIndex == 0) 0 else 1
+    val units = listOf("B", "KB", "MB", "GB", "TB")
+
+    return String.format(
+        "%.${precision}f ${units[magnitudeIndex]}",
+        toDouble() / 1024.0.pow(magnitudeIndex)
+    )
 }

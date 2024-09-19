@@ -236,12 +236,6 @@ public class EntropyLobby extends JFrame
 		return hmGameRoomByRoomName.get(roomName);
 	}
 	
-	public void removeRoom(String roomName)
-	{
-		hmRoomByRoomName.remove(roomName);
-		hmGameRoomByRoomName.remove(roomName);
-	}
-	
 	public void addOrUpdateRoom(String roomName, RoomWrapper room)
 	{
 		hmRoomByRoomName.put(roomName, room);

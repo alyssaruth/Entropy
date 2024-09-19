@@ -1,6 +1,6 @@
 package http
 
-import dto.ClientErrorResponse
+import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
 import kong.unirest.HttpResponse
@@ -9,10 +9,9 @@ import kong.unirest.Unirest
 import kong.unirest.UnirestException
 import logging.Severity
 import org.apache.http.HttpHeaders
-import util.Globals
 import utils.InjectedThings.logger
 
-class HttpClient(val baseUrl: String = Globals.baseUrl) {
+class HttpClient(val baseUrl: String) {
     val jsonObjectMapper = JsonObjectMapper()
 
     inline fun <reified T : Any?> doCall(

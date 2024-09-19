@@ -13,5 +13,5 @@ fun Application.module() {
     configureRouting()
 
     // Boot old stuff
-    EntropyServer.main(emptyArray())
+    EntropyServer.main()
 }

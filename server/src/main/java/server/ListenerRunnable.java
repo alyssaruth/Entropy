@@ -1,7 +1,7 @@
 package server;
 
+import auth.UserConnection;
 import object.ServerRunnable;
-import object.UserConnection;
 import util.Debug;
 
 import java.net.ServerSocket;

@@ -1,20 +1,15 @@
 package object;
 
+import auth.UserConnection;
+import org.w3c.dom.Document;
+import server.EntropyServer;
+import util.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.w3c.dom.Document;
-
-import server.EntropyServer;
-import util.CardsUtil;
-import util.Debug;
-import util.EntropyUtil;
-import util.StatisticsUtil;
-import util.XmlBuilderServer;
-import util.XmlConstants;
 
 /**
  * Server-side version of a Room
@@ -245,10 +240,6 @@ public final class Room extends RoomWrapper
 			if (currentGame != null)
 			{
 				previousGame = currentGame.factoryCopy();
-				if (previousGame.getRoundNumber() > 1)
-				{
-					StatisticsUtil.saveGlobalStatistics(roomName, previousGame);
-				}
 			}
 			
 			currentGame = new GameWrapper(gameId);

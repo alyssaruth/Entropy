@@ -1,12 +1,13 @@
 package plugins
 
-import dto.ClientErrorResponse
+import http.dto.ClientErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.logging.toLogString
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import routes.ClientException
+import routes.dev.DevController
 import routes.health.HealthCheckController
 import utils.InjectedThings.logger
 
@@ -33,4 +34,5 @@ fun Application.configureRouting() {
     }
 
     HealthCheckController.installRoutes(this)
+    DevController.installRoutes(this)
 }

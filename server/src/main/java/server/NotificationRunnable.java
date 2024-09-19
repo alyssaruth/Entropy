@@ -5,9 +5,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import auth.UserConnection;
 import object.NotificationSocket;
 import object.ServerRunnable;
-import object.UserConnection;
 
 import org.w3c.dom.Document;
 
@@ -36,9 +36,7 @@ public class NotificationRunnable implements ServerRunnable
 		this.usc = usc;
 		this.counter = counter;
 		this.socketName = socketName;
-		
-		String messageName = message.getDocumentElement().getNodeName();
-		server.incrementNotificationsAttemptedForMessage(messageName);
+
 		usc.addNotificationToQueue(socketName, message);
 	}
 	
@@ -73,7 +71,6 @@ public class NotificationRunnable implements ServerRunnable
 			finally
 			{
 				decrementCounter();
-				server.incrementNotificationsSentForMessage(messageName);
 			}
 		}
 	}
@@ -86,13 +83,11 @@ public class NotificationRunnable implements ServerRunnable
 			return;
 		}
 		
-		boolean logging = server.getNotificationSocketLogging();
-		
 		String xmlStr = XmlUtil.getStringFromDocument(message);
 		NotificationSocket notificationSocket = usc.getNotificationSocket(socketName);
 		if (notificationSocket == null)
 		{
-			Debug.append("Not sending " + messageName + " as NotificationSocket is NULL. Usc: " + usc, logging);
+			Debug.append("Not sending " + messageName + " as NotificationSocket is NULL. Usc: " + usc);
 			return;
 		}
 		
@@ -100,17 +95,13 @@ public class NotificationRunnable implements ServerRunnable
 		Throwable t = notificationSocket.sendMessageViaSocket(encryptedXmlStr);
 		if (t != null)
 		{
-			if (!server.isOnline())
-			{
-				Debug.append("Caught " + t + " sending " + messageName + " to " + usc + " while shutting down");
-			}
-			else if (shouldResend(t))
+			if (shouldResend(t))
 			{
 				retries++;
 				
 				String debugStr = "Caught " + t + " sending " + messageName + " to usc " + usc;
 				debugStr += ", will retry (" + retries + "/" + MAX_RETRIES + ")";
-				Debug.append(debugStr, logging);
+				Debug.append(debugStr);
 				
 				//Sleep before retrying
 				try {Thread.sleep(SLEEP_TIME_MILLIS);} catch (Throwable t2){}
@@ -139,13 +130,7 @@ public class NotificationRunnable implements ServerRunnable
 	
 	private boolean shouldResend(Throwable t)
 	{
-		int maxRetries = MAX_RETRIES;
-		if (server.getDevMode())
-		{
-			maxRetries = 30;
-		}
-		
-		if (retries >= maxRetries)
+		if (retries >= MAX_RETRIES)
 		{
 			return false;
 		}

@@ -1,6 +1,6 @@
 package http
 
-import dto.ClientErrorResponse
+import http.dto.ClientErrorResponse
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.maps.shouldContainKeys

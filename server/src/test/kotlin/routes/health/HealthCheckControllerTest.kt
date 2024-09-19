@@ -1,5 +1,6 @@
 package routes.health
 
+import http.Routes
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -13,7 +14,7 @@ import util.OnlineConstants
 class HealthCheckControllerTest : AbstractTest() {
     @Test
     fun `Should respond to a health check request`() = testApplication {
-        val response = client.get("/health-check")
+        val response = client.get(Routes.HEALTH_CHECK)
         response.status shouldBe HttpStatusCode.OK
         response.bodyAsText() shouldMatchJson
             """

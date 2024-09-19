@@ -42,8 +42,6 @@ public class EntropyMain implements Registry
 			return;
 		}
 
-		EncryptionUtil.failedDecryptionLogging = true;
-
 		checkForUpdatesIfRequired();
 
 		MainScreen application = ScreenCache.getMainScreen();

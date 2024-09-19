@@ -54,10 +54,10 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import auth.UserConnection;
 import object.ServerRunnable;
 import object.ServerThread;
-import object.UserConnection;
-import server.EntropyServer;
+import utils.InjectedThings;
 
 /**
  * An {@link ExecutorService} that executes each submitted task using
@@ -1234,8 +1234,7 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
                               int maximumPoolSize,
                               long keepAliveTime,
                               TimeUnit unit,
-                              BlockingQueue<ServerRunnable> workQueue,
-                              EntropyServer server) 
+                              BlockingQueue<ServerRunnable> workQueue)
     {
         if (corePoolSize < 0 
           || maximumPoolSize <= 0 
@@ -1255,7 +1254,7 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
         this.workQueue = workQueue;
         this.keepAliveTime = unit.toNanos(keepAliveTime);
         this.threadFactory = new WorkerFactory();
-        this.handler = new RejectedThreadHandler(server);
+        this.handler = new RejectedThreadHandler();
     }
 
     /**
@@ -1934,19 +1933,10 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
     /**
      * My own added classes
      */
-    private class RejectedThreadHandler
-    {
-    	private EntropyServer server = null;
-    	
-    	public RejectedThreadHandler(EntropyServer server)
-    	{
-    		this.server = server;
-    	}
-    	
+    private class RejectedThreadHandler {
     	public void rejectedExecution(Runnable arg0) 
     	{
-            Debug.append("Too many functions queued - throwing away runnable " + arg0);
-            server.incrementFunctionsReceivedAndHandledForMessage("REJECTED");
+            InjectedThings.logger.warn("rejected.execution", "Too many functions queued - throwing away runnable " + arg0);
     	}
     }
     
