@@ -1,6 +1,6 @@
 package http
 
-import dto.ClientErrorResponse
+import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
 import kong.unirest.HttpResponse

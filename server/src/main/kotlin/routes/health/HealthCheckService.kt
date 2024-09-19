@@ -1,6 +1,6 @@
 package routes.health
 
-import dto.HealthCheckResponse
+import http.dto.HealthCheckResponse
 import util.OnlineConstants
 
 class HealthCheckService {

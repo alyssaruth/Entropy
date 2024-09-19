@@ -54,9 +54,9 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import auth.UserConnection;
 import object.ServerRunnable;
 import object.ServerThread;
-import object.UserConnection;
 import utils.InjectedThings;
 
 /**

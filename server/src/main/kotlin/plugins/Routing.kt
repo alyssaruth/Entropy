@@ -1,6 +1,6 @@
 package plugins
 
-import dto.ClientErrorResponse
+import http.dto.ClientErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.logging.toLogString

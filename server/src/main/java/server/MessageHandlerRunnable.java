@@ -12,10 +12,10 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
+import auth.UserConnection;
 import object.NotificationSocket;
 import object.Room;
 import object.ServerRunnable;
-import object.UserConnection;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

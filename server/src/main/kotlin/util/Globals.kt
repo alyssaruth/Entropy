@@ -1,8 +1,8 @@
 package util
 
+import auth.UserConnection
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
-import `object`.UserConnection
 import store.MemoryUserConnectionStore
 import store.Store
 

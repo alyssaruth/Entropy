@@ -5,9 +5,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import auth.UserConnection;
 import object.NotificationSocket;
 import object.ServerRunnable;
-import object.UserConnection;
 
 import org.w3c.dom.Document;
 

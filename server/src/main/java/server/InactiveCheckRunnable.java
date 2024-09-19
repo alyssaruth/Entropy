@@ -2,8 +2,8 @@ package server;
 
 import java.util.List;
 
+import auth.UserConnection;
 import object.ServerRunnable;
-import object.UserConnection;
 import util.Debug;
 
 import static utils.InjectedThings.logger;

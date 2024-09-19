@@ -1,7 +1,8 @@
 package routes.dev
 
-import dto.DevCommandRequest
 import http.Routes
+import http.dto.DevCommandRequest
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,7 +17,7 @@ object DevController {
 
     private suspend fun doDevCommand(call: ApplicationCall) {
         val request = call.receive<DevCommandRequest>()
-        val response = devService.processCommand(request.command)
-        call.respond(response)
+        devService.processCommand(request.command)
+        call.respond(HttpStatusCode.NoContent)
     }
 }

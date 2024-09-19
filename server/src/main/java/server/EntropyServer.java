@@ -1,5 +1,6 @@
 package server;
 
+import auth.UserConnection;
 import logging.LoggerUncaughtExceptionHandler;
 import object.*;
 import org.w3c.dom.Document;

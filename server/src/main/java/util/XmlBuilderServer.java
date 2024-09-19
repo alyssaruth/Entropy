@@ -1,5 +1,6 @@
 package util;
 
+import auth.UserConnection;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -1,6 +1,6 @@
 package http
 
-import dto.HealthCheckResponse
+import http.dto.HealthCheckResponse
 import kong.unirest.HttpMethod
 
 class HealthCheckApi(private val httpClient: HttpClient) {

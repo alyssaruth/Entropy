@@ -1,6 +1,6 @@
 package object;
 
-import util.Debug;
+import auth.UserConnection;
 
 public class ServerThread extends Thread
 {

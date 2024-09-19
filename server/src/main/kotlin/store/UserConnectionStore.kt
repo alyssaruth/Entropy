@@ -1,6 +1,6 @@
 package store
 
-import `object`.UserConnection
+import auth.UserConnection
 
 class MemoryUserConnectionStore : MemoryStore<UserConnection>() {
     override val name = "user_connections"

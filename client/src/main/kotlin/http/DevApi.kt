@@ -1,6 +1,6 @@
 package http
 
-import dto.DevCommandRequest
+import http.dto.DevCommandRequest
 import kong.unirest.HttpMethod
 
 class DevApi(private val httpClient: HttpClient) {
