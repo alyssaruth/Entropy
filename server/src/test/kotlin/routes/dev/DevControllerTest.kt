@@ -11,7 +11,7 @@ import testCore.AbstractTest
 
 class DevControllerTest : AbstractTest() {
     @Test
-    fun `Should respond to a health check request`() = testApplication {
+    fun `Should respond to a command request`() = testApplication {
         val response = client.post(Routes.DEV_COMMAND, ::buildRequest)
 
         response.status shouldBe HttpStatusCode.NoContent

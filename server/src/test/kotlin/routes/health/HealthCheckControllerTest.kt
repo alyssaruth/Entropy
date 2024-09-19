@@ -14,7 +14,7 @@ import util.OnlineConstants
 class HealthCheckControllerTest : AbstractTest() {
     @Test
     fun `Should respond to a health check request`() = testApplication {
-        val response = client.get(Routes.DEV_COMMAND)
+        val response = client.get(Routes.HEALTH_CHECK)
         response.status shouldBe HttpStatusCode.OK
         response.bodyAsText() shouldMatchJson
             """
