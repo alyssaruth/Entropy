@@ -85,7 +85,7 @@ class HttpClientTest : AbstractTest() {
     @Test
     fun `GET with structured error response`() {
         val (client, server) = setUpWebServer()
-        val errorResponse = ClientErrorResponse("oh.dear", "a bid already exists")
+        val errorResponse = ClientErrorResponse(ClientErrorCode("oh.dear"), "a bid already exists")
 
         server.enqueue(
             MockResponse()
@@ -94,7 +94,8 @@ class HttpClientTest : AbstractTest() {
         )
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe FailureResponse(HttpStatus.CONFLICT, "oh.dear", "a bid already exists")
+        response shouldBe
+            FailureResponse(HttpStatus.CONFLICT, ClientErrorCode("oh.dear"), "a bid already exists")
 
         val responseLog = verifyLog("http.response", Severity.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"

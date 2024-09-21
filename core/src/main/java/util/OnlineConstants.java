@@ -3,7 +3,7 @@ package util;
 public interface OnlineConstants 
 {
 	//Used to make sure client/server are in sync
-	public static final String SERVER_VERSION = "19";
+	public static final int API_VERSION = 19;
 	
 	//Used in the AboutDialog and for sending logs
 	public static final String ENTROPY_VERSION_NUMBER = "v7.0.0";

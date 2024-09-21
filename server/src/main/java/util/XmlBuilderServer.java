@@ -84,17 +84,17 @@ public class XmlBuilderServer implements XmlConstants,
 	  UserConnection usc, EntropyServer server, boolean mobile)
 	{
 		Document response = XmlUtil.factoryNewDocument();
-		String currentVersion = OnlineConstants.SERVER_VERSION;
-		
-		if (!version.equals(currentVersion))
-		{
-			Debug.append("Rejecting connection for " + username + " due to out-of-date version (" + version + ")");
-			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
-			rootElement.setAttribute("FailureReason", "Your version of Entropy is out of date.\nDownload the newest version and try again.");
-			rootElement.setAttribute("VersionNumber", OnlineConstants.ENTROPY_VERSION_NUMBER);
-			response.appendChild(rootElement);
-		}
-		else if (!AccountUtil.usernameExists(username))
+//		int currentVersion = OnlineConstants.API_VERSION;
+//
+//		if (version != currentVersion)
+//		{
+//			Debug.append("Rejecting connection for " + username + " due to out-of-date version (" + version + ")");
+//			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
+//			rootElement.setAttribute("FailureReason", "Your version of Entropy is out of date.\nDownload the newest version and try again.");
+//			rootElement.setAttribute("VersionNumber", OnlineConstants.ENTROPY_VERSION_NUMBER);
+//			response.appendChild(rootElement);
+//		}
+		if (!AccountUtil.usernameExists(username))
 		{
 			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
 			rootElement.setAttribute("FailureReason", "The username you entered does not exist.");

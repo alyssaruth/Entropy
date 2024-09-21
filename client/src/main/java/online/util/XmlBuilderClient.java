@@ -130,19 +130,6 @@ public class XmlBuilderClient implements XmlConstants
 		return document;
 	}
 	
-	public static Document factoryConnectionRequest(String username, String passwordHash, boolean mobile)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_CONNECTION_REQUEST);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("Password", passwordHash);
-		rootElement.setAttribute("Version", OnlineConstants.SERVER_VERSION);
-		XmlUtil.setAttributeBoolean(rootElement, "Mobile", mobile);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryDisconnectRequest(String username)
 	{
 		Document document = XmlUtil.factoryNewDocument();

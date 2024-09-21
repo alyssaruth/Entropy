@@ -1,6 +1,7 @@
 package routes.dev
 
 import formatAsFileSize
+import http.ClientErrorCode
 import io.ktor.http.*
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ class DevService {
             DevCommand.entries.find { it.value == commandStr }
                 ?: throw ClientException(
                     HttpStatusCode.BadRequest,
-                    "invalid.command",
+                    ClientErrorCode("invalidCommand"),
                     "Command must be one of [${DevCommand.entries.map { it.value }}]"
                 )
 

@@ -475,7 +475,6 @@ public class EntropyLobby extends JFrame
 		if (source == btnSettings)
 		{
 			AccountSettingsDialog dialog = new AccountSettingsDialog(username, email);
-			ScreenCache.setAccountSettingsDialog(dialog);
 			dialog.setModal(true);
 			dialog.setLocationRelativeTo(this);
 			dialog.setVisible(true);

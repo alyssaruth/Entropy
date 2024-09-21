@@ -8,6 +8,7 @@ import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
+import screen.online.PlayOnlineDialog;
 import util.*;
 import utils.InjectedThings;
 
@@ -26,6 +27,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
+import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
 import static utils.InjectedThings.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -517,7 +519,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else
 		{
-			ScreenCache.showLoginDialog();
+			showPlayOnlineDialog();
 		}
 	}
 	

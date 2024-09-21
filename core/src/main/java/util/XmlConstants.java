@@ -55,6 +55,5 @@ public interface XmlConstants
 	public static final String RESPONSE_TAG_STACK_TRACE = "StackTrace";
 	public static final String RESPONSE_TAG_SOCKET_TIME_OUT = "SocketTimeOut";
 	
-	public static final String REMOVAL_REASON_SERVER_OFFLINE = "The Entropy Server is going offline for maintenance.";
 	public static final String REMOVAL_REASON_FAILED_USERNAME_CHECK = "There has been an authentication error.";
 }

@@ -1,9 +1,11 @@
 package util
 
+import auth.Session
 import auth.UserConnection
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import store.MemoryUserConnectionStore
+import store.SessionStore
 import store.Store
 
 private const val CORE_POOL_SIZE = 50
@@ -13,6 +15,8 @@ private const val KEEP_ALIVE_TIME = 20
 
 object Globals {
     val uscStore: Store<UserConnection> = MemoryUserConnectionStore()
+    val sessionStore: Store<Session> = SessionStore()
+
     @JvmField
     val workerPool =
         EntropyThreadPoolExecutor(
