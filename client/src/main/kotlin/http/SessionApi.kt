@@ -25,18 +25,16 @@ class SessionApi(private val httpClient: HttpClient) {
                 DialogUtilNew.showErrorLater(
                     "Error communicating with server.\n\n${response.unirestException.message}"
                 )
-            is SuccessResponse<BeginSessionResponse> -> {
-                // Errr, store the sessionId someplace, then hook back into legacy code somehow to
-                // launch the lobby etc
-                val sessionResponse = response.body
-
-                val lobby = ScreenCache.getEntropyLobby()
-                lobby.username = sessionResponse.name
-                lobby.setLocationRelativeTo(null)
-                lobby.isVisible = true
-                lobby.init()
-            }
+            is SuccessResponse<BeginSessionResponse> -> handleConnectSuccess(response.body)
         }
+    }
+
+    private fun handleConnectSuccess(response: BeginSessionResponse) {
+        val lobby = ScreenCache.getEntropyLobby()
+        lobby.username = response.name
+        lobby.setLocationRelativeTo(null)
+        lobby.isVisible = true
+        lobby.init()
     }
 
     private fun handleBeginSessionFailure(response: FailureResponse<*>) =

@@ -6,15 +6,8 @@ import kotlin.Pair;
 import org.w3c.dom.Document;
 
 import javax.crypto.SecretKey;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
 
 import static utils.InjectedThings.logger;
 
@@ -27,30 +20,7 @@ public class MessageUtil implements OnlineConstants
 	public static final String SERVER_IP = LOCAL_IP;
 	
 	public static int millisDelay = 0;
-	public static PublicKey publicKey = null;
 	public static SecretKey symmetricKey = EncryptionUtil.reconstructKeyFromString(LegacyConstants.SYMMETRIC_KEY_STR);
-
-	private static int cachedPortNumber = SERVER_PORT_NUMBER;
-	
-	public static void generatePublicKey()
-	{
-		Debug.append("Reading in public key...");
-		
-		try (InputStream in = MessageUtil.class.getResourceAsStream("/public.key");
-		  ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in)))
-		{
-			BigInteger m = (BigInteger) oin.readObject();
-			BigInteger e = (BigInteger) oin.readObject();
-			RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-			KeyFactory fact = KeyFactory.getInstance("RSA");
-			MessageUtil.publicKey = fact.generatePublic(keySpec);
-			Debug.append("Key read successfully");
-		} 
-		catch (Throwable t)
-		{
-			logger.error("keyError", "Unable to read public key - won't be able to communicate with Server.", t);
-		} 
-	}
 	
 	public static void sendMessage(Document message, int millis)
 	{
@@ -86,7 +56,7 @@ public class MessageUtil implements OnlineConstants
 	
 	public static int getRandomPortNumber()
 	{
-		return cachedPortNumber;
+		return SERVER_PORT_NUMBER;
 	}
 	
 	public static InetAddress factoryInetAddress(String ipAddress)
