@@ -159,6 +159,22 @@ class HttpClientTest : AbstractTest() {
         responseLog.keyValuePairs["responseBody"] shouldBe ""
     }
 
+    @Test
+    fun `Should handle additional fields`() {
+        val (client, server) = setUpWebServer()
+        val responseBody =
+            """{
+            "fieldOne": "foo",
+            "fieldTwo": 500,
+            "extraFieldThree": 10
+        }"""
+
+        server.enqueue(MockResponse().setBody(responseBody))
+
+        val response = client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        response shouldBe SuccessResponse(200, TestApiResponse("foo", 500))
+    }
+
     private fun setUpWebServer(): Pair<HttpClient, MockWebServer> {
         val server = MockWebServer()
         server.start()
