@@ -4,6 +4,7 @@ import com.github.alyssaburlton.swingtest.findAll
 import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import java.time.Instant
 import javax.swing.JDialog
 import javax.swing.JLabel
@@ -43,4 +44,9 @@ fun <T> runAsync(block: () -> T?): T? {
 
     flushEdt()
     return result
+}
+
+fun <T> List<T>.only(): T {
+    size shouldBe 1
+    return first()
 }
