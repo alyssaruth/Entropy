@@ -49,11 +49,7 @@ public class ResponseHandler implements XmlConstants
 			return;
 		}
 
-		if (responseName.equals(RESPONSE_TAG_CHANGE_PASSWORD))
-		{
-			handleChangePasswordResponse(root);
-		}
-		else if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
+		if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
 		{
 			//do nothing
 		}
@@ -121,96 +117,6 @@ public class ResponseHandler implements XmlConstants
 			throw new Throwable("Unexpected response.");
 		}
 	}
-	
-	private static void handleChangePasswordResponse(Element root)
-	{
-		ChangePasswordDialog changePasswordDialog = ScreenCache.getChangePasswordDialog();
-		
-		String error = root.getAttribute("Error");
-		if (!error.isEmpty())
-		{
-			DialogUtil.showErrorLater(error);
-		}
-		else
-		{
-			DialogUtil.showInfoLater("Password changed successfully.");
-			changePasswordDialog.disposeLater();
-		}
-	}
-	
-//	private static void handleConnectSuccess(Element root, final EntropyLobby lobby)
-//	{
-//		ScreenCache.dismissConnectingDialog();
-//
-//		PlayOnlineDialog playOnlineDialog = ScreenCache.getLoginDialog();
-//		playOnlineDialog.dispose();
-//
-//		final String username = root.getAttribute("Username");
-//		String email = root.getAttribute("Email");
-//		lobby.setUsername(username);
-//		lobby.setEmail(email);
-//		lobby.setLocationRelativeTo(null);
-//		lobby.setVisible(true);
-//		lobby.init();
-//
-//		boolean changePassword = XmlUtil.getAttributeBoolean(root, "ChangePassword");
-//		if (changePassword)
-//		{
-//			SwingUtilities.invokeLater(new Runnable()
-//			{
-//				@Override
-//				public void run()
-//				{
-//					ChangePasswordDialog changePasswordDialog = new ChangePasswordDialog(username, false);
-//					ScreenCache.setChangePasswordDialog(changePasswordDialog);
-//					changePasswordDialog.setModal(true);
-//					changePasswordDialog.setLocationRelativeTo(lobby);
-//					changePasswordDialog.setVisible(true);
-//				}
-//			});
-//		}
-//
-//		//Handle appended lobby response
-//		Element lobbyResponseElement = XmlUtil.getElementIfExists(root, RESPONSE_TAG_LOBBY_NOTIFICATION);
-//		handleLobbyResponse(lobbyResponseElement, lobby);
-//
-//		//Handle appended chat response
-//		Element chatChild = XmlUtil.getElementIfExists(root, RESPONSE_TAG_CHAT_NOTIFICATION);
-//		handleChatResponse(chatChild, lobby);
-//
-//		//Handle appended stats response
-//		Element statsChild = XmlUtil.getElementIfExists(root, RESPONSE_TAG_STATISTICS_NOTIFICATION);
-//		handleStatisticsResponse(statsChild, lobby);
-//
-//		ScreenCache.getMainScreen().minimise();
-//	}
-//
-//	private static void handleConnectFailure(Element root)
-//	{
-//		String failureReason = root.getAttribute("FailureReason");
-//
-//		ScreenCache.dismissConnectingDialog();
-//
-//		if (failureReason.contains("out of date"))
-//		{
-//			promptForUpdate();
-//		}
-//		else
-//		{
-//			DialogUtil.showErrorLater(failureReason);
-//		}
-//	}
-//
-//	private static void promptForUpdate()
-//	{
-//		SwingUtilities.invokeLater(() -> {
-//            int answer = DialogUtil.showQuestion("Entropy needs to update in order to connect. \n\nUpdate now?", false);
-//            if (answer == JOptionPane.YES_OPTION)
-//            {
-//                UpdateManager.INSTANCE.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
-//            }
-//        });
-//	}
 	
 	private static void handleKickOff(Element root)
 	{

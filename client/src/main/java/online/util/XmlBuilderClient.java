@@ -23,18 +23,6 @@ public class XmlBuilderClient implements XmlConstants
 		return XmlUtil.factorySimpleMessage(username, ROOT_TAG_HEARTBEAT);
 	}
 	
-	public static Document factoryChangePasswordRequest(String username, String oldPasswordHash, String newPasswordHash)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_CHANGE_PASSWORD_REQUEST);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("PasswordOld", oldPasswordHash);
-		rootElement.setAttribute("PasswordNew", newPasswordHash);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryDisconnectRequest(String username)
 	{
 		Document document = XmlUtil.factoryNewDocument();

@@ -7,8 +7,6 @@ public interface XmlConstants
 {
 	//Client
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
-	public static final String ROOT_TAG_CHANGE_PASSWORD_REQUEST		= "ChangePasswordRequest";
-	public static final String ROOT_TAG_CONNECTION_REQUEST 			= "ConnectRequest";
 	public static final String ROOT_TAG_DISCONNECT_REQUEST			= "DisconnectRequest";
 	public static final String ROOT_TAG_ACHIEVEMENTS_UPDATE 		= "AchievementsUpdate";
 	public static final String ROOT_TAG_NEW_CHAT 					= "NewChat";
@@ -36,9 +34,6 @@ public interface XmlConstants
 	
 	//Server responses
 	public static final String RESPONSE_TAG_KICK_OFF = "KickOff";
-	public static final String RESPONSE_TAG_CHANGE_PASSWORD = "ChangePasswordResponse";
-	public static final String RESPONSE_TAG_CONNECT_SUCCESS = "ConnectSuccess";
-	public static final String RESPONSE_TAG_CONNECT_FAILURE = "ConnectFailure";
 	public static final String RESPONSE_TAG_LEADERBOARD = "LeaderboardResponse";
 	public static final String RESPONSE_TAG_JOIN_ROOM_RESPONSE = "JoinRoomAck";
 	public static final String RESPONSE_TAG_CLOSE_ROOM_RESPONSE = "CloseRoomAck";

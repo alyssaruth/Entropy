@@ -13,9 +13,6 @@ import routes.ClientException
 import store.Store
 import util.Globals
 import util.OnlineConstants
-import util.XmlBuilderServer
-import util.XmlConstants
-import util.XmlUtil
 
 class SessionService(
     private val sessionStore: Store<Session>,
@@ -46,13 +43,7 @@ class SessionService(
         val usc = UserConnection(ip, LegacyConstants.SYMMETRIC_KEY, name)
         usc.setLastActiveNow()
         uscStore.put(ip, usc)
-
-        usc.sendNotificationInWorkerPool(
-            XmlBuilderServer.appendLobbyResponse(XmlUtil.factoryNewDocument(), Globals.server),
-            Globals.server,
-            XmlConstants.SOCKET_NAME_LOBBY,
-            null
-        )
+        Globals.server.lobbyChanged(usc)
 
         return BeginSessionResponse(session.name, session.id)
     }

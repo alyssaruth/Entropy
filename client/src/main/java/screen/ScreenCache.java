@@ -1,6 +1,5 @@
 package screen;
 
-import online.screen.ChangePasswordDialog;
 import online.screen.ConnectingDialog;
 import online.screen.EntropyLobby;
 import online.screen.Leaderboard;
@@ -24,7 +23,6 @@ public final class ScreenCache
 	private static EntropyLobby entropyLobby = null;
 	private static Leaderboard leaderboard = null;
 	private static ConnectingDialog connectingDialog = new ConnectingDialog();
-	private static ChangePasswordDialog changePasswordDialog = null;
 	
 	public static MainScreen getMainScreen()
 	{
@@ -158,15 +156,6 @@ public final class ScreenCache
 	/**
 	 * These work slightly differently
 	 */
-	public static ChangePasswordDialog getChangePasswordDialog() 
-	{
-		return changePasswordDialog;
-	}
-	public static void setChangePasswordDialog(ChangePasswordDialog dialog)
-	{
-		changePasswordDialog = dialog;
-	}
-	
 	public static ConnectingDialog getConnectingDialog()
 	{
 		return connectingDialog;

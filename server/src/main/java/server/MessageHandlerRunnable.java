@@ -210,37 +210,21 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		String name = root.getNodeName();
 		
 		String usernameForThisConnection = usc.getName();
-		if (XmlBuilderServer.isSessionMessage(name))
+		if (usernameForThisConnection == null
+		  || !usernameForThisConnection.equals(username))
 		{
-			if (usernameForThisConnection == null
-			  || !usernameForThisConnection.equals(username))
-			{
-				Debug.stackTrace("Failed username check for IP " + ipAddress + ": client passed up " + username 
-						   	   + " but connected as " + usernameForThisConnection);
-				Debug.appendWithoutDate("Message passed up: " + messageStr);
+			Debug.stackTrace("Failed username check for IP " + ipAddress + ": client passed up " + username
+						   + " but connected as " + usernameForThisConnection);
+			Debug.appendWithoutDate("Message passed up: " + messageStr);
 
-				server.removeFromUsersOnline(usc);
-				
-				return XmlBuilderServer.getKickOffResponse(usernameForThisConnection, REMOVAL_REASON_FAILED_USERNAME_CHECK);
-			}
+			server.removeFromUsersOnline(usc);
+
+			return XmlBuilderServer.getKickOffResponse(usernameForThisConnection, REMOVAL_REASON_FAILED_USERNAME_CHECK);
 		}
 		
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_CHANGE_PASSWORD_REQUEST))
-		{
-			String oldPasswordHash = root.getAttribute("PasswordOld");
-			String newPasswordHash = root.getAttribute("PasswordNew");
-			return XmlBuilderServer.getChangePasswordResponse(username, oldPasswordHash, newPasswordHash);
-		}
-		else if (name.equals(ROOT_TAG_CONNECTION_REQUEST))
-		{
-			String version = root.getAttribute("Version");
-			String hashedPassword = root.getAttribute("Password");
-			boolean mobile = XmlUtil.getAttributeBoolean(root, "Mobile");
-			return XmlBuilderServer.getConnectResponse(username, hashedPassword, version, usc, server, mobile);
-		}
-		else if (name.equals(ROOT_TAG_DISCONNECT_REQUEST))
+		if (name.equals(ROOT_TAG_DISCONNECT_REQUEST))
 		{
 			server.removeFromUsersOnline(usc);
 			return null;
@@ -259,14 +243,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			
 			if (!admin.isEmpty())
 			{
-				if (AccountUtil.isAdmin(username))
-				{
-					server.addAdminMessage(newMessage);
-				}
-				else
-				{
-					return XmlBuilderServer.getKickOffResponse(username, "You are not allowed to send admin messages.");
-				}
+				server.addAdminMessage(newMessage);
 			}
 			else
 			{

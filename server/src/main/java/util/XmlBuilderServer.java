@@ -36,77 +36,6 @@ public class XmlBuilderServer implements XmlConstants,
 		return response;
 	}
 	
-	public static Document getChangePasswordResponse(String username, String oldPass, String newPass)
-	{
-		String error = AccountUtil.changePassword(username, oldPass, newPass);
-		Document response = XmlUtil.factoryNewDocument();
-
-		Element rootElement = response.createElement(RESPONSE_TAG_CHANGE_PASSWORD);
-		rootElement.setAttribute("Username", username);
-		if (!error.isEmpty())
-		{
-			rootElement.setAttribute("Error", error);
-		}
-		
-		response.appendChild(rootElement);
-		return response;
-	}
-	
-	public static Document getConnectResponse(String username, String hashedPassword, String version, 
-	  UserConnection usc, EntropyServer server, boolean mobile)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-//		int currentVersion = OnlineConstants.API_VERSION;
-//
-//		if (version != currentVersion)
-//		{
-//			Debug.append("Rejecting connection for " + username + " due to out-of-date version (" + version + ")");
-//			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
-//			rootElement.setAttribute("FailureReason", "Your version of Entropy is out of date.\nDownload the newest version and try again.");
-//			rootElement.setAttribute("VersionNumber", OnlineConstants.ENTROPY_VERSION_NUMBER);
-//			response.appendChild(rootElement);
-//		}
-		if (!AccountUtil.usernameExists(username))
-		{
-			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
-			rootElement.setAttribute("FailureReason", "The username you entered does not exist.");
-			response.appendChild(rootElement);
-		}
-		else if (!AccountUtil.passwordIsCorrect(username, hashedPassword))
-		{
-			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
-			rootElement.setAttribute("FailureReason", "Incorrect password.");
-			response.appendChild(rootElement);
-		}
-		else
-		{
-			usc.setLastActiveNow();
-			
-			//We won't have a notification socket for them yet, so don't bother trying to notify them
-			server.lobbyChanged(usc);
-			
-			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_SUCCESS);
-			rootElement.setAttribute("Username", username);
-			String email = AccountUtil.getEmailForUser(username);
-			rootElement.setAttribute("Email", email);
-			boolean changePassword = AccountUtil.passwordNeedsToBeChanged(username);
-			XmlUtil.setAttributeBoolean(rootElement, "ChangePassword", changePassword);
-			
-			response.appendChild(rootElement);
-			
-			//Append the lobby response
-			appendLobbyResponse(response, server);
-			
-			//Append the current chat history for the lobby
-			appendCurrentChatElement(response, OnlineConstants.LOBBY_ID, server);
-			
-			//Append the current stats for this user
-			appendStatisticsResponse(response, username);
-		}
-		
-		return response;
-	}
-	
 	public static Document getAcknowledgement()
 	{
 		return ACKNOWLEDGEMENT;
@@ -694,10 +623,5 @@ public class XmlBuilderServer implements XmlConstants,
 		
 		response.appendChild(rootElement);
 		return response;
-	}
-
-	public static boolean isSessionMessage(String name) 
-	{
-		return !name.equals(ROOT_TAG_CONNECTION_REQUEST);
 	}
 }

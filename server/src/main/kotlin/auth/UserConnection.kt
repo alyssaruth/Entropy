@@ -6,12 +6,13 @@ import `object`.NotificationSocket
 import org.w3c.dom.Document
 import server.EntropyServer
 import server.NotificationRunnable
+import util.ColourGenerator
 import util.Debug
 import util.EncryptionUtil
 import util.XmlConstants
 
 data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, val name: String) {
-    var colour: String? = null
+    val colour: String = ColourGenerator.generateNextColour()
     var lastActive: Long = -1
         private set
 

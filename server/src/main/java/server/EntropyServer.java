@@ -218,7 +218,7 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public void lobbyChanged(UserConnection userToExclude) {
-        List<UserConnection> usersToNotify = Globals.INSTANCE.getUscStore().getAll();
+        List<UserConnection> usersToNotify = new ArrayList<>(Globals.INSTANCE.getUscStore().getAll());
         if (userToExclude != null) {
             usersToNotify.remove(userToExclude);
         }

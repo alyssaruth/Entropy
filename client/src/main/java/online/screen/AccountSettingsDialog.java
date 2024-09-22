@@ -1,37 +1,20 @@
 package online.screen;
 
-import java.awt.Component;
+import util.Debug;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import online.util.AccountUtil;
-import online.util.XmlBuilderClient;
-
-import org.w3c.dom.Document;
-
-import screen.ScreenCache;
-import util.Debug;
-import util.DialogUtil;
-import util.MessageUtil;
 
 public class AccountSettingsDialog extends JDialog
 								   implements ActionListener
 {
-	private String username = "";
-	private String email = "";
+	private String username;
 	
-	public AccountSettingsDialog(String username, String email) 
+	public AccountSettingsDialog(String username)
 	{
 		this.username = username;
-		this.email = email;
 
 		getRootPane().setDefaultButton(btnOk);
 		setTitle("Account Settings");
@@ -76,22 +59,14 @@ public class AccountSettingsDialog extends JDialog
 	private void init()
 	{
 		textFieldUsername.setText(username);
-		textFieldEmail.setText(email);
+		textFieldEmail.setText("");
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) 
 	{
 		Component source = (Component)arg0.getSource();
-		if (source == btnChangePassword)
-		{
-			ChangePasswordDialog dialog = new ChangePasswordDialog(username, true);
-			ScreenCache.setChangePasswordDialog(dialog);
-			dialog.setModal(true);
-			dialog.setLocationRelativeTo(this);
-			dialog.setVisible(true);
-		}
-		else if (source == btnOk)
+		if (source == btnOk)
 		{
 			dispose();
 		}
