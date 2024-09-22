@@ -1,5 +1,6 @@
 package routes.dev
 
+import http.ClientErrorCode
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -13,7 +14,7 @@ class DevServiceTest : AbstractTest() {
         val service = DevService()
 
         val ex = shouldThrow<ClientException> { service.processCommand("invalid") }
-        ex.errorCode shouldBe "invalid.command"
+        ex.errorCode shouldBe ClientErrorCode("invalidCommand")
     }
 
     @Test

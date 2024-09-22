@@ -19,7 +19,7 @@ class HealthCheckControllerTest : AbstractTest() {
         response.bodyAsText() shouldMatchJson
             """
             {
-                "version": "${OnlineConstants.API_VERSION}"
+                "apiVersion": ${OnlineConstants.API_VERSION}
             }
         """
                 .trimIndent()

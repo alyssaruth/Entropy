@@ -110,11 +110,7 @@ public abstract class AbstractClient implements OnlineConstants
 		AbstractClient.client = client;
 		client.init();
 	}
-	
-	public String sendSync(Document message, boolean encrypt)
-	{
-		return sendSync(message, encrypt, MessageSenderParams.SO_TIMEOUT_MILLIS, false);
-	}
+
 	public String sendSync(Document message, boolean encrypt, int readTimeOut, boolean alwaysRetryOnSoTimeout)
 	{
 		String messageString = XmlUtil.getStringFromDocument(message);
