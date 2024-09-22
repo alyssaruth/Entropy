@@ -20,12 +20,8 @@ import object.ServerRunnable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import util.AccountUtil;
-import util.Debug;
-import util.EncryptionUtil;
-import util.XmlBuilderServer;
-import util.XmlConstants;
-import util.XmlUtil;
+import util.*;
+import utils.InjectedThings;
 
 public class MessageHandlerRunnable implements ServerRunnable,
 											   XmlConstants
@@ -144,8 +140,8 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	private void initVariablesFromSocket()
 	{
 		InetAddress address = clientSocket.getInetAddress();
-		ipAddress = address.getHostAddress() + "_" + clientSocket.getLocalPort();
-		usc = server.getUserConnectionForIpAndPort(ipAddress);
+		ipAddress = address.getHostAddress();
+		usc = Globals.INSTANCE.getUscStore().find(ipAddress);
 		
 		if (usc != null)
 		{
@@ -191,48 +187,12 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	
 	private Document handleUnencryptedMessage(Document message)
 	{
-		//Set the USC variable here so ClientMail and CrcCheck messages show in the right place in threads
-		//We'll set it again correctly if it's a symmetric key message.
-		usc = new UserConnection(ipAddress, null);
-		
 		Element root = message.getDocumentElement();
 		String name = root.getNodeName();
-		
-		if (!name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY))
-		{
-			Debug.append("Received unencrypted " + name + " message. Probably using out of date version? "
-					  + "Message: " + messageStr);
-			return null;
-		}
-		
-		String encryptedKey = root.getAttribute("EncryptedKey");
-		String symmetricKeyStr = EncryptionUtil.decrypt(encryptedKey, server.getPrivateKey(), true);
-		if (symmetricKeyStr == null)
-		{
-			Debug.stackTrace("Failed to decrypt symmetricKeyStr " + encryptedKey + ". IP: " + ipAddress);
-			return null;
-		}
-		
-		SecretKey symmetricKeyPassedUp = EncryptionUtil.reconstructKeyFromString(symmetricKeyStr);
-		if (symmetricKeyPassedUp == null)
-		{
-			Debug.appendWithoutDate("IP: " + ipAddress);
-			return null;
-		}
-		
-		if (symmetricKey != null)
-		{
-			//An IP we already have has requested a new symmetric key. Tell them to use another port.
-			symmetricKey = symmetricKeyPassedUp;
-			return XmlBuilderServer.getChangePortResponse(server, ipAddress);
-		}
-		
-		usc = new UserConnection(ipAddress, symmetricKeyPassedUp);
-		usc.setLastActiveNow();
-		symmetricKey = usc.getSymmetricKey();
-		server.setUserConnectionForIpAndPort(ipAddress, usc);
-		
-		return XmlBuilderServer.getSymmetricKeyAcknowledgement();
+
+		InjectedThings.logger.info("unencrypted.message", "Received unencrypted " + name + " message. Probably using out of date version? "
+				  + "Message: " + messageStr);
+		return null;
 	}
 	
 	private Document getResponseForMessage() throws Throwable
@@ -249,7 +209,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		String username = root.getAttribute("Username");
 		String name = root.getNodeName();
 		
-		String usernameForThisConnection = usc.getUsername();
+		String usernameForThisConnection = usc.getName();
 		if (XmlBuilderServer.isSessionMessage(name))
 		{
 			if (usernameForThisConnection == null
@@ -267,13 +227,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_NEW_ACCOUNT_REQUEST))
-		{
-			String passwordHash = root.getAttribute("Password");
-			String email = root.getAttribute("Email");
-			return XmlBuilderServer.getNewAccountResponse(username, passwordHash, email);
-		}
-		else if (name.equals(ROOT_TAG_CHANGE_PASSWORD_REQUEST))
+		if (name.equals(ROOT_TAG_CHANGE_PASSWORD_REQUEST))
 		{
 			String oldPasswordHash = root.getAttribute("PasswordOld");
 			String newPasswordHash = root.getAttribute("PasswordNew");

@@ -10,6 +10,8 @@ interface Store<T> {
     fun get(key: String): T
 
     fun getAll(): List<T>
+
+    fun remove(key: String)
 }
 
 abstract class MemoryStore<T> : Store<T> {
@@ -24,4 +26,8 @@ abstract class MemoryStore<T> : Store<T> {
     override fun get(key: String): T = map.getValue(key)
 
     override fun getAll(): List<T> = map.values.toList()
+
+    override fun remove(key: String) {
+        map.remove(key)
+    }
 }

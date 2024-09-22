@@ -11,6 +11,7 @@ import io.ktor.http.*
 import main.kotlin.testCore.only
 import org.junit.jupiter.api.Test
 import routes.ClientException
+import store.MemoryUserConnectionStore
 import store.SessionStore
 import testCore.AbstractTest
 import util.OnlineConstants
@@ -21,7 +22,7 @@ class SessionServiceTest : AbstractTest() {
         val request = BeginSessionRequest("Alyssa", OnlineConstants.API_VERSION - 1)
         val (service) = makeService()
 
-        val ex = shouldThrow<ClientException> { service.beginSession(request) }
+        val ex = shouldThrow<ClientException> { service.beginSession(request, "1.2.3.4") }
 
         ex.statusCode shouldBe HttpStatusCode.BadRequest
         ex.errorCode shouldBe UPDATE_REQUIRED
@@ -31,7 +32,10 @@ class SessionServiceTest : AbstractTest() {
     fun `Should reject a blank name`() {
         val (service, store) = makeService()
 
-        val ex = shouldThrow<ClientException> { service.beginSession(BeginSessionRequest("")) }
+        val ex =
+            shouldThrow<ClientException> {
+                service.beginSession(BeginSessionRequest(""), "1.2.3.4")
+            }
         ex.errorCode shouldBe EMPTY_NAME
         ex.statusCode shouldBe HttpStatusCode.BadRequest
 
@@ -43,11 +47,13 @@ class SessionServiceTest : AbstractTest() {
         val request = BeginSessionRequest("Alyssa")
         val (service, store) = makeService()
 
-        val response = service.beginSession(request)
+        val response = service.beginSession(request, "1.2.3.4")
         response.name shouldBe "Alyssa"
 
         val session = store.getAll().only()
         session.id shouldBe response.sessionId
+        session.ip shouldBe "1.2.3.4"
+        session.apiVersion shouldBe OnlineConstants.API_VERSION
     }
 
     @Test
@@ -55,13 +61,13 @@ class SessionServiceTest : AbstractTest() {
         val request = BeginSessionRequest("Alyssa")
         val (service, store) = makeService()
 
-        val responseOne = service.beginSession(request)
+        val responseOne = service.beginSession(request, "1.2.3.4")
         responseOne.name shouldBe "Alyssa"
 
-        val responseTwo = service.beginSession(request)
+        val responseTwo = service.beginSession(request, "1.2.3.4")
         responseTwo.name shouldBe "Alyssa 2"
 
-        val responseThree = service.beginSession(request)
+        val responseThree = service.beginSession(request, "1.2.3.4")
         responseThree.name shouldBe "Alyssa 3"
 
         val sessions = store.getAll()
@@ -73,6 +79,6 @@ class SessionServiceTest : AbstractTest() {
 
     private fun makeService(): Pair<SessionService, SessionStore> {
         val store = SessionStore()
-        return SessionService(store) to store
+        return SessionService(store, MemoryUserConnectionStore()) to store
     }
 }

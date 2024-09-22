@@ -28,15 +28,11 @@ public final class EntropyServer implements OnlineConstants {
     private static DebugConsole console = new DebugConsole();
 
     //Caches
-    private ExtendedConcurrentHashMap<String, UserConnection> hmUserConnectionByIpAndPort = new ExtendedConcurrentHashMap<>();
     private ConcurrentHashMap<String, Room> hmRoomByName = new ConcurrentHashMap<>();
     private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
 
     //Seed
     private static long currentSeedLong = 4613352884640512L;
-
-    //Other
-    private PrivateKey privateKey = null;
 
     public static void main() {
         EntropyServer server = new EntropyServer();
@@ -52,7 +48,6 @@ public final class EntropyServer implements OnlineConstants {
     private void onStart() {
         Debug.appendBanner("Start-Up");
 
-        readInPrivateKey();
         registerDefaultRooms();
 
         Debug.append("Starting permanent threads");
@@ -61,19 +56,6 @@ public final class EntropyServer implements OnlineConstants {
         startListenerThreads();
 
         Debug.appendBanner("Server is ready - accepting connections");
-    }
-
-    private void readInPrivateKey() {
-        try (InputStream in = getClass().getResourceAsStream("/private.key");
-             ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in))) {
-            BigInteger m = (BigInteger) oin.readObject();
-            BigInteger e = (BigInteger) oin.readObject();
-            RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
-            KeyFactory fact = KeyFactory.getInstance("RSA");
-            privateKey = fact.generatePrivate(keySpec);
-        } catch (Throwable e) {
-            logger.error("keyError", "Failed to read in private key, server is borked :(", e);
-        }
     }
 
     private void registerDefaultRooms() {
@@ -146,17 +128,12 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     private void startListenerThreads() {
-        int lowerBound = SERVER_PORT_NUMBER_LOWER_BOUND;
-        int upperBound = SERVER_PORT_NUMBER_UPPER_BOUND;
-
-        for (int i = lowerBound; i < upperBound; i++) {
-            try {
-                ServerThread listenerThread = new ServerThread(new MessageListener(this, i));
-                listenerThread.setName("Listener-" + i);
-                listenerThread.start();
-            } catch (Throwable t) {
-                logger.error("listenerError", "Unable to start listener thread on port " + i, t);
-            }
+        try {
+            ServerThread listenerThread = new ServerThread(new MessageListener(this, SERVER_PORT_NUMBER));
+            listenerThread.setName("Listener-" + SERVER_PORT_NUMBER);
+            listenerThread.start();
+        } catch (Throwable t) {
+            logger.error("listenerError", "Unable to start listener thread on port " + SERVER_PORT_NUMBER, t);
         }
     }
 
@@ -164,50 +141,12 @@ public final class EntropyServer implements OnlineConstants {
         Globals.workerPool.executeServerRunnable(runnable);
     }
 
-    public boolean isAlreadyOnline(String username) {
-        if (username.equalsIgnoreCase("Admin")) {
-            return true;
-        }
-
-        return getUserConnectionForUsername(username) != null;
-    }
-
-    public ArrayList<UserConnection> getUserConnectionsForUsernames(HashSet<String> usernames) {
-        ArrayList<UserConnection> uscs = new ArrayList<>();
-
-        Iterator<String> it = usernames.iterator();
-        for (; it.hasNext(); ) {
-            String username = it.next();
-            UserConnection usc = getUserConnectionForUsername(username);
-            if (usc != null) {
-                uscs.add(usc);
-            }
-        }
-
-        return uscs;
-    }
-
-    public UserConnection getUserConnectionForUsername(String username) {
-        Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String ip = it.next();
-            UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
-            String usernameOnUsc = usc.getUsername();
-            if (usernameOnUsc != null
-                    && usernameOnUsc.equals(username)) {
-                return usc;
-            }
-        }
-
-        return null;
-    }
-
     public void removeFromUsersOnline(UserConnection usc) {
         //Null these out so we don't try to send any more notifications
         usc.destroyNotificationSockets();
 
         //Need to remove them from rooms too
-        String username = usc.getUsername();
+        String username = usc.getName();
         if (username != null) {
             ColourGenerator.freeUpColour(usc.getColour());
 
@@ -222,8 +161,8 @@ public final class EntropyServer implements OnlineConstants {
         }
 
         //Now remove the user connection.
-        hmUserConnectionByIpAndPort.removeAllWithValue(usc);
-        if (hmUserConnectionByIpAndPort.isEmpty()
+        Globals.INSTANCE.getUscStore().remove(usc.getIpAddress());
+        if (Globals.INSTANCE.getUscStore().getAll().size() == 0
                 && username != null) {
             resetLobby();
             return;
@@ -274,7 +213,7 @@ public final class EntropyServer implements OnlineConstants {
     private void addToChatHistory(String name, OnlineMessage message) {
         if (name.equals(LOBBY_ID)) {
             lobbyMessages.add(message);
-            ArrayList<UserConnection> usersToNotify = getUserConnections(true);
+            List<UserConnection> usersToNotify = Globals.INSTANCE.getUscStore().getAll();
 
             Document chatMessage = XmlBuilderServer.getChatNotification(name, message);
             sendViaNotificationSocket(usersToNotify, chatMessage, XmlConstants.SOCKET_NAME_CHAT);
@@ -289,7 +228,7 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public void lobbyChanged(UserConnection userToExclude) {
-        ArrayList<UserConnection> usersToNotify = getUserConnections(true);
+        List<UserConnection> usersToNotify = Globals.INSTANCE.getUscStore().getAll();
         if (userToExclude != null) {
             usersToNotify.remove(userToExclude);
         }
@@ -300,11 +239,11 @@ public final class EntropyServer implements OnlineConstants {
         sendViaNotificationSocket(usersToNotify, lobbyMessage, XmlConstants.SOCKET_NAME_LOBBY);
     }
 
-    private void sendViaNotificationSocket(ArrayList<UserConnection> uscs, Document message, String socketName) {
+    private void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName) {
         sendViaNotificationSocket(uscs, message, socketName, false);
     }
 
-    public void sendViaNotificationSocket(ArrayList<UserConnection> uscs, Document message, String socketName, boolean blocking) {
+    public void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName, boolean blocking) {
         AtomicInteger counter = null;
         if (blocking) {
             int size = uscs.size();
@@ -314,7 +253,7 @@ public final class EntropyServer implements OnlineConstants {
         sendViaNotificationSocket(uscs, message, socketName, counter);
     }
 
-    private void sendViaNotificationSocket(ArrayList<UserConnection> uscs, Document message, String socketName, AtomicInteger counter) {
+    private void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName, AtomicInteger counter) {
         int size = uscs.size();
         for (int i = 0; i < size; i++) {
             UserConnection usc = uscs.get(i);
@@ -339,10 +278,6 @@ public final class EntropyServer implements OnlineConstants {
 
         Room room = hmRoomByName.get(id);
         return room.getChatHistory();
-    }
-
-    public PrivateKey getPrivateKey() {
-        return privateKey;
     }
 
     private void registerNewRoom(String roomName, int mode, int players, int jokerQuantity, int jokerValue) {
@@ -432,48 +367,5 @@ public final class EntropyServer implements OnlineConstants {
         currentSeedLong++;
 
         return System.nanoTime() + currentSeedLong;
-    }
-
-    public ArrayList<UserConnection> getUserConnections(boolean onlyLoggedIn) {
-        ArrayList<UserConnection> uscs = new ArrayList<>();
-
-        Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String ip = it.next();
-            UserConnection usc = hmUserConnectionByIpAndPort.get(ip);
-            if (onlyLoggedIn
-                    && usc.getUsername() == null) {
-                continue;
-            }
-
-            uscs.add(usc);
-        }
-
-        return uscs;
-    }
-
-    public UserConnection getUserConnectionForIpAndPort(String ipAndPort) {
-        return hmUserConnectionByIpAndPort.get(ipAndPort);
-    }
-
-    public void setUserConnectionForIpAndPort(String ipAndPort, UserConnection usc) {
-        hmUserConnectionByIpAndPort.put(ipAndPort, usc);
-    }
-
-    public ArrayList<String> getAllPortsCurrentlyUsedByIp(String ipAddress) {
-        Iterator<String> it = hmUserConnectionByIpAndPort.keySet().iterator();
-        ArrayList<String> list = new ArrayList<>();
-
-        for (; it.hasNext(); ) {
-            String ipAndPort = it.next();
-            int index = ipAndPort.indexOf("_");
-            String ipToCheck = ipAndPort.substring(0, index);
-            if (ipToCheck.equals(ipAddress)) {
-                String port = ipAndPort.substring(index + 1);
-                list.add(port);
-            }
-        }
-
-        return list;
     }
 }

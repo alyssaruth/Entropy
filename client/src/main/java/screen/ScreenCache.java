@@ -20,9 +20,6 @@ public final class ScreenCache
 	private static SimulationDialog simulationDialog = null;
 	private static ApiAmendDialog apiAmendDialog = null;
 	
-	//Dev mode
-	private static LoadTesterDialog loadTesterDialog = null;
-	
 	//Online
 	private static EntropyLobby entropyLobby = null;
 	private static Leaderboard leaderboard = null;
@@ -138,15 +135,6 @@ public final class ScreenCache
 		}
 		
 		return apiAmendDialog;
-	}
-
-	public static LoadTesterDialog getLoadTesterDialog() 
-	{
-		if (loadTesterDialog == null)
-		{
-			loadTesterDialog = new LoadTesterDialog();
-		}
-		return loadTesterDialog;
 	}
 
 	public static EntropyScreen getEntropyPanel() 

@@ -1,12 +1,12 @@
 package util
 
 import auth.Session
-import auth.UserConnection
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import store.MemoryUserConnectionStore
 import store.SessionStore
 import store.Store
+import store.UserConnectionStore
 
 private const val CORE_POOL_SIZE = 50
 private const val MAX_POOL_SIZE = 500
@@ -14,7 +14,7 @@ private const val MAX_QUEUE_SIZE = 100
 private const val KEEP_ALIVE_TIME = 20
 
 object Globals {
-    val uscStore: Store<UserConnection> = MemoryUserConnectionStore()
+    val uscStore: UserConnectionStore = MemoryUserConnectionStore()
     val sessionStore: Store<Session> = SessionStore()
 
     @JvmField

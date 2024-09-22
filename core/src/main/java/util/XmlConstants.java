@@ -6,9 +6,7 @@ package util;
 public interface XmlConstants 
 {
 	//Client
-	public static final String ROOT_TAG_NEW_SYMMETRIC_KEY			= "NewSymmetricKey";
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
-	public static final String ROOT_TAG_NEW_ACCOUNT_REQUEST 		= "NewAccountRequest";
 	public static final String ROOT_TAG_CHANGE_PASSWORD_REQUEST		= "ChangePasswordRequest";
 	public static final String ROOT_TAG_CONNECTION_REQUEST 			= "ConnectRequest";
 	public static final String ROOT_TAG_DISCONNECT_REQUEST			= "DisconnectRequest";
@@ -37,11 +35,8 @@ public interface XmlConstants
 	public static final String RESPONSE_TAG_STATISTICS_NOTIFICATION = "StatisticsNotification";
 	
 	//Server responses
-	public static final String RESPONSE_TAG_SYMMETRIC_KEY = "SymmetricKey";
 	public static final String RESPONSE_TAG_UPDATE_AVAILABLE = "UpdateAvailable";
-	public static final String RESPONSE_TAG_CHANGE_PORT = "ChangePort";
 	public static final String RESPONSE_TAG_KICK_OFF = "KickOff";
-	public static final String RESPONSE_TAG_NEW_ACCOUNT = "NewAccountResponse";
 	public static final String RESPONSE_TAG_CHANGE_PASSWORD = "ChangePasswordResponse";
 	public static final String RESPONSE_TAG_CONNECT_SUCCESS = "ConnectSuccess";
 	public static final String RESPONSE_TAG_CONNECT_FAILURE = "ConnectFailure";

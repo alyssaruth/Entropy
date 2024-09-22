@@ -1,7 +1,9 @@
 package routes.session
 
 import auth.Session
+import auth.UserConnection
 import http.EMPTY_NAME
+import http.LegacyConstants
 import http.UPDATE_REQUIRED
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
@@ -11,8 +13,11 @@ import routes.ClientException
 import store.Store
 import util.OnlineConstants
 
-class SessionService(private val sessionStore: Store<Session>) {
-    fun beginSession(request: BeginSessionRequest): BeginSessionResponse {
+class SessionService(
+    private val sessionStore: Store<Session>,
+    private val uscStore: Store<UserConnection>
+) {
+    fun beginSession(request: BeginSessionRequest, ip: String): BeginSessionResponse {
         if (request.apiVersion < OnlineConstants.API_VERSION) {
             throw ClientException(
                 HttpStatusCode.BadRequest,
@@ -28,7 +33,15 @@ class SessionService(private val sessionStore: Store<Session>) {
         val sessionId = UUID.randomUUID()
         val currentNames = sessionStore.getAll().map { it.name }
         val name = ensureUnique(request.name, currentNames)
-        val session = Session(name, sessionId).also { sessionStore.put(it.id.toString(), it) }
+        val session =
+            Session(sessionId, name, ip, request.apiVersion).also {
+                sessionStore.put(it.id.toString(), it)
+            }
+
+        // Also populate legacy user connection
+        val usc = UserConnection(ip, LegacyConstants.SYMMETRIC_KEY, name)
+        usc.setLastActiveNow()
+        uscStore.put(ip, usc)
 
         return BeginSessionResponse(session.name, session.id)
     }

@@ -682,6 +682,9 @@ public final class MainScreen extends AbstractDevScreen
 		} else if (command.startsWith("server ")) {
 			var serverCommand = command.replace("server ", "");
 			Globals.INSTANCE.getDevApi().doServerCommand(serverCommand);
+		} else if (command.equals("keygen")) {
+			var key = KeyGeneratorUtil.generateSymmetricKey();
+			textToShow = EncryptionUtil.convertSecretKeyToString(key);
 		}
 		else if (command.equals("simulator"))
 		{
@@ -708,14 +711,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private boolean processDevModeCommand(String command)
 	{
-		if (command.startsWith("loadtest"))
-		{
-			LoadTesterDialog loadTesterDialog = ScreenCache.getLoadTesterDialog();
-			loadTesterDialog.setLocationRelativeTo(null);
-			loadTesterDialog.init();
-			loadTesterDialog.setVisible(true);
-		}
-		else if (command.startsWith("delay "))
+		if (command.startsWith("delay "))
 		{
 			int spaceIndex = command.indexOf(' ');
 			int millisDelay = Integer.parseInt(command.substring(spaceIndex+1));

@@ -15,8 +15,7 @@ public class XmlBuilderServer implements XmlConstants,
 	//Cached acknowledgements
 	//AJH 28 Feb 2015 - Made these final - they don't change
 	private static final Document ACKNOWLEDGEMENT = XmlUtil.factorySimpleMessage(RESPONSE_TAG_ACKNOWLEDGEMENT);
-	private static final Document symmetricKeyAck = XmlUtil.factorySimpleMessage(RESPONSE_TAG_SYMMETRIC_KEY);
-	
+
 	private static final int ACHIEVMENTS_TOTAL = 80;
 	
 	public static Document getKickOffResponse(String username, String reason)
@@ -43,22 +42,6 @@ public class XmlBuilderServer implements XmlConstants,
 		Element rootElement = response.createElement(RESPONSE_TAG_UPDATE_AVAILABLE);
 		rootElement.setAttribute("FileSize", "" + fileSize);
 		rootElement.setAttribute("VersionNumber", versionNumber);
-		
-		response.appendChild(rootElement);
-		return response;
-	}
-	
-	public static Document getNewAccountResponse(String username, String passwordHash, String email)
-	{
-		String error = AccountUtil.createAccount(username, passwordHash, email);
-		Document response = XmlUtil.factoryNewDocument();
-
-		Element rootElement = response.createElement(RESPONSE_TAG_NEW_ACCOUNT);
-		rootElement.setAttribute("Username", username);
-		if (!error.isEmpty())
-		{
-			rootElement.setAttribute("Error", error);
-		}
 		
 		response.appendChild(rootElement);
 		return response;
@@ -106,15 +89,9 @@ public class XmlBuilderServer implements XmlConstants,
 			rootElement.setAttribute("FailureReason", "Incorrect password.");
 			response.appendChild(rootElement);
 		}
-		else if (server.isAlreadyOnline(username))
-		{
-			Element rootElement = response.createElement(RESPONSE_TAG_CONNECT_FAILURE);
-			rootElement.setAttribute("FailureReason", "Another user is already logged on with that name.");
-			response.appendChild(rootElement);
-		}
 		else
 		{
-			usc.update(username, mobile);
+			usc.setLastActiveNow();
 			
 			//We won't have a notification socket for them yet, so don't bother trying to notify them
 			server.lobbyChanged(usc);
@@ -351,35 +328,10 @@ public class XmlBuilderServer implements XmlConstants,
 		root.appendChild(messageElement);
 	}
 	
-	public static Document getSymmetricKeyAcknowledgement()
-	{
-		return symmetricKeyAck;
-	}
-	
-	public static Document getChangePortResponse(EntropyServer server, String ipAndPort)
-	{
-		int index = ipAndPort.indexOf("_");
-		String ip = ipAndPort.substring(0, index);
-		
-		ArrayList<String> ports = server.getAllPortsCurrentlyUsedByIp(ip);
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_CHANGE_PORT);
-		
-		for (int i=0; i<ports.size(); i++)
-		{
-			Element portElement = response.createElement("UsedPort");
-			portElement.setAttribute("PortNumber", ports.get(i));
-			rootElement.appendChild(portElement);
-		}
-		
-		response.appendChild(rootElement);
-		return response;	
-	}
-	
 	public static Document appendLobbyResponse(Document message, EntropyServer server)
 	{
 		List<Room> rooms = server.getRooms();
-		List<UserConnection> userConnections = server.getUserConnections(true);
+		List<UserConnection> userConnections = Globals.INSTANCE.getUscStore().getAll();
 		
 		Element root = message.getDocumentElement();
 		Element rootElement = message.createElement(RESPONSE_TAG_LOBBY_NOTIFICATION);
@@ -432,16 +384,15 @@ public class XmlBuilderServer implements XmlConstants,
 		for (int i=0; i<userConnections.size(); i++)
 		{
 			UserConnection usc = userConnections.get(i);
-			String username = usc.getUsername();
+			String username = usc.getName();
 			String colour = usc.getColour();
-			boolean mobile = usc.getMobile();
 			int achievements = playerStats.getInt(username + "Achievements", 0);
 			
 			Element onlineUserElement = message.createElement("OnlineUser");
 			onlineUserElement.setAttribute("Username", username);
 			onlineUserElement.setAttribute("Achievements", "" + achievements);
 			onlineUserElement.setAttribute("Colour", colour);
-			XmlUtil.setAttributeBoolean(onlineUserElement, "Mobile", mobile);
+			XmlUtil.setAttributeBoolean(onlineUserElement, "Mobile", false);
 			
 			rootElement.appendChild(onlineUserElement);
 		}
@@ -758,8 +709,6 @@ public class XmlBuilderServer implements XmlConstants,
 
 	public static boolean isSessionMessage(String name) 
 	{
-		return !name.equals(ROOT_TAG_CONNECTION_REQUEST)
-		  && !name.equals(ROOT_TAG_NEW_ACCOUNT_REQUEST)
-		  && !name.equals(ROOT_TAG_NEW_SYMMETRIC_KEY);
+		return !name.equals(ROOT_TAG_CONNECTION_REQUEST);
 	}
 }

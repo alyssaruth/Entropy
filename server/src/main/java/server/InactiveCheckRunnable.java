@@ -5,6 +5,7 @@ import java.util.List;
 import auth.UserConnection;
 import object.ServerRunnable;
 import util.Debug;
+import util.Globals;
 
 import static utils.InjectedThings.logger;
 
@@ -39,7 +40,7 @@ public class InactiveCheckRunnable implements ServerRunnable
 	
 	private void runInactiveCheck() throws InterruptedException
 	{
-		List<UserConnection> userConnections = server.getUserConnections(false);
+		List<UserConnection> userConnections = Globals.INSTANCE.getUscStore().getAll();
 		int size = userConnections.size();
 
 		statusText = "Running for " + size + " uscs";
@@ -47,7 +48,7 @@ public class InactiveCheckRunnable implements ServerRunnable
 		for (int i=size-1; i>=0; i--)
 		{
 			UserConnection usc = userConnections.get(i);
-			String username = usc.getUsername();
+			String username = usc.getName();
 			long lastActiveMillis = usc.getLastActive();
 			long currentMillis = System.currentTimeMillis();
 			long timeSinceLastActive = currentMillis - lastActiveMillis;

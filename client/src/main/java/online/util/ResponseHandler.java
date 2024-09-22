@@ -48,8 +48,7 @@ public class ResponseHandler implements XmlConstants
 			handleKickOff(root);
 			return;
 		}
-		
-		MessageUtil.setShuttingDown(false);
+
 		if (responseName.equals(RESPONSE_TAG_CHANGE_PASSWORD))
 		{
 			handleChangePasswordResponse(root);
