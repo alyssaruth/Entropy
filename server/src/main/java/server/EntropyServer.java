@@ -2,20 +2,14 @@ package server;
 
 import auth.UserConnection;
 import logging.LoggerUncaughtExceptionHandler;
-import object.*;
+import object.OnlineMessage;
+import object.Room;
+import object.ServerRunnable;
+import object.ServerThread;
 import org.w3c.dom.Document;
-import screen.DebugConsole;
 import util.*;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.spec.RSAPrivateKeySpec;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static utils.InjectedThings.logger;
 
 public final class EntropyServer implements OnlineConstants {
-    //Console
-    private static DebugConsole console = new DebugConsole();
-
     //Caches
     private ConcurrentHashMap<String, Room> hmRoomByName = new ConcurrentHashMap<>();
     private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
@@ -35,14 +26,13 @@ public final class EntropyServer implements OnlineConstants {
     private static long currentSeedLong = 4613352884640512L;
 
     public static void main() {
-        EntropyServer server = new EntropyServer();
         Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 
         //Initialise interfaces etc
         EncryptionUtil.setBase64Interface(new Base64Desktop());
-        Debug.initialise(console);
+        Debug.initialise(new DebugOutputSystemOut());
 
-        server.onStart();
+        Globals.INSTANCE.getServer().onStart();
     }
 
     private void onStart() {

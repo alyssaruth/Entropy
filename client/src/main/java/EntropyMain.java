@@ -21,6 +21,7 @@ public class EntropyMain implements Registry
 	public static void main(String[] args)
 	{
 		//Initialise interfaces etc
+		Debug.initialise(new DebugOutputSystemOut());
 		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 		MainUtilKt.setLoggingContextFields();
 		AbstractClient.setInstance(new DesktopEntropyClient());

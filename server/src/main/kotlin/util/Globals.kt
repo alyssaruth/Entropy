@@ -3,6 +3,7 @@ package util
 import auth.Session
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
+import server.EntropyServer
 import store.MemoryUserConnectionStore
 import store.SessionStore
 import store.Store
@@ -26,4 +27,6 @@ object Globals {
             TimeUnit.SECONDS,
             ArrayBlockingQueue(MAX_QUEUE_SIZE)
         )
+
+    val server: EntropyServer = EntropyServer()
 }
