@@ -100,7 +100,7 @@ class HttpClientTest : AbstractTest() {
         val responseLog = verifyLog("http.response", Severity.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
         responseLog.keyValuePairs["responseCode"] shouldBe 409
-        responseLog.keyValuePairs["clientErrorCode"] shouldBe "oh.dear"
+        responseLog.keyValuePairs["clientErrorCode"] shouldBe ClientErrorCode("oh.dear")
         responseLog.keyValuePairs["clientErrorMessage"] shouldBe "a bid already exists"
     }
 
