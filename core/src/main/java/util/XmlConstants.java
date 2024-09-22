@@ -35,7 +35,6 @@ public interface XmlConstants
 	public static final String RESPONSE_TAG_STATISTICS_NOTIFICATION = "StatisticsNotification";
 	
 	//Server responses
-	public static final String RESPONSE_TAG_UPDATE_AVAILABLE = "UpdateAvailable";
 	public static final String RESPONSE_TAG_KICK_OFF = "KickOff";
 	public static final String RESPONSE_TAG_CHANGE_PASSWORD = "ChangePasswordResponse";
 	public static final String RESPONSE_TAG_CONNECT_SUCCESS = "ConnectSuccess";

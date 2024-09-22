@@ -36,17 +36,6 @@ public class XmlBuilderServer implements XmlConstants,
 		return response;
 	}
 	
-	public static Document getUpdateAvailableResponse(long fileSize, String versionNumber)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_UPDATE_AVAILABLE);
-		rootElement.setAttribute("FileSize", "" + fileSize);
-		rootElement.setAttribute("VersionNumber", versionNumber);
-		
-		response.appendChild(rootElement);
-		return response;
-	}
-	
 	public static Document getChangePasswordResponse(String username, String oldPass, String newPass)
 	{
 		String error = AccountUtil.changePassword(username, oldPass, newPass);

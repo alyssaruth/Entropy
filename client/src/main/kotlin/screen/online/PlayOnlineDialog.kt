@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder
 import screen.ScreenCache
 import screen.SimpleDialog
 import util.DialogUtilNew
+import util.Globals
 
 class PlayOnlineDialog : SimpleDialog() {
     private val lblName = JLabel("Name")
@@ -39,7 +40,15 @@ class PlayOnlineDialog : SimpleDialog() {
     }
 
     private fun beginSession() {
-        // TODO - write me
+        dispose()
+
+        ScreenCache.showConnectingDialog()
+
+        try {
+            Globals.sessionApi.beginSession(textFieldUsername.text)
+        } finally {
+            ScreenCache.dismissConnectingDialog()
+        }
     }
 
     override fun okPressed() {
