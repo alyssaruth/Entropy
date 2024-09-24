@@ -7,8 +7,8 @@ import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
 import screen.ScreenCache
 import util.DialogUtilNew
+import util.Globals
 import util.OnlineConstants
-import util.UpdateManager.checkForUpdates
 
 class SessionApi(private val httpClient: HttpClient) {
     fun beginSession(name: String) {
@@ -16,7 +16,7 @@ class SessionApi(private val httpClient: HttpClient) {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 Routes.BEGIN_SESSION,
-                BeginSessionRequest(name)
+                BeginSessionRequest(name),
             )
 
         when (response) {
@@ -47,7 +47,9 @@ class SessionApi(private val httpClient: HttpClient) {
                         )
 
                     if (ans == JOptionPane.YES_OPTION) {
-                        checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER)
+                        Globals.updateManager.checkForUpdates(
+                            OnlineConstants.ENTROPY_VERSION_NUMBER
+                        )
                     }
                 }
                 else -> DialogUtilNew.showError("An error occurred.\n\n${response.errorMessage}")

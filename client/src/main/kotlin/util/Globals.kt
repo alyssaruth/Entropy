@@ -11,4 +11,5 @@ object Globals {
     val healthCheckApi = HealthCheckApi(httpClient)
     val devApi = DevApi(httpClient)
     val sessionApi = SessionApi(httpClient)
+    var updateManager = UpdateManager()
 }
