@@ -39,18 +39,4 @@ public class ExtendedConcurrentHashMap<KeyType, ValueType> extends ConcurrentHas
 		Iterator<KeyType> it = keySet().iterator();
 		return it.next();
 	}
-	
-	public void removeAllWithValue(ValueType value)
-	{
-		Iterator<KeyType> it = keySet().iterator();
-		for (; it.hasNext();)
-		{
-			KeyType key = it.next();
-			ValueType valueInHm = get(key);
-			if (valueInHm.equals(value))
-			{
-				remove(key);
-			}
-		}
-	}
 }

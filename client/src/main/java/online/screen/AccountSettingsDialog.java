@@ -37,12 +37,10 @@ public class AccountSettingsDialog extends JDialog
 		okCancelPanel.setSize(294, 33);
 		getContentPane().add(okCancelPanel);
 		okCancelPanel.add(btnOk);
-		okCancelPanel.add(btnChangePassword);
 		okCancelPanel.add(btnCancel);
 		textFieldUsername.setEditable(false);
 		textFieldEmail.setEditable(false);
 
-		btnChangePassword.addActionListener(this);
 		btnOk.addActionListener(this);
 		btnCancel.addActionListener(this);
 
@@ -53,7 +51,6 @@ public class AccountSettingsDialog extends JDialog
 	private final JTextField textFieldEmail = new JTextField();
 	private final JPanel okCancelPanel = new JPanel();
 	private final JButton btnOk = new JButton("Ok");
-	private final JButton btnChangePassword = new JButton("Change Password");
 	private final JButton btnCancel = new JButton("Cancel");
 	
 	private void init()
