@@ -78,6 +78,9 @@ public final class ScreenCache
 		}
 		return entropyLobby;
 	}
+	public static void setEntropyLobby(EntropyLobby lobby) {
+		entropyLobby = lobby;
+	}
 
 	public static Leaderboard getLeaderboard() 
 	{

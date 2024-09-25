@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import utils.InjectedThings.logger
 
 @JsonSerialize(using = StringMicrotypeSerializer::class)
 abstract class StringMicrotype(val value: String) {
@@ -33,10 +32,5 @@ abstract class StringMicrotypeDeserializer<E : StringMicrotype>(
     private val constructor: (String) -> E
 ) : JsonDeserializer<E>() {
     override fun deserialize(p0: JsonParser, p1: DeserializationContext) =
-        try {
-            constructor.invoke(p0.text)
-        } catch (t: Throwable) {
-            logger.error("reflect.error", "Failed to instantiate ${javaClass.simpleName}", t)
-            null
-        }
+        constructor.invoke(p0.text)
 }

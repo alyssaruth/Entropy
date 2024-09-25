@@ -10,11 +10,16 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.UUID
 import kong.unirest.HttpMethod
+import kong.unirest.UnirestException
 import main.kotlin.testCore.getDialogMessage
+import main.kotlin.testCore.getErrorDialog
 import main.kotlin.testCore.getQuestionDialog
 import main.kotlin.testCore.verifyNotCalled
+import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
+import screen.ScreenCache
 import testCore.AbstractTest
 import util.Globals
 import util.OnlineConstants
@@ -68,11 +73,51 @@ class SessionApiTest : AbstractTest() {
         verifyNotCalled { Globals.updateManager.checkForUpdates(any()) }
     }
 
+    @Test
+    fun `should show an error for an unexpected error`() {
+        val httpClient =
+            mockHttpClient(FailureResponse(422, ClientErrorCode("bad"), "Internal Server Error"))
+
+        SessionApi(httpClient).beginSession("alyssa")
+        flushEdt()
+
+        getErrorDialog().getDialogMessage() shouldBe "An error occurred.\n\nInternal Server Error"
+    }
+
+    @Test
+    fun `should show an error for a communication error`() {
+        val httpClient =
+            mockHttpClient(CommunicationError(UnirestException("Connection timed out.")))
+
+        SessionApi(httpClient).beginSession("alyssa")
+        flushEdt()
+
+        getErrorDialog().getDialogMessage() shouldBe
+            "Error communicating with server.\n\nConnection timed out."
+    }
+
+    @Test
+    fun `should boot the lobby on success`() {
+        val mockLobby = mockk<EntropyLobby>(relaxed = true)
+        ScreenCache.setEntropyLobby(mockLobby)
+        val httpClient =
+            mockHttpClient(SuccessResponse(200, BeginSessionResponse("alyssa", UUID.randomUUID())))
+
+        SessionApi(httpClient).beginSession("alyssa")
+
+        val lobby = ScreenCache.getEntropyLobby()
+        verify {
+            lobby.username = "alyssa"
+            lobby.isVisible = true
+            lobby.init()
+        }
+    }
+
     private fun mockHttpClient(response: ApiResponse<BeginSessionResponse>): HttpClient {
         val httpClient = mockk<HttpClient>(relaxed = true)
         every {
             httpClient.doCall<BeginSessionResponse>(HttpMethod.POST, BEGIN_SESSION, any())
-        } returns FailureResponse(422, UPDATE_REQUIRED, "oh no")
+        } returns response
 
         return httpClient
     }
