@@ -24,10 +24,6 @@ public class Debug implements CoreRegistry {
     }
 
     private static void append(final String text, boolean logging, final boolean includeDate) {
-        append(text, logging, includeDate, null);
-    }
-
-    private static void append(final String text, boolean logging, final boolean includeDate, final BooleanWrapper haveStackTraced) {
         if (!logging) {
             return;
         }
@@ -41,10 +37,6 @@ public class Debug implements CoreRegistry {
                 }
 
                 output.append("\n" + time + text);
-
-                if (haveStackTraced != null) {
-                    haveStackTraced.setValue(true);
-                }
             }
         };
 
@@ -99,8 +91,7 @@ public class Debug implements CoreRegistry {
         t.printStackTrace(pw);
         trace += datetime + sw.toString();
 
-        BooleanWrapper haveAppendedStackTrace = new BooleanWrapper(false);
-        append(trace, true, false, haveAppendedStackTrace);
+        append(trace, true, false);
     }
 
     public static String getCurrentTimeForLogging() {

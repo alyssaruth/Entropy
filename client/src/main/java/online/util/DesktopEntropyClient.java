@@ -5,12 +5,11 @@ import online.screen.EntropyLobby;
 import screen.ScreenCache;
 import util.*;
 
-public class DesktopEntropyClient extends AbstractDesktopClient
+public class DesktopEntropyClient extends AbstractClient
 {
 	@Override
 	public void init()
 	{
-		super.init();
 	}
 	
 	@Override
