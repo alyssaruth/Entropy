@@ -15,6 +15,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import util.AbstractClient
+import util.Debug
+import util.DebugOutputSystemOut
 
 private val logDestination = FakeLogDestination()
 val logger = Logger(listOf(logDestination, LogDestinationSystemOut()))
@@ -27,6 +29,7 @@ open class AbstractTest {
         clearLogs()
         clearAllMocks()
 
+        Debug.initialise(DebugOutputSystemOut())
         AbstractClient.devMode = false
         logger.loggingContext.clear()
     }

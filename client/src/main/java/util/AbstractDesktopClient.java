@@ -6,6 +6,5 @@ public abstract class AbstractDesktopClient extends AbstractClient
 	@Override
 	public void init()
 	{
-		EncryptionUtil.setBase64Interface(new Base64Desktop());
 	}
 }

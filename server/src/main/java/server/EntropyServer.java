@@ -29,7 +29,6 @@ public final class EntropyServer implements OnlineConstants {
         Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 
         //Initialise interfaces etc
-        EncryptionUtil.setBase64Interface(new Base64Desktop());
         Debug.initialise(new DebugOutputSystemOut());
 
         Globals.INSTANCE.getServer().onStart();

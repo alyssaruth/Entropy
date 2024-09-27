@@ -11,7 +11,7 @@ public class EncryptionUtil
 	
 	private static final String ALGORITHM_RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding";
 	private static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
-	public static Base64Interface base64Interface = null;
+	public static Base64Interface base64Interface = new Base64Desktop();
 	
 	public static String convertSecretKeyToString(SecretKey secretKey)
 	{
@@ -108,10 +108,5 @@ public class EncryptionUtil
 		}
 		
 		return messageString;
-	}
-	
-	public static void setBase64Interface(Base64Interface base64Interface)
-	{
-		EncryptionUtil.base64Interface = base64Interface;
 	}
 }

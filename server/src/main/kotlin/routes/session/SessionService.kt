@@ -3,6 +3,7 @@ package routes.session
 import auth.Session
 import auth.UserConnection
 import http.EMPTY_NAME
+import http.INVALID_API_VERSION
 import http.LegacyConstants
 import http.UPDATE_REQUIRED
 import http.dto.BeginSessionRequest
@@ -19,6 +20,14 @@ class SessionService(
     private val uscStore: Store<UserConnection>
 ) {
     fun beginSession(request: BeginSessionRequest, ip: String): BeginSessionResponse {
+        if (request.apiVersion > OnlineConstants.API_VERSION) {
+            throw ClientException(
+                HttpStatusCode.BadRequest,
+                INVALID_API_VERSION,
+                "API Version is too high: ${request.apiVersion} > ${OnlineConstants.API_VERSION}"
+            )
+        }
+
         if (request.apiVersion < OnlineConstants.API_VERSION) {
             throw ClientException(
                 HttpStatusCode.BadRequest,
