@@ -57,4 +57,16 @@ abstract class AbstractStoreTest<T> {
 
         store.getAll().shouldContainExactlyInAnyOrder(makeItemA(), makeItemB())
     }
+
+    @Test
+    fun `Should be able to delete items`() {
+        val store = makeStore()
+        store.put("A", makeItemA())
+        store.put("B", makeItemB())
+
+        store.remove("B")
+
+        store.find("A") shouldBe makeItemA()
+        store.find("B") shouldBe null
+    }
 }

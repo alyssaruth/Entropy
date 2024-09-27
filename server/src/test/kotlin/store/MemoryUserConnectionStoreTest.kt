@@ -11,7 +11,7 @@ class MemoryUserConnectionStoreTest : AbstractStoreTest<UserConnection>() {
 
     override fun makeStore() = MemoryUserConnectionStore()
 
-    override fun makeItemA() = UserConnection("1.2.3.A", secretKeyA)
+    override fun makeItemA() = UserConnection("1.2.3.A", secretKeyA, "Alyssa")
 
-    override fun makeItemB() = UserConnection("1.2.3.B", secretKeyB)
+    override fun makeItemB() = UserConnection("1.2.3.B", secretKeyB, "Leah")
 }

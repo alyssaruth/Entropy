@@ -11,13 +11,22 @@ import logging.Severity
 import org.apache.http.HttpHeaders
 import utils.InjectedThings.logger
 
-class HttpClient(val baseUrl: String) {
-    val jsonObjectMapper = JsonObjectMapper()
+class HttpClient(private val baseUrl: String) {
+    private val jsonObjectMapper = JsonObjectMapper()
 
     inline fun <reified T : Any?> doCall(
         method: HttpMethod,
         route: String,
         payload: Any? = null,
+    ): ApiResponse<T> {
+        return doCall(method, route, payload, T::class.java)
+    }
+
+    fun <T> doCall(
+        method: HttpMethod,
+        route: String,
+        payload: Any? = null,
+        responseType: Class<T>?,
     ): ApiResponse<T> {
         val requestId = UUID.randomUUID()
         val requestJson = payload?.let { jsonObjectMapper.writeValue(payload) }
@@ -42,23 +51,24 @@ class HttpClient(val baseUrl: String) {
 
         try {
             val response = request.asString()
-            return handleResponse(response, requestId, route, method, requestJson)
+            return handleResponse(response, requestId, route, method, requestJson, responseType)
         } catch (e: UnirestException) {
             logUnirestError(requestId, route, method, requestJson, e)
             return CommunicationError(e)
         }
     }
 
-    inline fun <reified T : Any?> handleResponse(
+    private fun <T : Any?> handleResponse(
         response: HttpResponse<String>,
         requestId: UUID,
         route: String,
         method: HttpMethod,
-        requestJson: String?
+        requestJson: String?,
+        responseType: Class<T>?,
     ): ApiResponse<T> =
         if (response.isSuccess) {
             logResponse(Severity.INFO, requestId, route, method, requestJson, response)
-            val body = jsonObjectMapper.readValue(response.body, T::class.java)
+            val body = jsonObjectMapper.readValue(response.body, responseType)
             SuccessResponse(response.status, body)
         } else {
             val errorResponse = tryParseErrorResponse(response)
@@ -71,26 +81,22 @@ class HttpClient(val baseUrl: String) {
                 response,
                 errorResponse,
             )
-            FailureResponse(
-                response.status,
-                errorResponse?.errorCode,
-                errorResponse?.errorMessage,
-            )
+            FailureResponse(response.status, errorResponse?.errorCode, errorResponse?.errorMessage)
         }
 
-    fun tryParseErrorResponse(response: HttpResponse<String>) =
+    private fun tryParseErrorResponse(response: HttpResponse<String>) =
         try {
             jsonObjectMapper.readValue(response.body, ClientErrorResponse::class.java)
         } catch (e: Exception) {
             null
         }
 
-    fun logUnirestError(
+    private fun logUnirestError(
         requestId: UUID,
         route: String,
         method: HttpMethod,
         requestJson: String?,
-        e: UnirestException
+        e: UnirestException,
     ) {
         logger.error(
             "http.error",
@@ -98,11 +104,11 @@ class HttpClient(val baseUrl: String) {
             e,
             "requestId" to requestId,
             "requestBody" to requestJson,
-            "unirestError" to e.message
+            "unirestError" to e.message,
         )
     }
 
-    fun logResponse(
+    private fun logResponse(
         level: Severity,
         requestId: UUID,
         route: String,

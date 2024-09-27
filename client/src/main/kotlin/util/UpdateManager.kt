@@ -16,7 +16,7 @@ import utils.InjectedThings.logger
  *
  * https://developer.github.com/v3/repos/releases/#get-the-latest-release
  */
-object UpdateManager {
+class UpdateManager {
     fun checkForUpdates(currentVersion: String) {
         // Show this here, checking the CRC can take time
         logger.info("updateCheck", "Checking for updates - my version is $currentVersion")
@@ -75,7 +75,7 @@ object UpdateManager {
         val answer =
             DialogUtilNew.showQuestion(
                 "An update is available (${metadata.version}). Would you like to download it now?",
-                false
+                false,
             )
         return answer == JOptionPane.YES_OPTION
     }
@@ -109,7 +109,7 @@ object UpdateManager {
                 "parseError",
                 "Error parsing update response",
                 t,
-                "responseBody" to responseJson
+                "responseBody" to responseJson,
             )
             null
         }
@@ -146,7 +146,7 @@ data class UpdateMetadata(
     val version: String,
     val assetId: Long,
     val fileName: String,
-    val size: Long
+    val size: Long,
 ) {
     fun getArgs() = "$size $version $fileName $assetId"
 }

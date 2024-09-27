@@ -1,3 +1,5 @@
 package http.dto
 
-data class ClientErrorResponse(val errorCode: String, val errorMessage: String)
+import http.ClientErrorCode
+
+data class ClientErrorResponse(val errorCode: ClientErrorCode, val errorMessage: String)

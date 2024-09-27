@@ -8,7 +8,7 @@ data class SuccessResponse<T>(val statusCode: Int, val body: T) : ApiResponse<T>
 
 data class FailureResponse<T>(
     val statusCode: Int,
-    val errorCode: String?,
+    val errorCode: ClientErrorCode?,
     val errorMessage: String?
 ) : ApiResponse<T>
 

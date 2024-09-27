@@ -1,5 +1,6 @@
 package plugins
 
+import http.INTERNAL_SERVER_ERROR
 import http.dto.ClientErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -9,6 +10,7 @@ import io.ktor.server.response.*
 import routes.ClientException
 import routes.dev.DevController
 import routes.health.HealthCheckController
+import routes.session.SessionController
 import utils.InjectedThings.logger
 
 fun Application.configureRouting() {
@@ -28,11 +30,12 @@ fun Application.configureRouting() {
             logger.error("internalServerError", errorMessage, cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
-                ClientErrorResponse("internalServerError", errorMessage)
+                ClientErrorResponse(INTERNAL_SERVER_ERROR, errorMessage)
             )
         }
     }
 
     HealthCheckController.installRoutes(this)
+    SessionController.installRoutes(this)
     DevController.installRoutes(this)
 }

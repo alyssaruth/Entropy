@@ -5,12 +5,11 @@ import online.screen.EntropyLobby;
 import screen.ScreenCache;
 import util.*;
 
-public class DesktopEntropyClient extends AbstractDesktopClient
+public class DesktopEntropyClient extends AbstractClient
 {
 	@Override
 	public void init()
 	{
-		super.init();
 	}
 	
 	@Override
@@ -84,6 +83,6 @@ public class DesktopEntropyClient extends AbstractDesktopClient
 	@Override
 	public void checkForUpdates()
 	{
-		UpdateManager.INSTANCE.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
+		Globals.INSTANCE.getUpdateManager().checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
 	}
 }

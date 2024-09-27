@@ -11,13 +11,9 @@ import util.Debug
 import util.EncryptionUtil
 import util.XmlConstants
 
-data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey?) {
-    var username: String? = null
-    var colour: String? = null
+data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, val name: String) {
+    val colour: String = ColourGenerator.generateNextColour()
     var lastActive: Long = -1
-        private set
-
-    var mobile: Boolean = false
         private set
 
     private val hmNotificationQueueBySocketName = HashMap<String, ArrayList<Document>>()
@@ -27,17 +23,6 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey?) {
     /** When a connection is initiated */
     init {
         initialiseSocketHashMaps()
-    }
-
-    /** When the logon process is completed */
-    fun update(username: String, mobile: Boolean) {
-        this.username = username
-        this.mobile = mobile
-
-        colour = ColourGenerator.generateNextColour()
-        setLastActiveNow()
-
-        Debug.append("New user connected: $username")
     }
 
     fun setLastActiveNow() {
@@ -73,19 +58,8 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey?) {
         return hmSocketBySocketName[socketType]
     }
 
-    override fun toString(): String {
-        var desc = "$username @ $ipAddress"
-
-        if (mobile) {
-            desc += " (mob)"
-        }
-
-        if (symmetricKey != null) {
-            desc += ", " + EncryptionUtil.convertSecretKeyToString(symmetricKey)
-        }
-
-        return desc
-    }
+    override fun toString() =
+        "$name @ $ipAddress, ${ EncryptionUtil.convertSecretKeyToString(symmetricKey)}"
 
     fun sendNotificationInWorkerPool(
         message: Document?,

@@ -1,23 +1,13 @@
 
 package util;
 
+import http.LegacyConstants;
 import kotlin.Pair;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import javax.crypto.SecretKey;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.ArrayList;
-import java.util.Random;
 
 import static utils.InjectedThings.logger;
 
@@ -29,35 +19,8 @@ public class MessageUtil implements OnlineConstants
 	
 	public static final String SERVER_IP = LOCAL_IP;
 	
-	private static final Random RAND = new Random();
-	
 	public static int millisDelay = 0;
-	public static PublicKey publicKey = null;
-	public static SecretKey symmetricKey = null;
-	public static SecretKey tempSymmetricKey = null; //Used to cache a key
-	
-	private static boolean shuttingDown = false;
-	private static int cachedPortNumber = -1;
-	
-	public static void generatePublicKey()
-	{
-		Debug.append("Reading in public key...");
-		
-		try (InputStream in = MessageUtil.class.getResourceAsStream("/public.key");
-		  ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(in)))
-		{
-			BigInteger m = (BigInteger) oin.readObject();
-			BigInteger e = (BigInteger) oin.readObject();
-			RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-			KeyFactory fact = KeyFactory.getInstance("RSA");
-			MessageUtil.publicKey = fact.generatePublic(keySpec);
-			Debug.append("Key read successfully");
-		} 
-		catch (Throwable t)
-		{
-			logger.error("keyError", "Unable to read public key - won't be able to communicate with Server.", t);
-		} 
-	}
+	public static SecretKey symmetricKey = EncryptionUtil.reconstructKeyFromString(LegacyConstants.SYMMETRIC_KEY_STR);
 	
 	public static void sendMessage(Document message, int millis)
 	{
@@ -91,58 +54,9 @@ public class MessageUtil implements OnlineConstants
 		AbstractClient.getInstance().sendAsyncInSingleThread(message);
 	}
 	
-	public static boolean serverIsShuttingDown()
-	{
-		return shuttingDown;
-	}
-	public static void setShuttingDown(boolean serverShuttingDown)
-	{
-		shuttingDown = serverShuttingDown;
-	}
-	
 	public static int getRandomPortNumber()
 	{
-		synchronized (RAND)
-		{
-			if (cachedPortNumber != -1)
-			{
-				return cachedPortNumber;
-			}
-			
-			int portsToChoose = SERVER_PORT_NUMBER_UPPER_BOUND - SERVER_PORT_NUMBER_LOWER_BOUND;
-			cachedPortNumber = SERVER_PORT_NUMBER_LOWER_BOUND + RAND.nextInt(portsToChoose);
-			return cachedPortNumber;
-		}
-	}
-	
-	public static boolean changeCachedPort(Element rootElement)
-	{
-		ArrayList<Integer> list = new ArrayList<>();
-		
-		NodeList usedPorts = rootElement.getElementsByTagName("UsedPort");
-		int size = usedPorts.getLength();
-		for (int i=0; i<size; i++)
-		{
-			Element portElement = (Element)usedPorts.item(i);
-			int port = XmlUtil.getAttributeInt(portElement, "PortNumber");
-			list.add(port);
-		}
-		
-		int portsToChoose = SERVER_PORT_NUMBER_UPPER_BOUND - SERVER_PORT_NUMBER_LOWER_BOUND;
-		if (list.size() >= portsToChoose)
-		{
-			cachedPortNumber = -1;
-			return false;
-		}
-		
-		Random rand = new Random();
-		cachedPortNumber = SERVER_PORT_NUMBER_LOWER_BOUND + rand.nextInt(portsToChoose);
-		while (list.contains(cachedPortNumber))
-		{
-			cachedPortNumber = SERVER_PORT_NUMBER_LOWER_BOUND + rand.nextInt(portsToChoose);
-		}
-		
-		return true;
+		return SERVER_PORT_NUMBER;
 	}
 	
 	public static InetAddress factoryInetAddress(String ipAddress)

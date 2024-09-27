@@ -68,7 +68,6 @@ public class EntropyLobby extends JFrame
 	private UsernameRenderer usernameRenderer = new UsernameRenderer();
 	
 	private String username = "";
-	private String email = "";
 	
 	public EntropyLobby() 
 	{
@@ -182,6 +181,8 @@ public class EntropyLobby extends JFrame
 				onlineUserList.setModel(usernamesModel);
 				onlineUserList.setCellRenderer(usernameRenderer);
 				statsPanel.init();
+
+				initChatPanelIfNecessary();
 			}
 		});
 		
@@ -367,14 +368,6 @@ public class EntropyLobby extends JFrame
 	{
 		return username;
 	}
-	public String getEmail()
-	{
-		return email;
-	}
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
 	
 	public boolean confirmExit()
 	{
@@ -474,8 +467,7 @@ public class EntropyLobby extends JFrame
 		Component source = (Component)arg0.getSource();
 		if (source == btnSettings)
 		{
-			AccountSettingsDialog dialog = new AccountSettingsDialog(username, email);
-			ScreenCache.setAccountSettingsDialog(dialog);
+			AccountSettingsDialog dialog = new AccountSettingsDialog(username);
 			dialog.setModal(true);
 			dialog.setLocationRelativeTo(this);
 			dialog.setVisible(true);

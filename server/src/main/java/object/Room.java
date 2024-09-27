@@ -159,7 +159,7 @@ public final class Room extends RoomWrapper
 			usersToNotify.remove(userToExclude);
 		}
 		
-		ArrayList<UserConnection> uscs = server.getUserConnectionsForUsernames(usersToNotify);
+		List<UserConnection> uscs = Globals.INSTANCE.getUscStore().getAllForNames(usersToNotify);
 		server.sendViaNotificationSocket(uscs, notification, XmlConstants.SOCKET_NAME_GAME, blocking);
 	}
 	
@@ -414,7 +414,7 @@ public final class Room extends RoomWrapper
 				
 				//Push out a stats notification
 				Document statsNotification = XmlBuilderServer.factoryStatisticsNotification(player);
-				UserConnection usc = server.getUserConnectionForUsername(player);
+				UserConnection usc = Globals.INSTANCE.getUscStore().findForName(player);
 				usc.sendNotificationInWorkerPool(statsNotification, server, XmlConstants.SOCKET_NAME_LOBBY, null);
 			}
 		}
@@ -545,7 +545,7 @@ public final class Room extends RoomWrapper
 		
 		Document chatMessage = XmlBuilderServer.getChatNotification(roomName, message);
 		HashSet<String> users = getAllUsersInRoom();
-		ArrayList<UserConnection> uscs = server.getUserConnectionsForUsernames(users);
+		List<UserConnection> uscs = Globals.INSTANCE.getUscStore().getAllForNames(users);
 		server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false);
 	}
 	public ArrayList<OnlineMessage> getChatHistory()

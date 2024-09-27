@@ -85,7 +85,7 @@ class HttpClientTest : AbstractTest() {
     @Test
     fun `GET with structured error response`() {
         val (client, server) = setUpWebServer()
-        val errorResponse = ClientErrorResponse("oh.dear", "a bid already exists")
+        val errorResponse = ClientErrorResponse(ClientErrorCode("oh.dear"), "a bid already exists")
 
         server.enqueue(
             MockResponse()
@@ -94,12 +94,13 @@ class HttpClientTest : AbstractTest() {
         )
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe FailureResponse(HttpStatus.CONFLICT, "oh.dear", "a bid already exists")
+        response shouldBe
+            FailureResponse(HttpStatus.CONFLICT, ClientErrorCode("oh.dear"), "a bid already exists")
 
         val responseLog = verifyLog("http.response", Severity.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
         responseLog.keyValuePairs["responseCode"] shouldBe 409
-        responseLog.keyValuePairs["clientErrorCode"] shouldBe "oh.dear"
+        responseLog.keyValuePairs["clientErrorCode"] shouldBe ClientErrorCode("oh.dear")
         responseLog.keyValuePairs["clientErrorMessage"] shouldBe "a bid already exists"
     }
 
@@ -156,6 +157,22 @@ class HttpClientTest : AbstractTest() {
         responseLog.keyValuePairs["requestId"] shouldBe requestLog.keyValuePairs["requestId"]
         responseLog.keyValuePairs["responseCode"] shouldBe 204
         responseLog.keyValuePairs["responseBody"] shouldBe ""
+    }
+
+    @Test
+    fun `Should handle additional fields`() {
+        val (client, server) = setUpWebServer()
+        val responseBody =
+            """{
+            "fieldOne": "foo",
+            "fieldTwo": 500,
+            "extraFieldThree": 10
+        }"""
+
+        server.enqueue(MockResponse().setBody(responseBody))
+
+        val response = client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        response shouldBe SuccessResponse(200, TestApiResponse("foo", 500))
     }
 
     private fun setUpWebServer(): Pair<HttpClient, MockWebServer> {

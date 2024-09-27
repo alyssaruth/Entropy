@@ -76,7 +76,7 @@ class UpdateManagerTest : AbstractTest() {
     }
 
     private fun queryLatestReleastJsonExpectingError(repositoryUrl: String): String {
-        val result = runAsync { UpdateManager.queryLatestReleaseJson(repositoryUrl) }
+        val result = runAsync { UpdateManager().queryLatestReleaseJson(repositoryUrl) }
 
         val error = getErrorDialog()
         val errorText = error.getDialogMessage()
@@ -93,7 +93,7 @@ class UpdateManagerTest : AbstractTest() {
     @Tag("integration")
     fun `Should retrieve a valid latest asset from the remote repo`() {
         val responseJson =
-            UpdateManager.queryLatestReleaseJson(OnlineConstants.ENTROPY_REPOSITORY_URL)!!
+            UpdateManager().queryLatestReleaseJson(OnlineConstants.ENTROPY_REPOSITORY_URL)!!
 
         val version = responseJson.getString("tag_name")
         version.shouldStartWith("v")
@@ -115,7 +115,7 @@ class UpdateManagerTest : AbstractTest() {
                     ]
                 }"""
 
-        val metadata = UpdateManager.parseUpdateMetadata(JSONObject(json))!!
+        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))!!
         metadata.version shouldBe "foo"
         metadata.assetId shouldBe 123456
         metadata.fileName shouldBe "Dartzee_v_foo.jar"
@@ -125,7 +125,7 @@ class UpdateManagerTest : AbstractTest() {
     @Test
     fun `Should log an error if no tag_name is present`() {
         val json = "{\"other_tag\":\"foo\"}"
-        val metadata = UpdateManager.parseUpdateMetadata(JSONObject(json))
+        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
         metadata shouldBe null
 
         val log = verifyLog("parseError", Severity.ERROR)
@@ -136,7 +136,7 @@ class UpdateManagerTest : AbstractTest() {
     @Test
     fun `Should log an error if no assets are found`() {
         val json = """{"assets":[],"tag_name":"foo"}"""
-        val metadata = UpdateManager.parseUpdateMetadata(JSONObject(json))
+        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
         metadata shouldBe null
 
         val log = verifyLog("parseError", Severity.ERROR)
@@ -152,10 +152,11 @@ class UpdateManagerTest : AbstractTest() {
                 OnlineConstants.ENTROPY_VERSION_NUMBER,
                 123456,
                 "EntropyLive_x_y.jar",
-                100
+                100,
             )
 
-        UpdateManager.shouldUpdate(OnlineConstants.ENTROPY_VERSION_NUMBER, metadata) shouldBe false
+        UpdateManager().shouldUpdate(OnlineConstants.ENTROPY_VERSION_NUMBER, metadata) shouldBe
+            false
         val log = verifyLog("updateResult")
         log.message shouldBe "Up to date"
     }
@@ -211,7 +212,7 @@ class UpdateManagerTest : AbstractTest() {
     private fun shouldUpdateAsync(currentVersion: String, metadata: UpdateMetadata): AtomicBoolean {
         val result = AtomicBoolean(false)
         SwingUtilities.invokeLater {
-            result.set(UpdateManager.shouldUpdate(currentVersion, metadata))
+            result.set(UpdateManager().shouldUpdate(currentVersion, metadata))
         }
 
         flushEdt()
@@ -224,7 +225,7 @@ class UpdateManagerTest : AbstractTest() {
         val updateFile = File("update.bat")
         updateFile.writeText("blah")
 
-        UpdateManager.prepareBatchFile()
+        UpdateManager().prepareBatchFile()
 
         updateFile.readText() shouldBe javaClass.getResource("/update/update.bat").readText()
         updateFile.delete()
@@ -237,7 +238,7 @@ class UpdateManagerTest : AbstractTest() {
         val error = IOException("Argh")
         every { runtime.exec(any<String>()) } throws error
 
-        runAsync { assertDoesNotExit { UpdateManager.startUpdate("foo", runtime) } }
+        runAsync { assertDoesNotExit { UpdateManager().startUpdate("foo", runtime) } }
 
         val errorDialog = getErrorDialog()
         errorDialog.getDialogMessage() shouldBe
@@ -251,6 +252,6 @@ class UpdateManagerTest : AbstractTest() {
     fun `Should exit normally if batch file succeeds`() {
         val runtime = mockk<Runtime>(relaxed = true)
 
-        assertExits(0) { UpdateManager.startUpdate("foo", runtime) }
+        assertExits(0) { UpdateManager().startUpdate("foo", runtime) }
     }
 }

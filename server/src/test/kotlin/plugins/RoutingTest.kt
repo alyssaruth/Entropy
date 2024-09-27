@@ -1,5 +1,6 @@
 package plugins
 
+import http.ClientErrorCode
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -58,7 +59,7 @@ private object ErrorThrowingController {
             get("/client-error") {
                 throw ClientException(
                     HttpStatusCode.Conflict,
-                    "conflictingEntity",
+                    ClientErrorCode("conflictingEntity"),
                     "Entity conflicts with another",
                 )
             }

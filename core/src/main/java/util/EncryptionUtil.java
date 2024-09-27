@@ -1,11 +1,9 @@
 package util;
 
-import java.security.Key;
-import java.security.MessageDigest;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 
 public class EncryptionUtil 
 {
@@ -13,7 +11,7 @@ public class EncryptionUtil
 	
 	private static final String ALGORITHM_RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding";
 	private static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
-	public static Base64Interface base64Interface = null;
+	public static Base64Desktop base64Interface = new Base64Desktop();
 	
 	public static String convertSecretKeyToString(SecretKey secretKey)
 	{
@@ -110,27 +108,5 @@ public class EncryptionUtil
 		}
 		
 		return messageString;
-	}
-	
-	public static String sha256Hash(String input)
-	{
-		try
-		{
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			md.update(input.getBytes("UTF-8"));
-			byte[] digest = md.digest();
-			
-			return EncryptionUtil.base64Interface.encode(digest);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-			return "";
-		}
-	}
-	
-	public static void setBase64Interface(Base64Interface base64Interface)
-	{
-		EncryptionUtil.base64Interface = base64Interface;
 	}
 }

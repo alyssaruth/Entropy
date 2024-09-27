@@ -1,14 +1,8 @@
 package screen;
 
-import javax.swing.JDialog;
-
-import online.screen.AccountSettingsDialog;
-import online.screen.ChangePasswordDialog;
 import online.screen.ConnectingDialog;
 import online.screen.EntropyLobby;
 import online.screen.Leaderboard;
-import online.screen.LoginDialog;
-import online.screen.NewAccountDialog;
 
 public final class ScreenCache 
 {
@@ -25,18 +19,10 @@ public final class ScreenCache
 	private static SimulationDialog simulationDialog = null;
 	private static ApiAmendDialog apiAmendDialog = null;
 	
-	//Dev mode
-	private static DebugConsole debugConsole = null;
-	private static LoadTesterDialog loadTesterDialog = null;
-	
 	//Online
 	private static EntropyLobby entropyLobby = null;
 	private static Leaderboard leaderboard = null;
 	private static ConnectingDialog connectingDialog = new ConnectingDialog();
-	private static LoginDialog loginDialog = null;
-	private static NewAccountDialog newAccountDialog = null;
-	private static ChangePasswordDialog changePasswordDialog = null;
-	private static AccountSettingsDialog accountSettingsDialog = null;
 	
 	public static MainScreen getMainScreen()
 	{
@@ -46,15 +32,6 @@ public final class ScreenCache
 		}
 		
 		return mainScreen;
-	}
-	
-	public static DebugConsole getDebugConsole()
-	{
-		if (debugConsole == null)
-		{
-			debugConsole = new DebugConsole();
-		}
-		return debugConsole;
 	}
 	
 	public static AchievementsDialog getAchievementsDialog()
@@ -101,6 +78,9 @@ public final class ScreenCache
 		}
 		return entropyLobby;
 	}
+	public static void setEntropyLobby(EntropyLobby lobby) {
+		entropyLobby = lobby;
+	}
 
 	public static Leaderboard getLeaderboard() 
 	{
@@ -109,24 +89,6 @@ public final class ScreenCache
 			leaderboard = new Leaderboard();
 		}
 		return leaderboard;
-	}
-	
-	public static LoginDialog getLoginDialog() 
-	{
-		if (loginDialog == null)
-		{
-			loginDialog = new LoginDialog();
-		}
-		return loginDialog;
-	}
-
-	public static NewAccountDialog getNewAccountDialog() 
-	{
-		if (newAccountDialog == null)
-		{
-			newAccountDialog = new NewAccountDialog();
-		}
-		return newAccountDialog;
 	}
 	
 	public static ReplayDialog getReplayDialog() 
@@ -176,15 +138,6 @@ public final class ScreenCache
 		return apiAmendDialog;
 	}
 
-	public static LoadTesterDialog getLoadTesterDialog() 
-	{
-		if (loadTesterDialog == null)
-		{
-			loadTesterDialog = new LoadTesterDialog();
-		}
-		return loadTesterDialog;
-	}
-
 	public static EntropyScreen getEntropyPanel() 
 	{
 		if (entropyPanel == null)
@@ -206,32 +159,6 @@ public final class ScreenCache
 	/**
 	 * These work slightly differently
 	 */
-	public static void showLoginDialog()
-	{
-		getLoginDialog();
-		loginDialog.init();
-		loginDialog.setLocationRelativeTo(null);
-		loginDialog.setModal(true);
-		loginDialog.setResizable(false);
-		loginDialog.setVisible(true);
-	}
-	public static ChangePasswordDialog getChangePasswordDialog() 
-	{
-		return changePasswordDialog;
-	}
-	public static void setChangePasswordDialog(ChangePasswordDialog dialog)
-	{
-		changePasswordDialog = dialog;
-	}
-	public static AccountSettingsDialog getAccountSettingsDialog() 
-	{
-		return accountSettingsDialog;
-	}
-	public static void setAccountSettingsDialog(AccountSettingsDialog dialog)
-	{
-		accountSettingsDialog = dialog;
-	}
-	
 	public static ConnectingDialog getConnectingDialog()
 	{
 		return connectingDialog;
@@ -243,16 +170,5 @@ public final class ScreenCache
 	public static void dismissConnectingDialog()
 	{
 		connectingDialog.dismissDialog();
-	}
-	
-	public static boolean isPreLobbyDialogVisible()
-	{
-		return isVisible(loginDialog)
-		  || isVisible(newAccountDialog);
-	}
-	private static boolean isVisible(JDialog dialog)
-	{
-		return dialog != null
-		  && dialog.isVisible();
 	}
 }

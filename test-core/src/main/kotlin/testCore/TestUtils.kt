@@ -4,6 +4,8 @@ import com.github.alyssaburlton.swingtest.findAll
 import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.shouldBe
+import io.mockk.verify
 import java.time.Instant
 import javax.swing.JDialog
 import javax.swing.JLabel
@@ -21,7 +23,7 @@ fun makeLogRecord(
     loggingCode: String = "log",
     message: String = "A thing happened",
     errorObject: Throwable? = null,
-    keyValuePairs: Map<String, Any?> = mapOf()
+    keyValuePairs: Map<String, Any?> = mapOf(),
 ) = LogRecord(timestamp, severity, loggingCode, message, errorObject, keyValuePairs)
 
 fun getInfoDialog() = getOptionPaneDialog("Information")
@@ -43,4 +45,13 @@ fun <T> runAsync(block: () -> T?): T? {
 
     flushEdt()
     return result
+}
+
+fun <T> List<T>.only(): T {
+    size shouldBe 1
+    return first()
+}
+
+fun verifyNotCalled(verifyBlock: io.mockk.MockKVerificationScope.() -> Unit) {
+    verify(exactly = 0) { verifyBlock() }
 }
