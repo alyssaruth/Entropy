@@ -6,11 +6,16 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
+import org.slf4j.Marker
+import org.slf4j.MarkerFactory
 import utils.InjectedThings
 
 private const val LOGGER_THREAD = "Logger"
 
-class Logger(private val destinations: List<ILogDestination>) {
+class Logger(
+    private val slf4jLogger: org.slf4j.Logger,
+    private val destinations: List<ILogDestination>
+) {
     val loggingContext = ConcurrentHashMap<String, Any?>()
     private val loggerFactory = ThreadFactory { r -> Thread(r, LOGGER_THREAD) }
     private var logService = Executors.newFixedThreadPool(1, loggerFactory)
@@ -78,6 +83,10 @@ class Logger(private val destinations: List<ILogDestination>) {
                 loggingContext + keyValuePairs
             )
 
+        val combinedKeys = loggingContext + keyValuePairs
+        val marker = MarkerFactory.getMarker(code)
+        getLogMethod(severity).invoke(marker, message, errorObject)
+
         val runnable = Runnable { destinations.forEach { it.log(logRecord) } }
         if (
             Thread.currentThread().name != LOGGER_THREAD &&
@@ -89,6 +98,15 @@ class Logger(private val destinations: List<ILogDestination>) {
             runnable.run()
         }
     }
+
+    private fun getLogMethod(
+        severity: Severity
+    ): (marker: Marker, message: String, t: Throwable?) -> Unit =
+        when (severity) {
+            Severity.ERROR -> slf4jLogger::error
+            Severity.WARN -> slf4jLogger::warn
+            Severity.INFO -> slf4jLogger::info
+        }
 
     fun waitUntilLoggingFinished() {
         try {
