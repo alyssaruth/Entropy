@@ -1,12 +1,13 @@
-package main.kotlin.testCore
+package testCore
 
 import java.time.Clock
 import java.time.ZoneId
 import logging.LoggerUncaughtExceptionHandler
+import main.kotlin.testCore.CURRENT_TIME
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import testCore.logger
 import utils.InjectedThings
+import utils.InjectedThings.slf4jLogger
 
 var doneOneTimeSetup = false
 
@@ -23,5 +24,8 @@ class BeforeAllTestsExtension : BeforeAllCallback {
 
         InjectedThings.logger = logger
         InjectedThings.clock = Clock.fixed(CURRENT_TIME, ZoneId.of("UTC"))
+
+        listAppender.start()
+        slf4jLogger.addAppender(listAppender)
     }
 }

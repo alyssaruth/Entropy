@@ -13,4 +13,6 @@ dependencies {
     implementation("io.kotest:kotest-assertions-core:5.5.4")
     implementation("com.github.alexburlton:swing-test:4.0.0")
     implementation("org.skyscreamer:jsonassert:1.5.3")
+    implementation("ch.qos.logback:logback-classic:1.5.8")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
 }

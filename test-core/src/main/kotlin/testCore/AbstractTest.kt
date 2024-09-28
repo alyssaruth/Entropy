@@ -1,5 +1,7 @@
 package testCore
 
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.assertions.fail
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -9,7 +11,7 @@ import logging.LogDestinationSystemOut
 import logging.LogRecord
 import logging.Logger
 import logging.Severity
-import main.kotlin.testCore.BeforeAllTestsExtension
+import logging.loggingCode
 import main.kotlin.testCore.FakeLogDestination
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -17,10 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import util.AbstractClient
 import util.Debug
 import util.DebugOutputSystemOut
+import utils.InjectedThings.slf4jLogger
 
 private val logDestination = FakeLogDestination()
-val logger = Logger(listOf(logDestination, LogDestinationSystemOut()))
+val logger = Logger(slf4jLogger, listOf(logDestination, LogDestinationSystemOut()))
 private var checkedForExceptions = false
+
+val listAppender = ListAppender<ILoggingEvent>()
 
 @ExtendWith(BeforeAllTestsExtension::class)
 open class AbstractTest {
@@ -38,6 +43,7 @@ open class AbstractTest {
     fun afterEachTest() {
         if (!checkedForExceptions) {
             val errors = getErrorsLogged()
+
             if (errors.isNotEmpty()) {
                 fail(
                     "Unexpected error(s) were logged during test: ${errors.map { it.getThrowableStr() } }"
@@ -50,11 +56,10 @@ open class AbstractTest {
         purgeWindows()
     }
 
-    fun getLastLog() = flushAndGetLogRecords().last()
+    fun getLastLog() = getLogRecords().last()
 
     fun verifyLog(code: String, severity: Severity = Severity.INFO): LogRecord {
-        val record =
-            flushAndGetLogRecords().findLast { it.loggingCode == code && it.severity == severity }
+        val record = getLogRecords().findLast { it.loggingCode == code && it.severity == severity }
         record.shouldNotBeNull()
 
         if (severity == Severity.ERROR) {
@@ -65,10 +70,10 @@ open class AbstractTest {
     }
 
     protected fun findLog(code: String, severity: Severity = Severity.INFO) =
-        getLogRecordsSoFar().findLast { it.loggingCode == code && it.severity == severity }
+        getLogRecords().findLast { it.loggingCode == code && it.severity == severity }
 
     fun verifyNoLogs(code: String) {
-        flushAndGetLogRecords().any { it.loggingCode == code } shouldBe false
+        getLogRecords().any { it.loggingCode == code } shouldBe false
     }
 
     fun errorLogged(): Boolean {
@@ -76,17 +81,11 @@ open class AbstractTest {
         return getErrorsLogged().isNotEmpty()
     }
 
-    private fun getErrorsLogged() = flushAndGetLogRecords().filter { it.severity == Severity.ERROR }
+    private fun getErrorsLogged() = getLogRecords().filter { it.severity == Severity.ERROR }
 
-    fun getLogRecordsSoFar() = logDestination.logRecords.toList()
-
-    fun flushAndGetLogRecords(): List<LogRecord> {
-        logger.waitUntilLoggingFinished()
-        return logDestination.logRecords.toList()
-    }
+    fun getLogRecords() = listAppender.list
 
     fun clearLogs() {
-        logger.waitUntilLoggingFinished()
-        logDestination.clear()
+        listAppender.list.clear()
     }
 }

@@ -1,5 +1,6 @@
 package utils
 
+import ch.qos.logback.classic.Logger as LogbackLogger
 import java.time.Clock
 import logging.LogDestinationSystemOut
 import logging.Logger
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory
 object InjectedThings {
     @JvmField val loggingConsole = LoggingConsole()
 
-    val slf4jLogger: org.slf4j.Logger = LoggerFactory.getLogger("glean")
+    val slf4jLogger: LogbackLogger = LoggerFactory.getLogger("entropy") as LogbackLogger
     @JvmField
     var logger: Logger = Logger(slf4jLogger, listOf(loggingConsole, LogDestinationSystemOut()))
     var clock: Clock = Clock.systemUTC()

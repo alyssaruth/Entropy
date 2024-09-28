@@ -1,24 +1,17 @@
 package logging
 
+import ch.qos.logback.classic.spi.ILoggingEvent
 import getPercentage
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.TimeUnit
 import kotlin.math.floor
+import net.logstash.logback.marker.Markers
 import org.slf4j.Marker
-import org.slf4j.MarkerFactory
-import utils.InjectedThings
-
-private const val LOGGER_THREAD = "Logger"
 
 class Logger(
     private val slf4jLogger: org.slf4j.Logger,
     private val destinations: List<ILogDestination>
 ) {
     val loggingContext = ConcurrentHashMap<String, Any?>()
-    private val loggerFactory = ThreadFactory { r -> Thread(r, LOGGER_THREAD) }
-    private var logService = Executors.newFixedThreadPool(1, loggerFactory)
 
     fun addToContext(loggingKey: String, value: Any?) {
         loggingContext[loggingKey] = value ?: ""
@@ -72,31 +65,9 @@ class Logger(
         errorObject: Throwable?,
         keyValuePairs: Map<String, Any?>
     ) {
-        val timestamp = InjectedThings.clock.instant()
-        val logRecord =
-            LogRecord(
-                timestamp,
-                severity,
-                code,
-                message,
-                errorObject,
-                loggingContext + keyValuePairs
-            )
-
-        val combinedKeys = loggingContext + keyValuePairs
-        val marker = MarkerFactory.getMarker(code)
+        val combinedKeys = loggingContext + keyValuePairs + ("loggingCode" to code)
+        val marker = combinedKeys.filterValues { it != null }.let(Markers::appendEntries)
         getLogMethod(severity).invoke(marker, message, errorObject)
-
-        val runnable = Runnable { destinations.forEach { it.log(logRecord) } }
-        if (
-            Thread.currentThread().name != LOGGER_THREAD &&
-                !logService.isShutdown &&
-                !logService.isTerminated
-        ) {
-            logService.execute(runnable)
-        } else {
-            runnable.run()
-        }
     }
 
     private fun getLogMethod(
@@ -107,13 +78,11 @@ class Logger(
             Severity.WARN -> slf4jLogger::warn
             Severity.INFO -> slf4jLogger::info
         }
-
-    fun waitUntilLoggingFinished() {
-        try {
-            logService.shutdown()
-            logService.awaitTermination(30, TimeUnit.SECONDS)
-        } catch (_: InterruptedException) {} finally {
-            logService = Executors.newFixedThreadPool(1, loggerFactory)
-        }
-    }
 }
+
+val ILoggingEvent.loggingCode: String?
+    get() = findLogField("loggingCode") as? String
+
+fun ILoggingEvent.findLogField(key: String): Any? = getLogFields()[key]
+
+fun ILoggingEvent.getLogFields() = this.keyValuePairs.associate { it.key to it.value }
