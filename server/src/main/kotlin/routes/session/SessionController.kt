@@ -7,10 +7,10 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import util.Globals
+import util.ServerGlobals
 
 object SessionController {
-    private val sessionService = SessionService(Globals.sessionStore, Globals.uscStore)
+    private val sessionService = SessionService(ServerGlobals.sessionStore, ServerGlobals.uscStore)
 
     fun installRoutes(application: Application) {
         application.routing { post(Routes.BEGIN_SESSION) { beginSession(call) } }

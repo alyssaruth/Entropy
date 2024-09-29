@@ -11,7 +11,7 @@ import object.VectropyBid;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class ReplayConverterVersion0
 {

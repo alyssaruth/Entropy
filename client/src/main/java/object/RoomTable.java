@@ -27,7 +27,7 @@ import util.EntropyColour;
 import util.MessageUtil;
 import util.TableUtil;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public final class RoomTable extends JTable
 					   		 implements MouseListener

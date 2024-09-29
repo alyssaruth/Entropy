@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Level
 import io.kotest.matchers.maps.shouldNotContainKey
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import main.kotlin.testCore.shouldContainKeyValues
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
+import testCore.shouldContainKeyValues
 
 class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
     @Test

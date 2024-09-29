@@ -3,12 +3,9 @@ package bean;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-import util.Debug;
-
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public abstract class AbstractDevScreen extends FocusableWindow
 {

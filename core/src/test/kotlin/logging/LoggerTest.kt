@@ -3,10 +3,13 @@ package logging
 import ch.qos.logback.classic.Level
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import main.kotlin.testCore.shouldContainKeyValues
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.slf4j.MDC
 import testCore.AbstractTest
-import utils.InjectedThings.slf4jLogger
+import testCore.shouldContainKeyValues
+import utils.CoreGlobals.slf4jLogger
 
 class LoggerTest : AbstractTest() {
     @Test
@@ -21,7 +24,7 @@ class LoggerTest : AbstractTest() {
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A thing happened"
         record.errorObject() shouldBe null
-        record.shouldContainKeyValues("loggingCode" to "some.event")
+        record.shouldContainKeyValues(KEY_LOGGING_CODE to "some.event")
     }
 
     @Test
@@ -87,9 +90,25 @@ class LoggerTest : AbstractTest() {
         val logger = Logger(slf4jLogger)
 
         logger.addToContext("appVersion", "4.1.1")
+        MDC.put("threadContext", "test thread")
         logger.info("foo", "a thing happened", "otherKey" to "otherValue")
 
         val record = getLastLog()
-        record.shouldContainKeyValues("appVersion" to "4.1.1", "otherKey" to "otherValue")
+        record.shouldContainKeyValues(
+            "appVersion" to "4.1.1",
+            "threadContext" to "test thread",
+            "otherKey" to "otherValue"
+        )
+    }
+
+    @Test
+    fun `Should update listeners when global log context changes`() {
+        val logger = Logger(slf4jLogger)
+        val mockListener = mockk<ILogContextListener>(relaxed = true)
+
+        logger.addContextListener(mockListener)
+        logger.addToContext("client.ip", "1.2.3.4")
+
+        verify { mockListener.contextUpdated(mapOf("client.ip" to "1.2.3.4")) }
     }
 }

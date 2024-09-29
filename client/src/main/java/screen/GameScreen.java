@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.util.Timer;
 import java.util.*;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public abstract class GameScreen extends TransparentPanel
 								 implements BidListener,

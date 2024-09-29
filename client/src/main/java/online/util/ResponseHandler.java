@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class ResponseHandler implements XmlConstants
 {

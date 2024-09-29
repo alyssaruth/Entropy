@@ -14,7 +14,7 @@ private const val MAX_POOL_SIZE = 500
 private const val MAX_QUEUE_SIZE = 100
 private const val KEEP_ALIVE_TIME = 20
 
-object Globals {
+object ServerGlobals {
     val uscStore: UserConnectionStore = MemoryUserConnectionStore()
     val sessionStore: Store<Session> = SessionStore()
 

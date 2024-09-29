@@ -26,11 +26,6 @@ import kong.unirest.json.JSONException
 import kong.unirest.json.JSONObject
 import logging.errorObject
 import logging.findLogField
-import main.kotlin.testCore.getDialogMessage
-import main.kotlin.testCore.getErrorDialog
-import main.kotlin.testCore.getInfoDialog
-import main.kotlin.testCore.getQuestionDialog
-import main.kotlin.testCore.runAsync
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -38,6 +33,11 @@ import screen.LoadingDialog
 import testCore.AbstractTest
 import testCore.assertDoesNotExit
 import testCore.assertExits
+import testCore.getDialogMessage
+import testCore.getErrorDialog
+import testCore.getInfoDialog
+import testCore.getQuestionDialog
+import testCore.runAsync
 
 class UpdateManagerTest : AbstractTest() {
     @BeforeEach

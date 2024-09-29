@@ -8,12 +8,12 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
 import javax.swing.JTextField
-import main.kotlin.testCore.getDialogMessage
-import main.kotlin.testCore.getErrorDialog
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
 import testCore.AbstractTest
-import util.Globals
+import testCore.getDialogMessage
+import testCore.getErrorDialog
+import util.ClientGlobals
 
 class PlayOnlineDialogTest : AbstractTest() {
     @Test
@@ -29,7 +29,7 @@ class PlayOnlineDialogTest : AbstractTest() {
 
     @Test
     fun `Should invoke the session API`() {
-        Globals.sessionApi = mockk(relaxed = true)
+        ClientGlobals.sessionApi = mockk(relaxed = true)
 
         val dlg = PlayOnlineDialog()
         dlg.isVisible = true
@@ -37,7 +37,7 @@ class PlayOnlineDialogTest : AbstractTest() {
         dlg.clickOk()
 
         dlg.shouldNotBeVisible()
-        verify { Globals.sessionApi.beginSession("Alyssa") }
+        verify { ClientGlobals.sessionApi.beginSession("Alyssa") }
         ScreenCache.getConnectingDialog().shouldNotBeVisible()
     }
 }

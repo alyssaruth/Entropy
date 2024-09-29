@@ -9,7 +9,7 @@ import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
 import org.apache.http.HttpHeaders
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 class HttpClient(private val baseUrl: String) {
     private val jsonObjectMapper = JsonObjectMapper()

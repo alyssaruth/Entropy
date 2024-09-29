@@ -6,8 +6,8 @@ import logging.LoggerUncaughtExceptionHandler
 import main.kotlin.testCore.CURRENT_TIME
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import utils.InjectedThings
-import utils.InjectedThings.slf4jLogger
+import utils.CoreGlobals
+import utils.CoreGlobals.slf4jLogger
 
 var doneOneTimeSetup = false
 
@@ -22,8 +22,8 @@ class BeforeAllTestsExtension : BeforeAllCallback {
     private fun doOneTimeSetup() {
         Thread.setDefaultUncaughtExceptionHandler(LoggerUncaughtExceptionHandler())
 
-        InjectedThings.logger = logger
-        InjectedThings.clock = Clock.fixed(CURRENT_TIME, ZoneId.of("UTC"))
+        CoreGlobals.logger = logger
+        CoreGlobals.clock = Clock.fixed(CURRENT_TIME, ZoneId.of("UTC"))
 
         listAppender.start()
         slf4jLogger.addAppender(listAppender)

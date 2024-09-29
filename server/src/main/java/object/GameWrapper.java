@@ -2,9 +2,7 @@ package object;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import util.Debug;
-
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 /**
  * Wrap up a single game

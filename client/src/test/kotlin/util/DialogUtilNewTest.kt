@@ -11,12 +11,12 @@ import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.matchers.shouldBe
 import javax.swing.JDialog
 import javax.swing.SwingUtilities
-import main.kotlin.testCore.getErrorDialog
-import main.kotlin.testCore.getInfoDialog
-import main.kotlin.testCore.getQuestionDialog
-import main.kotlin.testCore.runAsync
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
+import testCore.getErrorDialog
+import testCore.getInfoDialog
+import testCore.getQuestionDialog
+import testCore.runAsync
 
 class DialogUtilNewTest : AbstractTest() {
     @Test

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public final class EntropyServer implements OnlineConstants {
     //Caches
@@ -31,7 +31,7 @@ public final class EntropyServer implements OnlineConstants {
         //Initialise interfaces etc
         Debug.initialise(new DebugOutputSystemOut());
 
-        Globals.INSTANCE.getServer().onStart();
+        ServerGlobals.INSTANCE.getServer().onStart();
     }
 
     private void onStart() {
@@ -127,7 +127,7 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public void executeInWorkerPool(ServerRunnable runnable) {
-        Globals.workerPool.executeServerRunnable(runnable);
+        ServerGlobals.workerPool.executeServerRunnable(runnable);
     }
 
     public void removeFromUsersOnline(UserConnection usc) {
@@ -150,8 +150,8 @@ public final class EntropyServer implements OnlineConstants {
         }
 
         //Now remove the user connection.
-        Globals.INSTANCE.getUscStore().remove(usc.getIpAddress());
-        if (Globals.INSTANCE.getUscStore().getAll().size() == 0
+        ServerGlobals.INSTANCE.getUscStore().remove(usc.getIpAddress());
+        if (ServerGlobals.INSTANCE.getUscStore().getAll().size() == 0
                 && username != null) {
             resetLobby();
             return;
@@ -202,7 +202,7 @@ public final class EntropyServer implements OnlineConstants {
     private void addToChatHistory(String name, OnlineMessage message) {
         if (name.equals(LOBBY_ID)) {
             lobbyMessages.add(message);
-            List<UserConnection> usersToNotify = Globals.INSTANCE.getUscStore().getAll();
+            List<UserConnection> usersToNotify = ServerGlobals.INSTANCE.getUscStore().getAll();
 
             Document chatMessage = XmlBuilderServer.getChatNotification(name, message);
             sendViaNotificationSocket(usersToNotify, chatMessage, XmlConstants.SOCKET_NAME_CHAT);
@@ -217,7 +217,7 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public void lobbyChanged(UserConnection userToExclude) {
-        List<UserConnection> usersToNotify = new ArrayList<>(Globals.INSTANCE.getUscStore().getAll());
+        List<UserConnection> usersToNotify = new ArrayList<>(ServerGlobals.INSTANCE.getUscStore().getAll());
         if (userToExclude != null) {
             usersToNotify.remove(userToExclude);
         }

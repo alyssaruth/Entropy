@@ -1,7 +1,5 @@
 package logging
 
-interface ILogDestination {
-    fun log(record: LogRecord)
-
+interface ILogContextListener {
     fun contextUpdated(context: Map<String, Any?>)
 }

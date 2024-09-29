@@ -12,8 +12,8 @@ import io.ktor.http.*
 import java.util.*
 import routes.ClientException
 import store.Store
-import util.Globals
 import util.OnlineConstants
+import util.ServerGlobals
 
 class SessionService(
     private val sessionStore: Store<Session>,
@@ -52,7 +52,7 @@ class SessionService(
         val usc = UserConnection(ip, LegacyConstants.SYMMETRIC_KEY, name)
         usc.setLastActiveNow()
         uscStore.put(ip, usc)
-        Globals.server.lobbyChanged(usc)
+        ServerGlobals.server.lobbyChanged(usc)
 
         return BeginSessionResponse(session.name, session.id)
     }

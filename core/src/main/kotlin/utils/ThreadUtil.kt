@@ -3,7 +3,7 @@ package utils
 import javax.swing.SwingUtilities
 import logging.KEY_STACK
 import logging.extractThreadStack
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 fun dumpThreadStacks() {
     logger.info("threadStacks", "Dumping thread stacks")

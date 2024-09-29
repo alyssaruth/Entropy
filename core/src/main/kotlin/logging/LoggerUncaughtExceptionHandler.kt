@@ -1,7 +1,7 @@
 package logging
 
 import java.lang.Thread.UncaughtExceptionHandler
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 class LoggerUncaughtExceptionHandler : UncaughtExceptionHandler {
     override fun uncaughtException(arg0: Thread, arg1: Throwable) {

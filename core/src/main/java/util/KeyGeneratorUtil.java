@@ -3,7 +3,7 @@ package util;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class KeyGeneratorUtil 
 {

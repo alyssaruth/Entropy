@@ -12,10 +12,17 @@ import net.logstash.logback.marker.Markers
 import org.slf4j.Marker
 
 class Logger(private val slf4jLogger: org.slf4j.Logger) {
-    val loggingContext = ConcurrentHashMap<String, Any?>()
+    private val globalContext = ConcurrentHashMap<String, Any?>()
+    private val contextListeners = mutableListOf<ILogContextListener>()
 
     fun addToContext(loggingKey: String, value: Any?) {
-        loggingContext[loggingKey] = value ?: ""
+        globalContext[loggingKey] = value ?: ""
+
+        contextListeners.forEach { it.contextUpdated(globalContext.toMap()) }
+    }
+
+    fun addContextListener(listener: ILogContextListener) {
+        contextListeners.add(listener)
     }
 
     @JvmOverloads
@@ -65,7 +72,7 @@ class Logger(private val slf4jLogger: org.slf4j.Logger) {
         errorObject: Throwable?,
         keyValuePairs: Map<String, Any?>
     ) {
-        val combinedKeys = loggingContext + keyValuePairs + ("loggingCode" to code)
+        val combinedKeys = globalContext + keyValuePairs + (KEY_LOGGING_CODE to code)
         val marker = combinedKeys.filterValues { it != null }.let(Markers::appendEntries)
         getLogMethod(severity).invoke(marker, message, errorObject)
     }
@@ -84,7 +91,7 @@ class Logger(private val slf4jLogger: org.slf4j.Logger) {
 }
 
 val ILoggingEvent.loggingCode: String?
-    get() = findLogField("loggingCode") as? String
+    get() = findLogField(KEY_LOGGING_CODE) as? String
 
 fun ILoggingEvent.findLogField(key: String): Any? = getLogFields()[key]
 
@@ -94,7 +101,7 @@ private val mapEntriesAppendingMarkerField: Field =
 fun ILoggingEvent.getLogFields(): Map<String, Any> {
     val marker = this.markerList?.firstOrNull()
     return if (marker is MapEntriesAppendingMarker) {
-        mapEntriesAppendingMarkerField.get(marker) as Map<String, Any>
+        mapEntriesAppendingMarkerField.get(marker) as Map<String, Any> + this.mdcPropertyMap
     } else {
         emptyMap()
     }

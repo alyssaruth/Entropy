@@ -249,7 +249,7 @@ public class XmlBuilderServer implements XmlConstants,
 	public static Document appendLobbyResponse(Document message, EntropyServer server)
 	{
 		List<Room> rooms = server.getRooms();
-		List<UserConnection> userConnections = Globals.INSTANCE.getUscStore().getAll();
+		List<UserConnection> userConnections = ServerGlobals.INSTANCE.getUscStore().getAll();
 		
 		Element root = message.getDocumentElement();
 		Element rootElement = message.createElement(RESPONSE_TAG_LOBBY_NOTIFICATION);

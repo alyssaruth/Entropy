@@ -1,11 +1,16 @@
-package logging
+package screen
 
 import bean.FocusableWindow
 import bean.WrapLayout
 import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.AppenderBase
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -18,9 +23,22 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.DefaultStyledDocument
 import javax.swing.text.StyleConstants
 import javax.swing.text.StyleContext
+import logging.ILogContextListener
+import logging.KEY_STACK
+import logging.errorObject
+import logging.extractStackTrace
+import logging.findLogField
+import logging.loggingCode
+import utils.CoreGlobals
 import utils.runOnEventThread
 
-class LoggingConsole : FocusableWindow(), ILogDestination {
+class LoggingConsoleAppender(private val console: LoggingConsole) : AppenderBase<ILoggingEvent>() {
+    override fun append(p0: ILoggingEvent) {
+        console.log(p0)
+    }
+}
+
+class LoggingConsole : FocusableWindow(), ILogContextListener {
     override val windowName = "Console"
 
     val doc = DefaultStyledDocument()
@@ -45,20 +63,20 @@ class LoggingConsole : FocusableWindow(), ILogDestination {
         contextPanel.layout = WrapLayout()
     }
 
-    override fun log(record: LogRecord) {
+    fun log(record: ILoggingEvent) {
         val cx = StyleContext()
-        val text = record.toString()
+        val text = record.toConsoleString()
         val style = cx.addStyle(text, null)
 
-        if (record.severity == Level.ERROR) {
+        if (record.level == Level.ERROR) {
             StyleConstants.setForeground(style, Color.RED)
         }
 
         try {
             doc.insertString(doc.length, "\n$text", style)
-            record.getThrowableStr()?.let { doc.insertString(doc.length, "\n$it", style) }
+            record.errorObject()?.let { doc.insertString(doc.length, "\n$it", style) }
 
-            val threadStack = record.keyValuePairs[KEY_STACK]
+            val threadStack = record.findLogField(KEY_STACK)
             threadStack?.let { doc.insertString(doc.length, "\n$it", style) }
 
             textArea.select(doc.length, doc.length)
@@ -78,6 +96,16 @@ class LoggingConsole : FocusableWindow(), ILogDestination {
             contextPanel.validate()
             contextPanel.repaint()
         }
+    }
+
+    private fun ILoggingEvent.toConsoleString(): String {
+        val dateStr =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withLocale(Locale.UK)
+                .withZone(ZoneId.systemDefault())
+                .format(CoreGlobals.clock.instant())
+
+        return "$dateStr   [$loggingCode] $message"
     }
 
     private fun factoryLabelForContext(field: Map.Entry<String, Any?>): Component {

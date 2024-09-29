@@ -8,9 +8,8 @@ import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
-import screen.online.PlayOnlineDialog;
 import util.*;
-import utils.InjectedThings;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -28,7 +27,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
 public final class MainScreen extends AbstractDevScreen
@@ -678,10 +677,10 @@ public final class MainScreen extends AbstractDevScreen
 		}
 
 		if (command.equals("health")) {
-			Globals.INSTANCE.getHealthCheckApi().doHealthCheck();
+			ClientGlobals.INSTANCE.getHealthCheckApi().doHealthCheck();
 		} else if (command.startsWith("server ")) {
 			var serverCommand = command.replace("server ", "");
-			Globals.INSTANCE.getDevApi().doServerCommand(serverCommand);
+			ClientGlobals.INSTANCE.getDevApi().doServerCommand(serverCommand);
 		} else if (command.equals("keygen")) {
 			var key = KeyGeneratorUtil.generateSymmetricKey();
 			textToShow = EncryptionUtil.convertSecretKeyToString(key);
@@ -922,8 +921,8 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmViewLogs)
 		{
-			InjectedThings.loggingConsole.setVisible(true);
-			InjectedThings.loggingConsole.toFront();
+			ClientGlobals.loggingConsole.setVisible(true);
+			ClientGlobals.loggingConsole.toFront();
 		}
 		else if (source == mntmPreferences)
 		{

@@ -12,7 +12,7 @@ import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter
 import javax.swing.text.Highlighter
 import screen.ScreenCache
 import util.Registry
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 import utils.getAllChildComponentsForType
 
 /** Object representing a 'page' of the help dialog. */

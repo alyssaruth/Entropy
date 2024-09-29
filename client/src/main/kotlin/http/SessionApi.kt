@@ -6,8 +6,8 @@ import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
 import screen.ScreenCache
+import util.ClientGlobals
 import util.DialogUtilNew
-import util.Globals
 import util.OnlineConstants
 
 class SessionApi(private val httpClient: HttpClient) {
@@ -47,7 +47,7 @@ class SessionApi(private val httpClient: HttpClient) {
                         )
 
                     if (ans == JOptionPane.YES_OPTION) {
-                        Globals.updateManager.checkForUpdates(
+                        ClientGlobals.updateManager.checkForUpdates(
                             OnlineConstants.ENTROPY_VERSION_NUMBER
                         )
                     }

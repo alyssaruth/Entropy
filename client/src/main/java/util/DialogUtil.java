@@ -3,7 +3,7 @@ package util;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 @Deprecated()
 public class DialogUtil 

@@ -7,12 +7,12 @@ import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.request.*
 import org.slf4j.event.*
-import utils.InjectedThings
+import utils.CoreGlobals
 
 fun Application.configureMonitoring() {
     install(CallLogging) {
         level = Level.INFO
-        logger = InjectedThings.slf4jLogger
+        logger = CoreGlobals.slf4jLogger
 
         filter { false }
         callIdMdc("call-id")

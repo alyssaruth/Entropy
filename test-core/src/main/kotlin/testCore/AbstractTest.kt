@@ -13,10 +13,11 @@ import logging.loggingCode
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
 import util.AbstractClient
 import util.Debug
 import util.DebugOutputSystemOut
-import utils.InjectedThings.slf4jLogger
+import utils.CoreGlobals.slf4jLogger
 
 val logger = Logger(slf4jLogger)
 private var checkedForExceptions = false
@@ -32,7 +33,7 @@ open class AbstractTest {
 
         Debug.initialise(DebugOutputSystemOut())
         AbstractClient.devMode = false
-        logger.loggingContext.clear()
+        MDC.clear()
     }
 
     @AfterEach

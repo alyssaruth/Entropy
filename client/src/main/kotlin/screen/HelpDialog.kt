@@ -42,7 +42,7 @@ import javax.swing.tree.TreeSelectionModel
 import kotlin.math.max
 import util.AchievementsUtil.UnlockAchievementTask
 import util.Registry
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
     private val fundamentalsTheDeck = FundamentalsTheDeck()

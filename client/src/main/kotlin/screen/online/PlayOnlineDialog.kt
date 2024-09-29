@@ -8,8 +8,8 @@ import javax.swing.JTextField
 import javax.swing.border.EmptyBorder
 import screen.ScreenCache
 import screen.SimpleDialog
+import util.ClientGlobals
 import util.DialogUtilNew
-import util.Globals
 
 class PlayOnlineDialog : SimpleDialog() {
     private val lblName = JLabel("Name")
@@ -45,7 +45,7 @@ class PlayOnlineDialog : SimpleDialog() {
         ScreenCache.showConnectingDialog()
 
         try {
-            Globals.sessionApi.beginSession(textFieldUsername.text)
+            ClientGlobals.sessionApi.beginSession(textFieldUsername.text)
         } finally {
             ScreenCache.dismissConnectingDialog()
         }
