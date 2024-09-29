@@ -27,8 +27,8 @@ class LoggingConsoleTest : AbstractTest() {
         console.log(recordTwo)
 
         val text = console.getText().split("\n")
-        text[1] shouldBe "2020-04-13 12:04:00   [foo] log one"
-        text[2] shouldBe "2020-04-13 12:04:00   [bar] log two"
+        text[1] shouldBe "${currentTimeLogString()}   [foo] log one"
+        text[2] shouldBe "${currentTimeLogString()}   [bar] log two"
     }
 
     @Test

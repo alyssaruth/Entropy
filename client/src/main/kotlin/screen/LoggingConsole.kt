@@ -98,15 +98,8 @@ class LoggingConsole : FocusableWindow(), ILogContextListener {
         }
     }
 
-    private fun ILoggingEvent.toConsoleString(): String {
-        val dateStr =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                .withLocale(Locale.UK)
-                .withZone(ZoneId.systemDefault())
-                .format(CoreGlobals.clock.instant())
-
-        return "$dateStr   [$loggingCode] $message"
-    }
+    private fun ILoggingEvent.toConsoleString() =
+        "${currentTimeLogString()}   [$loggingCode] $message"
 
     private fun factoryLabelForContext(field: Map.Entry<String, Any?>): Component {
         val label = JLabel("${field.key}: ${field.value}")
@@ -129,3 +122,9 @@ class LoggingConsole : FocusableWindow(), ILogContextListener {
         textArea.text = ""
     }
 }
+
+fun currentTimeLogString() =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        .withLocale(Locale.UK)
+        .withZone(ZoneId.systemDefault())
+        .format(CoreGlobals.clock.instant())
