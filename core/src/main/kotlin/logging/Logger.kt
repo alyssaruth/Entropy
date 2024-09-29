@@ -17,12 +17,20 @@ class Logger(private val slf4jLogger: org.slf4j.Logger) {
 
     fun addToContext(loggingKey: String, value: Any?) {
         globalContext[loggingKey] = value ?: ""
+        updateContextListeners()
+    }
 
-        contextListeners.forEach { it.contextUpdated(globalContext.toMap()) }
+    fun clearContext() {
+        globalContext.clear()
+        updateContextListeners()
     }
 
     fun addContextListener(listener: ILogContextListener) {
         contextListeners.add(listener)
+    }
+
+    private fun updateContextListeners() {
+        contextListeners.forEach { it.contextUpdated(globalContext.toMap()) }
     }
 
     @JvmOverloads

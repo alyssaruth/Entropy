@@ -9,6 +9,8 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import logging.Logger
+import logging.errorObject
+import logging.extractStackTrace
 import logging.loggingCode
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -33,6 +35,7 @@ open class AbstractTest {
 
         Debug.initialise(DebugOutputSystemOut())
         AbstractClient.devMode = false
+        logger.clearContext()
         MDC.clear()
     }
 
@@ -43,7 +46,7 @@ open class AbstractTest {
 
             if (errors.isNotEmpty()) {
                 fail(
-                    "Unexpected error(s) were logged during test: ${errors.map { it.throwableProxy } }"
+                    "Unexpected error(s) were logged during test: ${errors.map { it.errorObject()?.let(::extractStackTrace) } }"
                 )
             }
             errorLogged() shouldBe false
@@ -80,7 +83,7 @@ open class AbstractTest {
 
     private fun getErrorsLogged() = getLogRecords().filter { it.level == Level.ERROR }
 
-    fun getLogRecords() = listAppender.list
+    fun getLogRecords(): List<ILoggingEvent> = listAppender.list
 
     fun clearLogs() {
         listAppender.list.clear()
