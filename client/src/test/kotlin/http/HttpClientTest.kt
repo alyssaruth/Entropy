@@ -1,5 +1,6 @@
 package http
 
+import ch.qos.logback.classic.Level
 import http.dto.ClientErrorResponse
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.maps.shouldContain
@@ -12,7 +13,8 @@ import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
-import logging.Severity
+import logging.findLogField
+import logging.getLogFields
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
@@ -39,11 +41,11 @@ class HttpClientTest : AbstractTest() {
         requestId.shouldNotBeEmpty()
         val requestUuid = shouldNotThrowAny { UUID.fromString(requestId) }
 
-        val requestLog = verifyLog("http.request", Severity.INFO)
-        requestLog.keyValuePairs["requestId"] shouldBe requestUuid
+        val requestLog = verifyLog("http.request", Level.INFO)
+        requestLog.findLogField("requestId") shouldBe requestUuid
 
-        val responseLog = verifyLog("http.response", Severity.INFO)
-        responseLog.keyValuePairs["requestId"] shouldBe requestUuid
+        val responseLog = verifyLog("http.response", Level.INFO)
+        responseLog.findLogField("requestId") shouldBe requestUuid
     }
 
     @Test
@@ -64,9 +66,9 @@ class HttpClientTest : AbstractTest() {
         request.path shouldBe "/root/test-endpoint"
         request.method shouldBe "GET"
 
-        val requestLog = verifyLog("http.request", Severity.INFO)
+        val requestLog = verifyLog("http.request", Level.INFO)
         requestLog.message shouldBe "GET /test-endpoint"
-        requestLog.keyValuePairs.shouldContainKeys("requestId")
+        requestLog.getLogFields().shouldContainKeys("requestId")
     }
 
     @Test
@@ -77,9 +79,9 @@ class HttpClientTest : AbstractTest() {
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
         response shouldBe FailureResponse(HttpStatus.NOT_FOUND, null, null)
 
-        val responseLog = verifyLog("http.response", Severity.ERROR)
+        val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 404 for GET /test-endpoint"
-        responseLog.keyValuePairs["responseCode"] shouldBe 404
+        responseLog.getLogFields()["responseCode"] shouldBe 404
     }
 
     @Test
@@ -97,11 +99,11 @@ class HttpClientTest : AbstractTest() {
         response shouldBe
             FailureResponse(HttpStatus.CONFLICT, ClientErrorCode("oh.dear"), "a bid already exists")
 
-        val responseLog = verifyLog("http.response", Severity.ERROR)
+        val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
-        responseLog.keyValuePairs["responseCode"] shouldBe 409
-        responseLog.keyValuePairs["clientErrorCode"] shouldBe ClientErrorCode("oh.dear")
-        responseLog.keyValuePairs["clientErrorMessage"] shouldBe "a bid already exists"
+        responseLog.getLogFields()["responseCode"] shouldBe 409
+        responseLog.getLogFields()["clientErrorCode"] shouldBe ClientErrorCode("oh.dear")
+        responseLog.getLogFields()["clientErrorMessage"] shouldBe "a bid already exists"
     }
 
     @Test
@@ -111,7 +113,7 @@ class HttpClientTest : AbstractTest() {
 
         client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
 
-        val log = verifyLog("http.error", Severity.ERROR)
+        val log = verifyLog("http.error", Level.ERROR)
         log.message shouldContain "SocketTimeoutException"
     }
 
@@ -147,16 +149,16 @@ class HttpClientTest : AbstractTest() {
         capturedRequest.getHeader("Content-Type") shouldBe "application/json; charset=utf-8"
         capturedRequest.body.readUtf8() shouldBe expectedBody
 
-        val requestLog = verifyLog("http.request", Severity.INFO)
+        val requestLog = verifyLog("http.request", Level.INFO)
         requestLog.message shouldBe "POST /test-endpoint"
-        requestLog.keyValuePairs.shouldContainKeys("requestId")
-        requestLog.keyValuePairs.shouldContain("requestBody" to expectedBody)
+        requestLog.getLogFields().shouldContainKeys("requestId")
+        requestLog.getLogFields().shouldContain("requestBody" to expectedBody)
 
-        val responseLog = verifyLog("http.response", Severity.INFO)
+        val responseLog = verifyLog("http.response", Level.INFO)
         responseLog.message shouldBe "Received 204 for POST /test-endpoint"
-        responseLog.keyValuePairs["requestId"] shouldBe requestLog.keyValuePairs["requestId"]
-        responseLog.keyValuePairs["responseCode"] shouldBe 204
-        responseLog.keyValuePairs["responseBody"] shouldBe ""
+        responseLog.getLogFields()["requestId"] shouldBe requestLog.getLogFields()["requestId"]
+        responseLog.getLogFields()["responseCode"] shouldBe 204
+        responseLog.getLogFields()["responseBody"] shouldBe ""
     }
 
     @Test

@@ -2,6 +2,7 @@ package logging
 
 import bean.FocusableWindow
 import bean.WrapLayout
+import ch.qos.logback.classic.Level
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -49,7 +50,7 @@ class LoggingConsole : FocusableWindow(), ILogDestination {
         val text = record.toString()
         val style = cx.addStyle(text, null)
 
-        if (record.severity == Severity.ERROR) {
+        if (record.severity == Level.ERROR) {
             StyleConstants.setForeground(style, Color.RED)
         }
 

@@ -1,5 +1,6 @@
 package logging
 
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import getPercentage
 import java.util.concurrent.ConcurrentHashMap
@@ -7,15 +8,11 @@ import kotlin.math.floor
 import net.logstash.logback.marker.Markers
 import org.slf4j.Marker
 
-class Logger(
-    private val slf4jLogger: org.slf4j.Logger,
-    private val destinations: List<ILogDestination>
-) {
+class Logger(private val slf4jLogger: org.slf4j.Logger) {
     val loggingContext = ConcurrentHashMap<String, Any?>()
 
     fun addToContext(loggingKey: String, value: Any?) {
         loggingContext[loggingKey] = value ?: ""
-        destinations.forEach { it.contextUpdated(loggingContext.toMap()) }
     }
 
     @JvmOverloads
@@ -32,11 +29,11 @@ class Logger(
     }
 
     fun info(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
-        log(Severity.INFO, code, message, null, mapOf(*keyValuePairs))
+        log(Level.INFO, code, message, null, mapOf(*keyValuePairs))
     }
 
     fun warn(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
-        log(Severity.WARN, code, message, null, mapOf(*keyValuePairs))
+        log(Level.WARN, code, message, null, mapOf(*keyValuePairs))
     }
 
     fun error(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
@@ -50,7 +47,7 @@ class Logger(
         vararg keyValuePairs: Pair<String, Any?>
     ) {
         log(
-            Severity.ERROR,
+            Level.ERROR,
             code,
             message,
             errorObject,
@@ -59,7 +56,7 @@ class Logger(
     }
 
     fun log(
-        severity: Severity,
+        severity: Level,
         code: String,
         message: String,
         errorObject: Throwable?,
@@ -71,12 +68,15 @@ class Logger(
     }
 
     private fun getLogMethod(
-        severity: Severity
+        severity: Level
     ): (marker: Marker, message: String, t: Throwable?) -> Unit =
         when (severity) {
-            Severity.ERROR -> slf4jLogger::error
-            Severity.WARN -> slf4jLogger::warn
-            Severity.INFO -> slf4jLogger::info
+            Level.ERROR -> slf4jLogger::error
+            Level.WARN -> slf4jLogger::warn
+            Level.INFO -> slf4jLogger::info
+            Level.DEBUG -> slf4jLogger::debug
+            Level.TRACE -> slf4jLogger::trace
+            else -> throw RuntimeException("Unexpected log level: $severity")
         }
 }
 
@@ -86,3 +86,5 @@ val ILoggingEvent.loggingCode: String?
 fun ILoggingEvent.findLogField(key: String): Any? = getLogFields()[key]
 
 fun ILoggingEvent.getLogFields() = this.keyValuePairs.associate { it.key to it.value }
+
+fun ILoggingEvent.level() = this.throwableProxy

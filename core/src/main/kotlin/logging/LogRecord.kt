@@ -1,19 +1,14 @@
 package logging
 
+import ch.qos.logback.classic.Level
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-enum class Severity {
-    INFO,
-    WARN,
-    ERROR
-}
-
 data class LogRecord(
     val timestamp: Instant,
-    val severity: Severity,
+    val severity: Level,
     val loggingCode: String,
     val message: String,
     val errorObject: Throwable?,

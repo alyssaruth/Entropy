@@ -1,5 +1,6 @@
 package http
 
+import ch.qos.logback.classic.Level
 import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
@@ -7,7 +8,6 @@ import kong.unirest.HttpResponse
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
-import logging.Severity
 import org.apache.http.HttpHeaders
 import utils.InjectedThings.logger
 
@@ -67,13 +67,13 @@ class HttpClient(private val baseUrl: String) {
         responseType: Class<T>?,
     ): ApiResponse<T> =
         if (response.isSuccess) {
-            logResponse(Severity.INFO, requestId, route, method, requestJson, response)
+            logResponse(Level.INFO, requestId, route, method, requestJson, response)
             val body = jsonObjectMapper.readValue(response.body, responseType)
             SuccessResponse(response.status, body)
         } else {
             val errorResponse = tryParseErrorResponse(response)
             logResponse(
-                Severity.ERROR,
+                Level.ERROR,
                 requestId,
                 route,
                 method,
@@ -109,7 +109,7 @@ class HttpClient(private val baseUrl: String) {
     }
 
     private fun logResponse(
-        level: Severity,
+        level: Level,
         requestId: UUID,
         route: String,
         method: HttpMethod,

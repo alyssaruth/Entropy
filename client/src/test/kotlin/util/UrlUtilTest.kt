@@ -1,11 +1,11 @@
 package util
 
+import ch.qos.logback.classic.Level
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.io.IOException
-import logging.Severity
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
 
@@ -27,8 +27,8 @@ class UrlUtilTest : AbstractTest() {
 
         launchUrl("foo.bar", runtime)
 
-        val log = verifyLog("urlError", Severity.ERROR)
+        val log = verifyLog("urlError", Level.ERROR)
         log.message shouldBe "Failed to launch foo.bar"
-        log.errorObject shouldBe error
+        log.throwableProxy shouldBe error
     }
 }

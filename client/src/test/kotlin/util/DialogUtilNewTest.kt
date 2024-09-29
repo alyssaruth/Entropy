@@ -1,5 +1,6 @@
 package util
 
+import ch.qos.logback.classic.Level
 import com.github.alyssaburlton.swingtest.clickCancel
 import com.github.alyssaburlton.swingtest.clickNo
 import com.github.alyssaburlton.swingtest.clickOk
@@ -10,7 +11,6 @@ import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.matchers.shouldBe
 import javax.swing.JDialog
 import javax.swing.SwingUtilities
-import logging.Severity
 import main.kotlin.testCore.getErrorDialog
 import main.kotlin.testCore.getInfoDialog
 import main.kotlin.testCore.getQuestionDialog
@@ -23,22 +23,21 @@ class DialogUtilNewTest : AbstractTest() {
     fun `Should log for INFO dialogs`() {
         runAsync { DialogUtilNew.showInfo("Something useful") }
 
-        verifyLog("dialogShown", Severity.INFO).message shouldBe
-            "Info dialog shown: Something useful"
+        verifyLog("dialogShown", Level.INFO).message shouldBe "Info dialog shown: Something useful"
 
         getInfoDialog().clickOk()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe "Info dialog closed"
+        verifyLog("dialogClosed", Level.INFO).message shouldBe "Info dialog closed"
     }
 
     @Test
     fun `Should log for ERROR dialogs`() {
         runAsync { DialogUtilNew.showError("Something bad") }
 
-        verifyLog("dialogShown", Severity.INFO).message shouldBe "Error dialog shown: Something bad"
+        verifyLog("dialogShown", Level.INFO).message shouldBe "Error dialog shown: Something bad"
         getErrorDialog().clickOk()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe "Error dialog closed"
+        verifyLog("dialogClosed", Level.INFO).message shouldBe "Error dialog closed"
     }
 
     @Test
@@ -51,39 +50,39 @@ class DialogUtilNewTest : AbstractTest() {
         flushEdt()
         getErrorDialog().clickOk()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe "Error dialog closed"
+        verifyLog("dialogClosed", Level.INFO).message shouldBe "Error dialog closed"
     }
 
     @Test
     fun `Should log for QUESTION dialogs, with the correct selection`() {
         runAsync { DialogUtilNew.showQuestion("Do you like cheese?") }
-        verifyLog("dialogShown", Severity.INFO).message shouldBe
+        verifyLog("dialogShown", Level.INFO).message shouldBe
             "Question dialog shown: Do you like cheese?"
         getQuestionDialog().clickYes()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe
+        verifyLog("dialogClosed", Level.INFO).message shouldBe
             "Question dialog closed - selected Yes"
 
         clearLogs()
         purgeWindows()
 
         runAsync { DialogUtilNew.showQuestion("Do you like mushrooms?") }
-        verifyLog("dialogShown", Severity.INFO).message shouldBe
+        verifyLog("dialogShown", Level.INFO).message shouldBe
             "Question dialog shown: Do you like mushrooms?"
         getQuestionDialog().clickNo()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe
+        verifyLog("dialogClosed", Level.INFO).message shouldBe
             "Question dialog closed - selected No"
 
         clearLogs()
         purgeWindows()
 
         runAsync { DialogUtilNew.showQuestion("Do you want to delete all data?", true) }
-        verifyLog("dialogShown", Severity.INFO).message shouldBe
+        verifyLog("dialogShown", Level.INFO).message shouldBe
             "Question dialog shown: Do you want to delete all data?"
         getQuestionDialog().clickCancel()
         flushEdt()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe
+        verifyLog("dialogClosed", Level.INFO).message shouldBe
             "Question dialog closed - selected Cancel"
     }
 
@@ -91,11 +90,10 @@ class DialogUtilNewTest : AbstractTest() {
     fun `Should log when showing and dismissing loading dialog`() {
         DialogUtilNew.showLoadingDialog("One moment...")
         flushEdt()
-        verifyLog("dialogShown", Severity.INFO).message shouldBe
-            "Loading dialog shown: One moment..."
+        verifyLog("dialogShown", Level.INFO).message shouldBe "Loading dialog shown: One moment..."
 
         DialogUtilNew.dismissLoadingDialog()
-        verifyLog("dialogClosed", Severity.INFO).message shouldBe "Loading dialog closed"
+        verifyLog("dialogClosed", Level.INFO).message shouldBe "Loading dialog closed"
     }
 
     @Test

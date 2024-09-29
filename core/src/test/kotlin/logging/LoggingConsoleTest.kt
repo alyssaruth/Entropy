@@ -1,5 +1,6 @@
 package logging
 
+import ch.qos.logback.classic.Level
 import com.github.alyssaburlton.swingtest.flushEdt
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
@@ -31,7 +32,7 @@ class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should log a regular INFO log in green`() {
         val console = LoggingConsole()
-        val infoLog = makeLogRecord(severity = Severity.INFO)
+        val infoLog = makeLogRecord(severity = Level.INFO)
 
         console.log(infoLog)
         console.getTextColour() shouldBe Color.GREEN
@@ -40,7 +41,7 @@ class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should log an ERROR log in red`() {
         val console = LoggingConsole()
-        val errorLog = makeLogRecord(severity = Severity.ERROR)
+        val errorLog = makeLogRecord(severity = Level.ERROR)
 
         console.log(errorLog)
         console.getTextColour() shouldBe Color.RED
@@ -53,7 +54,7 @@ class LoggingConsoleTest : AbstractTest() {
 
         val errorLog =
             makeLogRecord(
-                severity = Severity.ERROR,
+                severity = Level.ERROR,
                 message = "Failed to load screen",
                 errorObject = t
             )
@@ -72,7 +73,7 @@ class LoggingConsoleTest : AbstractTest() {
 
         val threadStackLock =
             makeLogRecord(
-                severity = Severity.INFO,
+                severity = Level.INFO,
                 message = "AWT Thread",
                 keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)")
             )

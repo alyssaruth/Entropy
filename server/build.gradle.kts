@@ -19,6 +19,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation("ch.qos.logback:logback-classic:1.5.8")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(project(":test-core"))
 }

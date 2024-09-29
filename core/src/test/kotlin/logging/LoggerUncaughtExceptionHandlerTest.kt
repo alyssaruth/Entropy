@@ -1,5 +1,6 @@
 package logging
 
+import ch.qos.logback.classic.Level
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import main.kotlin.testCore.shouldContainKeyValues
@@ -15,8 +16,8 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         val ex = Exception(message)
         handler.uncaughtException(Thread.currentThread(), ex)
 
-        val log = verifyLog("uncaughtException", Severity.WARN)
-        log.errorObject shouldBe null
+        val log = verifyLog("uncaughtException", Level.WARN)
+        log.throwableProxy shouldBe null
         log.message shouldBe "Suppressing uncaught exception: $ex"
         log.shouldContainKeyValues(
             KEY_THREAD to Thread.currentThread().toString(),
@@ -31,8 +32,8 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         val ex = Exception()
         handler.uncaughtException(Thread.currentThread(), ex)
 
-        val log = verifyLog("uncaughtException", Severity.ERROR)
-        log.errorObject shouldBe ex
+        val log = verifyLog("uncaughtException", Level.ERROR)
+        log.throwableProxy shouldBe ex
         log.shouldContainKeyValues(
             KEY_THREAD to Thread.currentThread().toString(),
             KEY_EXCEPTION_MESSAGE to null
@@ -48,8 +49,8 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         val ex = Exception("Argh")
         handler.uncaughtException(t, ex)
 
-        val log = verifyLog("uncaughtException", Severity.ERROR)
-        log.errorObject shouldBe ex
+        val log = verifyLog("uncaughtException", Level.ERROR)
+        log.throwableProxy shouldBe ex
         log.shouldContainKeyValues(KEY_THREAD to t.toString(), KEY_EXCEPTION_MESSAGE to "Argh")
         log.message shouldContain "Uncaught exception: $ex"
     }
