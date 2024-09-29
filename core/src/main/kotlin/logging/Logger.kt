@@ -2,6 +2,7 @@ package logging
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.classic.spi.ThrowableProxy
 import getPercentage
 import java.lang.reflect.Field
 import java.util.concurrent.ConcurrentHashMap
@@ -99,4 +100,9 @@ fun ILoggingEvent.getLogFields(): Map<String, Any> {
     }
 }
 
-fun ILoggingEvent.level() = this.throwableProxy
+fun ILoggingEvent.errorObject(): Throwable? {
+    val proxy = this.throwableProxy
+    return if (proxy is ThrowableProxy) {
+        proxy.throwable
+    } else null
+}

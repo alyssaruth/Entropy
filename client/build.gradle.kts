@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id("Entropy.kotlin-common-conventions")
     id("com.ncorti.ktfmt.gradle") version "0.15.1"
@@ -30,4 +33,11 @@ task<JavaExec>("runDev") {
             args = listOf("devMode")
         }
     )
+}
+
+tasks.withType<Test> {
+    testLogging {
+        events = mutableSetOf(TestLogEvent.STARTED, TestLogEvent.FAILED)
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }

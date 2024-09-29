@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id("Entropy.kotlin-common-conventions")
     id("com.ncorti.ktfmt.gradle") version "0.15.1"
@@ -27,4 +30,11 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass.set("io.ktor.server.netty.EngineMain")
+}
+
+tasks.withType<Test> {
+    testLogging {
+        events = mutableSetOf(TestLogEvent.STARTED, TestLogEvent.FAILED)
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }

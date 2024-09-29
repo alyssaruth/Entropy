@@ -24,7 +24,8 @@ import kong.unirest.Unirest
 import kong.unirest.UnirestException
 import kong.unirest.json.JSONException
 import kong.unirest.json.JSONObject
-import logging.getLogFields
+import logging.errorObject
+import logging.findLogField
 import main.kotlin.testCore.getDialogMessage
 import main.kotlin.testCore.getErrorDialog
 import main.kotlin.testCore.getInfoDialog
@@ -56,7 +57,7 @@ class UpdateManagerTest : AbstractTest() {
 
         val log = verifyLog("updateError", Level.ERROR)
         log.message shouldBe "Received non-success HTTP status: 404 - Not Found"
-        log.getLogFields()["responseBody"].toString() shouldContain """"message":"Not Found""""
+        log.findLogField("responseBody").toString() shouldContain """"message":"Not Found""""
 
         findWindow<LoadingDialog>()!!.shouldNotBeVisible()
     }
@@ -71,7 +72,7 @@ class UpdateManagerTest : AbstractTest() {
         errorMessage shouldBe "Failed to check for updates (unable to connect)."
 
         val errorLog = verifyLog("updateError", Level.ERROR)
-        errorLog.throwableProxy.shouldBeInstanceOf<UnirestException>()
+        errorLog.errorObject().shouldBeInstanceOf<UnirestException>()
 
         findWindow<LoadingDialog>()!!.shouldNotBeVisible()
     }
@@ -130,8 +131,8 @@ class UpdateManagerTest : AbstractTest() {
         metadata shouldBe null
 
         val log = verifyLog("parseError", Level.ERROR)
-        log.throwableProxy.shouldBeInstanceOf<JSONException>()
-        log.getLogFields()["responseBody"].toString() shouldBe json
+        log.errorObject().shouldBeInstanceOf<JSONException>()
+        log.findLogField("responseBody").toString() shouldBe json
     }
 
     @Test
@@ -141,8 +142,8 @@ class UpdateManagerTest : AbstractTest() {
         metadata shouldBe null
 
         val log = verifyLog("parseError", Level.ERROR)
-        log.throwableProxy.shouldBeInstanceOf<JSONException>()
-        log.getLogFields()["responseBody"].toString() shouldBe json
+        log.errorObject().shouldBeInstanceOf<JSONException>()
+        log.findLogField("responseBody").toString() shouldBe json
     }
 
     /** Should update? */
@@ -228,7 +229,7 @@ class UpdateManagerTest : AbstractTest() {
 
         UpdateManager().prepareBatchFile()
 
-        updateFile.readText() shouldBe javaClass.getResource("/update/update.bat").readText()
+        updateFile.readText() shouldBe javaClass.getResource("/update/update.bat")?.readText()
         updateFile.delete()
     }
 
@@ -246,7 +247,7 @@ class UpdateManagerTest : AbstractTest() {
             "Failed to launch update.bat - call the following manually to perform the update: \n\nupdate.bat foo"
 
         val log = verifyLog("batchError", Level.ERROR)
-        log.throwableProxy shouldBe error
+        log.errorObject() shouldBe error
     }
 
     @Test

@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.io.IOException
+import logging.errorObject
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
 
@@ -29,6 +30,6 @@ class UrlUtilTest : AbstractTest() {
 
         val log = verifyLog("urlError", Level.ERROR)
         log.message shouldBe "Failed to launch foo.bar"
-        log.throwableProxy shouldBe error
+        log.errorObject() shouldBe error
     }
 }

@@ -20,7 +20,7 @@ class LoggerTest : AbstractTest() {
         record.level shouldBe Level.INFO
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A thing happened"
-        record.throwableProxy shouldBe null
+        record.errorObject() shouldBe null
         record.shouldContainKeyValues("loggingCode" to "some.event")
     }
 
@@ -35,7 +35,7 @@ class LoggerTest : AbstractTest() {
         record.level shouldBe Level.INFO
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A thing happened"
-        record.throwableProxy shouldBe null
+        record.errorObject() shouldBe null
         record.shouldContainKeyValues("Key" to "Value")
     }
 
@@ -50,7 +50,7 @@ class LoggerTest : AbstractTest() {
         record.level shouldBe Level.WARN
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A slightly bad thing happened"
-        record.throwableProxy shouldBe null
+        record.errorObject() shouldBe null
     }
 
     @Test
@@ -63,7 +63,7 @@ class LoggerTest : AbstractTest() {
 
         val record = getLastLog()
         record.level shouldBe Level.ERROR
-        record.throwableProxy.message shouldBe "Boo"
+        record.errorObject() shouldBe throwable
         record.loggingCode shouldBe loggingCode
         record.shouldContainKeyValues("other.info" to 60, KEY_EXCEPTION_MESSAGE to "Boo")
 

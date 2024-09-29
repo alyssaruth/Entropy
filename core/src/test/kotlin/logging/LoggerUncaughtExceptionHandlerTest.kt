@@ -18,7 +18,7 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         handler.uncaughtException(Thread.currentThread(), ex)
 
         val log = verifyLog("uncaughtException", Level.WARN)
-        log.throwableProxy shouldBe null
+        log.errorObject() shouldBe null
         log.message shouldBe "Suppressing uncaught exception: $ex"
         log.shouldContainKeyValues(
             KEY_THREAD to Thread.currentThread().toString(),
@@ -34,7 +34,7 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         handler.uncaughtException(Thread.currentThread(), ex)
 
         val log = verifyLog("uncaughtException", Level.ERROR)
-        log.throwableProxy.message shouldBe null
+        log.errorObject() shouldBe ex
         log.shouldContainKeyValues(KEY_THREAD to Thread.currentThread().toString())
         log.getLogFields().shouldNotContainKey(KEY_EXCEPTION_MESSAGE)
         log.message shouldContain "Uncaught exception: $ex"
@@ -49,7 +49,7 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         handler.uncaughtException(t, ex)
 
         val log = verifyLog("uncaughtException", Level.ERROR)
-        log.throwableProxy.message shouldBe "Argh"
+        log.errorObject() shouldBe ex
         log.shouldContainKeyValues(KEY_THREAD to t.toString(), KEY_EXCEPTION_MESSAGE to "Argh")
         log.message shouldContain "Uncaught exception: $ex"
     }

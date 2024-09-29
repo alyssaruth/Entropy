@@ -81,7 +81,7 @@ class HttpClientTest : AbstractTest() {
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 404 for GET /test-endpoint"
-        responseLog.getLogFields()["responseCode"] shouldBe 404
+        responseLog.findLogField("responseCode") shouldBe 404
     }
 
     @Test
@@ -101,9 +101,9 @@ class HttpClientTest : AbstractTest() {
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
-        responseLog.getLogFields()["responseCode"] shouldBe 409
-        responseLog.getLogFields()["clientErrorCode"] shouldBe ClientErrorCode("oh.dear")
-        responseLog.getLogFields()["clientErrorMessage"] shouldBe "a bid already exists"
+        responseLog.findLogField("responseCode") shouldBe 409
+        responseLog.findLogField("clientErrorCode") shouldBe ClientErrorCode("oh.dear")
+        responseLog.findLogField("clientErrorMessage") shouldBe "a bid already exists"
     }
 
     @Test
@@ -156,9 +156,9 @@ class HttpClientTest : AbstractTest() {
 
         val responseLog = verifyLog("http.response", Level.INFO)
         responseLog.message shouldBe "Received 204 for POST /test-endpoint"
-        responseLog.getLogFields()["requestId"] shouldBe requestLog.getLogFields()["requestId"]
-        responseLog.getLogFields()["responseCode"] shouldBe 204
-        responseLog.getLogFields()["responseBody"] shouldBe ""
+        responseLog.findLogField("requestId") shouldBe requestLog.findLogField("requestId")
+        responseLog.findLogField("responseCode") shouldBe 204
+        responseLog.findLogField("responseBody") shouldBe ""
     }
 
     @Test
