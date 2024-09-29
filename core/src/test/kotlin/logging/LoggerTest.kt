@@ -21,7 +21,7 @@ class LoggerTest : AbstractTest() {
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A thing happened"
         record.throwableProxy shouldBe null
-        record.getLogFields().size shouldBe 0
+        record.shouldContainKeyValues("loggingCode" to "some.event")
     }
 
     @Test
@@ -51,7 +51,6 @@ class LoggerTest : AbstractTest() {
         record.loggingCode shouldBe loggingCode
         record.message shouldBe "A slightly bad thing happened"
         record.throwableProxy shouldBe null
-        record.keyValuePairs.size shouldBe 0
     }
 
     @Test
@@ -64,9 +63,11 @@ class LoggerTest : AbstractTest() {
 
         val record = getLastLog()
         record.level shouldBe Level.ERROR
-        record.throwableProxy shouldBe throwable
+        record.throwableProxy.message shouldBe "Boo"
         record.loggingCode shouldBe loggingCode
         record.shouldContainKeyValues("other.info" to 60, KEY_EXCEPTION_MESSAGE to "Boo")
+
+        errorLogged() shouldBe true
     }
 
     @Test

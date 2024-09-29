@@ -3,8 +3,10 @@ package logging
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import getPercentage
+import java.lang.reflect.Field
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.floor
+import net.logstash.logback.marker.MapEntriesAppendingMarker
 import net.logstash.logback.marker.Markers
 import org.slf4j.Marker
 
@@ -85,6 +87,16 @@ val ILoggingEvent.loggingCode: String?
 
 fun ILoggingEvent.findLogField(key: String): Any? = getLogFields()[key]
 
-fun ILoggingEvent.getLogFields() = this.keyValuePairs.associate { it.key to it.value }
+private val mapEntriesAppendingMarkerField: Field =
+    MapEntriesAppendingMarker::class.java.getDeclaredField("map").apply { isAccessible = true }
+
+fun ILoggingEvent.getLogFields(): Map<String, Any> {
+    val marker = this.markerList?.firstOrNull()
+    return if (marker is MapEntriesAppendingMarker) {
+        mapEntriesAppendingMarkerField.get(marker) as Map<String, Any>
+    } else {
+        emptyMap()
+    }
+}
 
 fun ILoggingEvent.level() = this.throwableProxy

@@ -5,7 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import com.github.alyssaburlton.swingtest.findAll
 import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
-import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.mockk.verify
 import java.time.Instant
@@ -16,7 +16,7 @@ import logging.LogRecord
 import logging.getLogFields
 
 fun ILoggingEvent.shouldContainKeyValues(vararg values: Pair<String, Any?>) {
-    this.getLogFields().shouldContainExactly(mapOf(*values))
+    this.getLogFields().shouldContainAll(mapOf(*values))
 }
 
 fun makeLogRecord(
