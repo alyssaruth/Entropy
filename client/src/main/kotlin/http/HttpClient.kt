@@ -8,6 +8,7 @@ import kong.unirest.HttpResponse
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
+import logging.KEY_REQUEST_ID
 import org.apache.http.HttpHeaders
 import utils.CoreGlobals.logger
 
@@ -34,7 +35,7 @@ class HttpClient(private val baseUrl: String) {
         logger.info(
             "http.request",
             "$method $route",
-            "requestId" to requestId,
+            KEY_REQUEST_ID to requestId,
             "requestBody" to requestJson,
         )
 
@@ -72,15 +73,7 @@ class HttpClient(private val baseUrl: String) {
             SuccessResponse(response.status, body)
         } else {
             val errorResponse = tryParseErrorResponse(response)
-            logResponse(
-                Level.ERROR,
-                requestId,
-                route,
-                method,
-                requestJson,
-                response,
-                errorResponse,
-            )
+            logResponse(Level.ERROR, requestId, route, method, requestJson, response, errorResponse)
             FailureResponse(response.status, errorResponse?.errorCode, errorResponse?.errorMessage)
         }
 
@@ -102,7 +95,7 @@ class HttpClient(private val baseUrl: String) {
             "http.error",
             "Caught ${e.message} for $method $route",
             e,
-            "requestId" to requestId,
+            KEY_REQUEST_ID to requestId,
             "requestBody" to requestJson,
             "unirestError" to e.message,
         )
@@ -123,7 +116,7 @@ class HttpClient(private val baseUrl: String) {
             "Received ${response.status} for $method $route",
             null,
             mapOf(
-                "requestId" to requestId,
+                KEY_REQUEST_ID to requestId,
                 "requestBody" to requestJson,
                 "responseCode" to response.status,
                 "responseBody" to response.body?.toString(),

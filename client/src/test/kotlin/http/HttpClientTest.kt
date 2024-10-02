@@ -13,6 +13,7 @@ import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
+import logging.KEY_REQUEST_ID
 import logging.findLogField
 import logging.getLogFields
 import okhttp3.mockwebserver.MockResponse
@@ -42,10 +43,10 @@ class HttpClientTest : AbstractTest() {
         val requestUuid = shouldNotThrowAny { UUID.fromString(requestId) }
 
         val requestLog = verifyLog("http.request", Level.INFO)
-        requestLog.findLogField("requestId") shouldBe requestUuid
+        requestLog.findLogField(KEY_REQUEST_ID) shouldBe requestUuid
 
         val responseLog = verifyLog("http.response", Level.INFO)
-        responseLog.findLogField("requestId") shouldBe requestUuid
+        responseLog.findLogField(KEY_REQUEST_ID) shouldBe requestUuid
     }
 
     @Test
@@ -68,7 +69,7 @@ class HttpClientTest : AbstractTest() {
 
         val requestLog = verifyLog("http.request", Level.INFO)
         requestLog.message shouldBe "GET /test-endpoint"
-        requestLog.getLogFields().shouldContainKeys("requestId")
+        requestLog.getLogFields().shouldContainKeys(KEY_REQUEST_ID)
     }
 
     @Test
@@ -151,12 +152,12 @@ class HttpClientTest : AbstractTest() {
 
         val requestLog = verifyLog("http.request", Level.INFO)
         requestLog.message shouldBe "POST /test-endpoint"
-        requestLog.getLogFields().shouldContainKeys("requestId")
+        requestLog.getLogFields().shouldContainKeys(KEY_REQUEST_ID)
         requestLog.getLogFields().shouldContain("requestBody" to expectedBody)
 
         val responseLog = verifyLog("http.response", Level.INFO)
         responseLog.message shouldBe "Received 204 for POST /test-endpoint"
-        responseLog.findLogField("requestId") shouldBe requestLog.findLogField("requestId")
+        responseLog.findLogField(KEY_REQUEST_ID) shouldBe requestLog.findLogField(KEY_REQUEST_ID)
         responseLog.findLogField("responseCode") shouldBe 204
         responseLog.findLogField("responseBody") shouldBe ""
     }
