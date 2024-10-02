@@ -1,7 +1,7 @@
 package util
 
 import `object`.ServerThread
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 fun dumpServerThreads() {
     val sb = StringBuilder()

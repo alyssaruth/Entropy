@@ -7,7 +7,7 @@ import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import screen.LoadingDialog
 import screen.ScreenCache
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 object DialogUtilNew {
     private var loadingDialog: LoadingDialog? = null

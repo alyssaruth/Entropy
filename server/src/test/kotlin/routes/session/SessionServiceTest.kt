@@ -10,13 +10,13 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.ktor.http.*
-import main.kotlin.testCore.only
 import org.junit.jupiter.api.Test
 import routes.ClientException
 import store.MemoryUserConnectionStore
 import store.SessionStore
 import store.UserConnectionStore
 import testCore.AbstractTest
+import testCore.only
 import util.OnlineConstants
 
 class SessionServiceTest : AbstractTest() {

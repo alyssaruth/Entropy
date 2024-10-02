@@ -10,8 +10,8 @@ import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
 import testCore.shouldMatchJson
-import util.Globals.sessionStore
 import util.OnlineConstants
+import util.ServerGlobals.sessionStore
 
 class SessionControllerTest : AbstractTest() {
     @Test

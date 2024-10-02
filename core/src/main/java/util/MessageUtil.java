@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class MessageUtil implements OnlineConstants
 {	

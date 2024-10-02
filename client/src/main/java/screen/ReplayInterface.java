@@ -19,7 +19,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class ReplayInterface extends JFrame
 							 implements ListSelectionListener, 

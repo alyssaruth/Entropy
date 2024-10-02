@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import util.*;
-import utils.InjectedThings;
+import utils.CoreGlobals;
 
 public class MessageHandlerRunnable implements ServerRunnable,
 											   XmlConstants
@@ -141,7 +141,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	{
 		InetAddress address = clientSocket.getInetAddress();
 		ipAddress = address.getHostAddress();
-		usc = Globals.INSTANCE.getUscStore().find(ipAddress);
+		usc = ServerGlobals.INSTANCE.getUscStore().find(ipAddress);
 		
 		if (usc != null)
 		{
@@ -190,7 +190,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		Element root = message.getDocumentElement();
 		String name = root.getNodeName();
 
-		InjectedThings.logger.info("unencrypted.message", "Received unencrypted " + name + " message. Probably using out of date version? "
+		CoreGlobals.logger.info("unencrypted.message", "Received unencrypted " + name + " message. Probably using out of date version? "
 				  + "Message: " + messageStr);
 		return null;
 	}

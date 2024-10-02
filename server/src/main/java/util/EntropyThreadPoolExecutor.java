@@ -57,7 +57,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import auth.UserConnection;
 import object.ServerRunnable;
 import object.ServerThread;
-import utils.InjectedThings;
+import utils.CoreGlobals;
 
 /**
  * An {@link ExecutorService} that executes each submitted task using
@@ -1936,7 +1936,7 @@ public class EntropyThreadPoolExecutor extends AbstractExecutorService
     private class RejectedThreadHandler {
     	public void rejectedExecution(Runnable arg0) 
     	{
-            InjectedThings.logger.warn("rejected.execution", "Too many functions queued - throwing away runnable " + arg0);
+            CoreGlobals.logger.warn("rejected.execution", "Too many functions queued - throwing away runnable " + arg0);
     	}
     }
     

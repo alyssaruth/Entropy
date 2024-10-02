@@ -15,7 +15,7 @@ import util.Debug;
 import util.EncryptionUtil;
 import util.XmlUtil;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class NotificationRunnable implements ServerRunnable
 {

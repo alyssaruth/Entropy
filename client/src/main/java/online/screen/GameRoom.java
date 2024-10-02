@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 /**
  * This is an actual room as seen by the player

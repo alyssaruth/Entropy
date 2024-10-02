@@ -13,15 +13,15 @@ import io.mockk.verify
 import java.util.UUID
 import kong.unirest.HttpMethod
 import kong.unirest.UnirestException
-import main.kotlin.testCore.getDialogMessage
-import main.kotlin.testCore.getErrorDialog
-import main.kotlin.testCore.getQuestionDialog
-import main.kotlin.testCore.verifyNotCalled
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
 import testCore.AbstractTest
-import util.Globals
+import testCore.getDialogMessage
+import testCore.getErrorDialog
+import testCore.getQuestionDialog
+import testCore.verifyNotCalled
+import util.ClientGlobals
 import util.OnlineConstants
 
 class SessionApiTest : AbstractTest() {
@@ -43,7 +43,7 @@ class SessionApiTest : AbstractTest() {
 
     @Test
     fun `should handle a response indicating an update is required and check for updates`() {
-        Globals.updateManager = mockk(relaxed = true)
+        ClientGlobals.updateManager = mockk(relaxed = true)
         val httpClient = mockHttpClient(FailureResponse(422, UPDATE_REQUIRED, "oh no"))
 
         SessionApi(httpClient).beginSession("alyssa")
@@ -54,12 +54,14 @@ class SessionApiTest : AbstractTest() {
             "Your client must be updated to connect. Check for updates now?"
 
         questionDialog.clickYes()
-        verify { Globals.updateManager.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER) }
+        verify {
+            ClientGlobals.updateManager.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER)
+        }
     }
 
     @Test
     fun `should not check for updates if 'No' is answered`() {
-        Globals.updateManager = mockk(relaxed = true)
+        ClientGlobals.updateManager = mockk(relaxed = true)
         val httpClient = mockHttpClient(FailureResponse(422, UPDATE_REQUIRED, "oh no"))
 
         SessionApi(httpClient).beginSession("alyssa")
@@ -70,7 +72,7 @@ class SessionApiTest : AbstractTest() {
             "Your client must be updated to connect. Check for updates now?"
 
         questionDialog.clickNo()
-        verifyNotCalled { Globals.updateManager.checkForUpdates(any()) }
+        verifyNotCalled { ClientGlobals.updateManager.checkForUpdates(any()) }
     }
 
     @Test

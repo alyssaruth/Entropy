@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class CpuStrategies
 {

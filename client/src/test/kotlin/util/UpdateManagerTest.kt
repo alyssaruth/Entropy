@@ -1,6 +1,7 @@
 package util
 
 import bean.LinkLabel
+import ch.qos.logback.classic.Level
 import com.github.alyssaburlton.swingtest.clickNo
 import com.github.alyssaburlton.swingtest.clickOk
 import com.github.alyssaburlton.swingtest.clickYes
@@ -23,12 +24,8 @@ import kong.unirest.Unirest
 import kong.unirest.UnirestException
 import kong.unirest.json.JSONException
 import kong.unirest.json.JSONObject
-import logging.Severity
-import main.kotlin.testCore.getDialogMessage
-import main.kotlin.testCore.getErrorDialog
-import main.kotlin.testCore.getInfoDialog
-import main.kotlin.testCore.getQuestionDialog
-import main.kotlin.testCore.runAsync
+import logging.errorObject
+import logging.findLogField
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -36,6 +33,11 @@ import screen.LoadingDialog
 import testCore.AbstractTest
 import testCore.assertDoesNotExit
 import testCore.assertExits
+import testCore.getDialogMessage
+import testCore.getErrorDialog
+import testCore.getInfoDialog
+import testCore.getQuestionDialog
+import testCore.runAsync
 
 class UpdateManagerTest : AbstractTest() {
     @BeforeEach
@@ -53,9 +55,9 @@ class UpdateManagerTest : AbstractTest() {
             queryLatestReleastJsonExpectingError("https://api.github.com/repos/alyssaburlton/foo")
         errorMessage shouldBe "Failed to check for updates (unable to connect)."
 
-        val log = verifyLog("updateError", Severity.ERROR)
+        val log = verifyLog("updateError", Level.ERROR)
         log.message shouldBe "Received non-success HTTP status: 404 - Not Found"
-        log.keyValuePairs["responseBody"].toString() shouldContain """"message":"Not Found""""
+        log.findLogField("responseBody").toString() shouldContain """"message":"Not Found""""
 
         findWindow<LoadingDialog>()!!.shouldNotBeVisible()
     }
@@ -69,8 +71,8 @@ class UpdateManagerTest : AbstractTest() {
         val errorMessage = queryLatestReleastJsonExpectingError("https://ww.blargh.zcss.w")
         errorMessage shouldBe "Failed to check for updates (unable to connect)."
 
-        val errorLog = verifyLog("updateError", Severity.ERROR)
-        errorLog.errorObject.shouldBeInstanceOf<UnirestException>()
+        val errorLog = verifyLog("updateError", Level.ERROR)
+        errorLog.errorObject().shouldBeInstanceOf<UnirestException>()
 
         findWindow<LoadingDialog>()!!.shouldNotBeVisible()
     }
@@ -128,9 +130,9 @@ class UpdateManagerTest : AbstractTest() {
         val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
         metadata shouldBe null
 
-        val log = verifyLog("parseError", Severity.ERROR)
-        log.errorObject.shouldBeInstanceOf<JSONException>()
-        log.keyValuePairs["responseBody"].toString() shouldBe json
+        val log = verifyLog("parseError", Level.ERROR)
+        log.errorObject().shouldBeInstanceOf<JSONException>()
+        log.findLogField("responseBody").toString() shouldBe json
     }
 
     @Test
@@ -139,9 +141,9 @@ class UpdateManagerTest : AbstractTest() {
         val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
         metadata shouldBe null
 
-        val log = verifyLog("parseError", Severity.ERROR)
-        log.errorObject.shouldBeInstanceOf<JSONException>()
-        log.keyValuePairs["responseBody"].toString() shouldBe json
+        val log = verifyLog("parseError", Level.ERROR)
+        log.errorObject().shouldBeInstanceOf<JSONException>()
+        log.findLogField("responseBody").toString() shouldBe json
     }
 
     /** Should update? */
@@ -227,7 +229,7 @@ class UpdateManagerTest : AbstractTest() {
 
         UpdateManager().prepareBatchFile()
 
-        updateFile.readText() shouldBe javaClass.getResource("/update/update.bat").readText()
+        updateFile.readText() shouldBe javaClass.getResource("/update/update.bat")?.readText()
         updateFile.delete()
     }
 
@@ -244,8 +246,8 @@ class UpdateManagerTest : AbstractTest() {
         errorDialog.getDialogMessage() shouldBe
             "Failed to launch update.bat - call the following manually to perform the update: \n\nupdate.bat foo"
 
-        val log = verifyLog("batchError", Severity.ERROR)
-        log.errorObject shouldBe error
+        val log = verifyLog("batchError", Level.ERROR)
+        log.errorObject() shouldBe error
     }
 
     @Test

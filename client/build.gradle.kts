@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id("Entropy.kotlin-common-conventions")
     id("com.ncorti.ktfmt.gradle") version "0.15.1"
@@ -10,6 +13,7 @@ dependencies {
     implementation("com.jgoodies:jgoodies-forms:1.6.0")
     implementation("com.miglayout:miglayout-swing:5.2")
     implementation("com.konghq:unirest-java:3.14.2")
+    implementation("ch.qos.logback:logback-classic:1.5.8")
     implementation(project(":core"))
     testImplementation(project(":test-core"))
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
@@ -29,4 +33,11 @@ task<JavaExec>("runDev") {
             args = listOf("devMode")
         }
     )
+}
+
+tasks.withType<Test> {
+    testLogging {
+        events = mutableSetOf(TestLogEvent.STARTED, TestLogEvent.FAILED)
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }

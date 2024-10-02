@@ -11,7 +11,7 @@ import routes.ClientException
 import routes.dev.DevController
 import routes.health.HealthCheckController
 import routes.session.SessionController
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 fun Application.configureRouting() {
     install(StatusPages) {

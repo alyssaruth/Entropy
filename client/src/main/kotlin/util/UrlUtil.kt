@@ -1,6 +1,6 @@
 package util
 
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 /** N.B. will likely only work on linux */
 fun launchUrl(url: String, runtime: Runtime = Runtime.getRuntime()) {

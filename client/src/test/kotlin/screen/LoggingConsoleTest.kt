@@ -1,5 +1,6 @@
-package logging
+package screen
 
+import ch.qos.logback.classic.Level
 import com.github.alyssaburlton.swingtest.flushEdt
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
@@ -9,29 +10,31 @@ import io.kotest.matchers.string.shouldContain
 import java.awt.Color
 import javax.swing.JLabel
 import javax.swing.text.StyleConstants
-import main.kotlin.testCore.makeLogRecord
+import logging.KEY_STACK
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
+import testCore.makeLoggingEvent
 import utils.getAllChildComponentsForType
 
 class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should separate log records with a new line`() {
-        val recordOne = makeLogRecord(loggingCode = "foo", message = "log one")
-        val recordTwo = makeLogRecord(loggingCode = "bar", message = "log two")
+        val recordOne = makeLoggingEvent(loggingCode = "foo", message = "log one")
+        val recordTwo = makeLoggingEvent(loggingCode = "bar", message = "log two")
 
         val console = LoggingConsole()
         console.log(recordOne)
         console.log(recordTwo)
 
-        val text = console.getText()
-        text shouldBe "\n$recordOne\n$recordTwo"
+        val text = console.getText().split("\n")
+        text[1] shouldBe "${currentTimeLogString()}   [foo] log one"
+        text[2] shouldBe "${currentTimeLogString()}   [bar] log two"
     }
 
     @Test
     fun `Should log a regular INFO log in green`() {
         val console = LoggingConsole()
-        val infoLog = makeLogRecord(severity = Severity.INFO)
+        val infoLog = makeLoggingEvent(severity = Level.INFO)
 
         console.log(infoLog)
         console.getTextColour() shouldBe Color.GREEN
@@ -40,7 +43,7 @@ class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should log an ERROR log in red`() {
         val console = LoggingConsole()
-        val errorLog = makeLogRecord(severity = Severity.ERROR)
+        val errorLog = makeLoggingEvent(severity = Level.ERROR)
 
         console.log(errorLog)
         console.getTextColour() shouldBe Color.RED
@@ -52,8 +55,8 @@ class LoggingConsoleTest : AbstractTest() {
         val t = Throwable("Boom")
 
         val errorLog =
-            makeLogRecord(
-                severity = Severity.ERROR,
+            makeLoggingEvent(
+                severity = Level.ERROR,
                 message = "Failed to load screen",
                 errorObject = t
             )
@@ -71,8 +74,8 @@ class LoggingConsoleTest : AbstractTest() {
         val console = LoggingConsole()
 
         val threadStackLock =
-            makeLogRecord(
-                severity = Severity.INFO,
+            makeLoggingEvent(
+                severity = Level.INFO,
                 message = "AWT Thread",
                 keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)")
             )
@@ -88,7 +91,7 @@ class LoggingConsoleTest : AbstractTest() {
         console.pack()
         console.scrollPane.verticalScrollBar.value shouldBe 0
 
-        repeat(50) { console.log(makeLogRecord()) }
+        repeat(50) { console.log(makeLoggingEvent()) }
 
         flushEdt()
         console.scrollPane.verticalScrollBar.value shouldBeGreaterThan 0
@@ -97,7 +100,7 @@ class LoggingConsoleTest : AbstractTest() {
     @Test
     fun `Should support clearing the logs`() {
         val console = LoggingConsole()
-        console.log(makeLogRecord())
+        console.log(makeLoggingEvent())
 
         console.clear()
 

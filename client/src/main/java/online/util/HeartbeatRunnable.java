@@ -7,7 +7,7 @@ import org.w3c.dom.Document;
 import util.AbstractClient;
 import util.MessageUtil;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class HeartbeatRunnable implements Runnable
 {

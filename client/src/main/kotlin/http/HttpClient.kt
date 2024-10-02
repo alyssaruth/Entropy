@@ -1,5 +1,6 @@
 package http
 
+import ch.qos.logback.classic.Level
 import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
@@ -7,9 +8,9 @@ import kong.unirest.HttpResponse
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
-import logging.Severity
+import logging.KEY_REQUEST_ID
 import org.apache.http.HttpHeaders
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 class HttpClient(private val baseUrl: String) {
     private val jsonObjectMapper = JsonObjectMapper()
@@ -34,7 +35,7 @@ class HttpClient(private val baseUrl: String) {
         logger.info(
             "http.request",
             "$method $route",
-            "requestId" to requestId,
+            KEY_REQUEST_ID to requestId,
             "requestBody" to requestJson,
         )
 
@@ -67,20 +68,12 @@ class HttpClient(private val baseUrl: String) {
         responseType: Class<T>?,
     ): ApiResponse<T> =
         if (response.isSuccess) {
-            logResponse(Severity.INFO, requestId, route, method, requestJson, response)
+            logResponse(Level.INFO, requestId, route, method, requestJson, response)
             val body = jsonObjectMapper.readValue(response.body, responseType)
             SuccessResponse(response.status, body)
         } else {
             val errorResponse = tryParseErrorResponse(response)
-            logResponse(
-                Severity.ERROR,
-                requestId,
-                route,
-                method,
-                requestJson,
-                response,
-                errorResponse,
-            )
+            logResponse(Level.ERROR, requestId, route, method, requestJson, response, errorResponse)
             FailureResponse(response.status, errorResponse?.errorCode, errorResponse?.errorMessage)
         }
 
@@ -102,14 +95,14 @@ class HttpClient(private val baseUrl: String) {
             "http.error",
             "Caught ${e.message} for $method $route",
             e,
-            "requestId" to requestId,
+            KEY_REQUEST_ID to requestId,
             "requestBody" to requestJson,
             "unirestError" to e.message,
         )
     }
 
     private fun logResponse(
-        level: Severity,
+        level: Level,
         requestId: UUID,
         route: String,
         method: HttpMethod,
@@ -123,7 +116,7 @@ class HttpClient(private val baseUrl: String) {
             "Received ${response.status} for $method $route",
             null,
             mapOf(
-                "requestId" to requestId,
+                KEY_REQUEST_ID to requestId,
                 "requestBody" to requestJson,
                 "responseCode" to response.status,
                 "responseBody" to response.body?.toString(),

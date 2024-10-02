@@ -6,9 +6,9 @@ import io.ktor.http.*
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 import routes.ClientException
-import util.Globals
+import util.ServerGlobals
 import util.dumpServerThreads
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 import utils.dumpThreadStacks
 
 class DevService {
@@ -32,13 +32,13 @@ class DevService {
     }
 
     private fun dumpUsers() {
-        val uscs = Globals.uscStore.getAll()
+        val uscs = ServerGlobals.uscStore.getAll()
         logger.info("usc.count", "${uscs.size} user(s) online.")
         uscs.forEach { logger.info("usc", it.toString()) }
     }
 
     private fun dumpPoolStats() {
-        val workerPool = Globals.workerPool
+        val workerPool = ServerGlobals.workerPool
         val blockQueue = workerPool.queue
 
         logger.info(

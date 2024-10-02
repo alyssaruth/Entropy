@@ -1,23 +1,36 @@
 package logging
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.classic.spi.ThrowableProxy
 import getPercentage
+import java.lang.reflect.Field
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.TimeUnit
 import kotlin.math.floor
-import utils.InjectedThings
+import net.logstash.logback.marker.MapEntriesAppendingMarker
+import net.logstash.logback.marker.Markers
+import org.slf4j.Marker
 
-private const val LOGGER_THREAD = "Logger"
-
-class Logger(private val destinations: List<ILogDestination>) {
-    val loggingContext = ConcurrentHashMap<String, Any?>()
-    private val loggerFactory = ThreadFactory { r -> Thread(r, LOGGER_THREAD) }
-    private var logService = Executors.newFixedThreadPool(1, loggerFactory)
+class Logger(private val slf4jLogger: org.slf4j.Logger) {
+    private val globalContext = ConcurrentHashMap<String, Any?>()
+    private val contextListeners = mutableListOf<ILogContextListener>()
 
     fun addToContext(loggingKey: String, value: Any?) {
-        loggingContext[loggingKey] = value ?: ""
-        destinations.forEach { it.contextUpdated(loggingContext.toMap()) }
+        globalContext[loggingKey] = value ?: ""
+        updateContextListeners()
+    }
+
+    fun clearContext() {
+        globalContext.clear()
+        updateContextListeners()
+    }
+
+    fun addContextListener(listener: ILogContextListener) {
+        contextListeners.add(listener)
+    }
+
+    private fun updateContextListeners() {
+        contextListeners.forEach { it.contextUpdated(globalContext.toMap()) }
     }
 
     @JvmOverloads
@@ -34,11 +47,11 @@ class Logger(private val destinations: List<ILogDestination>) {
     }
 
     fun info(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
-        log(Severity.INFO, code, message, null, mapOf(*keyValuePairs))
+        log(Level.INFO, code, message, null, mapOf(*keyValuePairs))
     }
 
     fun warn(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
-        log(Severity.WARN, code, message, null, mapOf(*keyValuePairs))
+        log(Level.WARN, code, message, null, mapOf(*keyValuePairs))
     }
 
     fun error(code: String, message: String, vararg keyValuePairs: Pair<String, Any?>) {
@@ -52,7 +65,7 @@ class Logger(private val destinations: List<ILogDestination>) {
         vararg keyValuePairs: Pair<String, Any?>
     ) {
         log(
-            Severity.ERROR,
+            Level.ERROR,
             code,
             message,
             errorObject,
@@ -61,41 +74,50 @@ class Logger(private val destinations: List<ILogDestination>) {
     }
 
     fun log(
-        severity: Severity,
+        severity: Level,
         code: String,
         message: String,
         errorObject: Throwable?,
         keyValuePairs: Map<String, Any?>
     ) {
-        val timestamp = InjectedThings.clock.instant()
-        val logRecord =
-            LogRecord(
-                timestamp,
-                severity,
-                code,
-                message,
-                errorObject,
-                loggingContext + keyValuePairs
-            )
-
-        val runnable = Runnable { destinations.forEach { it.log(logRecord) } }
-        if (
-            Thread.currentThread().name != LOGGER_THREAD &&
-                !logService.isShutdown &&
-                !logService.isTerminated
-        ) {
-            logService.execute(runnable)
-        } else {
-            runnable.run()
-        }
+        val combinedKeys = globalContext + keyValuePairs + (KEY_LOGGING_CODE to code)
+        val marker = combinedKeys.filterValues { it != null }.let(Markers::appendEntries)
+        getLogMethod(severity).invoke(marker, message, errorObject)
     }
 
-    fun waitUntilLoggingFinished() {
-        try {
-            logService.shutdown()
-            logService.awaitTermination(30, TimeUnit.SECONDS)
-        } catch (_: InterruptedException) {} finally {
-            logService = Executors.newFixedThreadPool(1, loggerFactory)
+    private fun getLogMethod(
+        severity: Level
+    ): (marker: Marker, message: String, t: Throwable?) -> Unit =
+        when (severity) {
+            Level.ERROR -> slf4jLogger::error
+            Level.WARN -> slf4jLogger::warn
+            Level.INFO -> slf4jLogger::info
+            Level.DEBUG -> slf4jLogger::debug
+            Level.TRACE -> slf4jLogger::trace
+            else -> throw RuntimeException("Unexpected log level: $severity")
         }
+}
+
+val ILoggingEvent.loggingCode: String?
+    get() = findLogField(KEY_LOGGING_CODE) as? String
+
+fun ILoggingEvent.findLogField(key: String): Any? = getLogFields()[key]
+
+private val mapEntriesAppendingMarkerField: Field =
+    MapEntriesAppendingMarker::class.java.getDeclaredField("map").apply { isAccessible = true }
+
+fun ILoggingEvent.getLogFields(): Map<String, Any> {
+    val marker = this.markerList?.firstOrNull()
+    return if (marker is MapEntriesAppendingMarker) {
+        mapEntriesAppendingMarkerField.get(marker) as Map<String, Any> + this.mdcPropertyMap
+    } else {
+        emptyMap()
     }
+}
+
+fun ILoggingEvent.errorObject(): Throwable? {
+    val proxy = this.throwableProxy
+    return if (proxy is ThrowableProxy) {
+        proxy.throwable
+    } else null
 }

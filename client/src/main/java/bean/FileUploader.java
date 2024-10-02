@@ -14,10 +14,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import util.Debug;
 import util.DialogUtil;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class FileUploader extends JPanel
 						  implements ActionListener

@@ -5,9 +5,9 @@ import java.util.List;
 import auth.UserConnection;
 import object.ServerRunnable;
 import util.Debug;
-import util.Globals;
+import util.ServerGlobals;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class InactiveCheckRunnable implements ServerRunnable
 {
@@ -40,7 +40,7 @@ public class InactiveCheckRunnable implements ServerRunnable
 	
 	private void runInactiveCheck() throws InterruptedException
 	{
-		List<UserConnection> userConnections = Globals.INSTANCE.getUscStore().getAll();
+		List<UserConnection> userConnections = ServerGlobals.INSTANCE.getUscStore().getAll();
 		int size = userConnections.size();
 
 		statusText = "Running for " + size + " uscs";

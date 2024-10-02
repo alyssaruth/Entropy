@@ -10,7 +10,7 @@ import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class EntropyMain implements Registry
 {
@@ -23,7 +23,7 @@ public class EntropyMain implements Registry
 		//Initialise interfaces etc
 		Debug.initialise(new DebugOutputSystemOut());
 		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
-		MainUtilKt.setLoggingContextFields();
+		MainUtilKt.configureLogging();
 		AbstractClient.setInstance(new DesktopEntropyClient());
 
 		//Dev mode

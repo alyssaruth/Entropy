@@ -12,7 +12,7 @@ import kotlin.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class MessageSender implements Runnable
 {

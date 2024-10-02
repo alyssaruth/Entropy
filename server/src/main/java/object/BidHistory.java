@@ -3,9 +3,7 @@ package object;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import util.Debug;
-
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class BidHistory 
 {

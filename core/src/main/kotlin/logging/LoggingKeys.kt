@@ -9,8 +9,10 @@ const val KEY_DEV_MODE = "devMode"
 const val KEY_ACTIVE_WINDOW = "activeWindow"
 
 // Other
-const val KEY_DURATION = "duration"
-const val KEY_ROW_COUNT = "rowCount"
+const val KEY_LOGGING_CODE = "loggingCode"
 const val KEY_EXCEPTION_MESSAGE = "exceptionMessage"
 const val KEY_THREAD = "currentThread"
 const val KEY_STACK = "stackTrace"
+const val KEY_REQUEST_ID = "requestId"
+const val KEY_ROUTE = "route"
+const val KEY_DURATION = "duration"

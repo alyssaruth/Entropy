@@ -10,7 +10,7 @@ import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Vector;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class SimulationDialog extends JDialog
 {

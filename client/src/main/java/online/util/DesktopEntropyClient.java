@@ -83,6 +83,6 @@ public class DesktopEntropyClient extends AbstractClient
 	@Override
 	public void checkForUpdates()
 	{
-		Globals.INSTANCE.getUpdateManager().checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
+		ClientGlobals.INSTANCE.getUpdateManager().checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
 	}
 }

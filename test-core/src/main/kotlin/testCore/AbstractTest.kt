@@ -1,26 +1,30 @@
 package testCore
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.assertions.fail
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import logging.LogDestinationSystemOut
-import logging.LogRecord
 import logging.Logger
-import logging.Severity
-import main.kotlin.testCore.BeforeAllTestsExtension
-import main.kotlin.testCore.FakeLogDestination
+import logging.errorObject
+import logging.extractStackTrace
+import logging.loggingCode
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.MDC
 import util.AbstractClient
 import util.Debug
 import util.DebugOutputSystemOut
+import utils.CoreGlobals.slf4jLogger
 
-private val logDestination = FakeLogDestination()
-val logger = Logger(listOf(logDestination, LogDestinationSystemOut()))
+val logger = Logger(slf4jLogger)
 private var checkedForExceptions = false
+
+val listAppender = ListAppender<ILoggingEvent>()
 
 @ExtendWith(BeforeAllTestsExtension::class)
 open class AbstractTest {
@@ -31,16 +35,18 @@ open class AbstractTest {
 
         Debug.initialise(DebugOutputSystemOut())
         AbstractClient.devMode = false
-        logger.loggingContext.clear()
+        logger.clearContext()
+        MDC.clear()
     }
 
     @AfterEach
     fun afterEachTest() {
         if (!checkedForExceptions) {
             val errors = getErrorsLogged()
+
             if (errors.isNotEmpty()) {
                 fail(
-                    "Unexpected error(s) were logged during test: ${errors.map { it.getThrowableStr() } }"
+                    "Unexpected error(s) were logged during test: ${errors.map { it.errorObject()?.let(::extractStackTrace) } }"
                 )
             }
             errorLogged() shouldBe false
@@ -50,25 +56,24 @@ open class AbstractTest {
         purgeWindows()
     }
 
-    fun getLastLog() = flushAndGetLogRecords().last()
+    fun getLastLog() = getLogRecords().last()
 
-    fun verifyLog(code: String, severity: Severity = Severity.INFO): LogRecord {
-        val record =
-            flushAndGetLogRecords().findLast { it.loggingCode == code && it.severity == severity }
+    fun verifyLog(code: String, level: Level = Level.INFO): ILoggingEvent {
+        val record = getLogRecords().findLast { it.loggingCode == code && it.level == level }
         record.shouldNotBeNull()
 
-        if (severity == Severity.ERROR) {
+        if (level == Level.ERROR) {
             checkedForExceptions = true
         }
 
         return record
     }
 
-    protected fun findLog(code: String, severity: Severity = Severity.INFO) =
-        getLogRecordsSoFar().findLast { it.loggingCode == code && it.severity == severity }
+    protected fun findLog(code: String, level: Level = Level.INFO) =
+        getLogRecords().findLast { it.loggingCode == code && it.level == level }
 
     fun verifyNoLogs(code: String) {
-        flushAndGetLogRecords().any { it.loggingCode == code } shouldBe false
+        getLogRecords().any { it.loggingCode == code } shouldBe false
     }
 
     fun errorLogged(): Boolean {
@@ -76,17 +81,11 @@ open class AbstractTest {
         return getErrorsLogged().isNotEmpty()
     }
 
-    private fun getErrorsLogged() = flushAndGetLogRecords().filter { it.severity == Severity.ERROR }
+    private fun getErrorsLogged() = getLogRecords().filter { it.level == Level.ERROR }
 
-    fun getLogRecordsSoFar() = logDestination.logRecords.toList()
-
-    fun flushAndGetLogRecords(): List<LogRecord> {
-        logger.waitUntilLoggingFinished()
-        return logDestination.logRecords.toList()
-    }
+    fun getLogRecords(): List<ILoggingEvent> = listAppender.list
 
     fun clearLogs() {
-        logger.waitUntilLoggingFinished()
-        logDestination.clear()
+        listAppender.list.clear()
     }
 }

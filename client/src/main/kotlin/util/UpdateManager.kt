@@ -9,7 +9,7 @@ import javax.swing.JPanel
 import kong.unirest.Unirest
 import kong.unirest.json.JSONObject
 import kotlin.system.exitProcess
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 /**
  * Automatically check for and download updates using the Github API

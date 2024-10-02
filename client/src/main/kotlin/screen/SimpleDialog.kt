@@ -6,7 +6,7 @@ import java.awt.event.ActionListener
 import javax.swing.JButton
 import javax.swing.JDialog
 import javax.swing.JPanel
-import utils.InjectedThings.logger
+import utils.CoreGlobals.logger
 
 abstract class SimpleDialog : JDialog(), ActionListener {
     protected val panelOkCancel = JPanel()

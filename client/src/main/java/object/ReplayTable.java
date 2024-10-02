@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,7 +28,6 @@ import javax.swing.table.TableRowSorter;
 import screen.ReplayDialog;
 import screen.ReplayFilterPanel;
 import screen.ScreenCache;
-import util.Debug;
 import util.DialogUtil;
 import util.EntropyColour;
 import util.FileUtil;
@@ -41,7 +37,7 @@ import util.ReplayFileUtil;
 import util.ReplayRowWrapper;
 import util.TableUtil;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 public class ReplayTable extends JTable
 						 implements MouseListener,

@@ -5,7 +5,7 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static utils.InjectedThings.logger;
+import static utils.CoreGlobals.logger;
 
 /**
  * Interface used by Entropy Android & Desktop for anything to do with the online session
