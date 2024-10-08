@@ -34,8 +34,14 @@ public class ClientNotificationRunnable implements Runnable
 				response = client.sendSync(notificationXml, true, SO_TIMEOUT_MILLIS, true);
 				
 				//If the thread has stopped due to a d/c, we'll get a null response.
-				if (response != null)
+				if (response == null)
 				{
+					return;
+				}
+
+				if (ClientGlobals.INSTANCE.getWebSocketReceiver().canHandleMessage(response)) {
+					ClientGlobals.INSTANCE.getWebSocketReceiver().receiveMessage(response);
+				} else {
 					client.handleResponse(messageStr, response);
 				}
 			}

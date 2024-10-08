@@ -4,6 +4,7 @@ import http.DevApi
 import http.HealthCheckApi
 import http.HttpClient
 import http.SessionApi
+import http.WebSocketReceiver
 import screen.LoggingConsole
 import screen.LoggingConsoleAppender
 
@@ -16,4 +17,5 @@ object ClientGlobals {
     val devApi = DevApi(httpClient)
     var sessionApi = SessionApi(httpClient)
     var updateManager = UpdateManager()
+    val webSocketReceiver = WebSocketReceiver()
 }

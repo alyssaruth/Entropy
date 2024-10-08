@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.MDC
-import util.AbstractClient
 import util.Debug
 import util.DebugOutputSystemOut
 import utils.CoreGlobals.slf4jLogger
@@ -34,7 +33,6 @@ open class AbstractTest {
         clearAllMocks()
 
         Debug.initialise(DebugOutputSystemOut())
-        AbstractClient.devMode = false
         logger.clearContext()
         MDC.clear()
     }
