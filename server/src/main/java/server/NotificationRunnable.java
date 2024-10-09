@@ -21,18 +21,15 @@ public class NotificationRunnable implements ServerRunnable
 {
 	private static final int MAX_RETRIES = 10;
 	private static final int SLEEP_TIME_MILLIS = 500;
-	
-	private EntropyServer server = null;
-	private Document message = null;
-	private String messageName = null;
+
+	private String message = null;
 	private UserConnection usc = null;
 	private AtomicInteger counter = null;
 	private String socketName = null;
 	private int retries = 0;
 	
-	public NotificationRunnable(EntropyServer server, Document message, UserConnection usc, AtomicInteger counter, String socketName)
+	public NotificationRunnable(String message, UserConnection usc, AtomicInteger counter, String socketName)
 	{
-		this.server = server;
 		this.usc = usc;
 		this.counter = counter;
 		this.socketName = socketName;
@@ -59,7 +56,6 @@ public class NotificationRunnable implements ServerRunnable
 			{
 				//Pick up the first off the queue so we send notifications in the correct order.
 				message = usc.getNextNotificationToSend(socketName);
-				messageName = message.getDocumentElement().getNodeName();
 				
 				//Sync on the wait object so the socket doesn't get replaced while we're doing things with it
 				Object waitObj = usc.getNotificationWaitObject(socketName);
@@ -82,16 +78,15 @@ public class NotificationRunnable implements ServerRunnable
 			Debug.stackTrace("Trying to send notification but there were none queued. Usc: " + usc);
 			return;
 		}
-		
-		String xmlStr = XmlUtil.getStringFromDocument(message);
+
 		NotificationSocket notificationSocket = usc.getNotificationSocket(socketName);
 		if (notificationSocket == null)
 		{
-			Debug.append("Not sending " + messageName + " as NotificationSocket is NULL. Usc: " + usc);
+			Debug.append("Not sending " + socketName + " as NotificationSocket is NULL. Usc: " + usc);
 			return;
 		}
 		
-		String encryptedXmlStr = EncryptionUtil.encrypt(xmlStr, usc.getSymmetricKey());
+		String encryptedXmlStr = EncryptionUtil.encrypt(message, usc.getSymmetricKey());
 		Throwable t = notificationSocket.sendMessageViaSocket(encryptedXmlStr);
 		if (t != null)
 		{
@@ -99,7 +94,7 @@ public class NotificationRunnable implements ServerRunnable
 			{
 				retries++;
 				
-				String debugStr = "Caught " + t + " sending " + messageName + " to usc " + usc;
+				String debugStr = "Caught " + t + " sending " + message + " to usc " + usc;
 				debugStr += ", will retry (" + retries + "/" + MAX_RETRIES + ")";
 				Debug.append(debugStr);
 				
@@ -109,7 +104,7 @@ public class NotificationRunnable implements ServerRunnable
 			}
 			else
 			{
-				String debugStr = "Failed to send " + messageName + " to usc " + usc;
+				String debugStr = "Failed to send " + message + " to usc " + usc;
 				if (retries > 0)
 				{
 					debugStr += ". Retried " + retries + " times";
@@ -175,19 +170,19 @@ public class NotificationRunnable implements ServerRunnable
 	@Override
 	public String getDetails()
 	{
-		String message = "Sending " + messageName + " on " + socketName;
-		if (messageName == null)
+		String detailsMessage = "Sending on " + socketName;
+		if (message == null)
 		{
 			int size = usc.getNotificationQueueSize(socketName);
-			message = "Waiting to pick up from " + socketName + " queue of size " + size;
+			detailsMessage = "Waiting to pick up from " + socketName + " queue of size " + size;
 		}
 		
 		if (retries > 0)
 		{
-			message += ". Retries: " + retries + "/" + MAX_RETRIES;
+			detailsMessage += ". Retries: " + retries + "/" + MAX_RETRIES;
 		}
 		
-		return message;
+		return detailsMessage;
 	}
 
 	@Override

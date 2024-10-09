@@ -3,6 +3,7 @@ package http
 import http.dto.ClientMessage
 import http.dto.LobbyResponse
 import kong.unirest.JsonObjectMapper
+import screen.ScreenCache
 import utils.CoreGlobals.logger
 
 class WebSocketReceiver {
@@ -30,5 +31,7 @@ class WebSocketReceiver {
     private fun deserializeClientMessage(rawMessage: String): ClientMessage =
         jsonObjectMapper.readValue(rawMessage, ClientMessage::class.java)
 
-    private fun handleLobbyResponse(clientMessage: LobbyResponse) {}
+    private fun handleLobbyResponse(clientMessage: LobbyResponse) {
+        ScreenCache.getEntropyLobby().syncLobby(clientMessage)
+    }
 }

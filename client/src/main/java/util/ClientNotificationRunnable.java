@@ -39,6 +39,11 @@ public class ClientNotificationRunnable implements Runnable
 					return;
 				}
 
+				response = EncryptionUtil.decrypt(response, MessageUtil.symmetricKey);
+				if (response == null) {
+					throw new Throwable("Failed to decrypt response. Server may not be genuine.");
+				}
+
 				if (ClientGlobals.INSTANCE.getWebSocketReceiver().canHandleMessage(response)) {
 					ClientGlobals.INSTANCE.getWebSocketReceiver().receiveMessage(response);
 				} else {

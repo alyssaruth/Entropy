@@ -17,14 +17,14 @@ import util.ServerGlobals
 
 class SessionService(
     private val sessionStore: Store<Session>,
-    private val uscStore: Store<UserConnection>
+    private val uscStore: Store<UserConnection>,
 ) {
     fun beginSession(request: BeginSessionRequest, ip: String): BeginSessionResponse {
         if (request.apiVersion > OnlineConstants.API_VERSION) {
             throw ClientException(
                 HttpStatusCode.BadRequest,
                 INVALID_API_VERSION,
-                "API Version is too high: ${request.apiVersion} > ${OnlineConstants.API_VERSION}"
+                "API Version is too high: ${request.apiVersion} > ${OnlineConstants.API_VERSION}",
             )
         }
 
@@ -32,7 +32,7 @@ class SessionService(
             throw ClientException(
                 HttpStatusCode.BadRequest,
                 UPDATE_REQUIRED,
-                "API Version is out of date: ${request.apiVersion} < ${OnlineConstants.API_VERSION}"
+                "API Version is out of date: ${request.apiVersion} < ${OnlineConstants.API_VERSION}",
             )
         }
 
@@ -52,7 +52,7 @@ class SessionService(
         val usc = UserConnection(ip, LegacyConstants.SYMMETRIC_KEY, name)
         usc.setLastActiveNow()
         uscStore.put(ip, usc)
-        ServerGlobals.server.lobbyChanged(usc)
+        ServerGlobals.lobbyService.lobbyChanged(usc)
 
         return BeginSessionResponse(session.name, session.id)
     }
@@ -60,7 +60,7 @@ class SessionService(
     private tailrec fun ensureUnique(
         requestedName: String,
         currentNames: List<String>,
-        suffix: Int = 1
+        suffix: Int = 1,
     ): String {
         val nameToCheck = if (suffix > 1) "$requestedName $suffix" else requestedName
 

@@ -33,6 +33,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import http.dto.LobbyResponse;
+import http.dto.RoomSummary;
 import object.OnlineUsername;
 import object.RoomTable;
 import object.RoomWrapper;
@@ -62,7 +64,7 @@ public class EntropyLobby extends JFrame
 	
 	//Declaring these as 'Map' to fix obscure Java8 bug
 	private Map<String, GameRoom> hmGameRoomByRoomName = new ConcurrentHashMap<>();
-	private Map<String, RoomWrapper> hmRoomByRoomName = new ConcurrentHashMap<>();
+	private Map<String, RoomSummary> hmRoomByRoomName = new ConcurrentHashMap<>();
 	
 	private DefaultListModel<OnlineUsername> usernamesModel = new DefaultListModel<>();
 	private UsernameRenderer usernameRenderer = new UsernameRenderer();
@@ -227,7 +229,7 @@ public class EntropyLobby extends JFrame
 		return statsPanel;
 	}
 	
-	public RoomWrapper getRoomForName(String roomName)
+	public RoomSummary getRoomForName(String roomName)
 	{
 		return hmRoomByRoomName.get(roomName);
 	}
@@ -237,7 +239,7 @@ public class EntropyLobby extends JFrame
 		return hmGameRoomByRoomName.get(roomName);
 	}
 	
-	public void addOrUpdateRoom(String roomName, RoomWrapper room)
+	public void addOrUpdateRoom(String roomName, RoomSummary room)
 	{
 		hmRoomByRoomName.put(roomName, room);
 	}
@@ -250,6 +252,14 @@ public class EntropyLobby extends JFrame
 		hmGameRoomByRoomName.put(roomName, gameRoom);
 		
 		return gameRoom;
+	}
+
+	public void syncLobby(LobbyResponse response)
+	{
+		SwingUtilities.invokeLater(() -> {
+            roomTable.synchroniseRooms(response.getRooms());
+            synchUsernames(response.getUsers());
+        });
 	}
 	
 	public void synchroniseRooms(final List<RoomWrapper> rooms)
@@ -308,20 +318,6 @@ public class EntropyLobby extends JFrame
 				}
 			}
 		}
-	}
-	
-	public void synchUsernamesInAwtThread(final List<OnlineUsername> usernamesFromServer)
-	{
-		Runnable usernameSynchRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				synchUsernames(usernamesFromServer);
-			}
-		};
-		
-		SwingUtilities.invokeLater(usernameSynchRunnable);
 	}
 	
 	private void synchUsernames(List<OnlineUsername> usernamesFromServer)

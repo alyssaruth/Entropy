@@ -157,7 +157,7 @@ public final class EntropyServer implements OnlineConstants {
             return;
         }
 
-        lobbyChanged();
+        ServerGlobals.lobbyService.lobbyChanged();
     }
 
     private void resetLobby() {
@@ -204,7 +204,7 @@ public final class EntropyServer implements OnlineConstants {
             lobbyMessages.add(message);
             List<UserConnection> usersToNotify = ServerGlobals.INSTANCE.getUscStore().getAll();
 
-            Document chatMessage = XmlBuilderServer.getChatNotification(name, message);
+            String chatMessage = XmlBuilderServer.getChatNotification(name, message);
             sendViaNotificationSocket(usersToNotify, chatMessage, XmlConstants.SOCKET_NAME_CHAT);
         } else {
             Room room = hmRoomByName.get(name);
@@ -212,27 +212,11 @@ public final class EntropyServer implements OnlineConstants {
         }
     }
 
-    public void lobbyChanged() {
-        lobbyChanged(null);
-    }
-
-    public void lobbyChanged(UserConnection userToExclude) {
-        List<UserConnection> usersToNotify = new ArrayList<>(ServerGlobals.INSTANCE.getUscStore().getAll());
-        if (userToExclude != null) {
-            usersToNotify.remove(userToExclude);
-        }
-
-        Document lobbyMessage = XmlUtil.factoryNewDocument();
-        XmlBuilderServer.appendLobbyResponse(lobbyMessage, this);
-
-        sendViaNotificationSocket(usersToNotify, lobbyMessage, XmlConstants.SOCKET_NAME_LOBBY);
-    }
-
-    private void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName) {
+    public void sendViaNotificationSocket(List<UserConnection> uscs, String message, String socketName) {
         sendViaNotificationSocket(uscs, message, socketName, false);
     }
 
-    public void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName, boolean blocking) {
+    public void sendViaNotificationSocket(List<UserConnection> uscs, String message, String socketName, boolean blocking) {
         AtomicInteger counter = null;
         if (blocking) {
             int size = uscs.size();
@@ -242,7 +226,7 @@ public final class EntropyServer implements OnlineConstants {
         sendViaNotificationSocket(uscs, message, socketName, counter);
     }
 
-    private void sendViaNotificationSocket(List<UserConnection> uscs, Document message, String socketName, AtomicInteger counter) {
+    private void sendViaNotificationSocket(List<UserConnection> uscs, String message, String socketName, AtomicInteger counter) {
         int size = uscs.size();
         for (int i = 0; i < size; i++) {
             UserConnection usc = uscs.get(i);
@@ -326,7 +310,7 @@ public final class EntropyServer implements OnlineConstants {
 
         if (newRoom != null) {
             newRoom.setIsCopy(true);
-            lobbyChanged();
+            ServerGlobals.lobbyService.lobbyChanged();
         }
     }
 

@@ -79,7 +79,7 @@ public final class Room extends RoomWrapper
 			observers.remove(username);
 			
 			notifyAllPlayersOfPlayerChange(username, false);
-			server.lobbyChanged();
+			ServerGlobals.lobbyService.lobbyChanged();
 			return playerNumber;
 		}
 	}
@@ -147,11 +147,11 @@ public final class Room extends RoomWrapper
 	
 	private void notifyAllPlayersOfPlayerChange(String userToExclude, boolean blocking)
 	{
-		Document notification = XmlBuilderServer.getPlayerNotification(this);
+		String notification = XmlBuilderServer.getPlayerNotification(this);
 		notifyAllUsersViaGameSocket(notification, userToExclude, blocking);
 	}
 	
-	private void notifyAllUsersViaGameSocket(Document notification, String userToExclude, boolean blocking)
+	private void notifyAllUsersViaGameSocket(String notification, String userToExclude, boolean blocking)
 	{
 		HashSet<String> usersToNotify = getAllUsersInRoom();
 		if (userToExclude != null)
@@ -180,7 +180,7 @@ public final class Room extends RoomWrapper
 		initialiseGame();
 		
 		//Notify everyone that the game is over now we've finished setting up
-		Document notification = XmlBuilderServer.factoryGameOverNotification(this, winningPlayer);
+		String notification = XmlBuilderServer.factoryGameOverNotification(this, winningPlayer);
 		notifyAllUsersViaGameSocket(notification, null, false);
 	}
 	
@@ -203,7 +203,7 @@ public final class Room extends RoomWrapper
 		hmFormerPlayerByPlayerNumber.clear();
 		if (fireLobbyChanged)
 		{
-			server.lobbyChanged();
+			ServerGlobals.lobbyService.lobbyChanged();
 		}
 	}
 	
@@ -218,7 +218,7 @@ public final class Room extends RoomWrapper
 			}
 			
 			removePlayer(username, false);
-			server.lobbyChanged();
+			ServerGlobals.lobbyService.lobbyChanged();
 		}
 	}
 	public void removeFromObservers(String username)
@@ -226,7 +226,7 @@ public final class Room extends RoomWrapper
 		boolean removed = observers.remove(username);
 		if (removed)
 		{
-			server.lobbyChanged();
+			ServerGlobals.lobbyService.lobbyChanged();
 		}
 		
 		clearChatIfEmpty();
@@ -342,7 +342,7 @@ public final class Room extends RoomWrapper
 			
 			currentGame.setRoundNumber(currentRoundNumber + 1);
 			
-			Document newRoundNotification = XmlBuilderServer.factoryNewRoundNotification(this, nextRoundDetails, losingPlayerNumber);
+			String newRoundNotification = XmlBuilderServer.factoryNewRoundNotification(this, nextRoundDetails, losingPlayerNumber);
 			notifyAllUsersViaGameSocket(newRoundNotification, null, false);
 		}
 	}
@@ -414,8 +414,9 @@ public final class Room extends RoomWrapper
 				
 				//Push out a stats notification
 				Document statsNotification = XmlBuilderServer.factoryStatisticsNotification(player);
+				String notificationString = XmlUtil.getStringFromDocument(statsNotification);
 				UserConnection usc = ServerGlobals.INSTANCE.getUscStore().findForName(player);
-				usc.sendNotificationInWorkerPool(statsNotification, server, XmlConstants.SOCKET_NAME_LOBBY, null);
+				usc.sendNotificationInWorkerPool(notificationString, server, XmlConstants.SOCKET_NAME_LOBBY, null);
 			}
 		}
 	}
@@ -527,7 +528,7 @@ public final class Room extends RoomWrapper
 		if (added)
 		{
 			//Notify all other players
-			Document bidNotification = XmlBuilderServer.getBidNotification(roomName, playerNumber, newBid);
+			String bidNotification = XmlBuilderServer.getBidNotification(roomName, playerNumber, newBid);
 			notifyAllUsersViaGameSocket(bidNotification, null, false);
 		}
 		
@@ -543,7 +544,7 @@ public final class Room extends RoomWrapper
 		
 		chatHistory.add(message);
 		
-		Document chatMessage = XmlBuilderServer.getChatNotification(roomName, message);
+		String chatMessage = XmlBuilderServer.getChatNotification(roomName, message);
 		HashSet<String> users = getAllUsersInRoom();
 		List<UserConnection> uscs = ServerGlobals.INSTANCE.getUscStore().getAllForNames(users);
 		server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false);

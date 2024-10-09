@@ -22,26 +22,20 @@ import static utils.CoreGlobals.logger;
 
 public class ResponseHandler implements XmlConstants
 {
-	public static void handleResponse(String messageStr, String responseStr) throws Throwable
-	{
-		EntropyLobby lobby = ScreenCache.getEntropyLobby();
-		
-		SecretKey symmetricKeyForDecryption = MessageUtil.symmetricKey;
-		if (symmetricKeyForDecryption == null)
-		{
-			Debug.stackTrace("Handling server response with no symmetricKey set");
-		}
-		
-		responseStr = EncryptionUtil.decrypt(responseStr, symmetricKeyForDecryption);
-		if (responseStr == null)
-		{
+	public static void handleResponse(String messageStr, String responseStr) throws Throwable {
+		var decryptedResponseStr = EncryptionUtil.decrypt(responseStr, MessageUtil.symmetricKey);
+		if (decryptedResponseStr == null) {
 			throw new Throwable("Failed to decrypt response. Server may not be genuine.");
 		}
-		
+
+		handleDecryptedResponse(messageStr, responseStr);
+	}
+	public static void handleDecryptedResponse(String messageStr, String responseStr) throws Throwable {
 		Document response = XmlUtil.getDocumentFromXmlString(responseStr);
 		
 		Element root = response.getDocumentElement();
 		String responseName = root.getNodeName();
+		EntropyLobby lobby = ScreenCache.getEntropyLobby();
 		
 		if (responseName.equals(RESPONSE_TAG_KICK_OFF))
 		{
@@ -56,10 +50,6 @@ public class ResponseHandler implements XmlConstants
 		else if (responseName.equals(RESPONSE_TAG_CHAT_NOTIFICATION))
 		{
 			handleChatResponse(root, lobby);
-		}
-		else if (responseName.equals(RESPONSE_TAG_LOBBY_NOTIFICATION))
-		{
-			handleLobbyResponse(root, lobby);
 		}
 		else if (responseName.equals(RESPONSE_TAG_JOIN_ROOM_RESPONSE))
 		{

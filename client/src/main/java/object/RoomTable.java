@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import http.dto.RoomSummary;
 import online.screen.EntropyLobby;
 import online.screen.GameRoom;
 import online.util.XmlBuilderClient;
@@ -125,7 +126,7 @@ public final class RoomTable extends JTable
 		setRowSorter(sorter);
 	}
 	
-	public void synchroniseRooms(List<RoomWrapper> rooms)
+	public void synchroniseRooms(List<RoomSummary> rooms)
 	{
 		addNewRooms(rooms);
 		updateRooms(rooms);
@@ -134,12 +135,12 @@ public final class RoomTable extends JTable
 		getRowSorter().allRowsChanged();
 	}
 	
-	private void addNewRooms(List<RoomWrapper> rooms)
+	private void addNewRooms(List<RoomSummary> rooms)
 	{
 		for (int i=0; i<rooms.size(); i++)
 		{
-			RoomWrapper room = rooms.get(i);
-			String name = room.getRoomName();
+			RoomSummary room = rooms.get(i);
+			String name = room.getName();
 			
 			if (!modelContainsRoom(name))
 			{

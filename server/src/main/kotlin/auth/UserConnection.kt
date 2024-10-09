@@ -3,7 +3,6 @@ package auth
 import java.util.concurrent.atomic.AtomicInteger
 import javax.crypto.SecretKey
 import `object`.NotificationSocket
-import org.w3c.dom.Document
 import server.EntropyServer
 import server.NotificationRunnable
 import util.ColourGenerator
@@ -16,8 +15,8 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, va
     var lastActive: Long = -1
         private set
 
-    private val hmNotificationQueueBySocketName = HashMap<String, ArrayList<Document>>()
-    private val hmSocketBySocketName = HashMap<String, NotificationSocket?>()
+    private val hmNotificationQueueBySocketName = HashMap<String, MutableList<String>>()
+    private val hmSocketBySocketName = HashMap<String, NotificationSocket>()
     private val hmWaitObjBySocketName = HashMap<String, Object>()
 
     /** When a connection is initiated */
@@ -46,10 +45,10 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, va
         val notificationWaitObj = hmWaitObjBySocketName.getValue(socketType)
 
         synchronized(notificationWaitObj) {
-            val existingSocket = hmSocketBySocketName[socketType]
+            val existingSocket = hmSocketBySocketName.remove(socketType)
             existingSocket?.closeResources()
 
-            hmSocketBySocketName[socketType] = socket
+            socket?.let { hmSocketBySocketName[socketType] = socket }
             notificationWaitObj.notify()
         }
     }
@@ -62,26 +61,25 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, va
         "$name @ $ipAddress, ${ EncryptionUtil.convertSecretKeyToString(symmetricKey)}"
 
     fun sendNotificationInWorkerPool(
-        message: Document?,
+        message: String?,
         server: EntropyServer,
         socketName: String?,
-        counter: AtomicInteger?
+        counter: AtomicInteger?,
     ) {
-        val runnable = NotificationRunnable(server, message, this, counter, socketName)
+        val runnable = NotificationRunnable(message, this, counter, socketName)
         server.executeInWorkerPool(runnable)
     }
 
-    fun addNotificationToQueue(socketType: String, message: Document) {
-        val notificationQueue = hmNotificationQueueBySocketName.getValue(socketType)
-        notificationQueue.add(message)
+    fun addNotificationToQueue(socketType: String, message: String) {
+        getNotificationQueue(socketType).add(message)
     }
 
-    fun getNotificationQueue(socketName: String): ArrayList<Document> {
-        return hmNotificationQueueBySocketName[socketName]!!
+    fun getNotificationQueue(socketName: String): MutableList<String> {
+        return hmNotificationQueueBySocketName.getValue(socketName)
     }
 
-    fun getNextNotificationToSend(socketType: String): Document? {
-        val notificationQueue = hmNotificationQueueBySocketName.getValue(socketType)
+    fun getNextNotificationToSend(socketType: String): String? {
+        val notificationQueue = getNotificationQueue(socketType)
         val size = notificationQueue.size
         return if (size > 0) {
             notificationQueue.removeAt(0)
@@ -90,10 +88,7 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, va
         }
     }
 
-    fun getNotificationQueueSize(socketName: String): Int {
-        val notificationQueue = hmNotificationQueueBySocketName.getValue(socketName)
-        return notificationQueue.size
-    }
+    fun getNotificationQueueSize(socketName: String) = getNotificationQueue(socketName).size
 
     fun waitForNewNotificationSocket(socketName: String) {
         val waitObj = hmWaitObjBySocketName.getValue(socketName)

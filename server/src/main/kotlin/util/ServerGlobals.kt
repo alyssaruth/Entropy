@@ -3,6 +3,7 @@ package util
 import auth.Session
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
+import routes.lobby.LobbyService
 import server.EntropyServer
 import store.MemoryUserConnectionStore
 import store.SessionStore
@@ -25,8 +26,10 @@ object ServerGlobals {
             MAX_POOL_SIZE,
             KEEP_ALIVE_TIME.toLong(),
             TimeUnit.SECONDS,
-            ArrayBlockingQueue(MAX_QUEUE_SIZE)
+            ArrayBlockingQueue(MAX_QUEUE_SIZE),
         )
 
     val server: EntropyServer = EntropyServer()
+
+    @JvmField val lobbyService: LobbyService = LobbyService()
 }
