@@ -25,7 +25,7 @@ public class ResponseHandler implements XmlConstants
 			throw new Throwable("Failed to decrypt response. Server may not be genuine.");
 		}
 
-		handleDecryptedResponse(messageStr, responseStr);
+		handleDecryptedResponse(messageStr, decryptedResponseStr);
 	}
 	public static void handleDecryptedResponse(String messageStr, String responseStr) throws Throwable {
 		Document response = XmlUtil.getDocumentFromXmlString(responseStr);

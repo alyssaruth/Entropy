@@ -7,7 +7,7 @@ import http.ClientMessageType
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.EXISTING_PROPERTY,
-    property = "type",
+    property = "messageType",
 )
 @JsonSubTypes(JsonSubTypes.Type(value = LobbyResponse::class, name = "LOBBY"))
 sealed class ClientMessage {

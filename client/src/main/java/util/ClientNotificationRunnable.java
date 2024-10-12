@@ -1,5 +1,6 @@
 package util;
 
+import online.util.ResponseHandler;
 import org.w3c.dom.Document;
 
 public class ClientNotificationRunnable implements Runnable
@@ -47,7 +48,7 @@ public class ClientNotificationRunnable implements Runnable
 				if (ClientGlobals.INSTANCE.getWebSocketReceiver().canHandleMessage(response)) {
 					ClientGlobals.INSTANCE.getWebSocketReceiver().receiveMessage(response);
 				} else {
-					client.handleResponse(messageStr, response);
+					ResponseHandler.handleDecryptedResponse(messageStr, response);
 				}
 			}
 			catch (Throwable t)

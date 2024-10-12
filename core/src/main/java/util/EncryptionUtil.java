@@ -38,21 +38,12 @@ public class EncryptionUtil
 	
 	public static String encrypt(String messageString, Key key)
 	{
-		return encrypt(messageString, key, false);
-	}
-	public static String encrypt(String messageString, Key key, boolean asymmetric)
-	{
 		String encryptedString = null;
 		try
 		{
 			byte[] messageBytes = messageString.getBytes();
-			String algorithm = ALGORITHM_AES_ECB_PKCS5PADDING;
-			if (asymmetric)
-			{
-				algorithm = ALGORITHM_RSA_ECB_PKCS1PADDING;
-			}
 			
-			Cipher cipher = Cipher.getInstance(algorithm);
+			Cipher cipher = Cipher.getInstance(ALGORITHM_AES_ECB_PKCS5PADDING);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			byte[] cipherData = cipher.doFinal(messageBytes);
 			encryptedString = base64Interface.encode(cipherData);
@@ -77,21 +68,11 @@ public class EncryptionUtil
 
 	public static String decrypt(String encryptedMessage, Key key)
 	{
-		return decrypt(encryptedMessage, key, false);
-	}
-	public static String decrypt(String encryptedMessage, Key key, boolean asymmetric)
-	{
 		String messageString = null;
 		try
 		{
 			byte[] cipherData = base64Interface.decode(encryptedMessage);
-			String algorithm = ALGORITHM_AES_ECB_PKCS5PADDING;
-			if (asymmetric)
-			{
-				algorithm = ALGORITHM_RSA_ECB_PKCS1PADDING;
-			}
-			
-			Cipher cipher = Cipher.getInstance(algorithm);
+			Cipher cipher = Cipher.getInstance(ALGORITHM_AES_ECB_PKCS5PADDING);
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			byte[] messageBytes = cipher.doFinal(cipherData);
 			messageString = new String(messageBytes);
@@ -103,7 +84,6 @@ public class EncryptionUtil
 		
 		if (messageString != null)
 		{
-			messageString = messageString.intern();
 			return messageString.intern();
 		}
 		
