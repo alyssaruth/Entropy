@@ -3,8 +3,6 @@ package online.util;
 
 import object.Bid;
 import object.OnlineMessage;
-import object.OnlineUsername;
-import object.RoomWrapper;
 import online.screen.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,7 +10,6 @@ import org.w3c.dom.NodeList;
 import screen.ScreenCache;
 import util.*;
 
-import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,84 +165,7 @@ public class ResponseHandler implements XmlConstants
 		
 		return new OnlineMessage(colour, messageText, username);
 	}
-	
-	private static void handleLobbyResponse(Element root, EntropyLobby lobby)
-	{
-		List<RoomWrapper> rooms = new ArrayList<>();
-		
-		NodeList children = root.getElementsByTagName("Room");
-		int length = children.getLength();
-		
-		for (int i=0; i<length; i++)
-		{
-			Element child = (Element)children.item(i);
-			
-			String name = child.getAttribute("RoomName");
-			int players = XmlUtil.getAttributeInt(child, "Players");
-			int gameMode = XmlUtil.getAttributeInt(child, "GameMode");
-			int jokerQuantity = XmlUtil.getAttributeInt(child, "JokerQuantity");
-			int jokerValue = XmlUtil.getAttributeInt(child, "JokerValue");
-			boolean includeMoons = XmlUtil.getAttributeBoolean(child, "IncludeMoons");
-			boolean includeStars = XmlUtil.getAttributeBoolean(child, "IncludeStars");
-			boolean negativeJacks = XmlUtil.getAttributeBoolean(child, "NegativeJacks");
-			boolean illegalAllowed = XmlUtil.getAttributeBoolean(child, "IllegalAllowed");
-			boolean cardReveal = XmlUtil.getAttributeBoolean(child, "CardReveal");
-			
-			NodeList currentPlayers = child.getElementsByTagName("Player");
-			List<String> currentPlayerList = factoryListForNodeList(currentPlayers);
-			
-			NodeList observers = child.getElementsByTagName("Observer");
-			List<String> observerList = factoryListForNodeList(observers);
-			
-			RoomWrapper room = new RoomWrapper(name, gameMode, players);
-			room.setCurrentPlayers(currentPlayerList);
-			room.setObservers(observerList);
-			room.setJokerQuantity(jokerQuantity);
-			room.setJokerValue(jokerValue);
-			room.setIncludeMoons(includeMoons);
-			room.setIncludeStars(includeStars);
-			room.setNegativeJacks(negativeJacks);
-			room.setIllegalAllowed(illegalAllowed);
-			room.setCardReveal(cardReveal);
-			rooms.add(room);
-		}
-		
-		lobby.synchroniseRooms(rooms);
-		
-		NodeList usernameChildren = root.getElementsByTagName("OnlineUser");
-		int usernameLength = usernameChildren.getLength();
-		
-		List<OnlineUsername> serverUsernames = new ArrayList<>();
-		for (int i=0; i<usernameLength; i++)
-		{
-			Element child = (Element)usernameChildren.item(i);
-			String username = child.getAttribute("Username");
-			int achievements = XmlUtil.getAttributeInt(child, "Achievements");
-			String colour = child.getAttribute("Colour");
-			boolean mobile = XmlUtil.getAttributeBoolean(child, "Mobile");
-			
-			OnlineUsername onlineUser = new OnlineUsername(username, colour, achievements, mobile);
-			serverUsernames.add(onlineUser);
-		}
-		
-		lobby.synchUsernamesInAwtThread(serverUsernames);
-	}
-	
-	private static List<String> factoryListForNodeList(NodeList list)
-	{
-		List<String> returnList = new ArrayList<>();
-		
-		int playersLength = list.getLength();
-		for (int j=0; j<playersLength; j++)
-		{
-			Element player = (Element)list.item(j);
-			String playerName = player.getAttribute("Username");
-			returnList.add(playerName);
-		}
-		
-		return returnList;
-	}
-	
+
 	private static void handleJoinRoomAck(final Element root, final EntropyLobby lobby)
 	{
 		String username = lobby.getUsername();

@@ -14,9 +14,9 @@ public class EntropyRoom extends GameRoom
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
-	public EntropyRoom(String roomName, int mode, int players)
+	public EntropyRoom(String roomName, int players)
 	{
-		super(roomName, mode, players);
+		super(roomName, GameConstants.GAME_MODE_ENTROPY, players);
 		
 		bidPanel = new EntropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);

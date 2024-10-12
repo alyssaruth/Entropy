@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import utils.CoreGlobals;
 
 public class XmlUtil 
 {
@@ -78,6 +79,7 @@ public class XmlUtil
 		}
 		catch (Throwable t)
 		{
+			CoreGlobals.logger.error("xmlParseError", "Failed to parse XML " + xmlStr, t);
 			return null;
 		}
 	}

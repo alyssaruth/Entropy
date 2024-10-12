@@ -1,12 +1,9 @@
 package object;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import javax.swing.JFrame;
-
-import util.GameConstants;
 
 /**
  * Simple wrapper for a Room.
@@ -44,10 +41,6 @@ public class RoomWrapper extends JFrame
 	public int getMode()
 	{
 		return mode;
-	}
-	public String getModeDesc()
-	{
-		return GameConstants.getGameModeDesc(mode);
 	}
 	public int getPlayers()
 	{
@@ -150,24 +143,6 @@ public class RoomWrapper extends JFrame
 		this.cardReveal = cardReveal;
 	}
 
-	/**
-	 * Used by RoomTable to determine whether to refresh a row
-	 */
-	public boolean isInSync(RoomWrapper other)
-	{
-		if (getCurrentPlayerCount() != other.getCurrentPlayerCount())
-		{
-			return false;
-		}
-		
-		if (getObserverCount() != other.getObserverCount())
-		{
-			return false;
-		}
-		
-		return true;
-	}
-	
 	@Override
 	public String toString()
 	{

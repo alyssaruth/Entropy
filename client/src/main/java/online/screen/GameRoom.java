@@ -1,5 +1,7 @@
 package online.screen;
 
+import game.GameMode;
+import http.dto.RoomSummary;
 import object.*;
 import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
@@ -164,35 +166,32 @@ public abstract class GameRoom extends RoomWrapper
 	private final TransparentPanel panelInfo = new TransparentPanel();
 	private final JTextPane textPaneInfo = new JTextPane();
 	
-	public static GameRoom factoryCreate(RoomWrapper room)
+	public static GameRoom factoryCreate(RoomSummary room)
 	{
 		GameRoom ret = null;
+
+		var settings = room.getGameSettings();
 		
-		String roomName = room.getRoomName();
+		String roomName = room.getName();
 		int players = room.getPlayers();
-		int mode = room.getMode();
+		GameMode mode = settings.getMode();
 		
-		if (mode == GameConstants.GAME_MODE_ENTROPY)
+		if (mode == GameMode.Entropy)
 		{
-			ret = new EntropyRoom(roomName, mode, players);
+			ret = new EntropyRoom(roomName, players);
 		}
-		else if (mode == GameConstants.GAME_MODE_VECTROPY)
+		else if (mode == GameMode.Vectropy)
 		{
-			ret = new VectropyRoom(roomName, mode, players);
-		}
-		else
-		{
-			Debug.stackTrace("Unexpected game mode: " + mode);
-			return ret;
+			ret = new VectropyRoom(roomName, players);
 		}
 		
-		int jokerQuantity = room.getJokerQuantity();
-		int jokerValue = room.getJokerValue();
-		boolean includeMoons = room.getIncludeMoons();
-		boolean includeStars = room.getIncludeStars();
-		boolean illegalAllowed = room.getIllegalAllowed();
-		boolean negativeJacks = room.getNegativeJacks();
-		boolean cardReveal = room.getCardReveal();
+		int jokerQuantity = settings.getJokerQuantity();
+		int jokerValue = settings.getJokerValue();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
+		boolean illegalAllowed = settings.getIllegalAllowed();
+		boolean negativeJacks = settings.getNegativeJacks();
+		boolean cardReveal = settings.getCardReveal();
 		
 		ret.setJokerQuantity(jokerQuantity);
 		ret.setJokerValue(jokerValue);

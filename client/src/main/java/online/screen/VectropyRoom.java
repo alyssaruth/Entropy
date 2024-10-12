@@ -13,9 +13,9 @@ public class VectropyRoom extends GameRoom
 {
 	private boolean earnedMathematician = false;
 	
-	public VectropyRoom(String roomName, int mode, int players)
+	public VectropyRoom(String roomName, int players)
 	{
-		super(roomName, mode, players);
+		super(roomName, GameConstants.GAME_MODE_VECTROPY, players);
 		
 		bidPanel = new VectropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);

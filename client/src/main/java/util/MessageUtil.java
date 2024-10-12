@@ -81,7 +81,7 @@ public class MessageUtil implements OnlineConstants
 		AbstractClient.getInstance().finishServerCommunication();
 
 		logger.error("messageFailure",
-				"Failed to send message",
+				"Failed to send message: " + messageStr,
 				t,
 				new Pair<>("message", messageStr),
 				new Pair<>("previousStack", clientStackTrace));

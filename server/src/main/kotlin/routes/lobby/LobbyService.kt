@@ -45,6 +45,7 @@ class LobbyService {
                 includeStars,
                 negativeJacks,
                 cardReveal,
+                illegalAllowed
             ),
             players,
             currentPlayerCount,

@@ -8,4 +8,5 @@ data class GameSettings(
     val includeStars: Boolean,
     val negativeJacks: Boolean,
     val cardReveal: Boolean,
+    val illegalAllowed: Boolean
 )

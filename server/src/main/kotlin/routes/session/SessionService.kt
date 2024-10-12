@@ -54,7 +54,7 @@ class SessionService(
         uscStore.put(ip, usc)
         ServerGlobals.lobbyService.lobbyChanged(usc)
 
-        return BeginSessionResponse(session.name, session.id)
+        return BeginSessionResponse(session.name, session.id, ServerGlobals.lobbyService.getLobby())
     }
 
     private tailrec fun ensureUnique(

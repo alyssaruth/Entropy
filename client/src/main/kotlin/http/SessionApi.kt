@@ -34,7 +34,7 @@ class SessionApi(private val httpClient: HttpClient) {
         lobby.username = response.name
         lobby.setLocationRelativeTo(null)
         lobby.isVisible = true
-        lobby.init()
+        lobby.init(response.lobby)
     }
 
     private fun handleBeginSessionFailure(response: FailureResponse<*>) =

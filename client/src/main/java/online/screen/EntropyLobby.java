@@ -1,10 +1,22 @@
 package online.screen;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
+import game.GameMode;
+import http.dto.LobbyResponse;
+import http.dto.OnlineUser;
+import http.dto.RoomSummary;
+import object.RoomTable;
+import online.util.HeartbeatRunnable;
+import online.util.XmlBuilderClient;
+import online.util.XmlBuilderDesktop;
+import org.w3c.dom.Document;
+import screen.AchievementsDialog;
+import screen.ScreenCache;
+import util.*;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -14,47 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-
-import http.dto.LobbyResponse;
-import http.dto.RoomSummary;
-import object.OnlineUsername;
-import object.RoomTable;
-import object.RoomWrapper;
-import online.util.HeartbeatRunnable;
-import online.util.XmlBuilderClient;
-import online.util.XmlBuilderDesktop;
-
-import org.w3c.dom.Document;
-
-import screen.AchievementsDialog;
-import screen.ScreenCache;
-import util.AbstractClient;
-import util.AchievementsUtil;
-import util.DialogUtil;
-import util.EntropyColour;
-import util.GameConstants;
-import util.MessageSenderParams;
-import util.MessageUtil;
-import util.StringUtil;
-import util.XmlUtil;
 
 public class EntropyLobby extends JFrame
 						  implements WindowListener,
@@ -66,7 +37,7 @@ public class EntropyLobby extends JFrame
 	private Map<String, GameRoom> hmGameRoomByRoomName = new ConcurrentHashMap<>();
 	private Map<String, RoomSummary> hmRoomByRoomName = new ConcurrentHashMap<>();
 	
-	private DefaultListModel<OnlineUsername> usernamesModel = new DefaultListModel<>();
+	private DefaultListModel<OnlineUser> usernamesModel = new DefaultListModel<>();
 	private UsernameRenderer usernameRenderer = new UsernameRenderer();
 	
 	private String username = "";
@@ -149,7 +120,7 @@ public class EntropyLobby extends JFrame
 	
 	private final JScrollPane roomsScrollPane = new JScrollPane();
 	private final JScrollPane usersScrollPane = new JScrollPane();
-	private final JList<OnlineUsername> onlineUserList = new JList<>(usernamesModel);
+	private final JList<OnlineUser> onlineUserList = new JList<>(usernamesModel);
 	private final RoomTable roomTable = new RoomTable(this);
 	private final JPanel rightPanel = new JPanel();
 	private final OnlineStatsPanel statsPanel = new OnlineStatsPanel();
@@ -166,7 +137,7 @@ public class EntropyLobby extends JFrame
 	private final JButton btnSettings = new JButton("");
 	private final OnlineChatPanel chatPanel = new OnlineChatPanel(LOBBY_ID);
 	
-	public void init()
+	public void init(LobbyResponse lobbyResponse)
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -185,6 +156,8 @@ public class EntropyLobby extends JFrame
 				statsPanel.init();
 
 				initChatPanelIfNecessary();
+
+				syncLobbyOnEventThread(lobbyResponse);
 			}
 		});
 		
@@ -244,9 +217,9 @@ public class EntropyLobby extends JFrame
 		hmRoomByRoomName.put(roomName, room);
 	}
 	
-	public GameRoom createGameRoom(RoomWrapper room)
+	public GameRoom createGameRoom(RoomSummary room)
 	{
-		String roomName = room.getRoomName();
+		String roomName = room.getName();
 		GameRoom gameRoom = GameRoom.factoryCreate(room);
 		
 		hmGameRoomByRoomName.put(roomName, gameRoom);
@@ -257,21 +230,13 @@ public class EntropyLobby extends JFrame
 	public void syncLobby(LobbyResponse response)
 	{
 		SwingUtilities.invokeLater(() -> {
-            roomTable.synchroniseRooms(response.getRooms());
-            synchUsernames(response.getUsers());
+			syncLobbyOnEventThread(response);
         });
 	}
-	
-	public void synchroniseRooms(final List<RoomWrapper> rooms)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				roomTable.synchroniseRooms(rooms);
-			}
-		});
+
+	private void syncLobbyOnEventThread(LobbyResponse response) {
+		roomTable.synchroniseRooms(response.getRooms());
+		synchUsernames(response.getUsers());
 	}
 	
 	private boolean otherRoomsAreVisible()
@@ -320,34 +285,21 @@ public class EntropyLobby extends JFrame
 		}
 	}
 	
-	private void synchUsernames(List<OnlineUsername> usernamesFromServer)
+	private void synchUsernames(List<OnlineUser> usernamesFromServer)
 	{
 		initChatPanelIfNecessary();
 		
 		//add any new ones
+		usernamesModel.clear();
+
 		int size = usernamesFromServer.size();
 		for (int i=0; i<size; i++)
 		{
-			OnlineUsername userFromServer = usernamesFromServer.get(i);
+			OnlineUser userFromServer = usernamesFromServer.get(i);
+			usernamesModel.addElement(userFromServer);
 			if (!usernamesModel.contains(userFromServer))
 			{
 				usernamesModel.addElement(userFromServer);
-			}
-			
-			String usernameFromServer = userFromServer.getUsername();
-			if (usernameFromServer.equals(username))
-			{
-				chatPanel.setColour(userFromServer.getColour());
-			}
-		}
-		
-		//strip out any that are no longer on the server
-		for (int i=usernamesModel.getSize()-1; i>=0; i--)
-		{
-			OnlineUsername usernameFromModel = usernamesModel.get(i);
-			if (!usernamesFromServer.contains(usernameFromModel))
-			{
-				usernamesModel.removeElement(usernameFromModel);
 			}
 		}
 		
@@ -403,14 +355,14 @@ public class EntropyLobby extends JFrame
 	private void refreshRoomTable()
 	{
 		boolean includeFull = chckbxShowFull.isSelected();
-		int mode = -1;
+		GameMode mode = null;
 		if (rdbtnEntropy.isSelected())
 		{
-			mode = GameConstants.GAME_MODE_ENTROPY;
+			mode = GameMode.Entropy;
 		}
 		else if (rdbtnVectropy.isSelected())
 		{
-			mode = GameConstants.GAME_MODE_VECTROPY;
+			mode = GameMode.Vectropy;
 		}
 		
 		roomTable.refresh(includeFull, mode);
@@ -481,17 +433,8 @@ public class EntropyLobby extends JFrame
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) 
 		{
-			OnlineUsername username = (OnlineUsername)value;
-			String colour = username.getColour();
-
-			String text = "<html>";
-			text += "<font color=\"";
-			text += colour;
-			text += "\">";
-			text += StringUtil.escapeHtml(username.toString());
-			text += "</font></html>";
-
-			return super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
+			OnlineUser username = (OnlineUser)value;
+			return super.getListCellRendererComponent(list, StringUtil.escapeHtml(username.toString()), index, isSelected, cellHasFocus);
 		}
 	}
 }
