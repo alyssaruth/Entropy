@@ -24,7 +24,6 @@ public interface XmlConstants
 	public static final String SOCKET_NAME_LOBBY					= "Lobby" + SOCKET_NAME_SUFFIX;
 	
 	//Server notifications
-	public static final String RESPONSE_TAG_LOBBY_NOTIFICATION = "LobbyNotification";
 	public static final String RESPONSE_TAG_CHAT_NOTIFICATION = "ChatNotification";
 	public static final String RESPONSE_TAG_PLAYER_NOTIFICATION = "PlayerNotification";
 	public static final String RESPONSE_TAG_BID_NOTIFICATION = "BidNotification";

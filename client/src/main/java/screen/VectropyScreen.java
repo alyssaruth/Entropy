@@ -2,11 +2,11 @@ package screen;
 
 import java.awt.BorderLayout;
 
+import game.GameMode;
 import object.Bid;
 import object.VectropyBid;
 import util.AchievementsUtil;
 import util.Debug;
-import util.GameConstants;
 import util.Registry;
 import util.VectropyUtil;
 
@@ -123,9 +123,9 @@ public class VectropyScreen extends GameScreen
 	}
 
 	@Override
-	public int getGameMode() 
+	public GameMode getGameMode()
 	{
-		return GameConstants.GAME_MODE_VECTROPY;
+		return GameMode.Vectropy;
 	}
 	
 	@Override

@@ -2,7 +2,6 @@ package routes.session
 
 import http.EMPTY_NAME
 import http.INVALID_API_VERSION
-import http.LegacyConstants
 import http.UPDATE_REQUIRED
 import http.dto.BeginSessionRequest
 import io.kotest.assertions.throwables.shouldThrow
@@ -101,7 +100,6 @@ class SessionServiceTest : AbstractTest() {
 
         val usc = uscStore.getAll().only()
         usc.name shouldBe "Alyssa"
-        usc.symmetricKey shouldBe LegacyConstants.SYMMETRIC_KEY
         usc.ipAddress shouldBe "1.2.3.4"
     }
 

@@ -1,19 +1,14 @@
 package util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
+import game.GameMode;
 import object.Bid;
-import object.EntropyBid;
 import object.Player;
-import object.VectropyBid;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import java.util.ArrayList;
 
 public class StrategyParms
 {
-	private int gameMode = -1;
+	private GameMode gameMode = null;
 	private int playerCards = -1;
 	private int opponentOneCards = -1; 
 	private int opponentTwoCards = -1;
@@ -127,11 +122,11 @@ public class StrategyParms
 	{
 		this.lastBid = lastBid;
 	}
-	public int getGameMode()
+	public GameMode getGameMode()
 	{
 		return gameMode;
 	}
-	public void setGameMode(int gameMode)
+	public void setGameMode(GameMode gameMode)
 	{
 		this.gameMode = gameMode;
 	}
@@ -156,60 +151,5 @@ public class StrategyParms
 		
 		ArrayList<String> cardsRevealed = opponent.getRevealedCards();
 		cardsOnShowFromOpponents.addAll(cardsRevealed);
-	}
-	public void setCardsOnShowFromOpponents(ArrayList<String> cardsOnShowFromOpponents)
-	{
-		this.cardsOnShowFromOpponents = cardsOnShowFromOpponents;
-	}
-	
-	public static StrategyParms factoryFromXml(Element root) throws IOException
-	{
-		StrategyParms parms = new StrategyParms();
-		
-		String gameModeDesc = root.getAttribute("GameMode");
-		int gameMode = GameConstants.GAME_MODE_VECTROPY;
-		if (gameModeDesc.equals("Entropy"))
-		{
-			gameMode = GameConstants.GAME_MODE_ENTROPY;
-		}
-		
-		parms.setGameMode(gameMode);
-		parms.setIncludeMoons(XmlUtil.getAttributeBoolean(root, "IncludeMoons"));
-		parms.setIncludeStars(XmlUtil.getAttributeBoolean(root, "IncludeStars"));
-		parms.setJokerQuantity(XmlUtil.getAttributeInt(root, "JokerQuantity"));
-		parms.setJokerValue(XmlUtil.getAttributeInt(root, "JokerValue"));
-		parms.setNegativeJacks(XmlUtil.getAttributeBoolean(root, "NegativeJacks"));
-		parms.setCardReveal(XmlUtil.getAttributeBoolean(root, "ShowCards"));
-		
-		ArrayList<String> opponentCardsOnShow = XmlUtil.getListFromElement(root, "OpponentCardsOnShow", "Card");
-		parms.setCardsOnShowFromOpponents(opponentCardsOnShow);
-		
-		parms.setPlayerCards(XmlUtil.getAttributeInt(root, "TotalCards"));
-		parms.setOpponentOneCards(0);
-		parms.setOpponentTwoCards(0);
-		parms.setOpponentThreeCards(0);
-
-		NodeList bids = root.getElementsByTagName("LastBid");
-		if (bids.getLength() > 0)
-		{
-			Element bidElement = (Element)bids.item(0);
-			Bid lastBid = factoryBidFromXmlTag(bidElement, parms);
-			parms.setLastBid(lastBid);
-		}
-		
-		return parms;
-	}
-	
-	private static Bid factoryBidFromXmlTag(Element bidElement, StrategyParms parms) throws IOException
-	{
-		int gameMode = parms.getGameMode();
-		if (gameMode == GameConstants.GAME_MODE_ENTROPY)
-		{
-			return EntropyBid.factoryFromXmlTag(bidElement);
-		}
-		else
-		{
-			return VectropyBid.factoryFromXmlTag(bidElement, parms.getIncludeMoons(), parms.getIncludeStars());
-		}
 	}
 }

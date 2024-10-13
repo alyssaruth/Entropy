@@ -13,7 +13,11 @@ dependencies {
     implementation("com.jgoodies:jgoodies-forms:1.6.0")
     implementation("com.miglayout:miglayout-swing:5.2")
     implementation("com.konghq:unirest-java:3.14.2")
-    implementation("ch.qos.logback:logback-classic:1.5.8")
+    implementation("ch.qos.logback:logback-classic:${DependencyVersions.LOGBACK}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${DependencyVersions.JACKSON}")
+    implementation(
+        "com.fasterxml.jackson.module:jackson-module-kotlin:${DependencyVersions.JACKSON}"
+    )
     implementation(project(":core"))
     testImplementation(project(":test-core"))
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")

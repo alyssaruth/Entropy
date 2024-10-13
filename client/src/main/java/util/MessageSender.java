@@ -9,8 +9,10 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import kotlin.Pair;
+import online.util.ResponseHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import screen.ScreenCache;
 
 import static utils.CoreGlobals.logger;
 
@@ -19,14 +21,12 @@ public class MessageSender implements Runnable
 	private MessageSenderParams messageParms = null;
 	private String encryptedResponseString = null;
 	private int currentRetries = 0;
-	private AbstractClient client = null;
 	
 	/**
 	 * Constructor where message params are passed in directly. Used when sending synchronously.
 	 */
-	public MessageSender(AbstractClient client, MessageSenderParams messageWrapper)
+	public MessageSender(MessageSenderParams messageWrapper)
 	{
-		this.client = client;
 		this.messageParms = messageWrapper;
 	}
 	
@@ -34,22 +34,15 @@ public class MessageSender implements Runnable
 	 * Constructor just containing the client. When this runnable gets kicked off, we'll get the next 
 	 * messageWrapper to send off of the client.
 	 */
-	public MessageSender(AbstractClient client)
-	{
-		this.client = client;
-	}
+	public MessageSender() {}
 	
 	@Override
 	public void run()
 	{
 		if (messageParms == null)
 		{
-			//We're picking up off the queue, so we should synchronise
-			synchronized (client)
-			{
-				this.messageParms = client.getNextMessageToSend();
-				sendMessage();
-			}
+			this.messageParms = ClientUtil.getNextMessageToSend();
+			sendMessage();
 		}
 		else
 		{
@@ -70,7 +63,7 @@ public class MessageSender implements Runnable
 		try (Socket socket = new Socket(address, portNumber);
 		  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);)
 		{
-			client.setLastSentMessageMillis(System.currentTimeMillis());
+			ClientUtil.setLastSentMessageMillis(System.currentTimeMillis());
 			
 			int soTimeOut = messageParms.getReadTimeOut();
 			socket.setSoTimeout(soTimeOut);
@@ -95,7 +88,7 @@ public class MessageSender implements Runnable
 			//Handle the response if we're not ignoring it
 			if (!messageParms.getIgnoreResponse())
 			{
-				client.handleResponse(messageString, encryptedResponseString);
+				ResponseHandler.handleResponse(messageString, encryptedResponseString);
 			}
 			
 			return encryptedResponseString;
@@ -145,7 +138,7 @@ public class MessageSender implements Runnable
 	
 	private String retryOrStackTrace(Throwable t)
 	{
-		if (!AbstractClient.getInstance().isOnline())
+		if (!ClientUtil.isOnline())
 		{
 			return null;
 		}
@@ -175,18 +168,18 @@ public class MessageSender implements Runnable
 					new Pair<>("message", messageParms.getMessageString()),
 					new Pair<>("previousStack", messageParms.getCreationStack()));
 			
-			if (client.isCommunicatingWithServer())
+			if (ScreenCache.getConnectingDialog().isVisible())
 			{
-				client.unableToConnect();
+				ScreenCache.getConnectingDialog().dismissDialog();
+				DialogUtilNew.showErrorLater("Unable to connect.");
 			}
 			else
 			{
-				client.finishServerCommunication();
-				client.goOffline();
-				
+				ScreenCache.getEntropyLobby().exit(true);
+
 				if (!messageParms.getIgnoreResponse())
 				{
-					client.connectionLost();
+					DialogUtil.showConnectionLost();
 				}
 			}
 			

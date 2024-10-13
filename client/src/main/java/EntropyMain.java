@@ -5,7 +5,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 
 import logging.LoggerUncaughtExceptionHandler;
-import online.util.DesktopEntropyClient;
 import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
@@ -24,14 +23,13 @@ public class EntropyMain implements Registry
 		Debug.initialise(new DebugOutputSystemOut());
 		Thread.setDefaultUncaughtExceptionHandler(new LoggerUncaughtExceptionHandler());
 		MainUtilKt.configureLogging();
-		AbstractClient.setInstance(new DesktopEntropyClient());
 
 		//Dev mode
-		AbstractClient.parseProgramArguments(args);
+		ClientUtil.parseProgramArguments(args);
 
 		setLookAndFeel();
 
-		if (AbstractClient.devMode)
+		if (ClientUtil.devMode)
 		{
 			setInstanceNumber();
 		}
@@ -56,13 +54,13 @@ public class EntropyMain implements Registry
 
 	private static void setLookAndFeel()
 	{
-		logger.info("laf.init", "Initialising Look & Feel - Operating System: " + AbstractClient.operatingSystem);
+		logger.info("laf.init", "Initialising Look & Feel - Operating System: " + ClientUtil.operatingSystem);
 		
 		String lookAndFeel = null;
 		try 
 		{
 			lookAndFeel = prefs.get(PREFERENCES_STRING_LOOK_AND_FEEL, "Metal");
-			if (AbstractClient.isAppleOs()
+			if (ClientUtil.isAppleOs()
 			  && lookAndFeel.equals("Metal"))
 			{
 				//This doesn't seem to work on macs...
@@ -94,11 +92,11 @@ public class EntropyMain implements Registry
 		while (!boundSuccessfully)
 		{
 			startingPortNumber++;
-			AbstractClient.instanceNumber++;
+			ClientUtil.instanceNumber++;
 			boundSuccessfully = bindOnPort(startingPortNumber);
 		}
 
-		logger.info("instanceCheck", "I am instance number " + AbstractClient.instanceNumber);
+		logger.info("instanceCheck", "I am instance number " + ClientUtil.instanceNumber);
 	}
 	
 	private static boolean bindOnPort(int portNumber)
@@ -120,12 +118,12 @@ public class EntropyMain implements Registry
 	{
 		boolean checkForUpdates = Registry.prefs.getBoolean(PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES, true);
 		if (!checkForUpdates
-		  || AbstractClient.devMode)
+		  || ClientUtil.devMode)
 		{
 			logger.info("updateCheck", "Not checking for updates as preference is disabled or I'm in dev mode");
 			return;
 		}
 		
-		AbstractClient.getInstance().checkForUpdatesIfRequired();
+		ClientUtil.checkForUpdatesIfRequired();
 	}
 }

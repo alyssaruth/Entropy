@@ -6,45 +6,49 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-abstract class AbstractStoreTest<T> {
-    abstract fun makeStore(): Store<T>
+abstract class AbstractStoreTest<K, T : IHasId<K>> {
+    abstract fun makeStore(): Store<K, T>
 
-    abstract fun makeItemA(): T
+    abstract fun makeIdA(): K
 
-    abstract fun makeItemB(): T
+    abstract fun makeIdB(): K
+
+    abstract fun makeItemA(id: K = makeIdA()): T
+
+    abstract fun makeItemB(id: K = makeIdB()): T
 
     @Test
     fun `PUT should overwrite existing value`() {
         val store = makeStore()
 
-        store.put("1", makeItemA())
-        store.put("1", makeItemB())
+        store.put(makeItemA(makeIdA()))
+        store.put(makeItemB(makeIdA()))
 
-        store.get("1") shouldBe makeItemB()
+        store.get(makeIdA()) shouldBe makeItemB(makeIdA())
     }
 
     @Test
     fun `FIND should return null for non-existent key`() {
-        makeStore().find("invalid") shouldBe null
+        makeStore().find(makeIdA()) shouldBe null
     }
 
     @Test
     fun `GET should throw an error for non-existent key`() {
-        shouldThrow<Exception> { makeStore().get("invalid") }
+        shouldThrow<Exception> { makeStore().get(makeIdA()) }
     }
 
     @Test
     fun `GET and FIND should retrieve the appropriate record`() {
         val store = makeStore()
 
-        store.put("A", makeItemA())
-        store.put("B", makeItemB())
+        store.put(makeItemA())
+        store.put(makeItemB())
 
-        store.find("A") shouldBe makeItemA()
-        store.find("B") shouldBe makeItemB()
+        store.find(makeIdA()) shouldBe makeItemA()
+        store.find(makeIdB()) shouldBe makeItemB()
 
-        store.get("A") shouldBe makeItemA()
-        store.get("B") shouldBe makeItemB()
+        store.get(makeIdA()) shouldBe makeItemA()
+        store.get(makeIdB()) shouldBe makeItemB()
     }
 
     @Test
@@ -52,21 +56,30 @@ abstract class AbstractStoreTest<T> {
         val store = makeStore()
         store.getAll().shouldBeEmpty()
 
-        store.put("A", makeItemA())
-        store.put("B", makeItemB())
+        store.put(makeItemA())
+        store.put(makeItemB())
 
+        store.getAll().shouldContainExactlyInAnyOrder(makeItemA(), makeItemB())
+    }
+
+    @Test
+    fun `Should be able to PUT multiple items`() {
+        val store = makeStore()
+        store.getAll().shouldBeEmpty()
+
+        store.putAll(makeItemA(), makeItemB())
         store.getAll().shouldContainExactlyInAnyOrder(makeItemA(), makeItemB())
     }
 
     @Test
     fun `Should be able to delete items`() {
         val store = makeStore()
-        store.put("A", makeItemA())
-        store.put("B", makeItemB())
+        store.put(makeItemA())
+        store.put(makeItemB())
 
-        store.remove("B")
+        store.remove(makeIdB())
 
-        store.find("A") shouldBe makeItemA()
-        store.find("B") shouldBe null
+        store.find(makeIdA()) shouldBe makeItemA()
+        store.find(makeIdB()) shouldBe null
     }
 }

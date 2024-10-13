@@ -1,5 +1,8 @@
 package online.screen;
 
+import game.GameMode;
+import game.GameSettings;
+import http.dto.RoomSummary;
 import object.*;
 import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
@@ -25,7 +28,7 @@ import static utils.CoreGlobals.logger;
 /**
  * This is an actual room as seen by the player
  */
-public abstract class GameRoom extends RoomWrapper
+public abstract class GameRoom extends JFrame
 					  		   implements WindowListener,
 					  			          ActionListener,
 					  			          BidListener,
@@ -34,6 +37,11 @@ public abstract class GameRoom extends RoomWrapper
 {
 	public static final int MAX_NUMBER_OF_PLAYERS = 4;
 	private static final int ADJUSTED_PLAYER_NUMBER_ME = 0;
+
+
+	private final String roomName;
+	private final int players;
+	private final GameSettings settings;
 	
 	private String gameId = "";
 	private String username = null;
@@ -62,15 +70,15 @@ public abstract class GameRoom extends RoomWrapper
 	public ReplayDialog replayDialog = new ReplayDialog();
 	public BidPanel bidPanel = null;
 	
-	public GameRoom(String roomName, int mode, int players)
+	public GameRoom(String roomName, GameSettings settings, int players)
 	{
-		super(roomName, mode, players);
+		this.roomName = roomName;
+		this.settings = settings;
+		this.players = players;
+
 		bgPanel.setLayout(new BorderLayout(0, 0));
 		splitPane.setOpaque(false);
 		setContentPane(bgPanel);
-		
-		/*Image bgImage = new ImageIcon(getClass().getResource("/bg/wool.jpg")).getImage();
-		bgPanel.setBgImage(bgImage);*/
 		
 		chatPanel = new OnlineChatPanel(roomName);
 		
@@ -164,43 +172,25 @@ public abstract class GameRoom extends RoomWrapper
 	private final TransparentPanel panelInfo = new TransparentPanel();
 	private final JTextPane textPaneInfo = new JTextPane();
 	
-	public static GameRoom factoryCreate(RoomWrapper room)
+	public static GameRoom factoryCreate(RoomSummary room)
 	{
 		GameRoom ret = null;
+
+		var settings = room.getGameSettings();
 		
-		String roomName = room.getRoomName();
-		int players = room.getPlayers();
-		int mode = room.getMode();
+		String roomName = room.getName();
+		int capacity = room.getCapacity();
+		GameMode mode = settings.getMode();
 		
-		if (mode == GameConstants.GAME_MODE_ENTROPY)
+		if (mode == GameMode.Entropy)
 		{
-			ret = new EntropyRoom(roomName, mode, players);
+			ret = new EntropyRoom(roomName, settings, capacity);
 		}
-		else if (mode == GameConstants.GAME_MODE_VECTROPY)
+		else if (mode == GameMode.Vectropy)
 		{
-			ret = new VectropyRoom(roomName, mode, players);
+			ret = new VectropyRoom(roomName, settings, capacity);
 		}
-		else
-		{
-			Debug.stackTrace("Unexpected game mode: " + mode);
-			return ret;
-		}
-		
-		int jokerQuantity = room.getJokerQuantity();
-		int jokerValue = room.getJokerValue();
-		boolean includeMoons = room.getIncludeMoons();
-		boolean includeStars = room.getIncludeStars();
-		boolean illegalAllowed = room.getIllegalAllowed();
-		boolean negativeJacks = room.getNegativeJacks();
-		boolean cardReveal = room.getCardReveal();
-		
-		ret.setJokerQuantity(jokerQuantity);
-		ret.setJokerValue(jokerValue);
-		ret.setIncludeMoons(includeMoons);
-		ret.setIncludeStars(includeStars);
-		ret.setIllegalAllowed(illegalAllowed);
-		ret.setNegativeJacks(negativeJacks);
-		ret.setCardReveal(cardReveal);
+
 		return ret;
 	}
 	
@@ -253,13 +243,13 @@ public abstract class GameRoom extends RoomWrapper
 		boolean vectropy = this instanceof VectropyRoom;
 		
 		if (vectropy 
-		  && includeMoons 
-		  && includeStars)
+		  && settings.getIncludeMoons()
+		  && settings.getIncludeStars())
 		{
 			setMinimumSize(new Dimension(970, 570));
 			setSize(970, 570);
 		}
-		else if (vectropy && (includeMoons || includeStars))
+		else if (vectropy && (settings.getIncludeMoons() || settings.getIncludeStars()))
 		{
 			setMinimumSize(new Dimension(925, 570));
 			setSize(925, 570);
@@ -355,21 +345,21 @@ public abstract class GameRoom extends RoomWrapper
 	private void setInfoText()
 	{
 		String text = "";
-		if (jokerQuantity > 0)
+		if (settings.getJokerQuantity() > 0)
 		{
-			text += "The deck includes " + jokerQuantity + " jokers worth " + jokerValue + " of every suit.";
+			text += "The deck includes " + settings.getJokerQuantity() + " jokers worth " + settings.getJokerValue() + " of every suit.";
 		}
 		else
 		{
 			text += "The deck contains no jokers.";
 		}
 		
-		if (cardReveal)
+		if (settings.getCardReveal())
 		{
 			text += "\n\nPlayers reveal cards as the game progresses.";
 		}
 		
-		if (negativeJacks)
+		if (settings.getNegativeJacks())
 		{
 			text += "\n\nJacks are worth -1.";
 		}
@@ -389,8 +379,8 @@ public abstract class GameRoom extends RoomWrapper
 	
 	private void initBidPanel()
 	{
-		int maxBid = GameUtil.getMaxBid(true, jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
-		bidPanel.init(maxBid, totalNumberOfCards, true, includeMoons, includeStars, illegalAllowed);
+		int maxBid = GameUtil.getMaxBid(true, settings.getJokerQuantity(), settings.getJokerValue(), totalNumberOfCards, settings.getNegativeJacks());
+		bidPanel.init(maxBid, totalNumberOfCards, true, settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed());
 	}
 	
 	public void initHandPanel()
@@ -811,7 +801,7 @@ public abstract class GameRoom extends RoomWrapper
 			bidPanel.adjust(bid);
 		}
 		
-		if (cardReveal)
+		if (settings.getCardReveal())
 		{
 			String card = bid.getCardToReveal();
 			if (!card.isEmpty())
@@ -940,7 +930,7 @@ public abstract class GameRoom extends RoomWrapper
 			
 			int numberOfRounds = replay.getInt(REPLAY_INT_ROUNDS_SO_FAR, 0);
 			AchievementsUtil.unlockPerfectGameAchievements(numberOfRounds, players);
-			AchievementsUtil.unlockFullBlindGameAchievements(players, playBlind, handPanel.getHasViewedHandThisGame(), cardReveal);
+			AchievementsUtil.unlockFullBlindGameAchievements(players, playBlind, handPanel.getHasViewedHandThisGame(), settings.getCardReveal());
 			AchievementsUtil.unlockPrecision(hasOverbid, numberOfRounds);
 
 			replay.putInt(REPLAY_INT_PLAYER_WON, 1);
@@ -1092,9 +1082,9 @@ public abstract class GameRoom extends RoomWrapper
 			
 			//save non-round-dependent stuff
 			handPanel.saveLabels(replay);
-			replay.putInt(REPLAY_INT_JOKER_VALUE, jokerValue);
-			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, includeMoons);
-			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, includeStars);
+			replay.putInt(REPLAY_INT_JOKER_VALUE, settings.getJokerValue());
+			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, settings.getIncludeMoons());
+			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, settings.getIncludeStars());
 			replay.put(REPLAY_STRING_ROOM_NAME, getUnindexedRoomName(roomName));
 			
 			//save who is enabled
@@ -1396,7 +1386,7 @@ public abstract class GameRoom extends RoomWrapper
 		enableBidPanel(false);
 		
 		//3. If we're revealing cards, wait for one to be chosen
-		if (cardReveal
+		if (settings.getCardReveal()
 		  && player.hasMoreCardsToReveal())
 		{
 			handPanel.activateRevealListener();
@@ -1410,14 +1400,15 @@ public abstract class GameRoom extends RoomWrapper
 	private void processPlayerBid()
 	{
 		//4. Fire off a message to the server
-		Document bidXml = XmlBuilderClient.factoryBidXml(getRoomName(), getUsername(), getGameId(), 
+		Document bidXml = XmlBuilderClient.factoryBidXml(roomName, getUsername(), getGameId(),
 				getRoundNumber(), lastBid, -1);
 		
 		MessageUtil.sendMessage(bidXml, 0);
 		
 		//5. Unlock achievements, including specific perfect bid ones
 		updateAchievementVariables(lastBid);
-		if (lastBid.isPerfect(hmHandByAdjustedPlayerNumber, jokerValue, getIncludeMoons(), getIncludeStars())
+		if (lastBid.isPerfect(hmHandByAdjustedPlayerNumber,
+				settings.getJokerValue(), settings.getIncludeMoons(), settings.getIncludeStars())
 		  && lastBid.isOverAchievementThreshold())
 		{
 			updatePerfectBidVariables(lastBid);
@@ -1428,7 +1419,7 @@ public abstract class GameRoom extends RoomWrapper
 			}
 		}
 		
-		boolean overBid = lastBid.isOverbid(hmHandByAdjustedPlayerNumber, jokerValue);
+		boolean overBid = lastBid.isOverbid(hmHandByAdjustedPlayerNumber, settings.getJokerValue());
 		if (overBid)
 		{
 			hasOverbid = true;
@@ -1468,5 +1459,18 @@ public abstract class GameRoom extends RoomWrapper
 		Document illegal = XmlBuilderClient.factoryBidXml(roomName, getUsername(), getGameId(),
 															  getRoundNumber(), bid, lastPlayerToAct);
 		MessageUtil.sendMessage(illegal, 0);
+	}
+
+	public int getJokerValue()
+	{
+		return settings.getJokerValue();
+	}
+	public boolean getIncludeMoons()
+	{
+		return settings.getIncludeMoons();
+	}
+	public boolean getIncludeStars()
+	{
+		return settings.getIncludeStars();
 	}
 }

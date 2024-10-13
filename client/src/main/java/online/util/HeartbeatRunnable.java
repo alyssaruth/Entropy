@@ -4,7 +4,7 @@ import online.screen.EntropyLobby;
 
 import org.w3c.dom.Document;
 
-import util.AbstractClient;
+import util.ClientUtil;
 import util.MessageUtil;
 
 import static utils.CoreGlobals.logger;
@@ -26,7 +26,7 @@ public class HeartbeatRunnable implements Runnable
 	{
 		while (lobby.isVisible())
 		{
-			long lastSentMessageMillis = AbstractClient.getInstance().getLastSentMessageMillis();
+			long lastSentMessageMillis = ClientUtil.getLastSentMessageMillis();
 			long currentMillis = System.currentTimeMillis();
 			long difference = currentMillis - lastSentMessageMillis;
 			if (difference >= HEARTBEAT_THREADHOLD)

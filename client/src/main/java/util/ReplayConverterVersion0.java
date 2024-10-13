@@ -1,5 +1,6 @@
 package util;
 
+import game.GameMode;
 import object.Bid;
 import object.ChallengeBid;
 import object.EntropyBid;
@@ -61,7 +62,7 @@ public class ReplayConverterVersion0
 	{
 		try
 		{
-			boolean entropy = GameUtil.isEntropy(gameMode);
+			boolean entropy = ReplayConstants.toGameMode(gameMode) == GameMode.Entropy;
 			
 			int colorTagIndex = bidStr.indexOf("\"");
 			int closingQuoteIndex = bidStr.indexOf("\"", colorTagIndex + 1);

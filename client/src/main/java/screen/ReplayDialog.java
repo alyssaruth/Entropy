@@ -37,14 +37,7 @@ import object.OnlineMessage;
 import object.PlayerLabel;
 import online.screen.GameRoom;
 import online.screen.OnlineChatPanel;
-import util.CardsUtil;
-import util.Debug;
-import util.DialogUtil;
-import util.GameConstants;
-import util.GameUtil;
-import util.Registry;
-import util.ReplayFileUtil;
-import util.VectropyUtil;
+import util.*;
 
 public class ReplayDialog extends JFrame
 						  implements ActionListener,
@@ -343,7 +336,7 @@ public class ReplayDialog extends JFrame
 		}
 		
 		String username = room.getUsername();
-		String roomName = room.getRoomName();
+		String roomName = room.getName();
 
 		Debug.append("Opened online replay for room " + roomName, true);
 		replay = Preferences.userRoot().node(NODE_ONLINE_REPLAY + roomName + username);
@@ -449,7 +442,7 @@ public class ReplayDialog extends JFrame
 	{
 		moonFilter.setVisible(includeMoons);
 		starFilter.setVisible(includeStars);
-		boolean online = mode == GameConstants.GAME_MODE_ENTROPY_ONLINE || mode == GameConstants.GAME_MODE_VECTROPY_ONLINE;
+		boolean online = ReplayFileUtil.isOnline(mode);
 		chatPanel.setVisible(online);
 		
 		if (online)
@@ -700,12 +693,12 @@ public class ReplayDialog extends JFrame
 	{
 		switch (mode)
 		{
-		case GameConstants.GAME_MODE_ENTROPY:
-		case GameConstants.GAME_MODE_ENTROPY_ONLINE:
+		case ReplayConstants.GAME_MODE_ENTROPY:
+		case ReplayConstants.GAME_MODE_ENTROPY_ONLINE:
 			showEntropyResult(suitCode);
 			break;
-		case GameConstants.GAME_MODE_VECTROPY:
-		case GameConstants.GAME_MODE_VECTROPY_ONLINE:
+		case ReplayConstants.GAME_MODE_VECTROPY:
+		case ReplayConstants.GAME_MODE_VECTROPY_ONLINE:
 			showVectropyResult(suitCode);
 			break;
 		default:

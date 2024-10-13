@@ -4,8 +4,8 @@ import logging.KEY_DEVICE_ID
 import logging.KEY_DEV_MODE
 import logging.KEY_OPERATING_SYSTEM
 import logging.KEY_USERNAME
-import util.AbstractClient
 import util.ClientGlobals
+import util.ClientUtil
 import util.CoreRegistry.INSTANCE_STRING_DEVICE_ID
 import util.CoreRegistry.instance
 import util.OnlineConstants
@@ -20,9 +20,9 @@ fun configureLogging() {
 
     logger.addToContext(KEY_USERNAME, getUsername())
     logger.addToContext(KEY_APP_VERSION, OnlineConstants.ENTROPY_VERSION_NUMBER)
-    logger.addToContext(KEY_OPERATING_SYSTEM, AbstractClient.operatingSystem)
+    logger.addToContext(KEY_OPERATING_SYSTEM, ClientUtil.operatingSystem)
     logger.addToContext(KEY_DEVICE_ID, getDeviceId())
-    logger.addToContext(KEY_DEV_MODE, AbstractClient.devMode.toString())
+    logger.addToContext(KEY_DEV_MODE, ClientUtil.devMode.toString())
 }
 
 fun getDeviceId() = instance.get(INSTANCE_STRING_DEVICE_ID, null) ?: setDeviceId()

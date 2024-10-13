@@ -1,31 +1,27 @@
 package object;
 
-import java.awt.Font;
+import game.GameMode;
+import game.GameSettings;
+import http.dto.RoomSummary;
+import online.screen.EntropyLobby;
+import online.screen.GameRoom;
+import online.util.XmlBuilderClient;
+import org.w3c.dom.Document;
+import util.EntropyColour;
+import util.MessageUtil;
+import util.TableUtil;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.Beans;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
-import online.screen.EntropyLobby;
-import online.screen.GameRoom;
-import online.util.XmlBuilderClient;
-
-import org.w3c.dom.Document;
-
-import util.EntropyColour;
-import util.MessageUtil;
-import util.TableUtil;
 
 import static utils.CoreGlobals.logger;
 
@@ -41,11 +37,11 @@ public final class RoomTable extends JTable
 	private static final String CODE_NEGATIVE_JACKS = "u";
 	private static final String CODE_CARD_REVEAL = "t";
 	
-	private static int INDEX_OF_NAME_COLUMN = 0;
-	private static int INDEX_OF_MODE_COLUMN = 1;
-	private static int INDEX_OF_PLAYERS_COLUMN = 2;
-	private static int INDEX_OF_OBSERVERS_COLUMN = 3;
-	private static int INDEX_OF_FLAGS_COLUMN = 4;
+	private static final int INDEX_OF_NAME_COLUMN = 0;
+	private static final int INDEX_OF_MODE_COLUMN = 1;
+	private static final int INDEX_OF_PLAYERS_COLUMN = 2;
+	private static final int INDEX_OF_OBSERVERS_COLUMN = 3;
+	private static final int INDEX_OF_FLAGS_COLUMN = 4;
 	
 	private EntropyLobby lobby = null;
 	private DefaultTableModel model = new DefaultTableModel()
@@ -125,7 +121,7 @@ public final class RoomTable extends JTable
 		setRowSorter(sorter);
 	}
 	
-	public void synchroniseRooms(List<RoomWrapper> rooms)
+	public void synchroniseRooms(List<RoomSummary> rooms)
 	{
 		addNewRooms(rooms);
 		updateRooms(rooms);
@@ -134,12 +130,12 @@ public final class RoomTable extends JTable
 		getRowSorter().allRowsChanged();
 	}
 	
-	private void addNewRooms(List<RoomWrapper> rooms)
+	private void addNewRooms(List<RoomSummary> rooms)
 	{
 		for (int i=0; i<rooms.size(); i++)
 		{
-			RoomWrapper room = rooms.get(i);
-			String name = room.getRoomName();
+			RoomSummary room = rooms.get(i);
+			String name = room.getName();
 			
 			if (!modelContainsRoom(name))
 			{
@@ -150,28 +146,23 @@ public final class RoomTable extends JTable
 		}
 	}
 	
-	private void updateRooms(List<RoomWrapper> rooms)
+	private void updateRooms(List<RoomSummary> rooms)
 	{
 		int rowCount = model.getRowCount();
 		for (int i=0; i<rowCount; i++)
 		{
 			String roomName = (String)model.getValueAt(i, INDEX_OF_NAME_COLUMN);
-			RoomWrapper tableRoom = lobby.getRoomForName(roomName);
+			RoomSummary tableRoom = lobby.getRoomForName(roomName);
 			if (tableRoom == null)
 			{
 				logger.warn("missingRoom", roomName + " missing from lobby hashmap, despite being in our local table. Rooms from server: " + rooms);
 			}
 			
-			RoomWrapper listRoom = getListRoomForName(rooms, roomName);
+			RoomSummary listRoom = getListRoomForName(rooms, roomName);
 			
-			if (tableRoom == null
-			  || !listRoom.isInSync(tableRoom))
+			if (listRoom != tableRoom)
 			{
 				Object[] newRoomRow = factoryRowForRoom(listRoom);
-				
-				//Don't do it like this...
-				//model.insertRow(i, newRoomRow);
-				//model.removeRow(i+1);
 				updateRow(i, newRoomRow);
 				
 				lobby.addOrUpdateRoom(roomName, listRoom);
@@ -204,13 +195,13 @@ public final class RoomTable extends JTable
 		return false;
 	}
 	
-	private RoomWrapper getListRoomForName(List<RoomWrapper> rooms, String name)
+	private RoomSummary getListRoomForName(List<RoomSummary> rooms, String name)
 	{
 		int size = rooms.size();
 		for (int i=0; i<size; i++)
 		{
-			RoomWrapper room = rooms.get(i);
-			String roomName = room.getRoomName();
+			RoomSummary room = rooms.get(i);
+			String roomName = room.getName();
 			if (name.equals(roomName))
 			{
 				return room;
@@ -220,41 +211,41 @@ public final class RoomTable extends JTable
 		return null;
 	}
 	
-	private Object[] factoryRowForRoom(RoomWrapper room)
+	private Object[] factoryRowForRoom(RoomSummary room)
 	{
-		String name = room.getRoomName();
-		String mode = room.getModeDesc();
-		String players = room.getCurrentPlayerCount() + "/" + room.getPlayers();
-		String observers = "" + room.getObserverCount();
+		String name = room.getName();
+		String mode = room.getGameSettings().getMode().name();
+		String players = room.getPlayers() + "/" + room.getCapacity();
+		String observers = "" + room.getObservers();
 		
-		FlagImage image = createFlagsForRoom(room);
+		FlagImage image = createFlagsForRoom(room.getGameSettings());
 		
 		Object[] row = {name, mode, players, observers, image};
 		return row;
 	}
 	
-	private FlagImage createFlagsForRoom(RoomWrapper room)
+	private FlagImage createFlagsForRoom(GameSettings settings)
 	{
 		FlagImage image = new FlagImage();
 		
-		boolean illegalAllowed = room.getIllegalAllowed();
+		boolean illegalAllowed = settings.getIllegalAllowed();
 		if (illegalAllowed)
 		{
 			image.appendImage("illegal", CODE_ILLEGAL);
 			image.appendToolTip("Illegal available");
 		}
 		
-		int jokerQuantity = room.getJokerQuantity();
+		int jokerQuantity = settings.getJokerQuantity();
 		if (jokerQuantity > 0)
 		{
-			int jokerValue = room.getJokerValue();
+			int jokerValue = settings.getJokerValue();
 			String iconStr = "jokers" + jokerValue + jokerQuantity;
 			image.appendImage(iconStr, CODE_JOKERS);
 			image.appendToolTip(jokerQuantity + " Jokers worth " + jokerValue);
 		}
 		
-		boolean includeMoons = room.getIncludeMoons();
-		boolean includeStars = room.getIncludeStars();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
 		if (includeMoons && includeStars)
 		{
 			image.appendImage("moonAndStar", CODE_INCLUDE_MOONS_AND_STARS);
@@ -271,14 +262,14 @@ public final class RoomTable extends JTable
 			image.appendToolTip("Moons are included");
 		}
 		
-		boolean negativeJacks = room.getNegativeJacks();
+		boolean negativeJacks = settings.getNegativeJacks();
 		if (negativeJacks)
 		{
 			image.appendImage("negativeJacks", CODE_NEGATIVE_JACKS);
 			image.appendToolTip("Jacks worth -1");
 		}
 		
-		boolean cardReveal = room.getCardReveal();
+		boolean cardReveal = settings.getCardReveal();
 		if (cardReveal)
 		{
 			image.appendImage("cardReveal", CODE_CARD_REVEAL);
@@ -300,7 +291,7 @@ public final class RoomTable extends JTable
 		
 		String roomName = (String)model.getValueAt(internalRow, INDEX_OF_NAME_COLUMN);
 		GameRoom gameRoom = lobby.getGameRoomForName(roomName);
-		RoomWrapper room = lobby.getRoomForName(roomName);
+		RoomSummary room = lobby.getRoomForName(roomName);
 		
 		if (gameRoom == null)
 		{
@@ -318,7 +309,7 @@ public final class RoomTable extends JTable
 		}
 	}
 	
-	public void refresh(boolean includeFull, int mode)
+	public void refresh(boolean includeFull, GameMode mode)
 	{
 		RoomTableFilter filter = new RoomTableFilter(includeFull, mode);
 		@SuppressWarnings("unchecked")
@@ -346,10 +337,10 @@ public final class RoomTable extends JTable
 
 	class RoomTableFilter extends RowFilter<DefaultTableModel, Integer>
 	{
-		private boolean includeFull = true;
-		private int mode = -1;
+		private boolean includeFull;
+		private GameMode mode;
 		
-		public RoomTableFilter(boolean includeFull, int mode)
+		public RoomTableFilter(boolean includeFull, GameMode mode)
 		{
 			this.includeFull = includeFull;
 			this.mode = mode;
@@ -363,11 +354,11 @@ public final class RoomTable extends JTable
 			int index = identifierInt.intValue();
 			
 			String name = (String)entryModel.getValueAt(index, INDEX_OF_NAME_COLUMN);
-			RoomWrapper room = lobby.getRoomForName(name);
+			RoomSummary room = lobby.getRoomForName(name);
 			
-			int currentPlayers = room.getCurrentPlayerCount();
-			int capacity = room.getPlayers();
-			int roomMode = room.getMode();
+			int currentPlayers = room.getPlayers();
+			int capacity = room.getCapacity();
+			GameMode roomMode = room.getGameSettings().getMode();
 			
 			if (!includeFull
 			  && currentPlayers == capacity)
@@ -375,7 +366,7 @@ public final class RoomTable extends JTable
 				return false;
 			}
 			
-			if (mode != -1
+			if (mode != null
 			  && roomMode != mode)
 			{
 				return false;

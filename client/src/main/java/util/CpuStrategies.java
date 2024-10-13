@@ -1,5 +1,6 @@
 package util;
 
+import game.GameMode;
 import object.*;
 
 import java.util.ArrayList;
@@ -60,8 +61,7 @@ public class CpuStrategies
 	 */
 	public static Bid processOpponentTurn(StrategyParms parms, Player opponent)
 	{
-		int gameMode = parms.getGameMode();
-		boolean entropy = gameMode == GameConstants.GAME_MODE_ENTROPY;
+		boolean entropy = parms.getGameMode() == GameMode.Entropy;
 		Bid bid = getOpponentBid(parms, opponent, entropy);
 		if (bid == null)
 		{

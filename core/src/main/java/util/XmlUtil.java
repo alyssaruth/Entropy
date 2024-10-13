@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import utils.CoreGlobals;
 
 public class XmlUtil 
 {
@@ -67,8 +68,12 @@ public class XmlUtil
 			return "";
 		}
 	}
+
+	public static Document getDocumentFromXmlString(String xmlStr) {
+		return getDocumentFromXmlString(xmlStr, false);
+	}
 	
-	public static Document getDocumentFromXmlString(String xmlStr)
+	public static Document getDocumentFromXmlString(String xmlStr, boolean suppressError)
 	{
 		try
 		{
@@ -78,6 +83,9 @@ public class XmlUtil
 		}
 		catch (Throwable t)
 		{
+			if (!suppressError) {
+				CoreGlobals.logger.error("xmlParseError", "Failed to parse XML " + xmlStr, t);
+			}
 			return null;
 		}
 	}

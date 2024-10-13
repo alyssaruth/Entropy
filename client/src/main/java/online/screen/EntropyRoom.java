@@ -2,21 +2,22 @@ package online.screen;
 
 import java.awt.BorderLayout;
 
+import game.GameSettings;
 import object.Bid;
 import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import screen.EntropyBidPanel;
 import util.CardsUtil;
-import util.GameConstants;
 import util.Registry;
+import util.ReplayConstants;
 
 public class EntropyRoom extends GameRoom
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
-	public EntropyRoom(String roomName, int mode, int players)
+	public EntropyRoom(String roomName, GameSettings settings, int players)
 	{
-		super(roomName, mode, players);
+		super(roomName, settings, players);
 		
 		bidPanel = new EntropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
@@ -46,7 +47,7 @@ public class EntropyRoom extends GameRoom
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
 
-			int total = CardsUtil.countSuit(lastBidSuitCode, hmHandByAdjustedPlayerNumber, jokerValue);
+			int total = CardsUtil.countSuit(lastBidSuitCode, hmHandByAdjustedPlayerNumber, getJokerValue());
 			String suitsStr = CardsUtil.getSuitDesc(total, lastBidSuitCode);
 			if (total == 1)
 			{
@@ -63,7 +64,7 @@ public class EntropyRoom extends GameRoom
 	public void saveModeSpecificVariablesForReplay()
 	{
 		int roundsSoFar = replay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0);
-		replay.putInt(Registry.REPLAY_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY_ONLINE);
+		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_ENTROPY_ONLINE);
 		replay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, ((EntropyBid)lastBid).getBidSuitCode());
 		replayDialog.roundAdded();
 	}

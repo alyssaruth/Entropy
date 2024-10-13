@@ -1,6 +1,7 @@
 package screen;
 
 import bean.AbstractDevScreen;
+import game.GameMode;
 import object.Bid;
 import object.BidListCellRenderer;
 import object.Player;
@@ -9,7 +10,6 @@ import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
 import util.*;
-import utils.CoreGlobals;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -49,7 +49,7 @@ public final class MainScreen extends AbstractDevScreen
 
 	private boolean isGameToContinue = savedGame.getBoolean(Registry.SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, false);
 	
-	private int gameMode = -1;
+	private GameMode gameMode = null;
 	private ArrayList<Integer> lastTenKeys = new ArrayList<>();
 
 	@Override
@@ -251,7 +251,7 @@ public final class MainScreen extends AbstractDevScreen
 		{	
 			if (overwriteSavedGame() && quitCurrentGame())
 			{
-				gameMode = prefs.getInt(Registry.PREFERENCES_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY);
+				gameMode = GameMode.valueOf(prefs.get(Registry.PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
 				selectGameScreen(gameMode);
 				lblBidHistory.setVisible(true);
 				btnReplay.setVisible(true);
@@ -274,7 +274,7 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			try
 			{
-				int dialogButton = DialogUtil.showQuestion("Are you sure you wish to start a new game?"
+				int dialogButton = DialogUtilNew.showQuestion("Are you sure you wish to start a new game?"
 						+ "\nThis will wipe the currently saved game and count it as a loss in your statistics.", false);
 
 				if (dialogButton == JOptionPane.YES_OPTION)
@@ -347,7 +347,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private boolean confirmQuit() throws Throwable
 	{
-		int dialogButton = DialogUtil.showQuestion("Are you sure you wish to quit the current game?"
+		int dialogButton = DialogUtilNew.showQuestion("Are you sure you wish to quit the current game?"
 										+ "\nThis will count as a loss in your statistics.", false);
 
 		if (dialogButton == JOptionPane.YES_OPTION)
@@ -473,7 +473,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else
 		{
-			int dialogButton = DialogUtil.showQuestion("Do you want to save this game to continue next time?"
+			int dialogButton = DialogUtilNew.showQuestion("Do you want to save this game to continue next time?"
 					+ "\nAnswering no will count as a loss in your statistics.", false);
 
 			if (dialogButton == JOptionPane.YES_OPTION)
@@ -493,7 +493,7 @@ public final class MainScreen extends AbstractDevScreen
 	{
 		try
 		{
-			gameMode = savedGame.getInt(Registry.SAVED_GAME_INT_GAME_MODE, -1);
+			gameMode = GameMode.valueOf(savedGame.get(Registry.SAVED_GAME_STRING_GAME_MODE, null));
 			selectGameScreen(gameMode);
 			
 			lblBidHistory.setVisible(true);
@@ -505,7 +505,7 @@ public final class MainScreen extends AbstractDevScreen
 		catch (Throwable t)
 		{
 			Debug.stackTrace(t);
-			DialogUtil.showError("A serious error occurred retrieving your game.");
+			DialogUtilNew.showError("A serious error occurred retrieving your game.");
 		}
 	}
 	
@@ -633,14 +633,14 @@ public final class MainScreen extends AbstractDevScreen
 		setState(Frame.NORMAL);
 	}
 	
-	private void selectGameScreen(int gameMode)
+	private void selectGameScreen(GameMode gameMode)
 	{
 		switch (gameMode)
 		{
-			case GameConstants.GAME_MODE_ENTROPY:
+			case Entropy:
 				gamePanel = ScreenCache.getEntropyPanel();
 				break;
-			case GameConstants.GAME_MODE_VECTROPY:
+			case Vectropy:
 				gamePanel = ScreenCache.getVectropyPanel();
 				break;
 			default:
@@ -659,7 +659,7 @@ public final class MainScreen extends AbstractDevScreen
 	@Override
 	public boolean commandsEnabled()
 	{
-		return AbstractClient.devMode
+		return ClientUtil.devMode
 		  || rewards.getBoolean(Registry.REWARDS_BOOLEAN_CHEATS, false);
 	}
 	
@@ -667,7 +667,7 @@ public final class MainScreen extends AbstractDevScreen
 	public String processCommand(String command)
 	{
 		String textToShow = "";
-		if (AbstractClient.devMode)
+		if (ClientUtil.devMode)
 		{
 			boolean processed = processDevModeCommand(command);
 			if (processed)
@@ -748,7 +748,7 @@ public final class MainScreen extends AbstractDevScreen
 		leftPanel.add(gamePanel, BorderLayout.CENTER);
 		
 		//If we've just updated, show the change log automatically
-		if (AbstractClient.justUpdated)
+		if (ClientUtil.justUpdated)
 		{
 			ChangeLog dialog = new ChangeLog();
 			dialog.setLocationRelativeTo(null);

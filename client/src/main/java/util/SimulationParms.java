@@ -1,12 +1,14 @@
 package util;
 
+import game.GameMode;
+
 /**
  * All the parameters that can be specified for running an Entropy/Vectropy simulation
  */
 public class SimulationParms
 {
 	//Mode
-	private int gameMode = -1;
+	private GameMode gameMode = null;
 	
 	//Opponents
 	private boolean opponentTwoEnabled = false;
@@ -57,11 +59,11 @@ public class SimulationParms
 	/**
 	 * Gets / sets
 	 */
-	public int getGameMode()
+	public GameMode getGameMode()
 	{
 		return gameMode;
 	}
-	public void setGameMode(int gameMode)
+	public void setGameMode(GameMode gameMode)
 	{
 		this.gameMode = gameMode;
 	}

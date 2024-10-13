@@ -1,5 +1,6 @@
 package util;
 
+import game.GameMode;
 import object.FlagImage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -167,8 +168,7 @@ public final class ReplayFileUtil implements Registry
 		Element rootElement = document.createElement("Replay");
 		
 		int mode = replay.getInt(REPLAY_INT_GAME_MODE, -1);
-		boolean isEntropy = GameUtil.isEntropy(mode);
-		boolean isOnline = GameUtil.isOnline(mode);
+		boolean isEntropy = isEntropy(mode);
 		
 		appendStandardVariablesToXml(replay, rootElement);
 		
@@ -211,7 +211,7 @@ public final class ReplayFileUtil implements Registry
 			
 			addListmodelElement(replay, document, roundElement, i);
 			
-			if (isOnline)
+			if (isOnline(mode))
 			{
 				addChatHistoryElement(replay, document, roundElement, i);
 			}
@@ -362,13 +362,13 @@ public final class ReplayFileUtil implements Registry
 
 		switch (mode)
 		{
-			case GameConstants.GAME_MODE_ENTROPY:
-			case GameConstants.GAME_MODE_ENTROPY_ONLINE:
+			case ReplayConstants.GAME_MODE_ENTROPY:
+			case ReplayConstants.GAME_MODE_ENTROPY_ONLINE:
 				fileName += "E";
 				break;
 				
-			case GameConstants.GAME_MODE_VECTROPY:
-			case GameConstants.GAME_MODE_VECTROPY_ONLINE:
+			case ReplayConstants.GAME_MODE_VECTROPY:
+			case ReplayConstants.GAME_MODE_VECTROPY_ONLINE:
 				fileName += "V";
 				break;
 
@@ -395,8 +395,7 @@ public final class ReplayFileUtil implements Registry
 		int opponentThreeCoeff = replay.getBoolean(1 + REPLAY_BOOLEAN_OPPONENT_THREE_ENABLED, false)? 1:0;
 		
 		int totalPlayers = playerCoeff + opponentOneCoeff + opponentTwoCoeff + opponentThreeCoeff;
-		
-		//fileName += playerName;
+
 		fileName += startNumberOfCards;
 		fileName += totalPlayers;
 		fileName += ".txt";
@@ -510,6 +509,16 @@ public final class ReplayFileUtil implements Registry
 		
 		return true;
 	}
+
+	private static boolean isEntropy(int replayGameMode)
+	{
+		return ReplayConstants.toGameMode(replayGameMode) == GameMode.Entropy;
+	}
+	public static boolean isOnline(int replayGameMode)
+	{
+		return replayGameMode == ReplayConstants.GAME_MODE_ENTROPY_ONLINE ||
+				replayGameMode == ReplayConstants.GAME_MODE_VECTROPY_ONLINE;
+	}
 	
 	public static boolean successfullyFilledRegistryFromFile(String filePath, Preferences replay)
 	{
@@ -578,8 +587,8 @@ public final class ReplayFileUtil implements Registry
 			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, includeMoons);
 			replay.putBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, includeStars);
 			
-			boolean isEntropy = GameUtil.isEntropy(mode);
-			boolean isOnline = GameUtil.isOnline(mode);
+			boolean isEntropy = isEntropy(mode);
+			boolean isOnline = isOnline(mode);
 			
 			return addRoundsToRegistry(replay, rootElement, isEntropy, isOnline);
 		}
@@ -617,7 +626,7 @@ public final class ReplayFileUtil implements Registry
 		
 		//optional stuff
 		int mode = XmlUtil.getAttributeInt(rootElement, XML_REPLAY_INT_GAME_MODE);
-		String modeDesc = GameConstants.getGameModeDesc(mode);
+		String modeDesc = ReplayConstants.toGameMode(mode).name();
 		String roomName = rootElement.getAttribute(XML_REPLAY_STRING_ROOM_NAME);
 		String rounds = rootElement.getAttribute(XML_REPLAY_INT_TOTAL_ROUNDS);
 		
@@ -679,7 +688,7 @@ public final class ReplayFileUtil implements Registry
 			image.appendImage(flagStr, code);
 		}
 		
-		if (GameUtil.isOnline(mode))
+		if (isOnline(mode))
 		{
 			image.appendImage(ONLINE_FLAG, CODE_ONLINE);
 			image.appendToolTip("Online");

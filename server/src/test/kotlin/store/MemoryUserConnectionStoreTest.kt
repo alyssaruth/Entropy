@@ -1,17 +1,15 @@
 package store
 
 import auth.UserConnection
-import io.mockk.mockk
-import javax.crypto.SecretKey
 
-class MemoryUserConnectionStoreTest : AbstractStoreTest<UserConnection>() {
-
-    private val secretKeyA = mockk<SecretKey>()
-    private val secretKeyB = mockk<SecretKey>()
-
+class MemoryUserConnectionStoreTest : AbstractStoreTest<String, UserConnection>() {
     override fun makeStore() = MemoryUserConnectionStore()
 
-    override fun makeItemA() = UserConnection("1.2.3.A", secretKeyA, "Alyssa")
+    override fun makeIdA() = "1.2.3.A"
 
-    override fun makeItemB() = UserConnection("1.2.3.B", secretKeyB, "Leah")
+    override fun makeIdB() = "4.5.6.B"
+
+    override fun makeItemA(id: String) = UserConnection(id, "Alyssa")
+
+    override fun makeItemB(id: String) = UserConnection(id, "Leah")
 }

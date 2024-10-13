@@ -1,14 +1,11 @@
 package util;
 
-import java.net.URL;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-
-import object.Bid;
-import object.EntropyBid;
 import object.Player;
 import screen.HandPanelMk2;
+
+import javax.swing.*;
+import java.net.URL;
+import java.util.List;
 
 public class GameUtil 
 {
@@ -39,16 +36,16 @@ public class GameUtil
 		switch (winningPlayer)
 		{
 			case 0:
-				DialogUtil.showInfo("You won!");
+				DialogUtilNew.showInfo("You won!");
 				return;
 			case 1:
-				DialogUtil.showInfo(handPanel.getOpponentOneName() + " won!");
+				DialogUtilNew.showInfo(handPanel.getOpponentOneName() + " won!");
 				return;
 			case 2:
-				DialogUtil.showInfo(handPanel.getOpponentTwoName() + " won!");
+				DialogUtilNew.showInfo(handPanel.getOpponentTwoName() + " won!");
 				return;
 			case 3:
-				DialogUtil.showInfo(handPanel.getOpponentThreeName() + " won!");
+				DialogUtilNew.showInfo(handPanel.getOpponentThreeName() + " won!");
 				return;
 			default:
 				Debug.stackTrace("Unexpected winningPlayer [" + winningPlayer + "]");
@@ -100,28 +97,6 @@ public class GameUtil
 			return 1;
 		default:
 			return 0;
-		}
-	}
-	
-	public static boolean isEntropy(int mode)
-	{
-		return mode == GameConstants.GAME_MODE_ENTROPY || mode == GameConstants.GAME_MODE_ENTROPY_ONLINE;
-	}
-	
-	public static boolean isOnline(int mode)
-	{
-		return mode == GameConstants.GAME_MODE_ENTROPY_ONLINE || mode == GameConstants.GAME_MODE_VECTROPY_ONLINE;
-	}
-
-	public static Bid getEmptyBid(int mode, boolean includeMoons, boolean includeStars) 
-	{
-		if (isEntropy(mode))
-		{
-			return new EntropyBid(0, 0);
-		}
-		else
-		{
-			return VectropyUtil.getEmptyBid(includeMoons, includeStars);
 		}
 	}
 	

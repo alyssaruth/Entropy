@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
+import game.GameMode;
 import util.ApiUtil;
 import util.Debug;
 import util.Registry;
@@ -91,7 +92,7 @@ public class PreferencesDialog extends JDialog
 		return true;
 	}
 	
-	public void gameModeChanged(int gameMode)
+	public void gameModeChanged(GameMode gameMode)
 	{
 		playersPanel.updateStrategySelection(gameMode);
 	}

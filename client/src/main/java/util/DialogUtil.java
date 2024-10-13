@@ -22,18 +22,6 @@ public class DialogUtil
 		JOptionPane.showMessageDialog(null, errorText, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public static void showInfoLater(final String infoText)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				showInfo(infoText);
-			}
-		});
-	}
-	
 	public static void invokeInfoLaterAndWait(final String infoText)
 	{
 		try

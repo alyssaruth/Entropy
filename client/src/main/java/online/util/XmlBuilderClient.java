@@ -1,18 +1,10 @@
 package online.util;
 
-import javax.crypto.SecretKey;
-
 import object.Bid;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import util.AbstractClient;
-import util.Debug;
-import util.EncryptionUtil;
-import util.KeyGeneratorUtil;
-import util.MessageUtil;
-import util.OnlineConstants;
 import util.XmlConstants;
 import util.XmlUtil;
 

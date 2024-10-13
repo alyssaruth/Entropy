@@ -4,6 +4,7 @@ package util;
 import http.LegacyConstants;
 import kotlin.Pair;
 import org.w3c.dom.Document;
+import screen.ScreenCache;
 
 import javax.crypto.SecretKey;
 import java.net.InetAddress;
@@ -51,7 +52,7 @@ public class MessageUtil implements OnlineConstants
 		
 		message.setEncryptedMessageString(encryptedMessageString);
 		
-		AbstractClient.getInstance().sendAsyncInSingleThread(message);
+		ClientUtil.sendAsyncInSingleThread(message);
 	}
 	
 	public static int getRandomPortNumber()
@@ -78,10 +79,10 @@ public class MessageUtil implements OnlineConstants
 	public static void stackTraceAndDumpMessages(Throwable t, Throwable clientStackTrace, String messageStr, 
 	  String encryptedResponseStr)
 	{
-		AbstractClient.getInstance().finishServerCommunication();
+		ScreenCache.dismissConnectingDialog();
 
 		logger.error("messageFailure",
-				"Failed to send message",
+				"Failed to send message: " + messageStr,
 				t,
 				new Pair<>("message", messageStr),
 				new Pair<>("previousStack", clientStackTrace));

@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 
+import game.GameMode;
 import object.Bid;
 import object.Player;
 import online.screen.GameRoom;
@@ -121,14 +122,14 @@ public class AchievementsUtil implements AchievementBadges
 		}
 	}
 
-	public static void recordWin(int gameMode)
+	public static void recordWin(GameMode gameMode)
 	{
-		if (gameMode == GameConstants.GAME_MODE_ENTROPY)
+		if (gameMode == GameMode.Entropy)
 		{
 			int newGamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0) + 1;
 			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_WON, newGamesWon);
 		}
-		else if (gameMode == GameConstants.GAME_MODE_VECTROPY)
+		else if (gameMode == GameMode.Vectropy)
 		{
 			int newGamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0) + 1;
 			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_WON, newGamesWon);
@@ -137,7 +138,7 @@ public class AchievementsUtil implements AchievementBadges
 		updateStreaksForWin();
 		unlockWinningStreakAchievements();
 		
-		if (GameUtil.isEntropy(gameMode))
+		if (gameMode == GameMode.Entropy)
 		{
 			unlockEntropyWinAchievements();
 		}
@@ -368,16 +369,16 @@ public class AchievementsUtil implements AchievementBadges
 		}
 	}
 
-	public static void recordGamePlayed(int gameMode)
+	public static void recordGamePlayed(GameMode gameMode)
 	{
 		int gamesPlayed = 1;
 		
-		if (gameMode == GameConstants.GAME_MODE_ENTROPY)
+		if (gameMode == GameMode.Entropy)
 		{
 			gamesPlayed += achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0);
 			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, gamesPlayed);
 		}
-		else if (gameMode == GameConstants.GAME_MODE_VECTROPY)
+		else if (gameMode == GameMode.Vectropy)
 		{
 			gamesPlayed += achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0);
 			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, gamesPlayed);

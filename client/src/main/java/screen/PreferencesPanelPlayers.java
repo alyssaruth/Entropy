@@ -29,13 +29,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import game.GameMode;
 import object.ApiStrategy;
 import object.LimitedDocument;
 import util.ApiUtil;
 import util.CpuStrategies;
 import util.Debug;
 import util.DialogUtil;
-import util.GameConstants;
 import util.TableUtil;
 import util.TableUtil.DefaultModel;
 
@@ -53,7 +53,7 @@ public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 	private String opponentTwoStrategy = "Basic";
 	private String opponentThreeStrategy = "Basic";
 	private ArrayList<ApiStrategy> apiStrategies = null;
-	private int gameMode = GameConstants.GAME_MODE_ENTROPY;
+	private GameMode gameMode = GameMode.Entropy;
 	
 	public PreferencesPanelPlayers()
 	{
@@ -219,7 +219,7 @@ public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 		opponentThreeStrategy = prefs.get(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, "Basic");
 		apiStrategies = ApiUtil.getApiStrategiesFromPreferences();
 		
-		gameMode = prefs.getInt(PREFERENCES_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY);
+		gameMode = GameMode.valueOf(prefs.get(PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
 	}
 	
 	private void setPlayerNames()
@@ -283,10 +283,10 @@ public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 		updateStrategySelection(gameMode);
 	}
 	
-	public void updateStrategySelection(int gameMode)
+	public void updateStrategySelection(GameMode gameMode)
 	{
 		this.gameMode = gameMode;
-		Vector<String> allStrategies = CpuStrategies.getAllStrategies(gameMode == GameConstants.GAME_MODE_ENTROPY, apiStrategies);
+		Vector<String> allStrategies = CpuStrategies.getAllStrategies(gameMode == GameMode.Entropy, apiStrategies);
 		
 		ComboBoxModel<String> comboModel = new DefaultComboBoxModel<>(allStrategies);
 		opponentOneStrat.setModel(comboModel);

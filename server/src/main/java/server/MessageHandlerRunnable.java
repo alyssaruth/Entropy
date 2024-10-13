@@ -13,6 +13,7 @@ import java.util.List;
 import javax.crypto.SecretKey;
 
 import auth.UserConnection;
+import http.LegacyConstants;
 import object.NotificationSocket;
 import object.Room;
 import object.ServerRunnable;
@@ -145,7 +146,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		
 		if (usc != null)
 		{
-			symmetricKey = usc.getSymmetricKey();
+			symmetricKey = LegacyConstants.INSTANCE.getSYMMETRIC_KEY();
 		}
 	}
 	
@@ -154,7 +155,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	 */
 	private Document getResponse(String encryptedMessage) throws Throwable
 	{
-		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage);
+		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage, true);
 		if (unencryptedDocument != null)
 		{
 			//We've been sent an unencrypted XML message. Either this is the client agreeing a new

@@ -1,5 +1,7 @@
 package util;
 
+import game.GameMode;
+
 public class StatisticsUtil implements ServerRegistry
 {
 	public static int getAchievementCount(String username)
@@ -27,9 +29,9 @@ public class StatisticsUtil implements ServerRegistry
 		return playerStats.getInt(username + STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON + players, 0);
 	}
 	
-	public static void recordWin(String username, int players, int mode)
+	public static void recordWin(String username, int players, GameMode mode)
 	{
-		if (mode == GameConstants.GAME_MODE_ENTROPY)
+		if (mode == GameMode.Entropy)
 		{
 			recordEntropyWin(username, players);
 		}
@@ -51,9 +53,9 @@ public class StatisticsUtil implements ServerRegistry
 		playerStats.putInt(node, wins);
 	}
 	
-	public static void recordGamePlayed(String username, int players, int mode)
+	public static void recordGamePlayed(String username, int players, GameMode mode)
 	{
-		if (mode == GameConstants.GAME_MODE_ENTROPY)
+		if (mode == GameMode.Entropy)
 		{
 			recordEntropyPlayed(username, players);
 		}

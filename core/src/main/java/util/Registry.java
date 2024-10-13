@@ -61,7 +61,7 @@ public interface Registry extends CoreRegistry
 	public static final String PREFERENCES_INT_NUMBER_OF_CARDS = "numberOfCards";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_HEIGHT = "rvheight";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_WIDTH = "rvwidth";
-	public static final String PREFERENCES_INT_GAME_MODE = "mode";
+	public static final String PREFERENCES_STRING_GAME_MODE = "gameMode";
 	
 	public static final String PREFERENCES_XML_API_SETTINGS = "apiSettings";
 	public static final String PREFERENCES_TAG_API = "Api";
@@ -295,7 +295,7 @@ public interface Registry extends CoreRegistry
 	public static final String SAVED_GAME_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "opponentOneNumberOfCards";
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
 	public static final String SAVED_GAME_INT_HISTORY_SIZE = "historySize";
-	public static final String SAVED_GAME_INT_GAME_MODE = "gameMode";
+	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
 
 	//statics for default values etc
 	public static final String TWO_COLOURS = "twocolour";

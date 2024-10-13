@@ -2,20 +2,18 @@ package online.screen;
 
 import java.awt.BorderLayout;
 
+import game.GameSettings;
 import object.Bid;
 import screen.VectropyBidPanel;
-import util.AchievementsUtil;
-import util.GameConstants;
-import util.Registry;
-import util.VectropyUtil;
+import util.*;
 
 public class VectropyRoom extends GameRoom
 {
 	private boolean earnedMathematician = false;
 	
-	public VectropyRoom(String roomName, int mode, int players)
+	public VectropyRoom(String roomName, GameSettings settings, int players)
 	{
-		super(roomName, mode, players);
+		super(roomName, settings, players);
 		
 		bidPanel = new VectropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
@@ -49,7 +47,7 @@ public class VectropyRoom extends GameRoom
 			handPanel.displayAndHighlightHands(-1);
 			AchievementsUtil.unlockVectropyPerfectBidAchievements(earnedMathematician, earnedPsychic);
 
-			String resultStr = VectropyUtil.getResult(hmHandByAdjustedPlayerNumber, jokerValue, -1, getIncludeMoons(), getIncludeStars());
+			String resultStr = VectropyUtil.getResult(hmHandByAdjustedPlayerNumber, getJokerValue(), -1, getIncludeMoons(), getIncludeStars());
 			showResult("Result: " + resultStr);
 		}
 	}
@@ -57,7 +55,7 @@ public class VectropyRoom extends GameRoom
 	@Override
 	public void saveModeSpecificVariablesForReplay()
 	{
-		replay.putInt(Registry.REPLAY_INT_GAME_MODE, GameConstants.GAME_MODE_VECTROPY_ONLINE);
+		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_VECTROPY_ONLINE);
 		replayDialog.roundAdded();
 	}
 	
