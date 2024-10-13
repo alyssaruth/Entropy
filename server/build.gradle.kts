@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     id("Entropy.kotlin-common-conventions")
     id("com.ncorti.ktfmt.gradle") version "0.15.1"
-    id("io.ktor.plugin") version "2.3.12"
+    id("io.ktor.plugin") version DependencyVersions.KTOR
     application
 }
 
@@ -22,7 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
-    implementation("ch.qos.logback:logback-classic:1.5.8")
+    implementation("ch.qos.logback:logback-classic:${DependencyVersions.LOGBACK}")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(project(":test-core"))
 }
