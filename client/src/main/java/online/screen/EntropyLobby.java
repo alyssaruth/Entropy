@@ -164,7 +164,7 @@ public class EntropyLobby extends JFrame
 		AchievementsUtil.unlockConnected();
 		
 		//Start the notification thread, this is how the server will send us unsolicited messages
-		AbstractClient.getInstance().startNotificationThreads();
+		ClientUtil.startNotificationThreads();
 		
 		AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
 		achievementsDialog.refresh(false);

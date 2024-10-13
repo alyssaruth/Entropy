@@ -1,6 +1,7 @@
 package util;
 
 import org.w3c.dom.Document;
+import screen.ScreenCache;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -10,39 +11,31 @@ import static utils.CoreGlobals.logger;
 /**
  * Interface used by Entropy Android & Desktop for anything to do with the online session
  */
-public abstract class AbstractClient implements OnlineConstants
+public class ClientUtil
 {
 	public static boolean devMode = false;
 	public static String operatingSystem = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 	public static boolean justUpdated = false;
 	public static int instanceNumber = 1;
 	
-	//Instance
-	private static AbstractClient client = null;
-	
 	//Properties on the instance
-	private long lastSentMessageMillis = -1;
-	private ArrayList<MessageSenderParams> pendingMessages = new ArrayList<>();
-	
-	/**
-	 * Abstract methods
-	 */
-	public abstract void init();
-	public abstract String getUsername();
-	public abstract boolean isOnline();
-	public abstract void sendAsyncInSingleThread(MessageSenderParams message);
-	public abstract String sendSyncOnDevice(MessageSender runnable);
-	public abstract void handleResponse(String message, String encryptedResponse) throws Throwable;
-	public abstract void checkForUpdates();
-	
-	/**
-	 * Use these to show waiting dialogs/info to the user
-	 */
-	public abstract boolean isCommunicatingWithServer();
-	public abstract void finishServerCommunication();
-	public abstract void unableToConnect();
-	public abstract void connectionLost();
-	public abstract void goOffline();
+	private static long lastSentMessageMillis = -1;
+	private final static ArrayList<MessageSenderParams> pendingMessages = new ArrayList<>();
+
+
+	public static String getUsername() {
+		return ScreenCache.getEntropyLobby().getUsername();
+	}
+	public static boolean isOnline() {
+		return ScreenCache.getEntropyLobby().isVisible();
+	}
+	public static void sendAsyncInSingleThread(MessageSenderParams message) {
+		addToPendingMessages(message);
+
+		MessageSender senderRunnable = new MessageSender();
+		Thread senderThread = new Thread(senderRunnable, "MessageSender-" + System.currentTimeMillis());
+		senderThread.start();
+	}
 	
 	/**
 	 * Helpers during startup
@@ -81,37 +74,27 @@ public abstract class AbstractClient implements OnlineConstants
 		return operatingSystem.contains("windows");
 	}
 	
-	public void checkForUpdatesIfRequired()
+	public static void checkForUpdatesIfRequired()
 	{
 		if (justUpdated)
 		{
 			logger.info("justUpdated", "Just updated - not checking for updates");
 			return;
 		}
-		
-		checkForUpdates();
+
+		ClientGlobals.INSTANCE.getUpdateManager().checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER);
 	}
 	
-	public long getLastSentMessageMillis()
+	public static long getLastSentMessageMillis()
 	{
 		return lastSentMessageMillis;
 	}
-	public void setLastSentMessageMillis(long lastSentMessageMillis)
+	public static void setLastSentMessageMillis(long newValue)
 	{
-		this.lastSentMessageMillis = lastSentMessageMillis;
-	}
-	
-	public static AbstractClient getInstance()
-	{
-		return client;
-	}
-	public static void setInstance(AbstractClient client)
-	{
-		AbstractClient.client = client;
-		client.init();
+		lastSentMessageMillis = newValue;
 	}
 
-	public String sendSync(Document message, boolean encrypt, int readTimeOut, boolean alwaysRetryOnSoTimeout)
+	public static String sendSync(Document message, boolean encrypt, int readTimeOut, boolean alwaysRetryOnSoTimeout)
 	{
 		String messageString = XmlUtil.getStringFromDocument(message);
 		String encryptedMessageString = messageString;
@@ -126,30 +109,32 @@ public abstract class AbstractClient implements OnlineConstants
 		wrapper.setReadTimeOut(readTimeOut);
 		wrapper.setAlwaysRetryOnSoTimeout(alwaysRetryOnSoTimeout);
 		
-		MessageSender sender = new MessageSender(this, wrapper);
-		return sendSyncOnDevice(sender);
+		MessageSender sender = new MessageSender(wrapper);
+		return sender.sendMessage();
 	}
 	
-	public void startNotificationThreads()
+	public static void startNotificationThreads()
 	{
 		startNotificationThread(XmlConstants.SOCKET_NAME_GAME);
 		startNotificationThread(XmlConstants.SOCKET_NAME_CHAT);
 		startNotificationThread(XmlConstants.SOCKET_NAME_LOBBY);
 	}
 	
-	private void startNotificationThread(String socketType)
+	private static void startNotificationThread(String socketType)
 	{
-		ClientNotificationRunnable runnable = new ClientNotificationRunnable(this, socketType);
+		ClientNotificationRunnable runnable = new ClientNotificationRunnable(socketType);
 		Thread notificationThread = new Thread(runnable, socketType + "Thread");
 		notificationThread.start();
 	}
 	
-	public void addToPendingMessages(MessageSenderParams message)
+	public static void addToPendingMessages(MessageSenderParams message)
 	{
 		pendingMessages.add(message);
 	}
-	public MessageSenderParams getNextMessageToSend()
+	public static MessageSenderParams getNextMessageToSend()
 	{
-		return pendingMessages.remove(0);
+		synchronized (pendingMessages) {
+			return pendingMessages.remove(0);
+		}
 	}
 }

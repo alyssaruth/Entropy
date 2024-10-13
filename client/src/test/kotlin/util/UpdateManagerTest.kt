@@ -165,7 +165,7 @@ class UpdateManagerTest : AbstractTest() {
 
     @Test
     fun `Should show an info and not proceed to auto update if OS is not windows`() {
-        AbstractClient.operatingSystem = "foo"
+        ClientUtil.operatingSystem = "foo"
 
         val metadata = UpdateMetadata("v100", 123456, "Dartzee_x_y.jar", 100)
         shouldUpdateAsync(OnlineConstants.ENTROPY_VERSION_NUMBER, metadata).get() shouldBe false
@@ -181,7 +181,7 @@ class UpdateManagerTest : AbstractTest() {
 
     @Test
     fun `Should not proceed with the update if user selects 'No'`() {
-        AbstractClient.operatingSystem = "windows"
+        ClientUtil.operatingSystem = "windows"
 
         val metadata = UpdateMetadata("foo", 123456, "Dartzee_x_y.jar", 100)
         val result = shouldUpdateAsync("bar", metadata)
@@ -197,7 +197,7 @@ class UpdateManagerTest : AbstractTest() {
 
     @Test
     fun `Should proceed with the update if user selects 'Yes'`() {
-        AbstractClient.operatingSystem = "windows"
+        ClientUtil.operatingSystem = "windows"
 
         val metadata = UpdateMetadata("foo", 123456, "Dartzee_x_y.jar", 100)
         val result = shouldUpdateAsync("bar", metadata)

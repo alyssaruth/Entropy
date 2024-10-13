@@ -9,7 +9,6 @@ import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
 import util.*;
-import utils.CoreGlobals;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -659,7 +658,7 @@ public final class MainScreen extends AbstractDevScreen
 	@Override
 	public boolean commandsEnabled()
 	{
-		return AbstractClient.devMode
+		return ClientUtil.devMode
 		  || rewards.getBoolean(Registry.REWARDS_BOOLEAN_CHEATS, false);
 	}
 	
@@ -667,7 +666,7 @@ public final class MainScreen extends AbstractDevScreen
 	public String processCommand(String command)
 	{
 		String textToShow = "";
-		if (AbstractClient.devMode)
+		if (ClientUtil.devMode)
 		{
 			boolean processed = processDevModeCommand(command);
 			if (processed)
@@ -748,7 +747,7 @@ public final class MainScreen extends AbstractDevScreen
 		leftPanel.add(gamePanel, BorderLayout.CENTER);
 		
 		//If we've just updated, show the change log automatically
-		if (AbstractClient.justUpdated)
+		if (ClientUtil.justUpdated)
 		{
 			ChangeLog dialog = new ChangeLog();
 			dialog.setLocationRelativeTo(null);

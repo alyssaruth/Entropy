@@ -67,7 +67,7 @@ class UpdateManager {
         // An update is available
         logger.info("updateAvailable", "Newer release available - $newVersion")
 
-        if (!AbstractClient.isWindowsOs()) {
+        if (!ClientUtil.isWindowsOs()) {
             showManualDownloadMessage(newVersion)
             return false
         }

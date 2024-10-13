@@ -42,6 +42,7 @@ object DialogUtilNew {
         logDialogClosed("Error", null)
     }
 
+    @JvmStatic
     fun showErrorLater(errorText: String) {
         SwingUtilities.invokeLater { showError(errorText) }
     }
