@@ -157,7 +157,7 @@ public class XmlBuilderServer implements XmlConstants,
 		for (Room room : rooms) {
 			Element roomStatsElement = response.createElement("RoomStats");
 
-			roomStatsElement.setAttribute("RoomName", room.getRoomName());
+			roomStatsElement.setAttribute("RoomName", room.getName());
 			roomStatsElement.setAttribute("RoomGamesPlayed", "0");
 			roomStatsElement.setAttribute("RoomDuration", "0");
 			root.appendChild(roomStatsElement);
@@ -250,7 +250,7 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_JOIN_ROOM_RESPONSE);
-		rootElement.setAttribute("RoomId", room.getRoomName());
+		rootElement.setAttribute("RoomId", room.getName());
 		
 		boolean observer = !observerStr.isEmpty();
 		if (observer)
@@ -282,7 +282,7 @@ public class XmlBuilderServer implements XmlConstants,
 		response.appendChild(rootElement);
 		
 		//Append the current chat history and players for this room
-		appendCurrentChatElement(response, room.getRoomName(), server);
+		appendCurrentChatElement(response, room.getName(), server);
 		addPlayers(room, rootElement);
 		
 		if (observer)
@@ -297,7 +297,7 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_CLOSE_ROOM_RESPONSE);
-		rootElement.setAttribute("RoomId", room.getRoomName());
+		rootElement.setAttribute("RoomId", room.getName());
 
 		room.removeFromObservers(username);
 		room.removePlayer(username, true);
@@ -310,7 +310,7 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_PLAYER_NOTIFICATION);
-		rootElement.setAttribute("RoomName", room.getRoomName());
+		rootElement.setAttribute("RoomName", room.getName());
 		
 		addPlayers(room, rootElement);
 		
@@ -322,7 +322,7 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_OBSERVER_RESPONSE);
-		rootElement.setAttribute("RoomId", room.getRoomName());
+		rootElement.setAttribute("RoomId", room.getName());
 		
 		GameWrapper game = room.getNextGameForId("");
 		long countdownTimeRemaining = game.getCountdownTimeRemaining();
@@ -358,7 +358,7 @@ public class XmlBuilderServer implements XmlConstants,
 	}
 	private static void addPlayers(Room room, Element rootElement)
 	{
-		int numberOfPlayers = room.getPlayers();
+		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
 			String username = room.getPlayer(i);
@@ -370,7 +370,7 @@ public class XmlBuilderServer implements XmlConstants,
 	}
 	private static void addFormerPlayers(Room room, Element rootElement)
 	{
-		int numberOfPlayers = room.getPlayers();
+		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
 			String username = room.getFormerPlayer(i);
@@ -384,7 +384,7 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		HandDetails details = game.getDetailsForRound(roundNumber);
 		
-		int numberOfPlayers = room.getPlayers();
+		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
 			Element handElement = response.createElement("Hand");
@@ -400,7 +400,7 @@ public class XmlBuilderServer implements XmlConstants,
 	}
 	private static void addLastBids(Room room, int roundNumber, Element rootElement)
 	{
-		int numberOfPlayers = room.getPlayers();
+		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
 			Bid bid = room.getLastBidForPlayer(i, roundNumber);
@@ -416,7 +416,7 @@ public class XmlBuilderServer implements XmlConstants,
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_NEW_GAME);
 		
-		rootElement.setAttribute("RoomId", room.getRoomName());
+		rootElement.setAttribute("RoomId", room.getName());
 		
 		if (!room.isFull())
 		{
@@ -449,8 +449,8 @@ public class XmlBuilderServer implements XmlConstants,
 	
 	public static Document getBidAck(Room room, String gameId, int roundNumber, String bidStr, int previousBidder)
 	{
-		boolean includeMoons = room.getIncludeMoons();
-		boolean includeStars = room.getIncludeStars();
+		boolean includeMoons = room.getSettings().getIncludeMoons();
+		boolean includeStars = room.getSettings().getIncludeStars();
 		
 		Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
 		int playerNumber = bid.getPlayer().getPlayerNumber();
@@ -490,7 +490,7 @@ public class XmlBuilderServer implements XmlConstants,
 		Element rootElement = response.createElement(RESPONSE_TAG_GAME_OVER_NOTIFICATION);
 		
 		rootElement.setAttribute("WinningPlayer", "" + winningPlayer);
-		rootElement.setAttribute("RoomName", room.getRoomName());
+		rootElement.setAttribute("RoomName", room.getName());
 		
 		response.appendChild(rootElement);
 		return XmlUtil.getStringFromDocument(response);
@@ -500,9 +500,9 @@ public class XmlBuilderServer implements XmlConstants,
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_NEW_ROUND_NOTIFICATION);
-		rootElement.setAttribute("RoomName", room.getRoomName());
+		rootElement.setAttribute("RoomName", room.getName());
 		
-		int numberOfPlayers = room.getPlayers();
+		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
 			String[] hand = details.getHand(i);

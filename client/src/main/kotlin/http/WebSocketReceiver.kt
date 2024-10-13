@@ -14,7 +14,7 @@ class WebSocketReceiver {
             "Received server message of type ${clientMessage::class.simpleName}"
         )
 
-        when (val clientMessage = deserializeClientMessage(rawMessage)) {
+        when (clientMessage) {
             is LobbyMessage -> handleLobbyResponse(clientMessage)
         }
     }

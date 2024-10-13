@@ -1,34 +1,27 @@
 package object;
 
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.beans.Beans;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
 import game.GameMode;
 import game.GameSettings;
 import http.dto.RoomSummary;
 import online.screen.EntropyLobby;
 import online.screen.GameRoom;
 import online.util.XmlBuilderClient;
-
 import org.w3c.dom.Document;
-
 import util.EntropyColour;
 import util.MessageUtil;
 import util.TableUtil;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.Beans;
+import java.util.List;
 
 import static utils.CoreGlobals.logger;
 
@@ -44,11 +37,11 @@ public final class RoomTable extends JTable
 	private static final String CODE_NEGATIVE_JACKS = "u";
 	private static final String CODE_CARD_REVEAL = "t";
 	
-	private static int INDEX_OF_NAME_COLUMN = 0;
-	private static int INDEX_OF_MODE_COLUMN = 1;
-	private static int INDEX_OF_PLAYERS_COLUMN = 2;
-	private static int INDEX_OF_OBSERVERS_COLUMN = 3;
-	private static int INDEX_OF_FLAGS_COLUMN = 4;
+	private static final int INDEX_OF_NAME_COLUMN = 0;
+	private static final int INDEX_OF_MODE_COLUMN = 1;
+	private static final int INDEX_OF_PLAYERS_COLUMN = 2;
+	private static final int INDEX_OF_OBSERVERS_COLUMN = 3;
+	private static final int INDEX_OF_FLAGS_COLUMN = 4;
 	
 	private EntropyLobby lobby = null;
 	private DefaultTableModel model = new DefaultTableModel()

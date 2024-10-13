@@ -2,6 +2,7 @@ package online.screen;
 
 import java.awt.BorderLayout;
 
+import game.GameSettings;
 import object.Bid;
 import screen.VectropyBidPanel;
 import util.AchievementsUtil;
@@ -13,9 +14,9 @@ public class VectropyRoom extends GameRoom
 {
 	private boolean earnedMathematician = false;
 	
-	public VectropyRoom(String roomName, int players)
+	public VectropyRoom(String roomName, GameSettings settings, int players)
 	{
-		super(roomName, GameConstants.GAME_MODE_VECTROPY, players);
+		super(roomName, settings, players);
 		
 		bidPanel = new VectropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
@@ -49,7 +50,7 @@ public class VectropyRoom extends GameRoom
 			handPanel.displayAndHighlightHands(-1);
 			AchievementsUtil.unlockVectropyPerfectBidAchievements(earnedMathematician, earnedPsychic);
 
-			String resultStr = VectropyUtil.getResult(hmHandByAdjustedPlayerNumber, jokerValue, -1, getIncludeMoons(), getIncludeStars());
+			String resultStr = VectropyUtil.getResult(hmHandByAdjustedPlayerNumber, getJokerValue(), -1, getIncludeMoons(), getIncludeStars());
 			showResult("Result: " + resultStr);
 		}
 	}

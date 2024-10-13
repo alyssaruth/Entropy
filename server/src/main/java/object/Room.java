@@ -1,6 +1,7 @@
 package object;
 
 import auth.UserConnection;
+import game.GameSettings;
 import org.w3c.dom.Document;
 import server.EntropyServer;
 import util.*;
@@ -14,33 +15,39 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Server-side version of a Room
  */
-public final class Room extends RoomWrapper
+public final class Room
 {
 	private boolean isCopy = false;
 	
 	private ExtendedConcurrentHashMap<Integer, String> hmPlayerByPlayerNumber = new ExtendedConcurrentHashMap<>();
 	private ConcurrentHashMap<Integer, String> hmFormerPlayerByPlayerNumber = new ConcurrentHashMap<>();
 	private ArrayList<OnlineMessage> chatHistory = new ArrayList<>();
+	private List<String> currentPlayers = new ArrayList<>();
+	private List<String> observers = new ArrayList<>();
 	private GameWrapper previousGame = null;
 	private GameWrapper currentGame = null;
-	
-	private EntropyServer server = null;
-	
-	public Room(String roomName, int mode, int players, EntropyServer server)
+
+	private String name;
+	private GameSettings settings;
+	private int capacity;
+	private EntropyServer server;
+
+	public Room(String name, GameSettings settings, int capacity, EntropyServer server)
 	{
-		super(roomName, mode, players);
-		
+		this.name = name;
+		this.settings = settings;
+		this.capacity = capacity;
 		this.server = server;
 	}
 	
 	public boolean isFull()
 	{
-		return currentPlayers.size() == players;
+		return currentPlayers.size() == capacity;
 	}
 	public boolean isEmpty()
 	{
-		return currentPlayers.size() == 0
-		  && observers.size() == 0;
+		return currentPlayers.isEmpty()
+		  && observers.isEmpty();
 	}
 	
 	public void clearChatIfEmpty()
@@ -63,14 +70,14 @@ public final class Room extends RoomWrapper
 			String existingUsername = hmPlayerByPlayerNumber.get(playerNumber);
 			if (existingUsername != null)
 			{
-				Debug.append(username + " tried to join room " + roomName + " as player " + playerNumber
+				Debug.append(username + " tried to join room " + name + " as player " + playerNumber
 							+ " but the space was taken by " + existingUsername);
 				return -1;
 			}
 			
 			if (hmPlayerByPlayerNumber.containsValue(username))
 			{
-				Debug.append(username + " tried to join room " + roomName + " twice!");
+				Debug.append(username + " tried to join room " + name + " twice!");
 				return -1;
 			}
 			
@@ -86,7 +93,7 @@ public final class Room extends RoomWrapper
 	
 	public void removePlayer(String username, boolean fireLobbyChanged)
 	{
-		for (int playerNumber=0; playerNumber<players; playerNumber++)
+		for (int playerNumber=0; playerNumber<capacity; playerNumber++)
 		{
 			String user = hmPlayerByPlayerNumber.get(playerNumber);
 			if (user != null 
@@ -101,7 +108,7 @@ public final class Room extends RoomWrapper
 				//The game has not started
 				if (currentGame.getGameStartMillis() == -1)
 				{
-					//Unset the countdown if it's going, reset current players and get out of this madness
+					//Unset the countdown if it's going, reset current capacity and get out of this madness
 					currentGame.setCountdownStartMillis(-1);
 					resetCurrentPlayers(fireLobbyChanged);
 					return;
@@ -121,7 +128,7 @@ public final class Room extends RoomWrapper
 					int roundNumber = currentGame.getRoundNumber();
 					if (roundNumber > 1)
 					{
-						StatisticsUtil.recordGamePlayed(username, players, mode);
+						StatisticsUtil.recordGamePlayed(username, capacity, settings.getMode());
 					}
 					
 					//Moved this into here as otherwise we set it to 0 incorrectly and a person ends up with no cards!
@@ -191,7 +198,7 @@ public final class Room extends RoomWrapper
 	public void resetCurrentPlayers(boolean fireLobbyChanged)
 	{
 		currentPlayers.clear();
-		for (int i=0; i<players; i++)
+		for (int i=0; i<capacity; i++)
 		{
 			String username = hmPlayerByPlayerNumber.get(i);
 			if (username != null)
@@ -246,7 +253,7 @@ public final class Room extends RoomWrapper
 			
 			HandDetails details = new HandDetails();
 			ExtendedConcurrentHashMap<Integer, Integer> hmHandSizeByPlayerNumber = new ExtendedConcurrentHashMap<>();
-			for (int i=0; i<players; i++)
+			for (int i=0; i<capacity; i++)
 			{
 				hmHandSizeByPlayerNumber.put(i, Integer.valueOf(5));
 			}
@@ -258,7 +265,7 @@ public final class Room extends RoomWrapper
 			currentGame.setDetailsForRound(1, details);
 	
 			Random rand = new Random();
-			int personToStart = rand.nextInt(players);
+			int personToStart = rand.nextInt(capacity);
 			
 			BidHistory history = new BidHistory();
 			history.setPersonToStart(personToStart);
@@ -275,7 +282,7 @@ public final class Room extends RoomWrapper
 		GameWrapper game = getGameForId(gameId);
 		HandDetails details = game.getDetailsForRound(roundNumber);
 		ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber = details.getHands();
-		if (bid.isOverbid(hmHandByPlayerNumber, jokerValue))
+		if (bid.isOverbid(hmHandByPlayerNumber, settings.getJokerValue()))
 		{
 			//bidder loses
 			setUpNextRound(challengedNumber);
@@ -292,7 +299,7 @@ public final class Room extends RoomWrapper
 		GameWrapper game = getGameForId(gameId);
 		HandDetails details = game.getDetailsForRound(roundNumber);
 		ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber = details.getHands();
-		if (bid.isPerfect(hmHandByPlayerNumber, jokerValue, includeMoons, includeStars))
+		if (bid.isPerfect(hmHandByPlayerNumber, settings.getJokerValue(), settings.getIncludeMoons(), settings.getIncludeStars()))
 		{
 			setUpNextRound(bidderNumber);
 		}
@@ -309,7 +316,7 @@ public final class Room extends RoomWrapper
 		HandDetails nextRoundDetails = currentGame.getDetailsForRound(currentRoundNumber + 1);
 		if (nextRoundDetails != null)
 		{
-			Debug.stackTrace("Trying to set up next round but it's not null. Room " + roomName);
+			Debug.stackTrace("Trying to set up next round but it's not null. Room " + name);
 			return;
 		}
 		
@@ -352,8 +359,9 @@ public final class Room extends RoomWrapper
 		ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber = new ConcurrentHashMap<>();
 		
 		long seed = server.generateSeed();
-		List<String> deck = CardsUtil.createAndShuffleDeck(true, jokerQuantity, includeMoons, includeStars, negativeJacks, seed);
-		for (int i=0; i<players; i++)
+		List<String> deck = CardsUtil.createAndShuffleDeck(true, settings.getJokerQuantity(),
+				settings.getIncludeMoons(), settings.getIncludeStars(), settings.getNegativeJacks(), seed);
+		for (int i=0; i<capacity; i++)
 		{
 			int size = hmHandSizeByPlayerNumber.get(i);
 			String hand[] = new String[size];
@@ -373,7 +381,7 @@ public final class Room extends RoomWrapper
 		int activePlayers = 0;
 		int potentialWinner = 0;
 		
-		for (int i=0; i<players; i++)
+		for (int i=0; i<capacity; i++)
 		{
 			int handSize = hmHandSizeByPlayerNumber.get(i);
 			if (handSize > 0)
@@ -401,7 +409,7 @@ public final class Room extends RoomWrapper
 			return;
 		}
 		
-		StatisticsUtil.recordWin(winningPlayer, players, mode);
+		StatisticsUtil.recordWin(winningPlayer, capacity, settings.getMode());
 		
 		int size = currentPlayers.size();
 		for (int i=0; i<size; i++)
@@ -410,7 +418,7 @@ public final class Room extends RoomWrapper
 			if (hmPlayerByPlayerNumber.containsValue(player))
 			{
 				//They didn't leave, so record a game played
-				StatisticsUtil.recordGamePlayed(player, players, mode);
+				StatisticsUtil.recordGamePlayed(player, capacity, settings.getMode());
 				
 				//Push out a stats notification
 				Document statsNotification = XmlBuilderServer.factoryStatisticsNotification(player);
@@ -433,16 +441,39 @@ public final class Room extends RoomWrapper
 		long currentTime = System.currentTimeMillis();
 		return (currentTime - gameStart);
 	}
+
+	/**
+	 * Returns a HashSet since it's possible for a player to be present as a player AND an observer.
+	 * This occurs if they've left but the game is still going - we keep the reference as a player so
+	 * others can't take the seat. They obviously then have the option to join as an observer.
+	 */
+	public HashSet<String> getAllUsersInRoom()
+	{
+		ArrayList<String> ret = getCurrentPlayers();
+		ret.addAll(getObservers());
+
+		HashSet<String> hs = new HashSet<>(ret);
+		return hs;
+	}
 	
 	/**
 	 * Get/sets
 	 */
+	public String getName() {
+		return name;
+	}
+	public int getCapacity() {
+		return capacity;
+	}
+	public GameSettings getSettings() {
+		return settings;
+	}
 	public boolean isGameInProgress()
 	{
 		//This no longer works
 		//return currentGame != null;
-		//return currentPlayers.size() == players && (waitingForPlayerToSeeResult == null);
-		return currentPlayers.size() == players;
+		//return currentPlayers.size() == capacity && (waitingForPlayerToSeeResult == null);
+		return currentPlayers.size() == capacity;
 	}
 	public boolean getIsCopy()
 	{
@@ -451,6 +482,22 @@ public final class Room extends RoomWrapper
 	public void setIsCopy(boolean isCopy)
 	{
 		this.isCopy = isCopy;
+	}
+	public ArrayList<String> getCurrentPlayers()
+	{
+		return new ArrayList<>(currentPlayers);
+	}
+	public int getCurrentPlayerCount()
+	{
+		return currentPlayers.size();
+	}
+	public ArrayList<String> getObservers()
+	{
+		return new ArrayList<>(observers);
+	}
+	public int getObserverCount()
+	{
+		return observers.size();
 	}
 
 	/**
@@ -478,7 +525,7 @@ public final class Room extends RoomWrapper
 			return previousGame;
 		}
 
-		throw new RuntimeException("Got a null game for room " + roomName + " and gameId " + gameId);
+		throw new RuntimeException("Got a null game for room " + name + " and gameId " + gameId);
 	}
 	public GameWrapper getNextGameForId(String previousGameIdFromClient)
 	{
@@ -527,8 +574,8 @@ public final class Room extends RoomWrapper
 		
 		if (added)
 		{
-			//Notify all other players
-			String bidNotification = XmlBuilderServer.getBidNotification(roomName, playerNumber, newBid);
+			//Notify all other capacity
+			String bidNotification = XmlBuilderServer.getBidNotification(name, playerNumber, newBid);
 			notifyAllUsersViaGameSocket(bidNotification, null, false);
 		}
 		
@@ -544,7 +591,7 @@ public final class Room extends RoomWrapper
 		
 		chatHistory.add(message);
 		
-		String chatMessage = XmlBuilderServer.getChatNotification(roomName, message);
+		String chatMessage = XmlBuilderServer.getChatNotification(name, message);
 		HashSet<String> users = getAllUsersInRoom();
 		List<UserConnection> uscs = ServerGlobals.INSTANCE.getUscStore().getAllForNames(users);
 		server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false);
@@ -557,6 +604,6 @@ public final class Room extends RoomWrapper
 	@Override
 	public String toString() 
 	{
-		return roomName;
+		return name;
 	}
 }

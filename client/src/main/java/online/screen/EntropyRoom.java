@@ -2,6 +2,7 @@ package online.screen;
 
 import java.awt.BorderLayout;
 
+import game.GameSettings;
 import object.Bid;
 import object.EntropyAchievementsTracker;
 import object.EntropyBid;
@@ -14,9 +15,9 @@ public class EntropyRoom extends GameRoom
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
-	public EntropyRoom(String roomName, int players)
+	public EntropyRoom(String roomName, GameSettings settings, int players)
 	{
-		super(roomName, GameConstants.GAME_MODE_ENTROPY, players);
+		super(roomName, settings, players);
 		
 		bidPanel = new EntropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
@@ -46,7 +47,7 @@ public class EntropyRoom extends GameRoom
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
 
-			int total = CardsUtil.countSuit(lastBidSuitCode, hmHandByAdjustedPlayerNumber, jokerValue);
+			int total = CardsUtil.countSuit(lastBidSuitCode, hmHandByAdjustedPlayerNumber, getJokerValue());
 			String suitsStr = CardsUtil.getSuitDesc(total, lastBidSuitCode);
 			if (total == 1)
 			{

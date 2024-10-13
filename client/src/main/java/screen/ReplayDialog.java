@@ -343,7 +343,7 @@ public class ReplayDialog extends JFrame
 		}
 		
 		String username = room.getUsername();
-		String roomName = room.getRoomName();
+		String roomName = room.getName();
 
 		Debug.append("Opened online replay for room " + roomName, true);
 		replay = Preferences.userRoot().node(NODE_ONLINE_REPLAY + roomName + username);

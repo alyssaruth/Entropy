@@ -434,7 +434,7 @@ public class EntropyLobby extends JFrame
 				int index, boolean isSelected, boolean cellHasFocus) 
 		{
 			OnlineUser username = (OnlineUser)value;
-			return super.getListCellRendererComponent(list, StringUtil.escapeHtml(username.toString()), index, isSelected, cellHasFocus);
+			return super.getListCellRendererComponent(list, StringUtil.escapeHtml(username.getName()), index, isSelected, cellHasFocus);
 		}
 	}
 }
