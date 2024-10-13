@@ -36,7 +36,6 @@ import util.ApiUtil;
 import util.CpuStrategies;
 import util.Debug;
 import util.DialogUtil;
-import util.GameConstants;
 import util.TableUtil;
 import util.TableUtil.DefaultModel;
 

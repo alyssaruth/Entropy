@@ -23,7 +23,6 @@ import javax.swing.event.ChangeListener;
 
 import game.GameMode;
 import util.Debug;
-import util.GameConstants;
 
 public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 									  implements ChangeListener,

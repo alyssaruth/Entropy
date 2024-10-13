@@ -12,6 +12,8 @@ import utils.CoreGlobals.logger
 object DialogUtilNew {
     private var loadingDialog: LoadingDialog? = null
 
+    @JvmStatic
+    @JvmOverloads
     fun showInfo(infoText: String, parent: Component = ScreenCache.getMainScreen()) {
         logDialogShown("Info", "Information", infoText)
         JOptionPane.showMessageDialog(
@@ -34,6 +36,8 @@ object DialogUtilNew {
         logDialogClosed("CustomInfo", null)
     }
 
+    @JvmStatic
+    @JvmOverloads
     fun showError(errorText: String, parent: Component? = ScreenCache.getMainScreen()) {
         dismissLoadingDialog()
 
@@ -47,6 +51,7 @@ object DialogUtilNew {
         SwingUtilities.invokeLater { showError(errorText) }
     }
 
+    @JvmStatic
     @JvmOverloads
     fun showQuestion(
         message: String,

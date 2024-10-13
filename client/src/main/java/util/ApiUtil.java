@@ -1,5 +1,12 @@
 package util;
 
+import game.GameMode;
+import object.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,20 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.swing.JOptionPane;
-
-import object.ApiStrategy;
-import object.Bid;
-import object.ChallengeBid;
-import object.EntropyBid;
-import object.IllegalBid;
-import object.Player;
-import object.VectropyBid;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class ApiUtil implements Registry
 {
@@ -44,7 +37,7 @@ public class ApiUtil implements Registry
 	{
 		if (!xml)
 		{
-			DialogUtil.showError("JSON is currently unsupported.");
+			DialogUtilNew.showError("JSON is currently unsupported.");
 			return;
 		}
 		
@@ -96,7 +89,7 @@ public class ApiUtil implements Registry
 		{
 			Debug.append("Caught " + t.getMessage() + " sending message via API.");
 			String question = "An error occurred connecting to the third party software.\n\nRetry?";
-			int option = DialogUtil.showQuestion(question, false);
+			int option = DialogUtilNew.showQuestion(question, false);
 			if (option == JOptionPane.YES_OPTION)
 			{
 				sendWithCatch(messageString, port, logging, testMode);
@@ -115,7 +108,7 @@ public class ApiUtil implements Registry
 			}
 			
 			Debug.stackTrace(t);
-			DialogUtil.showError("A severe error occurred communicating with the third party software. "
+			DialogUtilNew.showError("A severe error occurred communicating with the third party software. "
 								+ "\n\nLogs have been sent for investigation.");
 			
 			saveStrategyErrorAndUnsetStrategies(apiStrategy, "A severe error occurred communicating with the third party software.");
@@ -146,7 +139,7 @@ public class ApiUtil implements Registry
 		Document document = XmlUtil.factoryNewDocument();
 		Element rootElement = document.createElement(ROOT_TAG_API_MESSAGE);
 		
-		int gameMode = parms.getGameMode();
+		GameMode gameMode = parms.getGameMode();
 		int totalCards = parms.getTotalNumberOfCards();
 		int jokerQuantity = parms.getJokerQuantity();
 		int jokerValue = parms.getJokerValue();
@@ -155,15 +148,8 @@ public class ApiUtil implements Registry
 		boolean negativeJacks = parms.getNegativeJacks();
 		boolean cardReveal = parms.getCardReveal();
 		Bid lastBid = parms.getLastBid();
-		
-		if (gameMode == GameConstants.GAME_MODE_ENTROPY)
-		{
-			rootElement.setAttribute("GameMode", "Entropy");
-		}
-		else if (gameMode == GameConstants.GAME_MODE_VECTROPY)
-		{
-			rootElement.setAttribute("GameMode", "Vectropy");
-		}
+
+		rootElement.setAttribute("GameMode", gameMode.name());
 		
 		String[] playerHand = player.getHand();
 		Element handElement = document.createElement("PlayerHand");
@@ -229,14 +215,6 @@ public class ApiUtil implements Registry
 	
 	private static String factoryJsonApiMessage(StrategyParms parms, Player player)
 	{
-		/*Gson gson = new Gson();
-		
-		String json = gson.toJson(parms);
-		Debug.append("JSON parms: " + json);
-		
-		return json;*/
-		
-		
 		if (parms == null
 		  || player == null)
 		{
@@ -285,8 +263,8 @@ public class ApiUtil implements Registry
 	{
 		try
 		{
-			int gameMode = parms.getGameMode();
-			if (gameMode == GameConstants.GAME_MODE_ENTROPY)
+			GameMode gameMode = parms.getGameMode();
+			if (gameMode == GameMode.Entropy)
 			{
 				return EntropyBid.factoryFromXmlTag(root);
 			}
@@ -303,7 +281,7 @@ public class ApiUtil implements Registry
 			
 			saveStrategyErrorAndUnsetStrategies(apiStrategy, message);
 			
-			DialogUtil.showError(message);
+			DialogUtilNew.showError(message);
 			return null;
 		}
 	}
@@ -316,7 +294,7 @@ public class ApiUtil implements Registry
 		saveStrategyErrorAndUnsetStrategies(apiStrategy, message);
 		
 		message += "\n\nRefer to the API documentation to see the responses that are accepted.";
-		DialogUtil.showError(message);
+		DialogUtilNew.showError(message);
 	}
 	
 	private static void initialiseStrategyHashMap()

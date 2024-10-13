@@ -8,8 +8,8 @@ import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import screen.EntropyBidPanel;
 import util.CardsUtil;
-import util.GameConstants;
 import util.Registry;
+import util.ReplayConstants;
 
 public class EntropyRoom extends GameRoom
 {
@@ -64,7 +64,7 @@ public class EntropyRoom extends GameRoom
 	public void saveModeSpecificVariablesForReplay()
 	{
 		int roundsSoFar = replay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0);
-		replay.putInt(Registry.REPLAY_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY_ONLINE);
+		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_ENTROPY_ONLINE);
 		replay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, ((EntropyBid)lastBid).getBidSuitCode());
 		replayDialog.roundAdded();
 	}

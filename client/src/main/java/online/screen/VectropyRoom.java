@@ -5,10 +5,7 @@ import java.awt.BorderLayout;
 import game.GameSettings;
 import object.Bid;
 import screen.VectropyBidPanel;
-import util.AchievementsUtil;
-import util.GameConstants;
-import util.Registry;
-import util.VectropyUtil;
+import util.*;
 
 public class VectropyRoom extends GameRoom
 {
@@ -58,7 +55,7 @@ public class VectropyRoom extends GameRoom
 	@Override
 	public void saveModeSpecificVariablesForReplay()
 	{
-		replay.putInt(Registry.REPLAY_INT_GAME_MODE, GameConstants.GAME_MODE_VECTROPY_ONLINE);
+		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_VECTROPY_ONLINE);
 		replayDialog.roundAdded();
 	}
 	

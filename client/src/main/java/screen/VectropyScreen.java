@@ -7,7 +7,6 @@ import object.Bid;
 import object.VectropyBid;
 import util.AchievementsUtil;
 import util.Debug;
-import util.GameConstants;
 import util.Registry;
 import util.VectropyUtil;
 

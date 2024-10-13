@@ -138,7 +138,7 @@ public class AchievementsUtil implements AchievementBadges
 		updateStreaksForWin();
 		unlockWinningStreakAchievements();
 		
-		if (GameUtil.isEntropy(gameMode))
+		if (gameMode == GameMode.Entropy)
 		{
 			unlockEntropyWinAchievements();
 		}

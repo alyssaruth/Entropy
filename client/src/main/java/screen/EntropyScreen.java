@@ -7,7 +7,6 @@ import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import util.CardsUtil;
 import util.EntropyUtil;
-import util.GameConstants;
 import util.Registry;
 
 public class EntropyScreen extends GameScreen
