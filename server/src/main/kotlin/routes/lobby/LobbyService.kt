@@ -3,20 +3,20 @@ package routes.lobby
 import auth.UserConnection
 import game.GameMode
 import game.GameSettings
-import http.dto.LobbyResponse
+import http.dto.LobbyMessage
 import http.dto.OnlineUser
 import http.dto.RoomSummary
 import `object`.Room
 import util.GameConstants
 import util.ServerGlobals
 import util.XmlConstants
-import utils.CoreGlobals.objectMapper
+import utils.CoreGlobals
 
 class LobbyService {
-    fun getLobby(): LobbyResponse {
+    fun getLobby(): LobbyMessage {
         val rooms = ServerGlobals.server.rooms.map { it.toSummary() }
         val users = ServerGlobals.sessionStore.getAll().map { OnlineUser(it.name) }
-        return LobbyResponse(rooms, users)
+        return LobbyMessage(rooms, users)
     }
 
     @JvmOverloads
@@ -29,7 +29,7 @@ class LobbyService {
         val lobbyMessage = getLobby()
         ServerGlobals.server.sendViaNotificationSocket(
             usersToNotify,
-            objectMapper.writeValueAsString(lobbyMessage),
+            CoreGlobals.jsonMapper.writeValueAsString(lobbyMessage),
             XmlConstants.SOCKET_NAME_LOBBY,
         )
     }

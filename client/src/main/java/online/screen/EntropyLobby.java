@@ -1,7 +1,7 @@
 package online.screen;
 
 import game.GameMode;
-import http.dto.LobbyResponse;
+import http.dto.LobbyMessage;
 import http.dto.OnlineUser;
 import http.dto.RoomSummary;
 import object.RoomTable;
@@ -137,7 +137,7 @@ public class EntropyLobby extends JFrame
 	private final JButton btnSettings = new JButton("");
 	private final OnlineChatPanel chatPanel = new OnlineChatPanel(LOBBY_ID);
 	
-	public void init(LobbyResponse lobbyResponse)
+	public void init(LobbyMessage lobbyMessage)
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -157,7 +157,7 @@ public class EntropyLobby extends JFrame
 
 				initChatPanelIfNecessary();
 
-				syncLobbyOnEventThread(lobbyResponse);
+				syncLobbyOnEventThread(lobbyMessage);
 			}
 		});
 		
@@ -227,14 +227,14 @@ public class EntropyLobby extends JFrame
 		return gameRoom;
 	}
 
-	public void syncLobby(LobbyResponse response)
+	public void syncLobby(LobbyMessage response)
 	{
 		SwingUtilities.invokeLater(() -> {
 			syncLobbyOnEventThread(response);
         });
 	}
 
-	private void syncLobbyOnEventThread(LobbyResponse response) {
+	private void syncLobbyOnEventThread(LobbyMessage response) {
 		roomTable.synchroniseRooms(response.getRooms());
 		synchUsernames(response.getUsers());
 	}

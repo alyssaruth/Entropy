@@ -154,7 +154,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	 */
 	private Document getResponse(String encryptedMessage) throws Throwable
 	{
-		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage);
+		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage, true);
 		if (unencryptedDocument != null)
 		{
 			//We've been sent an unencrypted XML message. Either this is the client agreeing a new

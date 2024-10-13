@@ -6,7 +6,7 @@ import com.github.alyssaburlton.swingtest.flushEdt
 import http.Routes.BEGIN_SESSION
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
-import http.dto.LobbyResponse
+import http.dto.LobbyMessage
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -104,12 +104,12 @@ class SessionApiTest : AbstractTest() {
         val mockLobby = mockk<EntropyLobby>(relaxed = true)
         ScreenCache.setEntropyLobby(mockLobby)
 
-        val lobbyResponse = LobbyResponse(emptyList(), emptyList())
+        val lobbyMessage = LobbyMessage(emptyList(), emptyList())
         val httpClient =
             mockHttpClient(
                 SuccessResponse(
                     200,
-                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyResponse)
+                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyMessage)
                 )
             )
 
@@ -119,7 +119,7 @@ class SessionApiTest : AbstractTest() {
         verify {
             lobby.username = "alyssa"
             lobby.isVisible = true
-            lobby.init(lobbyResponse)
+            lobby.init(lobbyMessage)
         }
     }
 

@@ -68,8 +68,12 @@ public class XmlUtil
 			return "";
 		}
 	}
+
+	public static Document getDocumentFromXmlString(String xmlStr) {
+		return getDocumentFromXmlString(xmlStr, false);
+	}
 	
-	public static Document getDocumentFromXmlString(String xmlStr)
+	public static Document getDocumentFromXmlString(String xmlStr, boolean suppressError)
 	{
 		try
 		{
@@ -79,7 +83,9 @@ public class XmlUtil
 		}
 		catch (Throwable t)
 		{
-			CoreGlobals.logger.error("xmlParseError", "Failed to parse XML " + xmlStr, t);
+			if (!suppressError) {
+				CoreGlobals.logger.error("xmlParseError", "Failed to parse XML " + xmlStr, t);
+			}
 			return null;
 		}
 	}

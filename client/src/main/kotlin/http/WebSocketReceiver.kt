@@ -1,17 +1,21 @@
 package http
 
 import http.dto.ClientMessage
-import http.dto.LobbyResponse
-import kong.unirest.JsonObjectMapper
+import http.dto.LobbyMessage
 import screen.ScreenCache
+import utils.CoreGlobals
 import utils.CoreGlobals.logger
 
 class WebSocketReceiver {
-    private val jsonObjectMapper = JsonObjectMapper()
-
     fun receiveMessage(rawMessage: String) {
+        val clientMessage = deserializeClientMessage(rawMessage)
+        logger.info(
+            "serverMessage",
+            "Received server message of type ${clientMessage::class.simpleName}"
+        )
+
         when (val clientMessage = deserializeClientMessage(rawMessage)) {
-            is LobbyResponse -> handleLobbyResponse(clientMessage)
+            is LobbyMessage -> handleLobbyResponse(clientMessage)
         }
     }
 
@@ -29,9 +33,9 @@ class WebSocketReceiver {
         }
 
     private fun deserializeClientMessage(rawMessage: String): ClientMessage =
-        jsonObjectMapper.readValue(rawMessage, ClientMessage::class.java)
+        CoreGlobals.jsonMapper.readValue(rawMessage, ClientMessage::class.java)
 
-    private fun handleLobbyResponse(clientMessage: LobbyResponse) {
+    private fun handleLobbyResponse(clientMessage: LobbyMessage) {
         ScreenCache.getEntropyLobby().syncLobby(clientMessage)
     }
 }
