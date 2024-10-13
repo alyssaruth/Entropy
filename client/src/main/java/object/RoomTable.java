@@ -163,10 +163,6 @@ public final class RoomTable extends JTable
 			if (listRoom != tableRoom)
 			{
 				Object[] newRoomRow = factoryRowForRoom(listRoom);
-				
-				//Don't do it like this...
-				//model.insertRow(i, newRoomRow);
-				//model.removeRow(i+1);
 				updateRow(i, newRoomRow);
 				
 				lobby.addOrUpdateRoom(roomName, listRoom);
@@ -219,7 +215,7 @@ public final class RoomTable extends JTable
 	{
 		String name = room.getName();
 		String mode = room.getGameSettings().getMode().name();
-		String players = room.getPlayers() + "/" + room.getPlayers();
+		String players = room.getPlayers() + "/" + room.getCapacity();
 		String observers = "" + room.getObservers();
 		
 		FlagImage image = createFlagsForRoom(room.getGameSettings());

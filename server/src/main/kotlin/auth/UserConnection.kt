@@ -9,6 +9,13 @@ import util.ColourGenerator
 import util.Debug
 import util.XmlConstants
 
+private val ALL_SOCKETS =
+    listOf(
+        XmlConstants.SOCKET_NAME_CHAT,
+        XmlConstants.SOCKET_NAME_GAME,
+        XmlConstants.SOCKET_NAME_LOBBY
+    )
+
 data class UserConnection(val ipAddress: String, val name: String) : IHasId<String> {
     override val id = ipAddress
 
@@ -30,11 +37,7 @@ data class UserConnection(val ipAddress: String, val name: String) : IHasId<Stri
     }
 
     fun destroyNotificationSockets() {
-        val it: Iterator<String> = hmSocketBySocketName.keys.iterator()
-        while (it.hasNext()) {
-            val socketType = it.next()
-            replaceNotificationSocket(socketType, null)
-        }
+        ALL_SOCKETS.forEach { replaceNotificationSocket(it, null) }
     }
 
     /**
@@ -102,9 +105,7 @@ data class UserConnection(val ipAddress: String, val name: String) : IHasId<Stri
     }
 
     private fun initialiseSocketHashMaps() {
-        initialiaseHashMaps(XmlConstants.SOCKET_NAME_CHAT)
-        initialiaseHashMaps(XmlConstants.SOCKET_NAME_LOBBY)
-        initialiaseHashMaps(XmlConstants.SOCKET_NAME_GAME)
+        ALL_SOCKETS.forEach(::initialiaseHashMaps)
     }
 
     private fun initialiaseHashMaps(socketType: String) {

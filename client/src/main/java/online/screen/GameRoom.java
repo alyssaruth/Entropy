@@ -179,16 +179,16 @@ public abstract class GameRoom extends JFrame
 		var settings = room.getGameSettings();
 		
 		String roomName = room.getName();
-		int players = room.getPlayers();
+		int capacity = room.getCapacity();
 		GameMode mode = settings.getMode();
 		
 		if (mode == GameMode.Entropy)
 		{
-			ret = new EntropyRoom(roomName, settings, players);
+			ret = new EntropyRoom(roomName, settings, capacity);
 		}
 		else if (mode == GameMode.Vectropy)
 		{
-			ret = new VectropyRoom(roomName, settings, players);
+			ret = new VectropyRoom(roomName, settings, capacity);
 		}
 
 		return ret;
