@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import game.GameMode;
 import util.Debug;
 import util.GameConstants;
 
@@ -28,7 +29,7 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 									  implements ChangeListener,
 									  			 ItemListener
 {
-	private int gameMode = GameConstants.GAME_MODE_ENTROPY;
+	private GameMode gameMode = GameMode.Entropy;
 	private boolean includeJokers = false;
 	private int numberOfCards = 5;
 	private int jokerQuantity = 2;
@@ -175,8 +176,8 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		cbIncludeStars.setSelected(includeStars);
 		cbIncludeMoons.setSelected(includeMoons);
 		
-		rdbtnEntropy.setSelected(gameMode == GameConstants.GAME_MODE_ENTROPY);
-		rdbtnVectropy.setSelected(gameMode == GameConstants.GAME_MODE_VECTROPY);
+		rdbtnEntropy.setSelected(gameMode == GameMode.Entropy);
+		rdbtnVectropy.setSelected(gameMode == GameMode.Vectropy);
 		
 		hideLockedFields();
 	}
@@ -211,7 +212,7 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_STARS, includeStars);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, includeMoons);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, cardReveal);
-		prefs.putInt(PREFERENCES_INT_GAME_MODE, gameMode);
+		prefs.put(PREFERENCES_STRING_GAME_MODE, gameMode.name());
 	}
 	
 	private void getVariablesFromPreferences()
@@ -227,7 +228,7 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		includeMoons = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, false);
 		negativeJacks = prefs.getBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, false);
 		cardReveal = prefs.getBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, false);
-		gameMode = prefs.getInt(PREFERENCES_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY);
+		gameMode = GameMode.valueOf(prefs.get(PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
 	}
 	
 	private void adjustHandicapSpinner()
@@ -266,16 +267,16 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
-		int originalGameMode = gameMode;
+		GameMode originalGameMode = gameMode;
 		
 		Object source = arg0.getSource();
 		if (source == rdbtnEntropy)
 		{
-			gameMode = GameConstants.GAME_MODE_ENTROPY;
+			gameMode = GameMode.Entropy;
 		}
 		else if (source == rdbtnVectropy)
 		{
-			gameMode = GameConstants.GAME_MODE_VECTROPY;
+			gameMode = GameMode.Vectropy;
 		}
 		
 		if (originalGameMode != gameMode)

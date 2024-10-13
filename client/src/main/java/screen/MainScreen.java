@@ -1,6 +1,7 @@
 package screen;
 
 import bean.AbstractDevScreen;
+import game.GameMode;
 import object.Bid;
 import object.BidListCellRenderer;
 import object.Player;
@@ -48,7 +49,7 @@ public final class MainScreen extends AbstractDevScreen
 
 	private boolean isGameToContinue = savedGame.getBoolean(Registry.SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, false);
 	
-	private int gameMode = -1;
+	private GameMode gameMode = null;
 	private ArrayList<Integer> lastTenKeys = new ArrayList<>();
 
 	@Override
@@ -250,7 +251,7 @@ public final class MainScreen extends AbstractDevScreen
 		{	
 			if (overwriteSavedGame() && quitCurrentGame())
 			{
-				gameMode = prefs.getInt(Registry.PREFERENCES_INT_GAME_MODE, GameConstants.GAME_MODE_ENTROPY);
+				gameMode = GameMode.valueOf(prefs.get(Registry.PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
 				selectGameScreen(gameMode);
 				lblBidHistory.setVisible(true);
 				btnReplay.setVisible(true);
@@ -492,7 +493,7 @@ public final class MainScreen extends AbstractDevScreen
 	{
 		try
 		{
-			gameMode = savedGame.getInt(Registry.SAVED_GAME_INT_GAME_MODE, -1);
+			gameMode = GameMode.valueOf(savedGame.get(Registry.SAVED_GAME_INT_GAME_MODE, null));
 			selectGameScreen(gameMode);
 			
 			lblBidHistory.setVisible(true);
@@ -632,14 +633,14 @@ public final class MainScreen extends AbstractDevScreen
 		setState(Frame.NORMAL);
 	}
 	
-	private void selectGameScreen(int gameMode)
+	private void selectGameScreen(GameMode gameMode)
 	{
 		switch (gameMode)
 		{
-			case GameConstants.GAME_MODE_ENTROPY:
+			case Entropy:
 				gamePanel = ScreenCache.getEntropyPanel();
 				break;
-			case GameConstants.GAME_MODE_VECTROPY:
+			case Vectropy:
 				gamePanel = ScreenCache.getVectropyPanel();
 				break;
 			default:

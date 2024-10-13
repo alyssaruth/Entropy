@@ -2,6 +2,7 @@ package screen;
 
 import java.awt.BorderLayout;
 
+import game.GameMode;
 import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import util.CardsUtil;
@@ -143,9 +144,9 @@ public class EntropyScreen extends GameScreen
 	}
 
 	@Override
-	public int getGameMode() 
+	public GameMode getGameMode()
 	{
-		return GameConstants.GAME_MODE_ENTROPY;
+		return GameMode.Entropy;
 	}
 	
 	@Override

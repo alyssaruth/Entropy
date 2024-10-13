@@ -1,5 +1,6 @@
 package screen;
 
+import game.GameMode;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
@@ -63,7 +64,7 @@ public abstract class GameScreen extends TransparentPanel
 	public abstract void loadSpecificVariables();
 	public abstract void showResult();
 	
-	public abstract int getGameMode();
+	public abstract GameMode getGameMode();
 	public abstract String processCommand(String command);
 	public abstract int getLastBidSuitCode();
 	public abstract void unlockPerfectBidAchievements();
@@ -460,7 +461,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	protected void saveRoundForReplay()
 	{
-		inGameReplay.putInt(REPLAY_INT_GAME_MODE, getGameMode());
+		inGameReplay.putInt(REPLAY_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
 		inGameReplay.put(REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOne.getStrategy());
 		inGameReplay.put(REPLAY_STRING_OPPONENT_TWO_STRATEGY, opponentTwo.getStrategy());
 		inGameReplay.put(REPLAY_STRING_OPPONENT_THREE_STRATEGY, opponentThree.getStrategy());		
@@ -520,7 +521,7 @@ public abstract class GameScreen extends TransparentPanel
 	protected void saveGame()
 	{
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, true);
-		savedGame.putInt(SAVED_GAME_INT_GAME_MODE, getGameMode());
+		savedGame.putInt(SAVED_GAME_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
 		
 		//save the listmodel
 		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();

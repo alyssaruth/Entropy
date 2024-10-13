@@ -1,6 +1,7 @@
 package screen;
 
 import bean.NumberField;
+import game.GameMode;
 import util.*;
 
 import javax.swing.*;
@@ -552,10 +553,10 @@ public class SimulationDialog extends JDialog
 	
 	private SimulationParms factorySimulationParms()
 	{
-		int gameMode = GameConstants.GAME_MODE_ENTROPY;
+		GameMode gameMode = GameMode.Entropy;
 		if (rdbtnVectropy.isSelected())
 		{
-			gameMode = GameConstants.GAME_MODE_VECTROPY;
+			gameMode = GameMode.Vectropy;
 		}
 		
 		int numberOfCards = slider.getValue();

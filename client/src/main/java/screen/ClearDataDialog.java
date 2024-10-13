@@ -199,7 +199,7 @@ public class ClearDataDialog extends JDialog
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_BLIND);
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP);
 		prefs.remove(PREFERENCES_XML_API_SETTINGS);
-		prefs.remove(PREFERENCES_INT_GAME_MODE);
+		prefs.remove(PREFERENCES_STRING_GAME_MODE);
 		prefs.remove(PREFERENCES_INT_HANDICAP_AMOUNT);
 		prefs.remove(PREFERENCES_INT_JOKER_QUANTITY);
 		prefs.remove(PREFERENCES_INT_JOKER_VALUE);

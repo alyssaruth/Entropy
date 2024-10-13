@@ -61,7 +61,7 @@ public interface Registry extends CoreRegistry
 	public static final String PREFERENCES_INT_NUMBER_OF_CARDS = "numberOfCards";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_HEIGHT = "rvheight";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_WIDTH = "rvwidth";
-	public static final String PREFERENCES_INT_GAME_MODE = "mode";
+	public static final String PREFERENCES_STRING_GAME_MODE = "gameMode";
 	
 	public static final String PREFERENCES_XML_API_SETTINGS = "apiSettings";
 	public static final String PREFERENCES_TAG_API = "Api";
