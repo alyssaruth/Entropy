@@ -274,7 +274,7 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			try
 			{
-				int dialogButton = DialogUtil.showQuestion("Are you sure you wish to start a new game?"
+				int dialogButton = DialogUtilNew.showQuestion("Are you sure you wish to start a new game?"
 						+ "\nThis will wipe the currently saved game and count it as a loss in your statistics.", false);
 
 				if (dialogButton == JOptionPane.YES_OPTION)
@@ -347,7 +347,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private boolean confirmQuit() throws Throwable
 	{
-		int dialogButton = DialogUtil.showQuestion("Are you sure you wish to quit the current game?"
+		int dialogButton = DialogUtilNew.showQuestion("Are you sure you wish to quit the current game?"
 										+ "\nThis will count as a loss in your statistics.", false);
 
 		if (dialogButton == JOptionPane.YES_OPTION)
@@ -473,7 +473,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else
 		{
-			int dialogButton = DialogUtil.showQuestion("Do you want to save this game to continue next time?"
+			int dialogButton = DialogUtilNew.showQuestion("Do you want to save this game to continue next time?"
 					+ "\nAnswering no will count as a loss in your statistics.", false);
 
 			if (dialogButton == JOptionPane.YES_OPTION)
@@ -493,7 +493,7 @@ public final class MainScreen extends AbstractDevScreen
 	{
 		try
 		{
-			gameMode = GameMode.valueOf(savedGame.get(Registry.SAVED_GAME_INT_GAME_MODE, null));
+			gameMode = GameMode.valueOf(savedGame.get(Registry.SAVED_GAME_STRING_GAME_MODE, null));
 			selectGameScreen(gameMode);
 			
 			lblBidHistory.setVisible(true);
@@ -505,7 +505,7 @@ public final class MainScreen extends AbstractDevScreen
 		catch (Throwable t)
 		{
 			Debug.stackTrace(t);
-			DialogUtil.showError("A serious error occurred retrieving your game.");
+			DialogUtilNew.showError("A serious error occurred retrieving your game.");
 		}
 	}
 	

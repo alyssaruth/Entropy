@@ -295,7 +295,7 @@ public interface Registry extends CoreRegistry
 	public static final String SAVED_GAME_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "opponentOneNumberOfCards";
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
 	public static final String SAVED_GAME_INT_HISTORY_SIZE = "historySize";
-	public static final String SAVED_GAME_INT_GAME_MODE = "gameMode";
+	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
 
 	//statics for default values etc
 	public static final String TWO_COLOURS = "twocolour";

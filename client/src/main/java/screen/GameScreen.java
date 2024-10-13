@@ -521,7 +521,7 @@ public abstract class GameScreen extends TransparentPanel
 	protected void saveGame()
 	{
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, true);
-		savedGame.putInt(SAVED_GAME_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
+		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
 		
 		//save the listmodel
 		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
