@@ -1,33 +1,39 @@
 package store
 
-interface Store<T> {
+interface Store<K, T : IHasId<K>> {
     val name: String
 
-    fun put(key: String, value: T)
+    fun put(value: T)
 
-    fun find(key: String): T?
+    fun find(key: K): T?
 
-    fun get(key: String): T
+    fun get(key: K): T
 
     fun getAll(): List<T>
 
-    fun remove(key: String)
+    fun remove(key: K)
+
+    fun putAll(vararg items: T)
 }
 
-abstract class MemoryStore<T> : Store<T> {
-    private val map = mutableMapOf<String, T>()
+abstract class MemoryStore<K, T : IHasId<K>> : Store<K, T> {
+    private val map = mutableMapOf<K, T>()
 
-    override fun put(key: String, value: T) {
-        map[key] = value
+    override fun put(value: T) {
+        map[value.id] = value
     }
 
-    override fun find(key: String): T? = map[key]
+    override fun find(key: K): T? = map[key]
 
-    override fun get(key: String): T = map.getValue(key)
+    override fun get(key: K): T = map.getValue(key)
 
     override fun getAll(): List<T> = map.values.toList()
 
-    override fun remove(key: String) {
+    override fun remove(key: K) {
         map.remove(key)
+    }
+
+    override fun putAll(vararg items: T) {
+        items.forEach(::put)
     }
 }

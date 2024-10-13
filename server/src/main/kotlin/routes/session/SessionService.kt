@@ -4,7 +4,6 @@ import auth.Session
 import auth.UserConnection
 import http.EMPTY_NAME
 import http.INVALID_API_VERSION
-import http.LegacyConstants
 import http.UPDATE_REQUIRED
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
@@ -16,8 +15,8 @@ import util.OnlineConstants
 import util.ServerGlobals
 
 class SessionService(
-    private val sessionStore: Store<Session>,
-    private val uscStore: Store<UserConnection>,
+    private val sessionStore: Store<UUID, Session>,
+    private val uscStore: Store<String, UserConnection>,
 ) {
     fun beginSession(request: BeginSessionRequest, ip: String): BeginSessionResponse {
         if (request.apiVersion > OnlineConstants.API_VERSION) {
@@ -43,15 +42,12 @@ class SessionService(
         val sessionId = UUID.randomUUID()
         val currentNames = sessionStore.getAll().map { it.name }
         val name = ensureUnique(request.name, currentNames)
-        val session =
-            Session(sessionId, name, ip, request.apiVersion).also {
-                sessionStore.put(it.id.toString(), it)
-            }
+        val session = Session(sessionId, name, ip, request.apiVersion).also { sessionStore.put(it) }
 
         // Also populate legacy user connection
-        val usc = UserConnection(ip, LegacyConstants.SYMMETRIC_KEY, name)
+        val usc = UserConnection(ip, name)
         usc.setLastActiveNow()
-        uscStore.put(ip, usc)
+        uscStore.put(usc)
         ServerGlobals.lobbyService.lobbyChanged(usc)
 
         return BeginSessionResponse(session.name, session.id, ServerGlobals.lobbyService.getLobby())

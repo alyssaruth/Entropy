@@ -6,6 +6,7 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import auth.UserConnection;
+import http.LegacyConstants;
 import object.NotificationSocket;
 import object.ServerRunnable;
 
@@ -86,7 +87,7 @@ public class NotificationRunnable implements ServerRunnable
 			return;
 		}
 		
-		String encryptedXmlStr = EncryptionUtil.encrypt(message, usc.getSymmetricKey());
+		String encryptedXmlStr = EncryptionUtil.encrypt(message, LegacyConstants.INSTANCE.getSYMMETRIC_KEY());
 		Throwable t = notificationSocket.sendMessageViaSocket(encryptedXmlStr);
 		if (t != null)
 		{

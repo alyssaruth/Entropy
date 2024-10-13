@@ -13,6 +13,7 @@ import java.util.List;
 import javax.crypto.SecretKey;
 
 import auth.UserConnection;
+import http.LegacyConstants;
 import object.NotificationSocket;
 import object.Room;
 import object.ServerRunnable;
@@ -145,7 +146,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		
 		if (usc != null)
 		{
-			symmetricKey = usc.getSymmetricKey();
+			symmetricKey = LegacyConstants.INSTANCE.getSYMMETRIC_KEY();
 		}
 	}
 	

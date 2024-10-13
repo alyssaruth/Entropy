@@ -1,16 +1,17 @@
 package auth
 
 import java.util.concurrent.atomic.AtomicInteger
-import javax.crypto.SecretKey
 import `object`.NotificationSocket
 import server.EntropyServer
 import server.NotificationRunnable
+import store.IHasId
 import util.ColourGenerator
 import util.Debug
-import util.EncryptionUtil
 import util.XmlConstants
 
-data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, val name: String) {
+data class UserConnection(val ipAddress: String, val name: String) : IHasId<String> {
+    override val id = ipAddress
+
     val colour: String = ColourGenerator.generateNextColour()
     var lastActive: Long = -1
         private set
@@ -57,8 +58,7 @@ data class UserConnection(val ipAddress: String, val symmetricKey: SecretKey, va
         return hmSocketBySocketName[socketType]
     }
 
-    override fun toString() =
-        "$name @ $ipAddress, ${ EncryptionUtil.convertSecretKeyToString(symmetricKey)}"
+    override fun toString() = "$name @ $ipAddress"
 
     fun sendNotificationInWorkerPool(
         message: String?,

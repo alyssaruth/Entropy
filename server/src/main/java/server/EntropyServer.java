@@ -255,7 +255,7 @@ public final class EntropyServer implements OnlineConstants {
         return room.getChatHistory();
     }
 
-    private Room registerNewRoom(String roomName, int capacity, GameSettings settings) {
+    public Room registerNewRoom(String roomName, int capacity, GameSettings settings) {
         return registerNewRoom(roomName, settings.getMode(), capacity, settings.getJokerQuantity(), settings.getJokerValue(),
                 settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed(), settings.getNegativeJacks(),
                 settings.getCardReveal());
@@ -291,7 +291,7 @@ public final class EntropyServer implements OnlineConstants {
         return room;
     }
 
-    public void registerCopy(Room room) {
+    public Room registerCopy(Room room) {
         String roomName = room.getName();
         int capacity = room.getCapacity();
         GameSettings settings = room.getSettings();
@@ -308,6 +308,8 @@ public final class EntropyServer implements OnlineConstants {
             newRoom.setIsCopy(true);
             ServerGlobals.lobbyService.lobbyChanged();
         }
+
+        return newRoom;
     }
 
     public ArrayList<Room> getRooms() {
