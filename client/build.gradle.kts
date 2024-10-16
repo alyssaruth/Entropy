@@ -28,16 +28,7 @@ application {
     mainClass.set("EntropyMain")
 }
 
-task<JavaExec>("runDev") {
-    configure(
-        closureOf<JavaExec> {
-            group = "application"
-            classpath = project.the<SourceSetContainer>()["main"].runtimeClasspath
-            mainClass = "EntropyMain"
-            args = listOf("devMode")
-        }
-    )
-}
+tasks.withType<JavaExec> { configure(closureOf<JavaExec> { args = listOf("devMode") }) }
 
 tasks.withType<Test> {
     testLogging {
