@@ -47,7 +47,7 @@ class SessionServiceTest : AbstractTest() {
 
         val ex =
             shouldThrow<ClientException> {
-                service.beginSession(BeginSessionRequest(""), "1.2.3.4")
+                service.beginSession(makeBeginSessionRequest(""), "1.2.3.4")
             }
         ex.errorCode shouldBe EMPTY_NAME
         ex.statusCode shouldBe HttpStatusCode.BadRequest
@@ -57,7 +57,7 @@ class SessionServiceTest : AbstractTest() {
 
     @Test
     fun `Should create a session and respond with the ID`() {
-        val request = BeginSessionRequest("Alyssa")
+        val request = makeBeginSessionRequest("Alyssa")
         val (service, store) = makeService()
 
         val response = service.beginSession(request, "1.2.3.4")
@@ -71,7 +71,7 @@ class SessionServiceTest : AbstractTest() {
 
     @Test
     fun `Should handle multiple requests for the same name`() {
-        val request = BeginSessionRequest("Alyssa")
+        val request = makeBeginSessionRequest("Alyssa")
         val (service, store) = makeService()
 
         val responseOne = service.beginSession(request, "1.2.3.4")
@@ -92,7 +92,7 @@ class SessionServiceTest : AbstractTest() {
 
     @Test
     fun `Should create a legacy user connection`() {
-        val request = BeginSessionRequest("Alyssa")
+        val request = makeBeginSessionRequest("Alyssa")
         val (service, _, uscStore) = makeService()
 
         val response = service.beginSession(request, "1.2.3.4")
@@ -102,6 +102,9 @@ class SessionServiceTest : AbstractTest() {
         usc.name shouldBe "Alyssa"
         usc.ipAddress shouldBe "1.2.3.4"
     }
+
+    private fun makeBeginSessionRequest(name: String = "Alyssa", achievementCount: Int = 5) =
+        BeginSessionRequest(name, achievementCount)
 
     private fun makeService(): Triple<SessionService, SessionStore, UserConnectionStore> {
         val store = SessionStore()

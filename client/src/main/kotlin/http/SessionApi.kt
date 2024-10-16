@@ -9,6 +9,7 @@ import screen.ScreenCache
 import util.ClientGlobals
 import util.DialogUtilNew
 import util.OnlineConstants
+import util.getAchievementCount
 
 class SessionApi(private val httpClient: HttpClient) {
     fun beginSession(name: String) {
@@ -16,7 +17,7 @@ class SessionApi(private val httpClient: HttpClient) {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 Routes.BEGIN_SESSION,
-                BeginSessionRequest(name),
+                BeginSessionRequest(name, getAchievementCount()),
             )
 
         when (response) {

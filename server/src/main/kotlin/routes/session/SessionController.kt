@@ -13,7 +13,10 @@ object SessionController {
     private val sessionService = SessionService(ServerGlobals.sessionStore, ServerGlobals.uscStore)
 
     fun installRoutes(application: Application) {
-        application.routing { post(Routes.BEGIN_SESSION) { beginSession(call) } }
+        application.routing {
+            post(Routes.BEGIN_SESSION) { beginSession(call) }
+            post(Routes.ACHIEVEMENT_COUNT) { updateAchievementCount(call) }
+        }
     }
 
     private suspend fun beginSession(call: ApplicationCall) {
@@ -22,4 +25,6 @@ object SessionController {
         val response = sessionService.beginSession(request, ip)
         call.respond(response)
     }
+
+    private suspend fun updateAchievementCount(call: ApplicationCall) {}
 }
