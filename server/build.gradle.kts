@@ -22,6 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation("io.insert-koin:koin-ktor:3.5.4")
     implementation("ch.qos.logback:logback-classic:${DependencyVersions.LOGBACK}")
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation(project(":test-core"))

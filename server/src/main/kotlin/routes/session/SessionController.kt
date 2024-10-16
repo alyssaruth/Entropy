@@ -7,24 +7,24 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import util.ServerGlobals
+import org.koin.ktor.ext.inject
 
 object SessionController {
-    private val sessionService = SessionService(ServerGlobals.sessionStore, ServerGlobals.uscStore)
-
     fun installRoutes(application: Application) {
         application.routing {
-            post(Routes.BEGIN_SESSION) { beginSession(call) }
-            post(Routes.ACHIEVEMENT_COUNT) { updateAchievementCount(call) }
+            val service by inject<SessionService>()
+
+            post(Routes.BEGIN_SESSION) { beginSession(call, service) }
+            post(Routes.ACHIEVEMENT_COUNT) { updateAchievementCount(call, service) }
         }
     }
 
-    private suspend fun beginSession(call: ApplicationCall) {
+    private suspend fun beginSession(call: ApplicationCall, service: SessionService) {
         val ip = call.request.origin.remoteAddress
         val request = call.receive<BeginSessionRequest>()
-        val response = sessionService.beginSession(request, ip)
+        val response = service.beginSession(request, ip)
         call.respond(response)
     }
 
-    private suspend fun updateAchievementCount(call: ApplicationCall) {}
+    private suspend fun updateAchievementCount(call: ApplicationCall, service: SessionService) {}
 }
