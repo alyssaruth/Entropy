@@ -39,6 +39,7 @@ class SessionControllerTest : ApplicationTest() {
             """
                 {
                     "name": "David",
+                    "achievementCount": 5,
                     "apiVersion": "${OnlineConstants.API_VERSION}"
                 }
             """

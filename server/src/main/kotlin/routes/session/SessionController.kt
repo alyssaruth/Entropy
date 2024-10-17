@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import util.ServerGlobals
 
-object SessionController {
+class SessionController {
     private val sessionService = SessionService(ServerGlobals.sessionStore, ServerGlobals.uscStore)
 
     fun installRoutes(application: Application) {

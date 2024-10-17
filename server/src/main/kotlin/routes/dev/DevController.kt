@@ -8,7 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-object DevController {
+class DevController {
     private val devService = DevService()
 
     fun installRoutes(application: Application) {

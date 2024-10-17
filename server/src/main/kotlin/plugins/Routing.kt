@@ -35,7 +35,7 @@ fun Application.configureRouting() {
         }
     }
 
-    HealthCheckController.installRoutes(this)
-    SessionController.installRoutes(this)
-    DevController.installRoutes(this)
+    HealthCheckController().installRoutes(this)
+    SessionController().installRoutes(this)
+    DevController().installRoutes(this)
 }
