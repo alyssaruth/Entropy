@@ -649,8 +649,7 @@ public class HandPanelMk2 extends TransparentPanel
 		
 		if (playerNumber == 0)
 		{
-			if (selected
-			  && !AchievementsUtil.isDistractedUnlocked())
+			if (selected)
 			{
 				distractedTimer.schedule(new WaitedTooLong(), 1000*60*3); //3 mins
 			}
@@ -674,12 +673,6 @@ public class HandPanelMk2 extends TransparentPanel
 				selectSpecificPlayer(i, false);
 			}
 		}
-	}
-	
-	public String getColourForAdjustedPlayerNumber(int adjustedPlayerNumber)
-	{
-		PlayerLabel label = getPlayerLabelForPlayerNumber(adjustedPlayerNumber);
-		return label.getColour();
 	}
 	
 	public void resetPlayers()
@@ -785,10 +778,6 @@ public class HandPanelMk2 extends TransparentPanel
 	public void setInitted(boolean initted)
 	{
 		this.initted = initted;
-	}
-	public boolean isInitted()
-	{
-		return initted;
 	}
 	
 	@Override

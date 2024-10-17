@@ -7,6 +7,7 @@ import util.AchievementsUtil;
 import util.DialogUtil;
 import util.Registry;
 import util.ReplayFileUtil;
+import utils.Achievement;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -246,7 +247,7 @@ public class ReplayInterface extends JFrame
 		if (ReplayFileUtil.successfullyFilledRegistryFromFile(fullPath, tempReplayStore))
 		{
 			ReplayFileUtil.exportReplay(filePath);
-			AchievementsUtil.unlockAchievement(ACHIEVEMENTS_BOOLEAN_LOOK_AT_ME);
+			AchievementsUtil.unlockAchievement(Achievement.LookAtMe);
 		}
 		else
 		{

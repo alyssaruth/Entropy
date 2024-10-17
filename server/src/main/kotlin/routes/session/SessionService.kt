@@ -14,7 +14,7 @@ import routes.ClientException
 import store.Store
 import util.OnlineConstants
 import util.ServerGlobals
-import utils.MAX_ACHIEVEMENT_COUNT
+import utils.Achievement
 
 class SessionService(
     private val sessionStore: Store<UUID, Session>,
@@ -81,11 +81,11 @@ class SessionService(
             )
         }
 
-        if (achievementCount > MAX_ACHIEVEMENT_COUNT) {
+        if (achievementCount > Achievement.entries.size) {
             throw ClientException(
                 HttpStatusCode.BadRequest,
                 INVALID_ACHIEVEMENT_COUNT,
-                "Achievement count cannot be greater than $MAX_ACHIEVEMENT_COUNT",
+                "Achievement count cannot be greater than ${Achievement.entries.size}",
             )
         }
     }

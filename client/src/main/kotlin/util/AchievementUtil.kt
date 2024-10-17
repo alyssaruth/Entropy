@@ -1,5 +1,10 @@
 package util
 
-import screen.ScreenCache
+import javax.swing.ImageIcon
+import utils.Achievement
+import utils.isUnlocked
 
-fun getAchievementCount() = ScreenCache.getAchievementsDialog().achievementsEarned
+@JvmField
+val LOCKED_ICON = ImageIcon(AchievementsUtil::class.java.getResource("/achievements/locked.png"))
+
+fun getAchievementsEarned() = Achievement.entries.count { it.isUnlocked() }

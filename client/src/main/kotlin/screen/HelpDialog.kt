@@ -42,7 +42,9 @@ import javax.swing.tree.TreeSelectionModel
 import kotlin.math.max
 import util.AchievementsUtil.UnlockAchievementTask
 import util.Registry
+import utils.Achievement
 import utils.CoreGlobals.logger
+import utils.isUnlocked
 
 class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
     private val fundamentalsTheDeck = FundamentalsTheDeck()
@@ -147,10 +149,10 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
     }
 
     private fun startTimer() {
-        if (!Registry.achievements.getBoolean(Registry.ACHIEVEMENTS_BOOLEAN_BOOKWORM, false)) {
+        if (!Achievement.Bookworm.isUnlocked()) {
             bookwormTimer = Timer("BookwormTimer")
 
-            val task: TimerTask = UnlockAchievementTask(Registry.ACHIEVEMENTS_BOOLEAN_BOOKWORM)
+            val task: TimerTask = UnlockAchievementTask(Achievement.Bookworm)
             val time =
                 max(
                         (60000 * 5 -

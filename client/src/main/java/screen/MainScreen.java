@@ -10,6 +10,7 @@ import online.screen.TestHarness;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
 import util.*;
+import utils.Achievement;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -27,6 +28,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
+import static util.AchievementUtilKt.getAchievementsEarned;
 import static utils.CoreGlobals.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -542,27 +544,24 @@ public final class MainScreen extends AbstractDevScreen
 	 */
 	private void restartTimers()
 	{
-		restartTimer(ACHIEVEMENTS_BOOLEAN_FIVE_MINUTES, timerFiveMinutes, 5);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_FIFTEEN_MINUTES, timerFifteenMinutes, 15);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_THIRTY_MINUTES, timerThirtyMinutes, 30);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_SIXTY_MINUTES, timerSixtyMinutes, 60);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_TWO_HOURS, timerTwoHours, 120);
+		restartTimer(Achievement.Sluggish, timerFiveMinutes, 5);
+		restartTimer(Achievement.WarmingUp, timerFifteenMinutes, 15);
+		restartTimer(Achievement.BreakingASweat, timerThirtyMinutes, 30);
+		restartTimer(Achievement.WorldClass, timerSixtyMinutes, 60);
+		restartTimer(Achievement.RecordBreaker, timerTwoHours, 120);
 	}
 	
-	private void restartTimer(String registryLocation, Timer timer, int minutes)
+	private void restartTimer(Achievement achievement, Timer timer, int minutes)
 	{
-		if (!achievements.getBoolean(registryLocation, false))
+		if (timer != null)
 		{
-			if (timer != null)
-			{
-				timer.cancel();
-			}
-			
-			timer = new Timer("Timer-" + minutes);
-			
-			TimerTask task = new AchievementsUtil.UnlockAchievementTask(registryLocation);
-			timer.schedule(task, (long) Math.max(60000*minutes - achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0), 0));
+			timer.cancel();
 		}
+
+		timer = new Timer("Timer-" + minutes);
+
+		TimerTask task = new AchievementsUtil.UnlockAchievementTask(achievement);
+		timer.schedule(task, (long) Math.max(60000*minutes - achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0), 0));
 	}
 
 	public void showBottomAchievementPanel(boolean visible)
@@ -587,9 +586,7 @@ public final class MainScreen extends AbstractDevScreen
 
 	public void showAchievementPopup(String title, ImageIcon icon)
 	{
-		AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
-		achievementsDialog.refresh(false);
-		int achievementsEarned = achievementsDialog.getAchievementsEarned();
+		int achievementsEarned = getAchievementsEarned();
 		
 		if (!bottomAchievementShowing)
 		{
@@ -762,9 +759,8 @@ public final class MainScreen extends AbstractDevScreen
 		cleanUpReplayNodes();
 		setViewLogsVisibility();
 		restartTimers();
-		
-		int achievementsEarned = ScreenCache.getAchievementsDialog().getAchievementsEarned();
-		AchievementsUtil.unlockRewards(achievementsEarned);
+
+		AchievementsUtil.unlockRewards(getAchievementsEarned());
 	}
 	
 	private void cleanUpReplayNodes()
