@@ -22,13 +22,13 @@ import logging.findLogField
 import org.junit.jupiter.api.Test
 import routes.ClientException
 import routes.requiresSession
-import testCore.AbstractTest
 import testCore.shouldContainKeyValues
 import testCore.shouldMatchJson
+import util.ApplicationTest
 import util.ServerGlobals
 import util.makeSession
 
-class RoutingTest : AbstractTest() {
+class RoutingTest : ApplicationTest() {
     @Test
     fun `Should handle client errors`() = testApplication {
         application { TestingController.installRoutes(this) }

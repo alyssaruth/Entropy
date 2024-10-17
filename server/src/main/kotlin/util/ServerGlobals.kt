@@ -17,8 +17,8 @@ private const val MAX_QUEUE_SIZE = 100
 private const val KEEP_ALIVE_TIME = 20
 
 object ServerGlobals {
-    val uscStore: UserConnectionStore = MemoryUserConnectionStore()
-    val sessionStore: Store<UUID, Session> = SessionStore()
+    var uscStore: UserConnectionStore = MemoryUserConnectionStore()
+    var sessionStore: Store<UUID, Session> = SessionStore()
 
     @JvmField
     val workerPool =

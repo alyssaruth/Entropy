@@ -21,7 +21,7 @@ import util.OnlineConstants
 class SessionServiceTest : AbstractTest() {
     @Test
     fun `Should reject futuristic API versions`() {
-        val request = BeginSessionRequest("Alyssa", OnlineConstants.API_VERSION + 1)
+        val request = makeBeginSessionRequest(apiVersion = OnlineConstants.API_VERSION + 1)
         val (service) = makeService()
 
         val ex = shouldThrow<ClientException> { service.beginSession(request, "1.2.3.4") }
@@ -32,7 +32,7 @@ class SessionServiceTest : AbstractTest() {
 
     @Test
     fun `Should reject old API versions`() {
-        val request = BeginSessionRequest("Alyssa", OnlineConstants.API_VERSION - 1)
+        val request = makeBeginSessionRequest(apiVersion = OnlineConstants.API_VERSION - 1)
         val (service) = makeService()
 
         val ex = shouldThrow<ClientException> { service.beginSession(request, "1.2.3.4") }
@@ -103,8 +103,11 @@ class SessionServiceTest : AbstractTest() {
         usc.ipAddress shouldBe "1.2.3.4"
     }
 
-    private fun makeBeginSessionRequest(name: String = "Alyssa", achievementCount: Int = 5) =
-        BeginSessionRequest(name, achievementCount)
+    private fun makeBeginSessionRequest(
+        name: String = "Alyssa",
+        achievementCount: Int = 5,
+        apiVersion: Int = OnlineConstants.API_VERSION
+    ) = BeginSessionRequest(name, achievementCount, apiVersion)
 
     private fun makeService(): Triple<SessionService, SessionStore, UserConnectionStore> {
         val store = SessionStore()

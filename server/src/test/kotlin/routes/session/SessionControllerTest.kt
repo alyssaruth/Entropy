@@ -8,12 +8,12 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
-import testCore.AbstractTest
 import testCore.shouldMatchJson
+import util.ApplicationTest
 import util.OnlineConstants
 import util.ServerGlobals.sessionStore
 
-class SessionControllerTest : AbstractTest() {
+class SessionControllerTest : ApplicationTest() {
     @Test
     fun `Should respond to a begin session request`() = testApplication {
         val response = client.post(Routes.BEGIN_SESSION, ::buildRequest)
