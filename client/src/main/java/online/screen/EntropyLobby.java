@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static util.AchievementUtilKt.getAchievementsEarned;
+
 public class EntropyLobby extends JFrame
 						  implements WindowListener,
 						  			 ActionListener
@@ -168,7 +170,7 @@ public class EntropyLobby extends JFrame
 		
 		AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
 		achievementsDialog.refresh(false);
-		int achievementsEarned = achievementsDialog.getAchievementsEarned();
+		int achievementsEarned = getAchievementsEarned();
 		Document achievementsUpdate = XmlBuilderDesktop.factoryAchievementsUpdate(username, null, achievementsEarned);
 		MessageUtil.sendMessage(achievementsUpdate, 500);
 		

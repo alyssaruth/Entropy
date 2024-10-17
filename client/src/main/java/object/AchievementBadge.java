@@ -1,33 +1,36 @@
 package object;
 
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
-import screen.AchievementBadges;
 import util.AchievementsUtil;
 import util.Registry;
+import utils.Achievement;
 
-@SuppressWarnings("serial")
+import javax.swing.*;
+import java.awt.*;
+
+import static util.AchievementUtilKt.LOCKED_ICON;
+
 public class AchievementBadge extends JLabel
 							  implements Registry
 {
-	private String registryLocation;
-	private String name;
-	private String explanation;
-	private String description;
-	private ImageIcon earnedIcon;
+	private final String registryLocation;
+	private final String name;
+	private final String explanation;
+	private final String description;
 	
-	public AchievementBadge(String registryLocation)
+	public AchievementBadge(Achievement achievement)
 	{
-		super(AchievementBadges.lockedIcon);
-		
 		setPreferredSize(new Dimension(56, 56));
 		
-		this.registryLocation = registryLocation;
-		this.name = AchievementsUtil.getAchievementName(registryLocation);
-		this.earnedIcon = AchievementsUtil.getIconForAchievement(registryLocation);
+		this.registryLocation = achievement.getRegistryLocation();
+		this.name = achievement.getTitle();
+		this.explanation = achievement.getExplanation();
+		this.description = achievement.getDescription();
+
+		if (achievements.getBoolean(registryLocation, false)) {
+			setIcon(AchievementsUtil.getIconForAchievement(registryLocation));
+		} else {
+			setIcon(LOCKED_ICON);
+		}
 	}
 	
 	@Override
@@ -45,28 +48,12 @@ public class AchievementBadge extends JLabel
 	{
 		return name;
 	}
-	public String getExplanation() 
+	public String getExplanation()
 	{
 		return explanation;
 	}
-	public void setExplanation(String explanation)
-	{
-		this.explanation = explanation;
-	}
-	public String getDescription() 
+	public String getDescription()
 	{
 		return description;
-	}
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-	public ImageIcon getEarnedIcon()
-	{
-		return earnedIcon;
-	}
-	public String getRegistryLocation()
-	{
-		return registryLocation;
 	}
 }

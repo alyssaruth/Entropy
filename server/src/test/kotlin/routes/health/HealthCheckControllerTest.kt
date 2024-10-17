@@ -7,11 +7,11 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
-import testCore.AbstractTest
 import testCore.shouldMatchJson
+import util.ApplicationTest
 import util.OnlineConstants
 
-class HealthCheckControllerTest : AbstractTest() {
+class HealthCheckControllerTest : ApplicationTest() {
     @Test
     fun `Should respond to a health check request`() = testApplication {
         val response = client.get(Routes.HEALTH_CHECK)
