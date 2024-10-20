@@ -1,7 +1,7 @@
 package screen
 
+import bean.AchievementBadge
 import javax.swing.JPanel
-import `object`.AchievementBadge
 import utils.Achievement
 
 const val MAX_PER_PAGE = 40

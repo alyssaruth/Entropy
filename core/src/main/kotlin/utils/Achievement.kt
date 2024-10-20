@@ -6,7 +6,8 @@ enum class Achievement(
     val registryLocation: String,
     val title: String,
     val explanation: String,
-    val description: String
+    val description: String,
+    val hidden: Boolean = false
 ) {
     Caveman("caveman", "The Caveman", "Make a perfect bid in Clubs", "Clobbered 'em!"),
     Burglar("burglar", "The Burglar", "Make a perfect bid in Diamonds", "Dazzling."),
@@ -315,13 +316,15 @@ enum class Achievement(
         "blueScreenOfDeath",
         "Blue Screen of Death",
         "Cause something to go wrong in the game",
-        "Oops! Looks like I'll be getting an alert to fix whatever that was..."
+        "Oops! Looks like I'll be getting an alert to fix whatever that was...",
+        hidden = true
     ),
     KonamiCode(
         "konamiCode",
         "Nintendo",
         "Enter the Konami code in the main Entropy window",
-        "I hear if you hold B and Down the opponent will never challenge."
+        "I hear if you hold B and Down the opponent will never challenge.",
+        hidden = true
     ),
 }
 

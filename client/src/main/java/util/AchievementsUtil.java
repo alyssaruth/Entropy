@@ -676,6 +676,8 @@ public class AchievementsUtil implements Registry
 		{
 			return;
 		}
+
+		ScreenCache.getAchievementsDialog().refresh(false);
 		
 		achievements.putBoolean(registryLocation, true);
 	
