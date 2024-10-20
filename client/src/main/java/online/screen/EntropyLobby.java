@@ -9,7 +9,6 @@ import online.util.HeartbeatRunnable;
 import online.util.XmlBuilderClient;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
-import screen.AchievementsDialog;
 import screen.ScreenCache;
 import util.*;
 
@@ -26,6 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static util.AchievementUtilKt.getAchievementsEarned;
+import static util.Images.ICON_ONLINE;
 
 public class EntropyLobby extends JFrame
 						  implements WindowListener,
@@ -46,7 +48,7 @@ public class EntropyLobby extends JFrame
 	{
 		setSize(780, 500);
 		getContentPane().setBackground(EntropyColour.COLOUR_LOBBY_PALE_BLUE);
-		setIconImage(new ImageIcon(AchievementsDialog.class.getResource("/icons/onlineIcon.png")).getImage());
+		setIconImage(ICON_ONLINE.getImage());
 		getContentPane().add(rightPanel, BorderLayout.EAST);
 		rightPanel.setLayout(new BorderLayout(0, 0));
 		rightPanel.setPreferredSize(new Dimension(280, 0));
@@ -165,10 +167,8 @@ public class EntropyLobby extends JFrame
 		
 		//Start the notification thread, this is how the server will send us unsolicited messages
 		ClientUtil.startNotificationThreads();
-		
-		AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
-		achievementsDialog.refresh(false);
-		int achievementsEarned = achievementsDialog.getAchievementsEarned();
+
+		int achievementsEarned = getAchievementsEarned();
 		Document achievementsUpdate = XmlBuilderDesktop.factoryAchievementsUpdate(username, null, achievementsEarned);
 		MessageUtil.sendMessage(achievementsUpdate, 500);
 		

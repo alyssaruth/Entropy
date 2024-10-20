@@ -37,7 +37,7 @@ class SessionApiTest : AbstractTest() {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 BEGIN_SESSION,
-                BeginSessionRequest("alyssa"),
+                BeginSessionRequest("alyssa", 0),
             )
         }
     }
@@ -109,7 +109,7 @@ class SessionApiTest : AbstractTest() {
             mockHttpClient(
                 SuccessResponse(
                     200,
-                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyMessage)
+                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyMessage),
                 )
             )
 
