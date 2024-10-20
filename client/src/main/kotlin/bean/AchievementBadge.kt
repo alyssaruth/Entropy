@@ -25,14 +25,15 @@ class AchievementBadge(private val achievement: Achievement) : JLabel(), Registr
     }
 
     fun toggle() {
-        val unlocked = Registry.achievements.getBoolean(registryLocation, false)
         icon =
-            if (unlocked) AchievementsUtil.getIconForAchievement(registryLocation)
+            if (isEarned) AchievementsUtil.getIconForAchievement(registryLocation)
             else Images.ACHIEVEMENT_LOCKED
 
         if (achievement.hidden) {
-            isVisible = unlocked
+            isVisible = isEarned
         }
+
+        repaint()
     }
 
     override fun toString(): String {

@@ -200,6 +200,7 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         }
 
         getAllChildComponentsForType<AchievementBadge>().forEach { it.toggle() }
+        repaint()
     }
 
     override fun mouseDragged(arg0: MouseEvent) {}
@@ -289,7 +290,7 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
 
     private fun updatePagination() {
         btnLeft.isEnabled = currentPage > 0
-        btnRight.isEnabled = currentPage < pages.size
+        btnRight.isEnabled = currentPage < pages.size - 1
 
         pages.forEachIndexed { i, page ->
             page.isVisible = i == currentPage
