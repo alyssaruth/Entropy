@@ -114,21 +114,21 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         btnLeft.isOpaque = false
         btnLeft.font = Font("Segoe UI Symbol", Font.BOLD, 24)
         btnLeft.border = EmptyBorder(0, 0, 0, 0)
-        btnLeft.setBounds(11, 158, 30, 50)
+        btnLeft.setBounds(25, 158, 30, 50)
         contentPane.add(btnLeft)
         btnLeft.addActionListener(this)
         btnRight.isOpaque = false
         btnRight.background = Color.WHITE
         btnRight.font = Font("Segoe UI Symbol", Font.BOLD, 24)
         btnRight.border = EmptyBorder(0, 0, 0, 0)
-        btnRight.setBounds(680, 158, 30, 50)
+        btnRight.setBounds(645, 158, 30, 50)
         contentPane.add(btnRight)
         btnRight.addActionListener(this)
 
         btnLeft.isEnabled = false
 
         for (page in pages) {
-            page.setBounds(56, 56, 615, 255)
+            page.setBounds(56, 56, 590, 255)
             contentPane.add(page)
         }
 
@@ -142,16 +142,11 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         achievementExplanation.text = ""
 
         updatePagination()
-        redrawStars()
-        animateTestTube()
+        refresh(true)
     }
 
     private fun populateBadgeListAndAddMotionListeners() {
-        pages.forEach { page ->
-            for (badge in page.badges) {
-                badge.addMouseMotionListener(this)
-            }
-        }
+        getAllChildComponentsForType<AchievementBadge>().forEach { it.addMouseMotionListener(this) }
     }
 
     private fun populateStarListAndAddMouseListeners() {
@@ -171,7 +166,9 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
     }
 
     private fun updateTestTube() {
+        progressShowing = getAchievementsEarned()
         testTube.icon = getTubeIconForIndex(getAchievementsEarned())
+        redrawStars()
     }
 
     private fun getTubeIconForIndex(i: Int): ImageIcon {
@@ -181,14 +178,15 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
 
     private fun redrawStars() {
         getAllChildComponentsForType<RewardStar>().forEach { star ->
-            if (star.isUnlocked(progressShowing)) {
+            if (star.isUnlocked(getAchievementsEarned())) {
                 star.setIcon(Images.REWARD_UNLOCKED)
-                val hoverDesc: String = star.getHoverDesc()
-                star.setToolTipText(hoverDesc)
+                star.setToolTipText(star.hoverDesc)
             } else {
                 star.setIcon(Images.REWARD_LOCKED)
                 star.setToolTipText("Locked")
             }
+
+            star.repaint()
         }
     }
 
@@ -200,6 +198,8 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         }
 
         getAllChildComponentsForType<AchievementBadge>().forEach { it.toggle() }
+
+        updateTitle()
         repaint()
     }
 
@@ -292,12 +292,11 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         btnLeft.isEnabled = currentPage > 0
         btnRight.isEnabled = currentPage < pages.size - 1
 
-        pages.forEachIndexed { i, page ->
-            page.isVisible = i == currentPage
+        pages.forEachIndexed { i, page -> page.isVisible = i == currentPage }
+        updateTitle()
+    }
 
-            if (i == currentPage) {
-                title.text = page.getTitle()
-            }
-        }
+    private fun updateTitle() {
+        title.text = pages[currentPage].getTitle()
     }
 }

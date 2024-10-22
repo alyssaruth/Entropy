@@ -4,7 +4,7 @@ import bean.AchievementBadge
 import javax.swing.JPanel
 import utils.Achievement
 
-const val MAX_PER_PAGE = 40
+const val MAX_PER_PAGE = 36
 
 fun makeAchievementPanels() =
     Achievement.entries.chunked(MAX_PER_PAGE).mapIndexed { ix, badges ->

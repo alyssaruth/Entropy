@@ -677,10 +677,9 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		ScreenCache.getAchievementsDialog().refresh(false);
-		
 		achievements.putBoolean(registryLocation, true);
-	
+
+		ScreenCache.getAchievementsDialog().refresh(false);
 		ImageIcon icon = getIconForAchievement(registryLocation);
 		
 		MainScreen screen = ScreenCache.getMainScreen();
