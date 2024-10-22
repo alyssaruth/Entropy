@@ -1,5 +1,7 @@
 package screen;
 
+import achievement.AchievementSetting;
+import achievement.AchievementUtilKt;
 import bean.AbstractDevScreen;
 import game.GameMode;
 import object.Bid;
@@ -23,12 +25,11 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
+import static achievement.AchievementUtilKt.getAchievementsEarned;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
-import static util.AchievementUtilKt.getAchievementsEarned;
+import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -38,7 +39,7 @@ public final class MainScreen extends AbstractDevScreen
 							  			 ActionListener,
 							  			 Registry
 {
-	public double startTime = System.currentTimeMillis();
+	public long startTime = System.currentTimeMillis();
 	
 	private Timer timerFiveMinutes = null;
 	private Timer timerFifteenMinutes = null;
@@ -436,9 +437,9 @@ public final class MainScreen extends AbstractDevScreen
 				}
 			}
 			
-			double currentTimePlayed = achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0);
-			double timePlayedThisSession = System.currentTimeMillis() - startTime;
-			achievements.putDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, currentTimePlayed + timePlayedThisSession);
+			long currentTimePlayed = achievementStore.get(AchievementSetting.TimePlayed);
+			long timePlayedThisSession = System.currentTimeMillis() - startTime;
+			achievementStore.save(AchievementSetting.TimePlayed, currentTimePlayed + timePlayedThisSession);
 			
 			if (!gamePanel.gameOver && !gamePanel.firstRound)
 			{
@@ -560,8 +561,9 @@ public final class MainScreen extends AbstractDevScreen
 
 		timer = new Timer("Timer-" + minutes);
 
+		var timePlayed = achievementStore.get(AchievementSetting.TimePlayed);
 		TimerTask task = new AchievementsUtil.UnlockAchievementTask(achievement);
-		timer.schedule(task, (long) Math.max(60000*minutes - achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0), 0));
+		timer.schedule(task, Math.max(60000L * minutes - timePlayed, 0));
 	}
 
 	public void showBottomAchievementPanel(boolean visible)
@@ -800,10 +802,10 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void checkForCoward()
 	{
-		boolean gotCoward = achievements.getBoolean(Registry.ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD, false);
+		boolean gotCoward = achievementStore.get(AchievementSetting.WillUnlockCoward);
 		if (gotCoward)
 		{
-			achievements.remove(Registry.ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD);
+			achievementStore.delete(AchievementSetting.WillUnlockCoward);
 			AchievementsUtil.unlockCoward();
 		}
 	}
@@ -867,20 +869,15 @@ public final class MainScreen extends AbstractDevScreen
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
 		});
-		
-		achievements.addPreferenceChangeListener(new PreferenceChangeListener()
-		{
-			@Override
-			public void preferenceChange(PreferenceChangeEvent arg0) 
-			{
-				String keyChanged = arg0.getKey();
-				if (keyChanged.equals(Registry.STATISTICS_DOUBLE_TIME_PLAYED))
-				{
-					restartTimers();
-				}
-				
-			}
-		});
+
+		achievementStore.addPreferenceChangeListener(arg0 -> {
+            String keyChanged = arg0.getKey();
+			String timePlayedKey = AchievementSetting.TimePlayed.getName();
+            if (keyChanged.equals(timePlayedKey))
+            {
+                restartTimers();
+            }
+        });
 	}
 	
 	@Override
@@ -932,7 +929,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmAchievements)
 		{
-			AchievementsUtil.updateAndUnlockVanity();
+			AchievementUtilKt.updateAndUnlockVanity();
 			
 			AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
 			achievementsDialog.setLocationRelativeTo(null);
@@ -966,7 +963,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmStatistics)
 		{
-			AchievementsUtil.updateAndUnlockVanity();
+			AchievementUtilKt.updateAndUnlockVanity();
 			
 			StatisticsDialog dialog = new StatisticsDialog();
 			dialog.setTitle("Statistics");

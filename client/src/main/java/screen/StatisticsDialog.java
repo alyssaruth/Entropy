@@ -23,9 +23,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
+import achievement.AchievementSetting;
 import util.DateUtil;
 import util.Debug;
 import util.Registry;
+
+import static util.ClientGlobals.achievementStore;
 
 @SuppressWarnings("serial")
 public class StatisticsDialog extends JDialog
@@ -262,7 +265,8 @@ public class StatisticsDialog extends JDialog
 	
 	private void setTimePlayedText()
 	{
-		double timePlayed = System.currentTimeMillis() - ScreenCache.getMainScreen().startTime + achievements.getDouble(STATISTICS_DOUBLE_TIME_PLAYED, 0);
+		var storedTimePlayed = achievementStore.get(AchievementSetting.TimePlayed);
+		long timePlayed = System.currentTimeMillis() - ScreenCache.getMainScreen().startTime + storedTimePlayed;
 		String timeFormatted = DateUtil.formatHHMMSS(timePlayed);
 		
 		timePlayedField.setText("Time played: " + timeFormatted);

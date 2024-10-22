@@ -1,23 +1,15 @@
 package screen;
 
-import java.awt.Component;
-import java.awt.Toolkit;
+import achievement.AchievementSetting;
+import util.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import util.Debug;
-import util.DialogUtil;
-import util.Registry;
-import util.RegistryUtil;
-import util.ReplayFileUtil;
+import static util.ClientGlobals.achievementStore;
 
 public class ClearDataDialog extends JDialog
 							 implements ActionListener,
@@ -97,7 +89,7 @@ public class ClearDataDialog extends JDialog
 			
 			if (choice == JOptionPane.YES_OPTION)
 			{
-				removeStatisticsVariablesFromNode(achievements);
+				removeStatisticsVariablesFromNode();
 				DialogUtil.showInfo("Statistics were reset successfully.");
 			}
 			else
@@ -173,12 +165,12 @@ public class ClearDataDialog extends JDialog
 		closeDialog();
 	}
 	
-	private void removeStatisticsVariablesFromNode(Preferences achievements)
+	private void removeStatisticsVariablesFromNode()
 	{
 		try
 		{
 			ScreenCache.getMainScreen().resetStartTime();
-			achievements.putInt(STATISTICS_DOUBLE_TIME_PLAYED, 0);
+			achievementStore.delete(AchievementSetting.TimePlayed);
 			achievements.remove(STATISTICS_INT_BEST_STREAK);
 			achievements.remove(STATISTICS_INT_CURRENT_STREAK);
 			achievements.remove(STATISTICS_INT_ENTROPY_GAMES_PLAYED);

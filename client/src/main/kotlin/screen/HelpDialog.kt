@@ -1,5 +1,7 @@
 package screen
 
+import achievement.AchievementSetting
+import achievement.isUnlocked
 import help.FundamentalsGlossary
 import help.FundamentalsTheDeck
 import help.HelpPanel
@@ -41,10 +43,10 @@ import javax.swing.tree.TreePath
 import javax.swing.tree.TreeSelectionModel
 import kotlin.math.max
 import util.AchievementsUtil.UnlockAchievementTask
+import util.ClientGlobals.achievementStore
 import util.Registry
 import utils.Achievement
 import utils.CoreGlobals.logger
-import utils.isUnlocked
 
 class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
     private val fundamentalsTheDeck = FundamentalsTheDeck()
@@ -153,17 +155,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
             bookwormTimer = Timer("BookwormTimer")
 
             val task: TimerTask = UnlockAchievementTask(Achievement.Bookworm)
-            val time =
-                max(
-                        (60000 * 5 -
-                                Registry.achievements.getLong(
-                                    Registry.ACHIEVEMENTS_LONG_BOOKWORM_TIME,
-                                    0
-                                ))
-                            .toDouble(),
-                        0.0
-                    )
-                    .toLong()
+            val time = max((60000 * 5 - achievementStore.get(AchievementSetting.BookwormTime)), 0L)
             bookwormTimer!!.schedule(task, time)
         }
     }
@@ -174,7 +166,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
         populateTools("")
         populateMisc("")
 
-        for (i in 0 ..< tree.rowCount) {
+        for (i in 0..<tree.rowCount) {
             tree.expandRow(i)
         }
 
@@ -198,7 +190,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
             treePane.setViewportView(noSearchResults)
             helpPane.setViewportView(JPanel())
         } else {
-            for (i in 0 ..< 50) {
+            for (i in 0..<50) {
                 tree.expandRow(i)
             }
 
@@ -282,7 +274,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
     private fun addNodeBasedOnString(
         parent: DefaultMutableTreeNode,
         node: HelpPanel,
-        searchStr: String
+        searchStr: String,
     ) {
         if (node.contains(searchStr)) {
             node.refresh()
@@ -339,7 +331,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
 
     private fun <T : HelpPanel> selectPaneRecursively(
         nodes: Enumeration<TreeNode>,
-        clazz: Class<T>
+        clazz: Class<T>,
     ) {
         while (nodes.hasMoreElements()) {
             val node = nodes.nextElement() as DefaultMutableTreeNode
@@ -370,11 +362,10 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
 
     override fun windowClosing(arg0: WindowEvent) {
         val timeSpentOnDialog = System.currentTimeMillis() - startTime
-        val currentBookwormTime =
-            Registry.achievements.getLong(Registry.ACHIEVEMENTS_LONG_BOOKWORM_TIME, 0)
-        Registry.achievements.putLong(
-            Registry.ACHIEVEMENTS_LONG_BOOKWORM_TIME,
-            currentBookwormTime + timeSpentOnDialog
+        val currentBookwormTime = achievementStore.get(AchievementSetting.BookwormTime)
+        achievementStore.save(
+            AchievementSetting.BookwormTime,
+            currentBookwormTime + timeSpentOnDialog,
         )
 
         bookwormTimer?.cancel()

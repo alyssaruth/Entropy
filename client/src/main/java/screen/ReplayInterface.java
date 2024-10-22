@@ -1,9 +1,9 @@
 package screen;
 
+import achievement.AchievementUtilKt;
 import bean.FileUploadListener;
 import bean.FileUploader;
 import object.ReplayTable;
-import util.AchievementsUtil;
 import util.DialogUtil;
 import util.Registry;
 import util.ReplayFileUtil;
@@ -247,7 +247,7 @@ public class ReplayInterface extends JFrame
 		if (ReplayFileUtil.successfullyFilledRegistryFromFile(fullPath, tempReplayStore))
 		{
 			ReplayFileUtil.exportReplay(filePath);
-			AchievementsUtil.unlockAchievement(Achievement.LookAtMe);
+			AchievementUtilKt.unlockAchievement(Achievement.LookAtMe);
 		}
 		else
 		{

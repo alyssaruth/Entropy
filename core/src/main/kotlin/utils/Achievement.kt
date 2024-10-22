@@ -1,10 +1,7 @@
 package utils
 
-import javax.swing.ImageIcon
-import util.Registry.achievements
-
 enum class Achievement(
-    val registryLocation: String,
+    val settingName: String,
     val title: String,
     val explanation: String,
     val description: String,
@@ -66,7 +63,7 @@ enum class Achievement(
     Vanity(
         "vanity",
         "Vanity",
-        "View your achievements and/or statistics 20 times",
+        "View your achievements and/or statistics $VANITY_THRESHOLD times",
         "Your own biggest fan!",
     ),
     Unscathed(
@@ -285,7 +282,7 @@ enum class Achievement(
     Chatty(
         "chatty",
         "Chatty",
-        "Send 25 online chat messages",
+        "Send $CHATTY_THRESHOLD online chat messages",
         "Bonus points if there was actually someone else around at the time.",
     ),
     Deceitful(
@@ -328,7 +325,3 @@ enum class Achievement(
         hidden = true,
     ),
 }
-
-fun Achievement.isUnlocked() = achievements.getBoolean(registryLocation, false)
-
-fun Achievement.getIcon() = ImageIcon(javaClass.getResource("/achievements/$registryLocation.png"))

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static util.AchievementUtilKt.getAchievementsEarned;
+import static achievement.AchievementUtilKt.getAchievementsEarned;
 import static util.Images.ICON_ONLINE;
 
 public class EntropyLobby extends JFrame

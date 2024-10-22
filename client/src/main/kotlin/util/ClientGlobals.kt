@@ -5,6 +5,8 @@ import http.HealthCheckApi
 import http.HttpClient
 import http.SessionApi
 import http.WebSocketReceiver
+import preference.AbstractSettingStore
+import preference.DefaultSettingStore
 import screen.LoggingConsole
 import screen.LoggingConsoleAppender
 
@@ -18,4 +20,5 @@ object ClientGlobals {
     var sessionApi = SessionApi(httpClient)
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
+    @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")
 }

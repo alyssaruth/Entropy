@@ -1,12 +1,12 @@
 package bean
 
+import achievement.getIcon
+import achievement.isUnlocked
 import java.awt.Dimension
 import javax.swing.JLabel
 import util.Images
 import util.Registry
 import utils.Achievement
-import utils.getIcon
-import utils.isUnlocked
 
 class AchievementBadge(private val achievement: Achievement) : JLabel(), Registry {
     val explanation = achievement.explanation

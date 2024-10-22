@@ -121,11 +121,7 @@ public interface Registry extends CoreRegistry
 	public static final String REPLAY_INT_GAME_MODE = "gameMode";
 	
 	//Achievement variables, counters etc
-	public static final String ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD = "willUnlockCoward";
 	public static final String ACHIEVEMENTS_STRING_SOCIAL_LIST = "socialList";
-	public static final String ACHIEVEMENTS_LONG_BOOKWORM_TIME = "bookwormTime";
-	public static final String ACHIEVEMENTS_INT_VANITY_COUNT = "vanityCount";
-	public static final String ACHIEVEMENTS_INT_CHAT_COUNT = "chatCount";
 	public static final String ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF = "opponentTwoWasEnabled";
 	public static final String ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF = "opponentThreeWasEnabled";
 	
@@ -155,7 +151,6 @@ public interface Registry extends CoreRegistry
 	public static final String STATISTICS_INT_BEST_STREAK = "bestStreak";
 	public static final String STATISTICS_INT_WORST_STREAK = "worstStreak";
 	public static final String STATISTICS_INT_CURRENT_STREAK = "currentStreak";
-	public static final String STATISTICS_DOUBLE_TIME_PLAYED = "timePlayed";
 	
 	//savedGame
 	public static final String SAVED_GAME_STRING_RESULT_TEXT = "resultText";
@@ -221,8 +216,6 @@ public interface Registry extends CoreRegistry
 	public static final String SAVED_GAME_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SAVED_GAME_INT_JOKER_VALUE = "jokerValue";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
-	public static final String SAVED_GAME_INT_SLIDER_MINIMUM = "sliderMinimum";
-	public static final String SAVED_GAME_INT_SLIDER_VALUE = "sliderValue";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
 	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
 	public static final String SAVED_GAME_INT_LAST_BID_SUIT_CODE = "lastBidSuitCode";

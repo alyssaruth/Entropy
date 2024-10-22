@@ -1,5 +1,6 @@
 package screen
 
+import achievement.getAchievementsEarned
 import bean.AchievementBadge
 import java.awt.Color
 import java.awt.Font
@@ -19,7 +20,6 @@ import javax.swing.SwingConstants
 import javax.swing.border.EmptyBorder
 import `object`.RewardStar
 import util.Images
-import util.getAchievementsEarned
 import utils.getAllChildComponentsForType
 
 class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionListener {

@@ -1,15 +1,14 @@
 package util;
 
+import achievement.AchievementSetting;
 import game.GameMode;
 import object.Bid;
 import object.Player;
 import online.screen.GameRoom;
 import org.w3c.dom.Element;
-import screen.MainScreen;
 import screen.RewardDialog;
 import screen.ScreenCache;
 import utils.Achievement;
-import utils.AchievementKt;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -17,10 +16,12 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static achievement.AchievementUtilKt.unlockAchievement;
+import static util.ClientGlobals.achievementStore;
+
 public class AchievementsUtil implements Registry
 {
 	private static final int FULL_GAME_STARTING_CARDS = 5;
-	private static final int CHATTY_THRESHOLD = 25;
 	private static final int OMNISCIENT_THRESHOLD = 10;
 	private static final int SOCIAL_THRESHOLD = 5;
 	private static final int HONEST_THRESHOLD = 5;
@@ -489,7 +490,7 @@ public class AchievementsUtil implements Registry
 	
 	public static void setCowardToBeUnlocked()
 	{
-		achievements.putBoolean(ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD, true);
+		achievementStore.save(AchievementSetting.WillUnlockCoward, true);
 	}
 	
 	public static void unlockCoward()
@@ -520,17 +521,6 @@ public class AchievementsUtil implements Registry
 	public static void unlockBlueScreenOfDeath()
 	{
 		unlockAchievement(Achievement.BlueScreenOfDeath);
-	}
-	
-	public static void updateAndUnlockVanity()
-	{
-		int vanityCount = achievements.getInt(ACHIEVEMENTS_INT_VANITY_COUNT, 0) + 1;
-		achievements.putInt(ACHIEVEMENTS_INT_VANITY_COUNT, vanityCount);
-
-		if (vanityCount == 20)
-		{
-			unlockAchievement(Achievement.Vanity);
-		}
 	}
 	
 	public static void unlockRewards(int achievementsEarned)
@@ -634,17 +624,6 @@ public class AchievementsUtil implements Registry
 		}
 	}
 	
-	public static void incrementChatCount()
-	{
-		int chatCount = achievements.getInt(ACHIEVEMENTS_INT_CHAT_COUNT, 0) + 1;
-		achievements.putInt(ACHIEVEMENTS_INT_CHAT_COUNT, chatCount);
-		
-		if (chatCount >= CHATTY_THRESHOLD)
-		{
-			unlockAchievement(Achievement.Chatty);
-		}
-	}
-	
 	public static void unlockHonestOrDeceitful(int cardsRevealed, boolean revealedDifferentSuit, boolean revealedSameSuit)
 	{
 		if (cardsRevealed < HONEST_THRESHOLD)
@@ -660,24 +639,6 @@ public class AchievementsUtil implements Registry
 		{
 			unlockAchievement(Achievement.Deceitful);
 		}
-	}
-	
-	public static void unlockAchievement(Achievement achievement)
-	{
-		//If we've already got the achievement, do nothing
-		var registryLocation = achievement.getRegistryLocation();
-		if (achievements.getBoolean(registryLocation, false))
-		{
-			return;
-		}
-
-		achievements.putBoolean(registryLocation, true);
-
-		ScreenCache.getAchievementsDialog().refresh(false);
-		ImageIcon icon = AchievementKt.getIcon(achievement);
-		
-		MainScreen screen = ScreenCache.getMainScreen();
-		screen.showAchievementPopup(achievement.getTitle(), icon);
 	}
 	
 	public static class UnlockAchievementTask extends TimerTask

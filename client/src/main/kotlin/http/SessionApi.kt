@@ -1,5 +1,6 @@
 package http
 
+import achievement.getAchievementsEarned
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import javax.swing.JOptionPane
@@ -9,7 +10,6 @@ import screen.ScreenCache
 import util.ClientGlobals
 import util.DialogUtilNew
 import util.OnlineConstants
-import util.getAchievementsEarned
 
 class SessionApi(private val httpClient: HttpClient) {
     fun beginSession(name: String) {
