@@ -2,32 +2,26 @@ package bean
 
 import java.awt.Dimension
 import javax.swing.JLabel
-import util.AchievementsUtil
 import util.Images
 import util.Registry
 import utils.Achievement
+import utils.getIcon
+import utils.isUnlocked
 
 class AchievementBadge(private val achievement: Achievement) : JLabel(), Registry {
-    private val registryLocation: String
-    private val name: String
-    val explanation: String
-    val description: String
+    val explanation = achievement.explanation
+    val description = achievement.description
 
     init {
         preferredSize = Dimension(56, 56)
 
-        this.registryLocation = achievement.registryLocation
         this.name = achievement.title
-        this.explanation = achievement.explanation
-        this.description = achievement.description
 
         toggle()
     }
 
     fun toggle() {
-        icon =
-            if (isEarned) AchievementsUtil.getIconForAchievement(registryLocation)
-            else Images.ACHIEVEMENT_LOCKED
+        icon = if (isEarned) achievement.getIcon() else Images.ACHIEVEMENT_LOCKED
 
         if (achievement.hidden) {
             isVisible = isEarned
@@ -36,14 +30,6 @@ class AchievementBadge(private val achievement: Achievement) : JLabel(), Registr
         repaint()
     }
 
-    override fun toString(): String {
-        return name
-    }
-
     val isEarned: Boolean
-        get() = Registry.achievements.getBoolean(registryLocation, false)
-
-    override fun getName(): String {
-        return name
-    }
+        get() = achievement.isUnlocked()
 }

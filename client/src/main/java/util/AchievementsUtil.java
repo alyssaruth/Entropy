@@ -9,10 +9,10 @@ import screen.MainScreen;
 import screen.RewardDialog;
 import screen.ScreenCache;
 import utils.Achievement;
+import utils.AchievementKt;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -662,12 +662,6 @@ public class AchievementsUtil implements Registry
 		}
 	}
 	
-	public static ImageIcon getIconForAchievement(String registryLocation)
-	{
-		URL url = AchievementsUtil.class.getResource("/achievements/" + registryLocation + ".png");
-		return new ImageIcon(url);
-	}
-	
 	public static void unlockAchievement(Achievement achievement)
 	{
 		//If we've already got the achievement, do nothing
@@ -680,7 +674,7 @@ public class AchievementsUtil implements Registry
 		achievements.putBoolean(registryLocation, true);
 
 		ScreenCache.getAchievementsDialog().refresh(false);
-		ImageIcon icon = getIconForAchievement(registryLocation);
+		ImageIcon icon = AchievementKt.getIcon(achievement);
 		
 		MainScreen screen = ScreenCache.getMainScreen();
 		screen.showAchievementPopup(achievement.getTitle(), icon);
