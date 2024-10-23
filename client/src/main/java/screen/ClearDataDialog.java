@@ -167,22 +167,14 @@ public class ClearDataDialog extends JDialog
 	
 	private void removeStatisticsVariablesFromNode()
 	{
-		try
-		{
-			ScreenCache.getMainScreen().resetStartTime();
-			achievementStore.delete(AchievementSetting.TimePlayed);
-			achievements.remove(STATISTICS_INT_BEST_STREAK);
-			achievements.remove(STATISTICS_INT_CURRENT_STREAK);
-			achievements.remove(STATISTICS_INT_ENTROPY_GAMES_PLAYED);
-			achievements.remove(STATISTICS_INT_VECTROPY_GAMES_PLAYED);
-			achievements.remove(STATISTICS_INT_ENTROPY_GAMES_WON);
-			achievements.remove(STATISTICS_INT_VECTROPY_GAMES_WON);
-			achievements.remove(STATISTICS_INT_WORST_STREAK);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		ScreenCache.getMainScreen().resetStartTime();
+		achievementStore.delete(AchievementSetting.TimePlayed);
+		achievementStore.delete(AchievementSetting.BestStreak);
+		achievementStore.delete(AchievementSetting.CurrentStreak);
+		achievementStore.delete(AchievementSetting.EntropyGamesPlayed);
+		achievementStore.delete(AchievementSetting.VectropyGamesPlayed);
+		achievementStore.delete(AchievementSetting.EntropyGamesWon);
+		achievementStore.delete(AchievementSetting.VectropyGamesWon);
 	}
 	
 	private void resetPreferences()

@@ -35,6 +35,7 @@ abstract class AbstractSettingStore {
         when (val desiredType = setting.default::class) {
             Boolean::class -> raw.toBoolean() as T
             Double::class -> raw.toDouble() as T
+            Long::class -> raw.toLong() as T
             Int::class -> raw.toInt() as T
             String::class -> raw as T
             else ->

@@ -139,19 +139,6 @@ public interface Registry extends CoreRegistry
 	public static final String REWARDS_BOOLEAN_EXTRA_SUITS = "extraSuits";
 	public static final String REWARDS_BOOLEAN_CHEATS = "cheats";
 	
-	//statistics
-	public static final String STATISTICS_INT_ENTROPY_GAMES_PLAYED = "gamesPlayed";
-	public static final String STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED = "onlineGamesPlayed";
-	public static final String STATISTICS_INT_VECTROPY_GAMES_PLAYED = "vGamesPlayed";
-	public static final String STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED = "vOnlineGamesPlayed";
-	public static final String STATISTICS_INT_ENTROPY_GAMES_WON = "gamesWon";
-	public static final String STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON = "onlineGamesWon";
-	public static final String STATISTICS_INT_VECTROPY_GAMES_WON = "vGamesWon";
-	public static final String STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON = "vOnlineGamesWon";
-	public static final String STATISTICS_INT_BEST_STREAK = "bestStreak";
-	public static final String STATISTICS_INT_WORST_STREAK = "worstStreak";
-	public static final String STATISTICS_INT_CURRENT_STREAK = "currentStreak";
-	
 	//savedGame
 	public static final String SAVED_GAME_STRING_RESULT_TEXT = "resultText";
 	public static final String SAVED_GAME_STRING_TOTAL_CARDS_LABEL = "totalCardsLabel";

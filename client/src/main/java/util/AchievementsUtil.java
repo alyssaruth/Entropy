@@ -31,37 +31,20 @@ public class AchievementsUtil implements Registry
 
 	public static void updateStreaksForLoss()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
-		int worstStreak = achievements.getInt(STATISTICS_INT_WORST_STREAK, 0);
-
-		if (currentStreak > 0)
-		{
-			currentStreak = -1;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
-		else
-		{
-			currentStreak--;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
-
-		if (currentStreak < -worstStreak)
-		{
-			achievements.putInt(STATISTICS_INT_WORST_STREAK, -currentStreak);
-		}
+		achievementStore.save(AchievementSetting.CurrentStreak, 0);
 	}
 
 	public static void recordWin(GameMode gameMode)
 	{
 		if (gameMode == GameMode.Entropy)
 		{
-			int newGamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0) + 1;
-			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_WON, newGamesWon);
+			int newGamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon) + 1;
+			achievementStore.save(AchievementSetting.EntropyGamesWon, newGamesWon);
 		}
 		else if (gameMode == GameMode.Vectropy)
 		{
-			int newGamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0) + 1;
-			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_WON, newGamesWon);
+			int newGamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon) + 1;
+			achievementStore.save(AchievementSetting.VectropyGamesWon, newGamesWon);
 		}
 		
 		updateStreaksForWin();
@@ -79,27 +62,19 @@ public class AchievementsUtil implements Registry
 	
 	private static void updateStreaksForWin()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
-		int bestStreak = achievements.getInt(STATISTICS_INT_BEST_STREAK, 0);
-		if (currentStreak < 0)
-		{
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, 1);
-		}
-		else
-		{
-			currentStreak++;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
+		int currentStreak = achievementStore.get(AchievementSetting.CurrentStreak) + 1;
+		achievementStore.save(AchievementSetting.CurrentStreak, currentStreak);
 
+		int bestStreak = achievementStore.get(AchievementSetting.BestStreak);
 		if (currentStreak > bestStreak)
 		{
-			achievements.putInt(STATISTICS_INT_BEST_STREAK, currentStreak);
+			achievementStore.save(AchievementSetting.BestStreak, currentStreak);
 		}
 	}
 	
 	private static void unlockWinningStreakAchievements()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
+		int currentStreak = achievementStore.get(AchievementSetting.CurrentStreak);
 		
 		if (currentStreak >= 3)
 		{
@@ -119,8 +94,7 @@ public class AchievementsUtil implements Registry
 	
 	private static void unlockEntropyWinAchievements()
 	{
-		int gamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0)
-					 + achievements.getInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON, 0);
+		int gamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon);
 		
 		if (gamesWon > 0)
 		{
@@ -145,8 +119,7 @@ public class AchievementsUtil implements Registry
 	
 	private static void unlockVectropyWinAchievements()
 	{
-		int gamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0)
-				 + achievements.getInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON, 0);
+		int gamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon);
 
 		if (gamesWon > 0)
 		{
@@ -291,17 +264,15 @@ public class AchievementsUtil implements Registry
 
 	public static void recordGamePlayed(GameMode gameMode)
 	{
-		int gamesPlayed = 1;
-		
 		if (gameMode == GameMode.Entropy)
 		{
-			gamesPlayed += achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0);
-			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, gamesPlayed);
+			int newGamesPlayed = achievementStore.get(AchievementSetting.EntropyGamesPlayed) + 1;
+			achievementStore.save(AchievementSetting.EntropyGamesPlayed, newGamesPlayed);
 		}
 		else if (gameMode == GameMode.Vectropy)
 		{
-			gamesPlayed += achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0);
-			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, gamesPlayed);
+			int newGamesPlayed = achievementStore.get(AchievementSetting.VectropyGamesPlayed) + 1;
+			achievementStore.save(AchievementSetting.VectropyGamesPlayed, newGamesPlayed);
 		}
 		
 		unlockGamesPlayedAchievements();
@@ -335,41 +306,8 @@ public class AchievementsUtil implements Registry
 	
 	private static int getTotalGamesPlayed()
 	{
-		return achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0) 
-			 + achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0)
-			 + achievements.getInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED, 0)
-			 + achievements.getInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED, 0);
-	}
-	
-	public static void updateOnlineStats(Element rootElement)
-	{
-		int entropyWins = getTotalWins("Entropy", rootElement);
-		int vectropyWins = getTotalWins("Vectropy", rootElement);
-		int entropyPlayed = entropyWins + getTotalLosses("Entropy", rootElement);
-		int vectropyPlayed = vectropyWins + getTotalLosses("Vectropy", rootElement);
-		
-		achievements.putInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON, entropyWins);
-		achievements.putInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED, entropyPlayed);		
-		achievements.putInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON, vectropyWins);
-		achievements.putInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED, vectropyPlayed);
-		
-		unlockGamesPlayedAchievements();
-		unlockEntropyWinAchievements();
-		unlockVectropyWinAchievements();
-	}
-	private static int getTotalWins(String mode, Element rootElement)
-	{
-		return getTotal(mode, rootElement, "Won");
-	}
-	private static int getTotalLosses(String mode, Element rootElement)
-	{
-		return getTotal(mode, rootElement, "Lost");
-	}
-	private static int getTotal(String mode, Element rootElement, String wonOrLost)
-	{
-		return XmlUtil.getAttributeInt(rootElement, mode + "2" + wonOrLost)
-				 + XmlUtil.getAttributeInt(rootElement, mode + "3" + wonOrLost)
-				 + XmlUtil.getAttributeInt(rootElement, mode + "4" + wonOrLost);
+		return achievementStore.get(AchievementSetting.EntropyGamesPlayed)
+			 + achievementStore.get(AchievementSetting.VectropyGamesPlayed);
 	}
 	
 	public static void unlockSecondThoughts(String roomId)
