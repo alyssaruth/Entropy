@@ -10,7 +10,7 @@ class SessionStoreTest : AbstractStoreTest<UUID, Session>() {
 
     override fun makeIdB(): UUID = UUID.fromString("7a10f6a0-03bc-4e95-a4cb-44b92582f016")
 
-    override fun makeItemA(id: UUID) = Session(id, "Alyssa", "1.2.3.4", 15)
+    override fun makeItemA(id: UUID) = Session(id, "Alyssa", "1.2.3.4", 5, 15)
 
-    override fun makeItemB(id: UUID) = Session(id, "David", "5.6.7.8", 16)
+    override fun makeItemB(id: UUID) = Session(id, "David", "5.6.7.8", 10, 16)
 }

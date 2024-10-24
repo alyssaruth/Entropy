@@ -430,8 +430,5 @@ public class ResponseHandler implements XmlConstants
 	{
 		OnlineStatsPanel statsPanel = lobby.getOnlineStatsPanel();
 		statsPanel.updateVariablesFromResponse(root);
-		
-		//Also update our local stats so we can unlock achievements
-		AchievementsUtil.updateOnlineStats(root);
 	}
 }

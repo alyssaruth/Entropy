@@ -1,8 +1,10 @@
 package object;
 
+import achievement.AchievementUtilKt;
 import util.AchievementsUtil;
 import util.CardsUtil;
 import util.Registry;
+import utils.Achievement;
 
 public class EntropyAchievementsTracker implements Registry
 {
@@ -159,7 +161,7 @@ public class EntropyAchievementsTracker implements Registry
 		if (!deviatedFromFirstSuit
 		  && startingCards == 5)
 		{
-			AchievementsUtil.unlockAchievement(ACHIEVEMENTS_BOOLEAN_MONOTONE);
+			AchievementUtilKt.unlockAchievement(Achievement.Monotone);
 		}
 	}
 }

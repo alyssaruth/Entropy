@@ -9,8 +9,7 @@ import server.EntropyServer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlBuilderServer implements XmlConstants,
-										 ServerRegistry
+public class XmlBuilderServer implements XmlConstants
 {
 	//Cached acknowledgements
 	//AJH 28 Feb 2015 - Made these final - they don't change
@@ -53,8 +52,6 @@ public class XmlBuilderServer implements XmlConstants,
 			return getKickOffResponse(username, "Nice try.");
 		}
 		
-		playerStats.putInt(username + "Achievements", newCount);
-		
 		//Now loop through rooms where the player is actively playing and add a chat message
 		if (!achievementName.isEmpty())
 		{
@@ -84,7 +81,7 @@ public class XmlBuilderServer implements XmlConstants,
 		
 		addGlobalStats(response, rootElement, rooms);
 		
-		String[] usernames = accountData.keys();
+		String[] usernames = {};
 		
 		int length = usernames.length;
 		for (int i=0; i<length; i++)
@@ -98,12 +95,6 @@ public class XmlBuilderServer implements XmlConstants,
 			Element userElement = response.createElement("User");
 			addWinsAndLossesToElement(userElement, username);
 			
-			int achievementCount = StatisticsUtil.getAchievementCount(username);
-			if (achievementCount > 0)
-			{
-				userElement.setAttribute("Achievements", "" + achievementCount);
-			}
-			
 			rootElement.appendChild(userElement);
 		}
 		
@@ -113,34 +104,20 @@ public class XmlBuilderServer implements XmlConstants,
 	
 	private static void addWinsAndLossesToElement(Element userElement, String username)
 	{
-		int twoPlayerEntropyLost = StatisticsUtil.getEntropyLost(username, 2);
-		int threePlayerEntropyLost = StatisticsUtil.getEntropyLost(username, 3);
-		int fourPlayerEntropyLost = StatisticsUtil.getEntropyLost(username, 4);
-		int twoPlayerEntropyWon = StatisticsUtil.getEntropyWon(username, 2);
-		int threePlayerEntropyWon = StatisticsUtil.getEntropyWon(username, 3);
-		int fourPlayerEntropyWon = StatisticsUtil.getEntropyWon(username, 4);
-		
-		int twoPlayerVectropyLost = StatisticsUtil.getVectropyLost(username, 2);
-		int threePlayerVectropyLost = StatisticsUtil.getVectropyLost(username, 3);
-		int fourPlayerVectropyLost = StatisticsUtil.getVectropyLost(username, 4);
-		int twoPlayerVectropyWon = StatisticsUtil.getVectropyWon(username, 2);
-		int threePlayerVectropyWon = StatisticsUtil.getVectropyWon(username, 3);
-		int fourPlayerVectropyWon = StatisticsUtil.getVectropyWon(username, 4);
-		
 		userElement.setAttribute("Username", username);
-		userElement.setAttribute("Entropy2Lost", "" + twoPlayerEntropyLost);
-		userElement.setAttribute("Entropy3Lost", "" + threePlayerEntropyLost);
-		userElement.setAttribute("Entropy4Lost", "" + fourPlayerEntropyLost);
-		userElement.setAttribute("Entropy2Won", "" + twoPlayerEntropyWon);
-		userElement.setAttribute("Entropy3Won", "" + threePlayerEntropyWon);
-		userElement.setAttribute("Entropy4Won", "" + fourPlayerEntropyWon);
+		userElement.setAttribute("Entropy2Lost", "0");
+		userElement.setAttribute("Entropy3Lost", "0");
+		userElement.setAttribute("Entropy4Lost", "0");
+		userElement.setAttribute("Entropy2Won", "0");
+		userElement.setAttribute("Entropy3Won", "0");
+		userElement.setAttribute("Entropy4Won", "0");
 		
-		userElement.setAttribute("Vectropy2Lost", "" + twoPlayerVectropyLost);
-		userElement.setAttribute("Vectropy3Lost", "" + threePlayerVectropyLost);
-		userElement.setAttribute("Vectropy4Lost", "" + fourPlayerVectropyLost);
-		userElement.setAttribute("Vectropy2Won", "" + twoPlayerVectropyWon);
-		userElement.setAttribute("Vectropy3Won", "" + threePlayerVectropyWon);
-		userElement.setAttribute("Vectropy4Won", "" + fourPlayerVectropyWon);
+		userElement.setAttribute("Vectropy2Lost", "0");
+		userElement.setAttribute("Vectropy3Lost", "0");
+		userElement.setAttribute("Vectropy4Lost", "0");
+		userElement.setAttribute("Vectropy2Won", "0");
+		userElement.setAttribute("Vectropy3Won", "0");
+		userElement.setAttribute("Vectropy4Won", "0");
 	}
 	
 	private static void addGlobalStats(Document response, Element rootElement, List<Room> rooms)

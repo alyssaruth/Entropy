@@ -1,5 +1,6 @@
 package http
 
+import achievement.getAchievementsEarned
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import javax.swing.JOptionPane
@@ -16,7 +17,7 @@ class SessionApi(private val httpClient: HttpClient) {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 Routes.BEGIN_SESSION,
-                BeginSessionRequest(name),
+                BeginSessionRequest(name, getAchievementsEarned()),
             )
 
         when (response) {

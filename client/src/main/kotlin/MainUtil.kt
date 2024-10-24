@@ -6,9 +6,9 @@ import logging.KEY_OPERATING_SYSTEM
 import logging.KEY_USERNAME
 import util.ClientGlobals
 import util.ClientUtil
-import util.CoreRegistry.INSTANCE_STRING_DEVICE_ID
-import util.CoreRegistry.instance
 import util.OnlineConstants
+import util.Registry.INSTANCE_STRING_DEVICE_ID
+import util.Registry.instance
 import utils.CoreGlobals
 import utils.CoreGlobals.logger
 import utils.getUsername

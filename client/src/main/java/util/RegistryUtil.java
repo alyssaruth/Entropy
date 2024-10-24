@@ -20,7 +20,11 @@ public class RegistryUtil
 	
 	public static Document getAttributeXml(Preferences node, String key)
 	{
-		String attribute = node.get(key, "");
+		String attribute = node.get(key, null);
+		if (attribute == null) {
+			return null;
+		}
+		
 		return XmlUtil.getDocumentFromXmlString(attribute);
 	}
 	
