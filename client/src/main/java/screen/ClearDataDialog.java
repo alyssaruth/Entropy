@@ -73,7 +73,7 @@ public class ClearDataDialog extends JDialog
 		
 		if (!clearOnlyStatistics && !clearAchievementsAndStatistics && !clearMyReplays && !clearImportedReplays)
 		{
-			DialogUtil.showError("You must select something to clear.");
+			DialogUtilNew.showError("You must select something to clear.");
 			return false;
 		}
 		
@@ -84,13 +84,13 @@ public class ClearDataDialog extends JDialog
 	{
 		if (clearOnlyStatistics)
 		{
-			int choice = DialogUtil.showQuestion("You have selected to reset your statistics. Whilst you will not lose earned achievements,\n"
+			int choice = DialogUtilNew.showQuestion("You have selected to reset your statistics. Whilst you will not lose earned achievements,\n"
 											   + " any progress you may have made towards locked achievements will be lost. \n\nProceed?", false);
 			
 			if (choice == JOptionPane.YES_OPTION)
 			{
 				removeStatisticsVariablesFromNode();
-				DialogUtil.showInfo("Statistics were reset successfully.");
+				DialogUtilNew.showInfo("Statistics were reset successfully.");
 			}
 			else
 			{
@@ -101,7 +101,7 @@ public class ClearDataDialog extends JDialog
 		
 		if (clearAchievementsAndStatistics)
 		{
-			int choice = DialogUtil.showQuestion("Clearing your Achievements will also clear any rewards you have unlocked.\n\nProceed?", false);
+			int choice = DialogUtilNew.showQuestion("Clearing your Achievements will also clear any rewards you have unlocked.\n\nProceed?", false);
 
 			if (choice == JOptionPane.NO_OPTION)
 			{
@@ -112,7 +112,7 @@ public class ClearDataDialog extends JDialog
 			RegistryUtil.clearNode(rewards);
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();
-			DialogUtil.showInfo("Achievements and statistics were reset successfully.");
+			DialogUtilNew.showInfo("Achievements and statistics were reset successfully.");
 			ScreenCache.getAchievementsDialog().refresh(true);
 			ScreenCache.getMainScreen().showTopAchievementPanel(false);
 			ScreenCache.getMainScreen().showBottomAchievementPanel(false);
@@ -124,19 +124,19 @@ public class ClearDataDialog extends JDialog
 
 			if (result.equals("nullReplayFiles"))
 			{
-				DialogUtil.showError("A serious error occurred deleting the personal replays.");
+				DialogUtilNew.showError("A serious error occurred deleting the personal replays.");
 			}
 			else if (result.equals("noReplays"))
 			{
-				DialogUtil.showInfo("There were no personal replays to delete.");
+				DialogUtilNew.showInfo("There were no personal replays to delete.");
 			}
 			else if (!result.isEmpty())
 			{
-				DialogUtil.showError("Replay deletion failed for the following personal replays:\n" + result);
+				DialogUtilNew.showError("Replay deletion failed for the following personal replays:\n" + result);
 			}
 			else 
 			{
-				DialogUtil.showInfo("Personal replays were deleted successfully.");
+				DialogUtilNew.showInfo("Personal replays were deleted successfully.");
 			}
 		}
 		
@@ -146,19 +146,19 @@ public class ClearDataDialog extends JDialog
 
 			if (result.equals("nullReplayFiles"))
 			{
-				DialogUtil.showError("A serious error occurred deleting the imported replays.");
+				DialogUtilNew.showError("A serious error occurred deleting the imported replays.");
 			}
 			else if (result.equals("noReplays"))
 			{
-				DialogUtil.showInfo("There were no imported replays to delete.");
+				DialogUtilNew.showInfo("There were no imported replays to delete.");
 			}
 			else if (!result.isEmpty())
 			{
-				DialogUtil.showError("Replay deletion failed for the following imported replays:\n" + result);
+				DialogUtilNew.showError("Replay deletion failed for the following imported replays:\n" + result);
 			}
 			else 
 			{
-				DialogUtil.showInfo("Imported replays were deleted successfully.");
+				DialogUtilNew.showInfo("Imported replays were deleted successfully.");
 			}
 		}
 		
