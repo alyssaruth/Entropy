@@ -107,8 +107,8 @@ public class ClearDataDialog extends JDialog
 			{
 				return;
 			}
-			
-			RegistryUtil.clearNode(achievements);
+
+			achievementStore.clear();
 			RegistryUtil.clearNode(rewards);
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();

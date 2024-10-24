@@ -6,6 +6,10 @@ import java.util.prefs.Preferences
 class DefaultSettingStore(nodeName: String) : AbstractSettingStore() {
     private val preferences = Preferences.userRoot().node(nodeName)
 
+    override fun clear() {
+        preferences.clear()
+    }
+
     override fun addPreferenceChangeListener(listener: PreferenceChangeListener) {
         preferences.addPreferenceChangeListener(listener)
     }

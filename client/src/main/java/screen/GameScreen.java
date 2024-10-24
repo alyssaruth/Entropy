@@ -1,5 +1,6 @@
 package screen;
 
+import achievement.AchievementSetting;
 import game.GameMode;
 import object.Bid;
 import object.ChallengeBid;
@@ -11,6 +12,7 @@ import javax.swing.*;
 import java.util.Timer;
 import java.util.*;
 
+import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
 public abstract class GameScreen extends TransparentPanel
@@ -181,10 +183,9 @@ public abstract class GameScreen extends TransparentPanel
 		firstRound = true;
 
 		//variables to use for perfect game achievements
-		int opponentTwoCoeff = opponentTwo.isEnabled()? 1:0;
-		int opponentThreeCoeff = opponentThree.isEnabled()? 1:0;
-		achievements.putInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, opponentTwoCoeff);
-		achievements.putInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, opponentThreeCoeff);
+		var allPlayers = new Player[]{player, opponentOne, opponentTwo, opponentThree};
+		var playerCount = Arrays.stream(allPlayers).filter(Player::isEnabled).count();
+		achievementStore.save(AchievementSetting.PlayerCount, playerCount);
 		
 		bidPanel.showBidPanel(true);
 		setRandomPersonToStart();

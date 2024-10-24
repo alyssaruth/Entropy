@@ -5,7 +5,6 @@ import game.GameMode;
 import object.Bid;
 import object.Player;
 import online.screen.GameRoom;
-import org.w3c.dom.Element;
 import screen.RewardDialog;
 import screen.ScreenCache;
 import utils.Achievement;
@@ -149,14 +148,11 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		unlockPerfectGameAchievements(numberOfRounds, totalPlayers);
+		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		unlockPerfectGameAchievements(numberOfRounds, playerCount);
 	}
 	
-	public static void unlockPerfectGameAchievements(int numberOfRounds, int totalPlayers)
+	public static void unlockPerfectGameAchievements(int numberOfRounds, long totalPlayers)
 	{
 		if (numberOfRounds == 5)
 		{
@@ -181,14 +177,11 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-
-		unlockFullBlindGameAchievements(totalPlayers, playedBlind, hasLookedAtCards, cardReveal);
+		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		unlockFullBlindGameAchievements(playerCount, playedBlind, hasLookedAtCards, cardReveal);
 	}
 	
-	public static void unlockFullBlindGameAchievements(int totalPlayers, boolean playedBlind, boolean hasLookedAtCards, 
+	public static void unlockFullBlindGameAchievements(long totalPlayers, boolean playedBlind, boolean hasLookedAtCards,
 	  boolean cardReveal)
 	{
 		boolean fullyBlind = playedBlind && !hasLookedAtCards;
@@ -222,12 +215,9 @@ public class AchievementsUtil implements Registry
 		{
 			return;
 		}
-		
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		if (totalPlayers == 4 
+
+		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		if (playerCount == 4
 		  && playedBlind 
 		  && !hasLookedAtCards
 		  && !cardReveal)
@@ -243,20 +233,17 @@ public class AchievementsUtil implements Registry
 		{
 			return;
 		}
-		
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		if (totalPlayers == 2)
+
+		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		if (playerCount == 2)
 		{
 			unlockAchievement(Achievement.HandicapTwo);
 		}
-		else if (totalPlayers == 3)
+		else if (playerCount == 3)
 		{
 			unlockAchievement(Achievement.HandicapThree);
 		}
-		else if (totalPlayers == 4)
+		else if (playerCount == 4)
 		{
 			unlockAchievement(Achievement.HandicapFour);
 		}
@@ -489,45 +476,46 @@ public class AchievementsUtil implements Registry
 
 	public static void updateAndUnlockSocial(ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber) 
 	{
-		String achievementsList = achievements.get(ACHIEVEMENTS_STRING_SOCIAL_LIST, "");
-		
-		for (int i=0; i<4; i++)
-		{
-			Player player = hmPlayerByAdjustedPlayerNumber.get(i);
-			if (player == null)
-			{
-				continue;
-			}
-			
-			String username = player.getName();
-			if (!username.isEmpty()
-			  && !containsExact(achievementsList, username))
-			{
-				achievementsList += username;
-				achievementsList += ";";
-			}
-		}
-		
-		achievements.put(ACHIEVEMENTS_STRING_SOCIAL_LIST, achievementsList);
-		
-		String[] usernames = achievementsList.split(";");
-		int size = usernames.length;
-		if (size >= SOCIAL_THRESHOLD)
-		{
-			unlockSocial();
-		}
+		// TODO - Rethink this
+//		String achievementsList = achievements.get(ACHIEVEMENTS_STRING_SOCIAL_LIST, "");
+//
+//		for (int i=0; i<4; i++)
+//		{
+//			Player player = hmPlayerByAdjustedPlayerNumber.get(i);
+//			if (player == null)
+//			{
+//				continue;
+//			}
+//
+//			String username = player.getName();
+//			if (!username.isEmpty()
+//			  && !containsExact(achievementsList, username))
+//			{
+//				achievementsList += username;
+//				achievementsList += ";";
+//			}
+//		}
+//
+//		achievements.put(ACHIEVEMENTS_STRING_SOCIAL_LIST, achievementsList);
+//
+//		String[] usernames = achievementsList.split(";");
+//		int size = usernames.length;
+//		if (size >= SOCIAL_THRESHOLD)
+//		{
+//			unlockSocial();
+//		}
 	}
-	
-	private static boolean containsExact(String socialStr, String username)
-	{
-		return socialStr.startsWith(username + ";")
-		  || socialStr.contains(";" + username + ";");
-	}
-	
-	private static void unlockSocial()
-	{
-		unlockAchievement(Achievement.Social);
-	}
+
+//	private static boolean containsExact(String socialStr, String username)
+//	{
+//		return socialStr.startsWith(username + ";")
+//		  || socialStr.contains(";" + username + ";");
+//	}
+//
+//	private static void unlockSocial()
+//	{
+//		unlockAchievement(Achievement.Social);
+//	}
 	
 	public static void unlockKonamiCode()
 	{

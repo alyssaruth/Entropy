@@ -4,18 +4,22 @@ package util;
 import java.util.prefs.Preferences;
 
 
-public interface Registry extends CoreRegistry
+public interface Registry
 {
 	public static final String NODE_ONLINE_REPLAY = "entropyReplayOnline";
 	
 	//Actual preference wrappers
-	public static final Preferences achievements = Preferences.userRoot().node("entropyAchievementsNone");
 	public static final Preferences savedGame = Preferences.userRoot().node("entropySavedgameNone");
 	public static final Preferences prefs = Preferences.userRoot().node("entropyPreferencesTuuug");
 	public static final Preferences rewards = Preferences.userRoot().node("entropyRewardsNone");
 	public static final Preferences inGameReplay = Preferences.userRoot().node("entropyReplayCurrent");
 	public static final Preferences fileReplay = Preferences.userRoot().node("entropyReplayFile");
 	public static final Preferences tempReplayStore = Preferences.userRoot().node("entropyTemp");
+	public static final Preferences instance = Preferences.userRoot().node("entropyInstance");
+
+	// instance
+	public static final String INSTANCE_INT_REPLAY_CONVERSION = "replayConversion";
+	public static final String INSTANCE_STRING_DEVICE_ID = "deviceId";
 	
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
@@ -119,11 +123,6 @@ public interface Registry extends CoreRegistry
 	public static final String REPLAY_INT_GAME_COMPLETE = "gameComplete";
 	public static final String REPLAY_INT_PLAYER_WON = "playerWon";
 	public static final String REPLAY_INT_GAME_MODE = "gameMode";
-	
-	//Achievement variables, counters etc
-	public static final String ACHIEVEMENTS_STRING_SOCIAL_LIST = "socialList";
-	public static final String ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF = "opponentTwoWasEnabled";
-	public static final String ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF = "opponentThreeWasEnabled";
 	
 	//rewards
 	public static final String REWARDS_BOOLEAN_FOUR_COLOURS = "fourColours";

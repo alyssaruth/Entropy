@@ -7,6 +7,8 @@ abstract class AbstractSettingStore {
 
     abstract fun <T : Any> delete(setting: Setting<T>)
 
+    abstract fun clear()
+
     protected abstract fun <T> findRaw(setting: Setting<T>): String?
 
     protected abstract fun <T : Any> saveRaw(setting: Setting<T>, value: String)

@@ -9,6 +9,10 @@ class InMemorySettingStore : AbstractSettingStore() {
     private val hmPreferences = mutableMapOf<String, String>()
     private val listeners = mutableListOf<PreferenceChangeListener>()
 
+    override fun clear() {
+        hmPreferences.clear()
+    }
+
     override fun addPreferenceChangeListener(listener: PreferenceChangeListener) {
         listeners.add(listener)
     }
