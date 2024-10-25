@@ -31,13 +31,13 @@
 
 ### Bids
 
-| Player | Hand        | Bid 1 | Bid 2     |
-|--------|-------------|-------|-----------|
-| David  | 3d 6c 3c Kc | 4000  | 5262      |
-| Sara   | 9h Kh Qc 5c | 4111  | 6272      |
-| Mark   | 2d 8c Kd Qs | 4222  | 6372      |
-| Alyssa | 7s 4d 2h 4h | 4232  | Challenge |
-| Leah   | 4c Th Qh 8h | 4262  |           |
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| David  | 1000  | 3d 6c 3c Kc | 4000  | 5262      |
+| Sara   | 1000  | 9h Kh Qc 5c | 4111  | 6272      |
+| Mark   | 1000  | 2d 8c Kd Qs | 4222  | 6372      |
+| Alyssa | 1000  | 7s 4d 2h 4h | 4232  | Challenge |
+| Leah   | 1000  | 4c Th Qh 8h | 4262  |           |
 
 ### Betting
 
@@ -64,5 +64,45 @@
 - Leah :heavy_plus_sign:105
 - Alyssa :small_red_triangle_down:200
 - Mark :small_red_triangle_down:10
+
+</details>
+
+
+<details>
+<summary>Hand 2</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Sara   | 1105  | 8c Qh 7h 5h | 1131  | 4353      |
+| Mark   | 990   | 2s 4h Ad 9s | 2231  | 4354      |
+| Alyssa | 800   | 3h 4c 4d Kd | 3331  | 4454      |
+| Leah   | 1105  | 5c 7d 5s Jh | 3333  | 5454      |
+| David  | 1000  | 7s 6d 3c Tc | 4343  | Challenge |
+
+### Betting
+
+- :speech_balloon: Bid is **5454**
+- First reveal shows **2012**
+- :shield: Leah: 20
+- :crossed_swords: David: 20
+- ❌ Sara: **fold**
+- :shield: Mark: **raise** to 80
+- ❌ Alyssa: **fold**
+- :shield: Leah: **call** 60
+- :crossed_swords: David: **call** 60
+- Second reveal shows **3232**
+- :shield: Leah: **check**
+- :crossed_swords: David: **check**
+- :shield: Mark: **check**
+
+### Results
+
+**5454** < **6675**, team :shield: wins
+
+- Mark :heavy_plus_sign:40
+- Leah :heavy_plus_sign:40
+- David :small_red_triangle_down:80
 
 </details>
