@@ -6,10 +6,11 @@
 
 ## :page_with_curl: Format
 
-- **Deck:** Standard 52-card deck, no Jokers.
-- **Hand size:** 5
-- Losing player loses 1 card and starts the next round.
-- Illegal allowed while >= 8 cards in play
+- :speech_balloon: Entropy bidding format
+- :exclamation: Illegal allowed while >= 8 cards in play
+- :black_joker: Standard 52-card deck, no Jokers
+- :raised_hand_with_fingers_splayed: 5-card hands
+- :chart_with_downwards_trend: Losing player loses 1 card and starts the next round.
 
 ## :trophy: Results
 
