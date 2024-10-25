@@ -29,6 +29,8 @@
 <details>
 <summary>Hand 1</summary>
 
+### Bids
+
 | Player | Hand        | Bid 1 | Bid 2     |
 |--------|-------------|-------|-----------|
 | David  | 3d 6c 3c Kc | 4000  | 5262      |
@@ -37,26 +39,30 @@
 | Alyssa | 7s 4d 2h 4h | 4232  | Challenge |
 | Leah   | 4c Th Qh 8h | 4262  |           |
 
+### Betting
+
 - :speech_balloon: Bid is **6372**
-- :eyes: First reveal shows **1211**
+- First reveal shows **1211**
 - :shield: Mark: 10
 - :crossed_swords: Alyssa: 10
-- :shield: Leah: raises to 100
+- :shield: Leah: **raise** to 100
 - ❌ David: folds
-- :shield: Sara: calls 100
+- :shield: Sara: **call** 100
 - ❌ Mark: folds
-- :crossed_swords: Alyssa: calls 90
+- :crossed_swords: Alyssa: **call** 90
 - Second reveal shows **3331**
-- :crossed_swords: Alyssa: checks
-- :shield: Leah: bets 100
-- :shield: Sara: calls 100
-- :crossed_swords: Alyssa: calls 100
+- :crossed_swords: Alyssa: **check**
+- :shield: Leah: **bet** 100
+- :shield: Sara: **call** 100
+- :crossed_swords: Alyssa: **call** 100
 
+### Results 
 
-- Result: **7472**, team :shield: wins
-- Sara :arrow_up: 105
-- Leah :arrow_up: 105
-- Alyssa :arrow_down: 200
-- Mark :arrow_down: 10
+**6372** < **7472**, team :shield: wins
+
+- Sara :heavy_plus_sign: 105
+- Leah :heavy_plus_sign: 105
+- Alyssa :small_red_triangle_down: 200
+- Mark :small_red_triangle_down: 10
 
 </details>
