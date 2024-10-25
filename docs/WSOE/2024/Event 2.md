@@ -40,17 +40,17 @@
 - :speech_balloon: Bid is **6372**
 - :eyes: First reveal shows **1211**
 - :shield: Mark: 10
-- :sword: Alyssa: 10
+- :crossed_swords: Alyssa: 10
 - :shield: Leah: raises to 100
 - ❌ David: folds
 - :shield: Sara: calls 100
 - ❌ Mark: folds
-- :sword: Alyssa: calls 90
+- :crossed_swords: Alyssa: calls 90
 - Second reveal shows **3331**
-- :sword: Alyssa: checks
+- :crossed_swords: Alyssa: checks
 - :shield: Leah: bets 100
 - :shield: Sara: calls 100
-- :sword: Alyssa: calls 100
+- :crossed_swords: Alyssa: calls 100
 
 
 - Result: **7472**, team :shield: wins
