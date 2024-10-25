@@ -46,9 +46,9 @@
 - :shield: Mark: 10
 - :crossed_swords: Alyssa: 10
 - :shield: Leah: **raise** to 100
-- ❌ David: folds
+- ❌ David: **fold**
 - :shield: Sara: **call** 100
-- ❌ Mark: folds
+- ❌ Mark: **fold**
 - :crossed_swords: Alyssa: **call** 90
 - Second reveal shows **3331**
 - :crossed_swords: Alyssa: **check**
@@ -60,9 +60,9 @@
 
 **6372** < **7472**, team :shield: wins
 
-- Sara :heavy_plus_sign: 105
-- Leah :heavy_plus_sign: 105
-- Alyssa :small_red_triangle_down: 200
-- Mark :small_red_triangle_down: 10
+- Sara :heavy_plus_sign:105
+- Leah :heavy_plus_sign:105
+- Alyssa :small_red_triangle_down:200
+- Mark :small_red_triangle_down:10
 
 </details>
