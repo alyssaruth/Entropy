@@ -99,7 +99,7 @@ First reveal shows **2012**
 Second reveal shows **3232**
 - :shield: Leah: **check**
 - :crossed_swords: David: **check**
-- (:shield:) Mark: **check**
+- ( :shield: ) Mark: **check**
 
 ### Results
 
