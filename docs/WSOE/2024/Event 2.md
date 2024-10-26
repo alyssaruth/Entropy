@@ -41,19 +41,21 @@
 
 ### Betting
 
-- :speech_balloon: Bid is **6372**
-- First reveal shows **1211**
+:speech_balloon: Bid is **6372**
+
+First reveal shows **1211**
 - :shield: Mark: 10
 - :crossed_swords: Alyssa: 10
-- :shield: Leah: **raise** to 100
+- (:shield:) Leah: **raise** to 100
 - ❌ David: **fold**
-- :shield: Sara: **call** 100
+- (:shield:) Sara: **call** 100
 - ❌ Mark: **fold**
-- :crossed_swords: Alyssa: **call** 90
-- Second reveal shows **3331**
+- :crossed_swords: Alyssa: **call** 90 
+
+Second reveal shows **3331**
 - :crossed_swords: Alyssa: **check**
-- :shield: Leah: **bet** 100
-- :shield: Sara: **call** 100
+- (:shield:) Leah: **bet** 100
+- (:shield:) Sara: **call** 100
 - :crossed_swords: Alyssa: **call** 100
 
 ### Results 
@@ -83,19 +85,21 @@
 
 ### Betting
 
-- :speech_balloon: Bid is **5454**
-- First reveal shows **2012**
+:speech_balloon: Bid is **5454**
+
+First reveal shows **2012**
 - :shield: Leah: 20
 - :crossed_swords: David: 20
 - ❌ Sara: **fold**
-- :shield: Mark: **raise** to 80
+- (:shield:) Mark: **raise** to 80
 - ❌ Alyssa: **fold**
 - :shield: Leah: **call** 60
 - :crossed_swords: David: **call** 60
-- Second reveal shows **3232**
+
+Second reveal shows **3232**
 - :shield: Leah: **check**
 - :crossed_swords: David: **check**
-- :shield: Mark: **check**
+- (:shield:) Mark: **check**
 
 ### Results
 
