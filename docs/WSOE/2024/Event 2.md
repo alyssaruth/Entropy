@@ -1,20 +1,20 @@
 # Event 2
 
-:calendar: 19/10/2024
+📆 19/10/2024
 
-:clock8: 17:30 - 20:30
+🕗 17:30 - 20:30
 
-## :page_with_curl: Format
+## 📃 Format
 
-- :speech_balloon: Vectropy bidding format
-- :coin: 1000 starting stack
-- :stopwatch: 15-minute levels, 10/10 start
-- :black_joker: Standard 52-card deck, no Jokers
-- :raised_hand_with_fingers_splayed: 4-card hands
-- :moneybag: 2 betting rounds
-- :eyes: All players reveal 1 card per betting round
+- 💬 Vectropy bidding format
+- 🪙 1000 starting stack
+- ⏱️ 15-minute levels, 10/10 start
+- 🃏 Standard 52-card deck, no Jokers
+- 🖐️ 4-card hands
+- 💰 2 betting rounds
+- 👀 All players reveal 1 card per betting round
 
-## :trophy: Results
+## 🏆 Results
 
 | Position | Player         | Prize |
 |----------|----------------|-------|
@@ -31,17 +31,17 @@
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| David  | 1000  | 3♦ 6♣ 3♣ K♣ | 4000  | 5262      |
-| Sara   | 1000  | 9♥ K♥ Q♣ 5♣ | 4111  | 6272      |
-| Mark   | 1000  | 2♦ 8♣ K♦ Q♠ | 4222  | 6372      |
-| Alyssa | 1000  | 7♠ 4♦ 2♥ 4♥ | 4232  | Challenge |
-| Leah   | 1000  | 4♣ T♥ Q♥ 8♥ | 4262  |           |
+| Player | Stack | Hand              | Bid 1 | Bid 2     |
+|--------|-------|-------------------|-------|-----------|
+| David  | 1000  | 3️♦️ 6♣️ 3♣️ K♣️  | 4000  | 5262      |
+| Sara   | 1000  | 9♥️ K♥️ Q♣️ 5♣️   | 4111  | 6272      |
+| Mark   | 1000  | 2️♦️ 8♣️ K️♦️ Q♠️ | 4222  | 6372      |
+| Alyssa | 1000  | 7♠️ 4️♦️ 2♥️ 4♥️  | 4232  | Challenge |
+| Leah   | 1000  | 4♣️ T♥️ Q♥️ 8♥️   | 4262  |           |
 
 ### Betting
 
-:speech_balloon: Bid is **6372**
+💬 Bid is **6372**
 
 First reveal shows **1211**
 - 🛡️ Mark: 10
@@ -62,10 +62,10 @@ Second reveal shows **3331**
 
 **6372** < **7472**, team 🛡️ wins
 
-- Sara :heavy_plus_sign:105
-- Leah :heavy_plus_sign:105
-- Alyssa :small_red_triangle_down:200
-- Mark :small_red_triangle_down:10
+- Sara ➕105
+- Leah ➕105
+- Alyssa 🔻200
+- Mark 🔻10
 
 </details>
 
@@ -75,17 +75,17 @@ Second reveal shows **3331**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Sara   | 1105  | 8♣ Q♥ 7♥ 5♥ | 1131  | 4353      |
-| Mark   | 990   | 2♠ 4♥ A♦ 9♠ | 2231  | 4354      |
-| Alyssa | 800   | 3♥ 4♣ 4♦ K♦ | 3331  | 4454      |
-| Leah   | 1105  | 5♣ 7♦ 5♠ J♥ | 3333  | 5454      |
-| David  | 1000  | 7♠ 6♦ 3♣ T♣ | 4343  | Challenge |
+| Player | Stack | Hand              | Bid 1 | Bid 2     |
+|--------|-------|-------------------|-------|-----------|
+| Sara   | 1105  | 8♣️ Q♥️ 7♥️ 5♥️   | 1131  | 4353      |
+| Mark   | 990   | 2♠️ 4♥️ A️♦️ 9♠️  | 2231  | 4354      |
+| Alyssa | 800   | 3♥️ 4♣️ 4️♦️ K️♦️ | 3331  | 4454      |
+| Leah   | 1105  | 5♣️ 7️♦️ 5♠️ J♥️  | 3333  | 5454      |
+| David  | 1000  | 7♠️ 6️♦️ 3♣️ T♣️  | 4343  | Challenge |
 
 ### Betting
 
-:speech_balloon: Bid is **5454**
+💬 Bid is **5454**
 
 First reveal shows **2012**
 - 🛡️ Leah: 20
@@ -105,8 +105,54 @@ Second reveal shows **3232**
 
 **5454** < **6675**, team 🛡️ wins
 
-- Mark :heavy_plus_sign:40
-- Leah :heavy_plus_sign:40
-- David :small_red_triangle_down:80
+- Mark ➕40
+- Leah ➕40
+- David 🔻80
+
+</details>
+
+<details>
+<summary>Hand 3</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Mark   | 1030  | 9♠️ 9♦️ Q♠️ J♥️ | 2222  | 4464      |
+| Alyssa | 800   | 2♦️ 7♣️ A♦️ J♦️ | 4422  | 4564      |
+| Leah   | 1145  | 5♥️ 4♥️ 2♣️ 6♣️ | 4442  | Challenge |
+| David  | 920   | 3♥️ 6♦️ A♥️ K♣️ | 4462  |           |
+| Sara   | 1105  | 4♦️ 6♠️ 5♠️ 7♥️ | 4463  |           |
+
+### Betting
+
+💬 Bid is **4564**
+
+First reveal shows **0221**
+- 🛡️ Alyssa: 30
+- ⚔️ Leah: 30
+- (🛡️) David: **call** 30
+- ❌ Sara: **fold**
+- ❌ Mark: **fold**
+- 🛡️ Alyssa: **check**
+- ⚔️ Leah: **check**
+
+Second reveal shows **1432**
+- 🛡️ Alyssa: **check**
+- ⚔️ Leah: **bet** 50
+- (🛡️) David: **call** 50
+- 🛡️ Alyssa: **raise** to 400
+- ⚔️ Leah: **call** 350
+- (🛡️) David: **raise all-in** to 890
+- 🛡️ Alyssa: **call all-in** 370
+- ❌ Leah: **fold**
+
+### Results
+
+**4564** < **6886**, team 🛡️ wins by default
+
+- Alyssa ➕215
+- David ➕215
+- Leah 🔻430
 
 </details>
