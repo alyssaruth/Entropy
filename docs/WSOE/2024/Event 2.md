@@ -44,23 +44,23 @@
 :speech_balloon: Bid is **6372**
 
 First reveal shows **1211**
-- :shield: Mark: 10
-- :crossed_swords: Alyssa: 10
-- (:shield:) Leah: **raise** to 100
+- 🛡️ Mark: 10
+- ⚔️ Alyssa: 10
+- (🛡️) Leah: **raise** to 100
 - ❌ David: **fold**
-- (:shield:) Sara: **call** 100
+- (🛡️) Sara: **call** 100
 - ❌ Mark: **fold**
-- :crossed_swords: Alyssa: **call** 90 
+- ⚔️ Alyssa: **call** 90 
 
 Second reveal shows **3331**
-- :crossed_swords: Alyssa: **check**
-- (:shield:) Leah: **bet** 100
-- (:shield:) Sara: **call** 100
-- :crossed_swords: Alyssa: **call** 100
+- ⚔️ Alyssa: **check**
+- (🛡️) Leah: **bet** 100
+- (🛡️) Sara: **call** 100
+- ⚔️ Alyssa: **call** 100
 
 ### Results 
 
-**6372** < **7472**, team :shield: wins
+**6372** < **7472**, team 🛡️ wins
 
 - Sara :heavy_plus_sign:105
 - Leah :heavy_plus_sign:105
@@ -88,22 +88,22 @@ Second reveal shows **3331**
 :speech_balloon: Bid is **5454**
 
 First reveal shows **2012**
-- :shield: Leah: 20
-- :crossed_swords: David: 20
+- 🛡️ Leah: 20
+- ⚔️ David: 20
 - ❌ Sara: **fold**
-- (:shield:) Mark: **raise** to 80
+- (🛡️) Mark: **raise** to 80
 - ❌ Alyssa: **fold**
-- :shield: Leah: **call** 60
-- :crossed_swords: David: **call** 60
+- 🛡️ Leah: **call** 60
+- ⚔️ David: **call** 60
 
 Second reveal shows **3232**
-- :shield: Leah: **check**
-- :crossed_swords: David: **check**
-- ( :shield: ) Mark: **check**
+- 🛡️ Leah: **check**
+- ⚔️ David: **check**
+- (🛡️) Mark: **check**
 
 ### Results
 
-**5454** < **6675**, team :shield: wins
+**5454** < **6675**, team 🛡️ wins
 
 - Mark :heavy_plus_sign:40
 - Leah :heavy_plus_sign:40
