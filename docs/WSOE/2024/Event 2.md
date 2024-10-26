@@ -156,3 +156,97 @@ Second reveal shows **1432**
 - Leah 🔻430
 
 </details>
+
+<details>
+<summary>Hand 4</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Alyssa | 1015  | Th Jc Ah Kc | 0303  | 3366      |
+| Leah   | 715   | 8s Td 4c 3h | 1313  | 3367      |
+| David  | 1135  | 6c 7d 6h 2s | 1316  | Challenge |
+| Sara   | 1105  | Ks 2h Qh Jh | 1336  |           |
+| Mark   | 1030  | 4h 3s 7h 9c | 2336  |           |
+
+### Betting
+
+💬 Bid is **3367**
+
+First reveal shows **1022**
+- 🛡️ Leah: 40
+- ⚔️ David: 40
+- (🛡️) Sara: **call** 40
+- ❌ Mark: **fold**
+- (🛡️) Alyssa: **call** 40
+- 🛡️ Leah: **check**
+- ⚔️ David: **check**
+
+Second reveal shows **2233**
+- 🛡️ Leah: **check**
+- ⚔️ David: **check**
+- (🛡️) Sara: **check**
+- (🛡️) Alyssa: **bet** 150
+- 🛡️ Leah: **call** 150
+- ⚔️ David: **call** 150
+- (🛡️) Sara: **call** 150
+
+### Results
+
+**3 3 6 7** > **6 3 10 5**, team ⚔️ wins
+
+- David ➕570
+- Leah 🔻190
+- Sara 🔻190
+- Alyssa 🔻190
+
+</details>
+
+<details>
+<summary>Hand 5</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 525   | 3h 7h Ad 9h | 1340  | 1563      |
+| David  | 1705  | 2c 8h Ah Ac | 1341  | 2563      |
+| Sara   | 915   | 4c Ts 5h 6h | 1351  | 2564      |
+| Mark   | 1030  | Jc 3d 5s 7s | 1353  | 3564      |
+| Alyssa | 825   | Js 4d 2d Jh | 1553  | Challenge |
+
+### Betting
+
+💬 Bid is **3564**
+
+First reveal shows **3011**
+- 🛡️ Mark: 50
+- ⚔️ Alyssa: 50
+- (🛡️) Leah: **raise** to 200
+- (🛡️) David: **call** 200
+- (⚔️) Sara: **call** 200
+- 🛡️ Mark: **call** 150
+- ⚔️ Alyssa: **call** 150
+
+Second reveal shows **3232**
+- 🛡️ Mark: **check**
+- ⚔️ Alyssa: **check**
+- (🛡️) Leah: **check**
+- (🛡️) David: **bet** 400
+- (⚔️) Sara: **call** 400
+- 🛡️ Mark: **call** 400
+- ❌ Alyssa: **fold**
+- (🛡️) Leah: **call all-in** 325
+
+### Results
+
+**3 5 6 4** < **7 6 10 7**, team 🛡️ wins
+
+- Mark ➕250 / 245
+- Leah ➕175
+- David ➕250 / 245
+- Alyssa 🔻200
+- Sara 🔻600
+
+</details>
