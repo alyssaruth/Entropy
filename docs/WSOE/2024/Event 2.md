@@ -162,13 +162,13 @@ Second reveal shows **1432**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Alyssa | 1015  | Th Jc Ah Kc | 0303  | 3366      |
-| Leah   | 715   | 8s Td 4c 3h | 1313  | 3367      |
-| David  | 1135  | 6c 7d 6h 2s | 1316  | Challenge |
-| Sara   | 1105  | Ks 2h Qh Jh | 1336  |           |
-| Mark   | 1030  | 4h 3s 7h 9c | 2336  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Alyssa | 1015  | T♥️ J♣️ A♥️ K♣️ | 0303  | 3366      |
+| Leah   | 715   | 8♠️ T♦️ 4♣️ 3♥️ | 1313  | 3367      |
+| David  | 1135  | 6♣️ 7♦️ 6♥️ 2♠️ | 1316  | Challenge |
+| Sara   | 1105  | K♠️ 2♥️ Q♥️ J♥️ | 1336  |           |
+| Mark   | 1030  | 4♥️ 3♠️ 7♥️ 9♣️ | 2336  |           |
 
 ### Betting
 
@@ -208,13 +208,13 @@ Second reveal shows **2233**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Leah   | 525   | 3h 7h Ad 9h | 1340  | 1563      |
-| David  | 1705  | 2c 8h Ah Ac | 1341  | 2563      |
-| Sara   | 915   | 4c Ts 5h 6h | 1351  | 2564      |
-| Mark   | 1030  | Jc 3d 5s 7s | 1353  | 3564      |
-| Alyssa | 825   | Js 4d 2d Jh | 1553  | Challenge |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Leah   | 525   | 3♥️ 7♥️ A♦️ 9♥️ | 1340  | 1563      |
+| David  | 1705  | 2♣️ 8♥️ A♥️ A♣️ | 1341  | 2563      |
+| Sara   | 915   | 4♣️ T♠️ 5♥️ 6♥️ | 1351  | 2564      |
+| Mark   | 1030  | J♣️ 3♦️ 5♠️ 7♠️ | 1353  | 3564      |
+| Alyssa | 825   | J♠️ 4♦️ 2♦️ J♥️ | 1553  | Challenge |
 
 ### Betting
 
@@ -243,9 +243,9 @@ Second reveal shows **3232**
 
 **3 5 6 4** < **7 6 10 7**, team 🛡️ wins
 
-- Mark ➕285
+- Mark ➕275
 - Leah ➕240
-- David ➕275
+- David ➕285
 - Alyssa 🔻200
 - Sara 🔻600
 
@@ -256,13 +256,13 @@ Second reveal shows **3232**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1     |
-|--------|-------|-------------|-----------|
-| David  | 1980  | 9h 9s Jd 2c | 4444      |
-| Sara   | 315   | 3s 7s Js 4d | 4445      |
-| Mark   | 1315  | 2d Ac Kc 7c | 5445      |
-| Alyssa | 625   | 5h As Th 4c | 5465      |
-| Leah   | 765   | Ah 3d 5s 8s | Challenge |
+| Player | Stack | Hand            | Bid 1     |
+|--------|-------|-----------------|-----------|
+| David  | 1990  | 9♥️ 9♠️ J♦️ 2♣️ | 4444      |
+| Sara   | 315   | 3♠️ 7♠️ J♠️ 4♦️ | 4445      |
+| Mark   | 1305  | 2♦️ A♣️ K♣️ 7♣️ | 5445      |
+| Alyssa | 625   | 5♥️ A♠️ T♥️ 4♣️ | 5465      |
+| Leah   | 765   | A♥️ 3♦️ 5♠️ 8♠️ | Challenge |
 
 ### Betting
 
@@ -295,12 +295,12 @@ First reveal shows **1242**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Mark   | 1515  | Qd Qs Ah Td | 2222  | 4544      |
-| Alyssa | 820   | 9h Qh 3s Jh | 4422  | Challenge |
-| Leah   | 685   | Qc 3c 4h 7h | 4442  |           |
-| David  | 1980  | Kd Kc As 6h | 4444  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Mark   | 1505  | Q♦️ Q♠️ A♥️ T♦️ | 2222  | 4544      |
+| Alyssa | 820   | 9♥️ Q♥️ 3♠️ J♥️ | 4422  | Challenge |
+| Leah   | 685   | Q♣️ 3♣️ 4♥️ 7♥️ | 4442  |           |
+| David  | 1990  | K♦️ K♣️ A♠️ 6♥️ | 4444  |           |
 
 ### Betting
 
@@ -336,12 +336,12 @@ Second reveal shows **3221**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Alyssa | 720   | Jc 6h 3s Tc | 3333  | 4544      |
-| Leah   | 685   | 8d Ad Td 5h | 3533  | 4644      |
-| David  | 2030  | Jh Th 4s 7h | 3543  | Challenge |
-| Mark   | 1565  | 9c As 6c 5d | 4543  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Alyssa | 720   | J♣️ 6♥️ 3♠️ T♣️ | 3333  | 4544      |
+| Leah   | 685   | 8♦️ A♦️ T♦️ 5♥️ | 3533  | 4644      |
+| David  | 2040  | J♥️ T♥️ 4♠️ 7♥️ | 3543  | Challenge |
+| Mark   | 1555  | 9♣️ A♠️ 6♣️ 5♦️ | 4543  |           |
 
 ### Betting
 
@@ -373,11 +373,11 @@ First reveal shows **2110**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
-|--------|-------|-------------|-------|-------|-----------|
-| David  | 1310  | 7d 9d 6c 2h | 0005  | 2425  | Challenge |
-| Mark   | 1565  | 2d 7c Td 2s | 1115  | 3425  |           |
-| Leah   | 2125  | Jd Ah 5d Qc | 2325  | 3525  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| David  | 1320  | 7♦️ 9♦️ 6♣️ 2♥️ | 0005  | 2425  | Challenge |
+| Mark   | 1555  | 2♦️ 7♣️ T♦️ 2♠️ | 1115  | 3425  |           |
+| Leah   | 2125  | J♦️ A♥️ 5♦️ Q♣️ | 2325  | 3525  |           |
 
 ### Betting
 
@@ -405,11 +405,11 @@ First reveal shows **0300**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1     |
-|--------|-------|-------------|-----------|
-| Mark   | 1565  | Jh As Ks 7s | 0005      |
-| Leah   | 1975  | Qs 7c 7d Ts | 1105      |
-| David  | 1460  | Kh 5c 6h Jc | Challenge |
+| Player | Stack | Hand            | Bid 1     |
+|--------|-------|-----------------|-----------|
+| Mark   | 1555  | J♥️ A♠️ K♠️ 7♠️ | 0005      |
+| Leah   | 1975  | Q♠️ 7♣️ 7♦️ T♠️ | 1105      |
+| David  | 1470  | K♥️ 5♣️ 6♥️ J♣️ | Challenge |
 
 ### Betting
 
@@ -429,9 +429,9 @@ First reveal shows **0021**
 
 **1105** < **4246**, team 🛡️ wins
 
-- Leah ➕730
-- Mark ➕730
-- David 🔻1460  ❌ Eliminated
+- Leah ➕735
+- Mark ➕735
+- David 🔻1470  ❌ Eliminated
 
 </details>
 
@@ -440,10 +440,10 @@ First reveal shows **0021**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
-|--------|-------|-------------|-------|-------|-----------|
-| Leah   | 2705  | 8h 5d 6s 7s | 1112  | 1132  | Challenge |
-| Mark   | 2295  | 3d 4h Ah 3s | 1122  | 1142  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Leah   | 2710  | 8♥️ 5♦️ 6♠️ 7♠️ | 1112  | 1132  | Challenge |
+| Mark   | 2290  | 3♦️ 4♥️ A♥️ 3♠️ | 1122  | 1142  |           |
 
 ### Betting
 
@@ -473,10 +473,10 @@ Second reveal shows **0220**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Mark   | 3645  | 2c 8s Ts 9s | 1101  | Challenge |
-| Leah   | 1355  | 4c Kd Ah Qh | 1231  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Mark   | 3640  | 2♣️ 8♠️ T♠️ 9♠️ | 1101  | Challenge |
+| Leah   | 1360  | 4♣️ K♦️ A♥️ Q♥️ | 1231  |           |
 
 ### Betting
 
@@ -497,8 +497,8 @@ Second reveal shows **2101**
 
 **1231** < **3233**, team 🛡️ wins
 
-- Leah ➕1355
-- Mark 🔻1355
+- Leah ➕1360
+- Mark 🔻1360
 
 </details>
 
@@ -507,44 +507,10 @@ Second reveal shows **2101**
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2     |
-|--------|-------|-------------|-------|-----------|
-| Mark   | 3645  | 2c 8s Ts 9s | 1101  | Challenge |
-| Leah   | 1355  | 4c Kd Ah Qh | 1231  |           |
-
-### Betting
-
-💬 Bid is **1231**
-
-First reveal shows **2000**
-- 🛡️ Leah: 300
-- ⚔️ Mark: 300
-- 🛡️ Leah: **check**
-- ⚔️ Mark: **raise** to 800
-- 🛡️ Leah: **call** 500
-
-Second reveal shows **2101**
-- 🛡️ Leah: **bet all-in** 555
-- ⚔️ Mark: **call** 555
-
-### Results
-
-**1231** < **3233**, team 🛡️ wins
-
-- Leah ➕1355
-- Mark 🔻1355
-
-</details>
-
-<details>
-<summary>Hand 14</summary>
-
-### Bids
-
-| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
-|--------|-------|-------------|-------|-------|-----------|
-| Leah   | 2710  | 8d 6h 9c 4c | 2111  | 2131  | Challenge |
-| Mark   | 2290  | 2h Qd 5c 9h | 2121  | 2231  |           |
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Leah   | 2720  | 8♦️ 6♥️ 9♣️ 4♣️ | 2111  | 2131  | Challenge |
+| Mark   | 2280  | 2♥️ Q♦️ 5♣️ 9♥️ | 2121  | 2231  |           |
 
 ### Betting
 
@@ -571,13 +537,239 @@ Second reveal shows **0220**
 </details>
 
 <details>
+<summary>Hand 14</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Mark   | 1480  | 2♠️ A♣️ 7♥️ Q♠️ | 1111  | 1212  | 2222      |
+| Leah   | 3520  | 6♠️ 4♦️ T♦️ K♥️ | 1211  | 1222  | Challenge |
+
+### Betting
+
+💬 Bid is **2222**
+
+First reveal shows **0002**
+- 🛡️ Mark: 400
+- ⚔️ Leah: 400
+- 🛡️ Mark: **raise all-in** to 1480
+- ⚔️ Leah: **call** 1080
+
+### Results
+
+**2222** < **2334**, team 🛡️ wins
+
+- Mark ➕1480
+- Leah 🔻1480
+
+</details>
+
+<details>
 <summary>Hand 15</summary>
 
 ### Bids
 
-| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
-|--------|-------|-------------|-------|-------|-----------|
-| Mark   | 690   |  |   |   |           |
-| Leah   | 4310  |  |   |   |  |
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Leah   | 2040  | Q♥️ J♥️ 4♥️ 6♥️ | 0220  | 0231      |
+| Mark   | 2960  | 4♣️ 5♠️ T♠️ 8♠️ | 0221  | Challenge |
+
+### Betting
+
+💬 Bid is **0231**
+
+First reveal shows **1010**
+- 🛡️ Leah: 500
+- ⚔️ Mark: 500
+- 🛡️ Leah: **check**
+- ⚔️ Mark: **raise all-in** to 2040
+- ❌ Leah: **fold**
+
+### Results
+
+**0231** > **1043**, team ⚔️ wins by default
+
+- Mark ➕500
+- Leah 🔻500
+
+</details>
+
+<details>
+<summary>Hand 16</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Mark   | 3460  | 4♠️ T♠️ K♥️ T♣️ | 2002  | 2112  | Challenge |
+| Leah   | 1540  | T♦️ 6♥️ 8♥️ 9♥️ | 2102  | 2122  |           |
+
+### Betting
+
+💬 Bid is **2122**
+
+First reveal shows **0101**
+- 🛡️ Leah: 500
+- ⚔️ Mark: 500
+- 🛡️ Leah: **raise** to 1000
+- ❌ Mark: **fold**
+
+### Results
+
+**2122** > **1142**, team ⚔️ wins by default
+
+- Leah ➕500
+- Mark 🔻500
+
+</details>
+
+<details>
+<summary>Hand 17</summary>
+
+Apparently stacks are 2250 vs 2750 here, IDK how
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3 | Bid 4     |
+|--------|-------|-----------------|-------|-------|-------|-----------|
+| Leah   | 2040  | 3♠️ A♥️ K♥️ T♥️ | 0022  | 0132  | 0143  | 1243      |
+| Mark   | 2960  | 3♦️ J♥️ 7♠️ 6♠️ | 0122  | 0133  | 1143  | Challenge |
+
+### Betting
+
+💬 Bid is **1243**
+
+First reveal shows **0101**
+- 🛡️ Leah: 500
+- ⚔️ Mark: 500
+- 🛡️ Leah: **raise** to 1000
+- ⚔️ Mark: **raise all-in** to 2250 apparently?
+- 🛡️ Leah: **call** 1250
+
+### Results
+
+**1243** < **1254**, team 🛡️ wins
+
+- Leah ➕2250
+- Mark 🔻2250
+
+</details>
+
+<details>
+<summary>Hand 18</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2     |
+|--------|-------|-----------------|-------|-----------|
+| Mark   | 500   | 3♣️ 9♠️ 4♣️ 4♦️ | 2021  | Challenge |
+| Leah   | 4500  | A♠️ K♠️ Q♣️ 2♦️ | 2122  |           |
+
+### Betting
+
+💬 Bid is **2122**
+
+- 🛡️ Leah: 500
+- ⚔️ Mark: 500 (all-in)
+
+### Results
+
+**2122** > **4314**, team ⚔️ wins
+
+- Mark ➕500
+- Leah 🔻500
+
+</details>
+
+<details>
+<summary>Hand 19</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Leah   | 4000  | J♣️ Q♦️ 6♠️ Q♠️ | 1112  | 1123  | Challenge |
+| Mark   | 1000  | 9♦️ A♠️ K♥️ 7♠️ | 1122  | 1223  |           |
+
+### Betting
+
+💬 Bid is **1223**
+
+First reveal shows **1100**
+- 🛡️ Mark: 600
+- ⚔️ Leah: 600
+- 🛡️ Mark: **raise all-in** to 1000
+- ⚔️ Leah: **call** 400
+
+### Results
+
+**1223** < **2325**, team 🛡️ wins
+
+- Mark ➕1000
+- Leah 🔻1000
+
+</details>
+
+<details>
+<summary>Hand 20</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-----------------|-------|-------|-----------|
+| Mark   | 2000  | 3♠️ 6♠️ 9♦️ 4♠️ | 0111  | 1212  | 1223      |
+| Leah   | 3000  | K♣️ K♥️ 5♦️ 2♦️ | 1211  | 1222  | Challenge |
+
+### Betting
+
+💬 Bid is **1223**
+
+First reveal shows **1001**
+- 🛡️ Mark: 600
+- ⚔️ Leah: 600
+- 🛡️ Mark: **check**
+- ⚔️ Leah: **check**
+
+Second reveal shows **1012**
+- 🛡️ Mark: **check**
+- ⚔️ Leah: **bet** 600
+- 🛡️ Mark: **call**
+
+### Results
+
+**1223** > **1313**, team ⚔️ wins
+
+- Leah ➕1200
+- Mark 🔻1200
+
+</details>
+
+<details>
+<summary>Hand 21 - ❌ Mark (2nd)</summary>
+
+### Bids
+
+| Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3 | Bid 4 | Bid 5     |
+|--------|-------|-----------------|-------|-------|-------|-------|-----------|
+| Leah   | 4200  | 9♣️ Q♣️ 7♣️ 5♣️ | 3010  | 4011  | 5111  | 6112  | Challenge |
+| Mark   | 800   | 8♣️ 3♦️ 6♠️ J♣️ | 4010  | 4111  | 5112  | 6212  |           |
+
+### Betting
+
+💬 Bid is **6212**
+
+First reveal shows **2000**
+- 🛡️ Mark: 600
+- ⚔️ Leah: 600
+- 🛡️ Mark: **raise all-in** to 800
+- ⚔️ Leah: **call** 200
+
+### Results
+
+**6212** > **6101**, team ⚔️ wins
+
+- Leah ➕800
+- Mark 🔻800  ❌ Eliminated
 
 </details>
