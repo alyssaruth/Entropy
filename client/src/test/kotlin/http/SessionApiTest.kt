@@ -54,7 +54,7 @@ class SessionApiTest : AbstractTest() {
         questionDialog.getDialogMessage() shouldBe
             "Your client must be updated to connect. Check for updates now?"
 
-        questionDialog.clickYes()
+        questionDialog.clickYes(async = true)
         verify {
             ClientGlobals.updateManager.checkForUpdates(OnlineConstants.ENTROPY_VERSION_NUMBER)
         }
