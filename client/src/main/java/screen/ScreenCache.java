@@ -33,6 +33,9 @@ public final class ScreenCache
 		
 		return mainScreen;
 	}
+	public static void setMainScreen(MainScreen scrn) {
+		mainScreen = scrn;
+	}
 	
 	public static AchievementsDialog getAchievementsDialog()
 	{

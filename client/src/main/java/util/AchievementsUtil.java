@@ -148,11 +148,11 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
 		unlockPerfectGameAchievements(numberOfRounds, playerCount);
 	}
 	
-	public static void unlockPerfectGameAchievements(int numberOfRounds, long totalPlayers)
+	public static void unlockPerfectGameAchievements(int numberOfRounds, int totalPlayers)
 	{
 		if (numberOfRounds == 5)
 		{
@@ -177,11 +177,11 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
 		unlockFullBlindGameAchievements(playerCount, playedBlind, hasLookedAtCards, cardReveal);
 	}
 	
-	public static void unlockFullBlindGameAchievements(long totalPlayers, boolean playedBlind, boolean hasLookedAtCards,
+	public static void unlockFullBlindGameAchievements(int totalPlayers, boolean playedBlind, boolean hasLookedAtCards,
 	  boolean cardReveal)
 	{
 		boolean fullyBlind = playedBlind && !hasLookedAtCards;
@@ -216,7 +216,7 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
 		if (playerCount == 4
 		  && playedBlind 
 		  && !hasLookedAtCards
@@ -234,7 +234,7 @@ public class AchievementsUtil implements Registry
 			return;
 		}
 
-		long playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
 		if (playerCount == 2)
 		{
 			unlockAchievement(Achievement.HandicapTwo);

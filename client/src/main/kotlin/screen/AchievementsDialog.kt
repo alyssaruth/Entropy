@@ -65,6 +65,7 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         setTitle("Achievements")
         setSize(860, 504)
         addMouseMotionListener(this)
+        testTube.name = "testTube"
         iconImage =
             ImageIcon(AchievementsDialog::class.java.getResource("/icons/achievements.png")).image
         contentPane.layout = null
@@ -77,11 +78,14 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         panelDescriptions.setBounds(10, 345, 714, 131)
         contentPane.add(panelDescriptions)
         panelDescriptions.layout = null
+        achievementName.name = "AchievementName"
         achievementName.setBounds(0, 0, 714, 36)
         achievementName.font = Font("Tahoma", Font.BOLD, 15)
         panelDescriptions.add(achievementName)
+        achievementExplanation.name = "AchievementExplanation"
         achievementExplanation.setBounds(0, 32, 714, 36)
         panelDescriptions.add(achievementExplanation)
+        achievementDescription.name = "AchievementDescription"
         achievementDescription.verticalAlignment = SwingConstants.TOP
         achievementDescription.setBounds(0, 70, 714, 54)
         achievementDescription.font = Font("Tahoma", Font.ITALIC, 12)

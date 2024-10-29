@@ -185,7 +185,7 @@ public abstract class GameScreen extends TransparentPanel
 		//variables to use for perfect game achievements
 		var allPlayers = new Player[]{player, opponentOne, opponentTwo, opponentThree};
 		var playerCount = Arrays.stream(allPlayers).filter(Player::isEnabled).count();
-		achievementStore.save(AchievementSetting.PlayerCount, playerCount);
+		achievementStore.save(AchievementSetting.PlayerCount, (int)playerCount);
 		
 		bidPanel.showBidPanel(true);
 		setRandomPersonToStart();
