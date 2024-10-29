@@ -1,6 +1,7 @@
 package routes.session
 
 import http.EMPTY_NAME
+import http.INVALID_ACHIEVEMENT_COUNT
 import http.INVALID_API_VERSION
 import http.UPDATE_REQUIRED
 import http.dto.BeginSessionRequest
@@ -17,6 +18,8 @@ import store.UserConnectionStore
 import testCore.AbstractTest
 import testCore.only
 import util.OnlineConstants
+import util.makeSession
+import utils.Achievement
 
 class SessionServiceTest : AbstractTest() {
     @Test
@@ -50,6 +53,37 @@ class SessionServiceTest : AbstractTest() {
                 service.beginSession(makeBeginSessionRequest(""), "1.2.3.4")
             }
         ex.errorCode shouldBe EMPTY_NAME
+        ex.statusCode shouldBe HttpStatusCode.BadRequest
+
+        store.getAll().shouldBeEmpty()
+    }
+
+    @Test
+    fun `Should reject negative achievement count`() {
+        val (service, store) = makeService()
+
+        val ex =
+            shouldThrow<ClientException> {
+                service.beginSession(makeBeginSessionRequest(achievementCount = -1), "1.2.3.4")
+            }
+        ex.errorCode shouldBe INVALID_ACHIEVEMENT_COUNT
+        ex.statusCode shouldBe HttpStatusCode.BadRequest
+
+        store.getAll().shouldBeEmpty()
+    }
+
+    @Test
+    fun `Should reject too high achievement count`() {
+        val (service, store) = makeService()
+
+        val ex =
+            shouldThrow<ClientException> {
+                service.beginSession(
+                    makeBeginSessionRequest(achievementCount = Achievement.entries.size + 1),
+                    "1.2.3.4",
+                )
+            }
+        ex.errorCode shouldBe INVALID_ACHIEVEMENT_COUNT
         ex.statusCode shouldBe HttpStatusCode.BadRequest
 
         store.getAll().shouldBeEmpty()
@@ -103,10 +137,35 @@ class SessionServiceTest : AbstractTest() {
         usc.ipAddress shouldBe "1.2.3.4"
     }
 
+    @Test
+    fun `Attempts to update achievement count should be validated`() {
+        val session = makeSession()
+        val (service, store) = makeService()
+        store.put(session)
+
+        shouldThrow<ClientException> { service.updateAchievementCount(session, -1) }
+        shouldThrow<ClientException> {
+            service.updateAchievementCount(session, Achievement.entries.size + 1)
+        }
+
+        store.get(session.id).achievementCount shouldBe session.achievementCount
+    }
+
+    @Test
+    fun `Should support updating achievement count`() {
+        val session = makeSession(achievementCount = 5)
+        val (service, store) = makeService()
+        store.put(session)
+
+        service.updateAchievementCount(session, 7)
+
+        store.get(session.id) shouldBe session.copy(achievementCount = 7)
+    }
+
     private fun makeBeginSessionRequest(
         name: String = "Alyssa",
         achievementCount: Int = 5,
-        apiVersion: Int = OnlineConstants.API_VERSION
+        apiVersion: Int = OnlineConstants.API_VERSION,
     ) = BeginSessionRequest(name, achievementCount, apiVersion)
 
     private fun makeService(): Triple<SessionService, SessionStore, UserConnectionStore> {

@@ -72,6 +72,12 @@ class SessionService(
         else nameToCheck
     }
 
+    fun updateAchievementCount(session: Session, achievementCount: Int) {
+        validateAchievementCount(achievementCount)
+
+        sessionStore.update(session.id) { it.copy(achievementCount = achievementCount) }
+    }
+
     private fun validateAchievementCount(achievementCount: Int) {
         if (achievementCount < 0) {
             throw ClientException(

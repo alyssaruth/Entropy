@@ -33,6 +33,8 @@ class SessionControllerTest : ApplicationTest() {
                 .trimIndent()
     }
 
+    @Test fun `Should reject an update achievement call without a session`() = testApplication {}
+
     private fun buildRequest(builder: HttpRequestBuilder) {
         builder.contentType(ContentType.Application.Json)
         builder.setBody(
