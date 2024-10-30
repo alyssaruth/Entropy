@@ -9,6 +9,10 @@ import object.BidListCellRenderer;
 import object.Player;
 import online.screen.EntropyLobby;
 import online.screen.TestHarness;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import settings.Setting;
+import settings.SettingChangeListener;
 import util.*;
 import utils.Achievement;
 
@@ -854,14 +858,14 @@ public final class MainScreen extends AbstractDevScreen
 			public void mouseReleased(MouseEvent arg0) {}
 		});
 
-		achievementStore.addPreferenceChangeListener(arg0 -> {
-            String keyChanged = arg0.getKey();
-			String timePlayedKey = AchievementSetting.TimePlayed.getName();
-            if (keyChanged.equals(timePlayedKey))
-            {
-                restartTimers();
-            }
-        });
+		achievementStore.addChangeListener(new SettingChangeListener() {
+			@Override
+			public <T> void settingChanged(@NotNull Setting<T> setting, @Nullable T newValue) {
+				if (setting.equals(AchievementSetting.TimePlayed)) {
+					restartTimers();
+				}
+			}
+		});
 	}
 	
 	@Override

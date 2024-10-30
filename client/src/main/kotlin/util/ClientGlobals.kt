@@ -5,10 +5,10 @@ import http.HealthCheckApi
 import http.HttpClient
 import http.SessionApi
 import http.WebSocketReceiver
-import preference.AbstractSettingStore
-import preference.DefaultSettingStore
 import screen.LoggingConsole
 import screen.LoggingConsoleAppender
+import settings.AbstractSettingStore
+import settings.DefaultSettingStore
 
 object ClientGlobals {
     private val baseUrl = "http://localhost:8080"

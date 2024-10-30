@@ -2,8 +2,8 @@ package util
 
 import java.awt.Container
 import org.junit.jupiter.api.BeforeEach
-import preference.InMemorySettingStore
 import screen.ScreenCache
+import settings.InMemorySettingStore
 import testCore.AbstractTest
 
 abstract class AbstractClientTest : AbstractTest() {

@@ -1,10 +1,10 @@
 package achievement
 
 import javax.swing.ImageIcon
-import preference.Setting
 import screen.AchievementsDialog
 import screen.MainScreen
 import screen.ScreenCache
+import settings.Setting
 import util.AchievementsUtil
 import util.ClientGlobals
 import util.ClientGlobals.achievementStore

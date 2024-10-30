@@ -1,6 +1,5 @@
-package preference
+package settings
 
-import java.util.prefs.PreferenceChangeListener
 import java.util.prefs.Preferences
 
 class DefaultSettingStore(nodeName: String) : AbstractSettingStore() {
@@ -10,11 +9,7 @@ class DefaultSettingStore(nodeName: String) : AbstractSettingStore() {
         preferences.clear()
     }
 
-    override fun addPreferenceChangeListener(listener: PreferenceChangeListener) {
-        preferences.addPreferenceChangeListener(listener)
-    }
-
-    override fun <T : Any> delete(setting: Setting<T>) {
+    override fun <T : Any> deleteImpl(setting: Setting<T>) {
         preferences.remove(setting.name)
     }
 

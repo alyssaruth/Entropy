@@ -1,6 +1,6 @@
 package achievement
 
-import preference.Setting
+import settings.Setting
 
 object AchievementSetting {
     val BookwormTime = Setting("bookwormTime", 0L)

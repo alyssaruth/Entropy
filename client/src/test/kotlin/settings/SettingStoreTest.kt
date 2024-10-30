@@ -1,16 +1,10 @@
-package preference
+package settings
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.slot
 import io.mockk.verify
-import java.util.prefs.PreferenceChangeEvent
-import java.util.prefs.PreferenceChangeListener
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
@@ -95,26 +89,17 @@ abstract class SettingStoreTest : AbstractTest() {
 
     @Test
     fun `Should notify listener on update & delete`() {
-        val listener = mockk<PreferenceChangeListener>(relaxed = true)
-        val slot = slot<PreferenceChangeEvent>()
-        every { listener.preferenceChange(capture(slot)) } just runs
-        implementation.addPreferenceChangeListener(listener)
+        val listener = mockk<SettingChangeListener>(relaxed = true)
+        implementation.addChangeListener(listener)
 
         // Update
         implementation.save(STRING_PREF, "foobar")
-        verify { listener.preferenceChange(any()) }
-        val updateEvent = slot.captured
-        updateEvent.key shouldBe STRING_PREF.name
-        updateEvent.newValue shouldBe "foobar"
+        verify { listener.settingChanged(STRING_PREF, "foobar") }
 
         // Delete
         clearMocks(listener)
-        every { listener.preferenceChange(capture(slot)) } just runs
 
         implementation.delete(STRING_PREF)
-        verify { listener.preferenceChange(any()) }
-        val deleteEvent = slot.captured
-        deleteEvent.key shouldBe STRING_PREF.name
-        deleteEvent.newValue shouldBe null
+        verify { listener.settingChanged(STRING_PREF, null) }
     }
 }

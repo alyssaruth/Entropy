@@ -9,10 +9,10 @@ import io.mockk.verify
 import javax.swing.ImageIcon
 import javax.swing.JLabel
 import org.junit.jupiter.api.Test
-import preference.Setting
 import screen.AchievementsDialog
 import screen.MainScreen
 import screen.ScreenCache
+import settings.Setting
 import testCore.verifyNotCalled
 import util.AbstractClientTest
 import util.ClientGlobals.achievementStore

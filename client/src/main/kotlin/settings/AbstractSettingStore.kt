@@ -1,20 +1,30 @@
-package preference
-
-import java.util.prefs.PreferenceChangeListener
+package settings
 
 abstract class AbstractSettingStore {
-    abstract fun addPreferenceChangeListener(listener: PreferenceChangeListener)
+    private val listeners = mutableListOf<SettingChangeListener>()
 
-    abstract fun <T : Any> delete(setting: Setting<T>)
+    fun addChangeListener(listener: SettingChangeListener) {
+        listeners.add(listener)
+    }
 
     abstract fun clear()
+
+    protected abstract fun <T : Any> deleteImpl(setting: Setting<T>)
 
     protected abstract fun <T> findRaw(setting: Setting<T>): String?
 
     protected abstract fun <T : Any> saveRaw(setting: Setting<T>, value: String)
 
+    fun <T : Any> delete(setting: Setting<T>) {
+        deleteImpl(setting)
+
+        listeners.forEach { it.settingChanged(setting, null) }
+    }
+
     fun <T : Any> save(setting: Setting<T>, value: T) {
         saveRaw(setting, toRawValue(value))
+
+        listeners.forEach { it.settingChanged(setting, value) }
     }
 
     fun <T : Any> find(setting: Setting<T>): T? =
