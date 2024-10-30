@@ -264,7 +264,7 @@ public class StatisticsDialog extends JDialog
 	private void setTimePlayedText()
 	{
 		var storedTimePlayed = achievementStore.get(AchievementSetting.TimePlayed);
-		long timePlayed = System.currentTimeMillis() - ScreenCache.getMainScreen().startTime + storedTimePlayed;
+		long timePlayed = System.currentTimeMillis() - ScreenCache.get(MainScreen.class).startTime + storedTimePlayed;
 		String timeFormatted = DateUtil.formatHHMMSS(timePlayed);
 		
 		timePlayedField.setText("Time played: " + timeFormatted);

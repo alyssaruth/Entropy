@@ -42,11 +42,11 @@ public class EntropyScreen extends GameScreen
 		String suitsStr = CardsUtil.getSuitDesc(total, lastBidSuitCode);
 		if (total == 1)
 		{
-			ScreenCache.getMainScreen().setResultText("There was " + total + " " + suitsStr);
+			ScreenCache.get(MainScreen.class).setResultText("There was " + total + " " + suitsStr);
 		}
 		else
 		{
-			ScreenCache.getMainScreen().setResultText("There were " + total + " " + suitsStr);
+			ScreenCache.get(MainScreen.class).setResultText("There were " + total + " " + suitsStr);
 		}
 	}
 

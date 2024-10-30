@@ -28,6 +28,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import static achievement.AchievementUtilKt.getAchievementsEarned;
+import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
@@ -408,10 +409,8 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			history.repaint();
 			gamePanel.fireAppearancePreferencesChange();
-			ScreenCache.getHelpDialog().fireAppearancePreferencesChange();
-			ScreenCache.getReplayDialog().fireAppearancePreferencesChange();
-			ScreenCache.getFileReplayDialog().fireAppearancePreferencesChange();
-			ScreenCache.getEntropyLobby().fireAppearancePreferencesChange();
+			ScreenCache.get(HelpDialog.class).fireAppearancePreferencesChange();
+			ScreenCache.getReplayDialogs().forEach(ReplayDialog::fireAppearancePreferencesChange);
 		}
 		catch (Throwable t)
 		{
@@ -424,7 +423,7 @@ public final class MainScreen extends AbstractDevScreen
 		try
 		{
 			//online stuff
-			EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
+			EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
 			if (entropyLobby.isVisible())
 			{
 				if (!entropyLobby.confirmExit())
@@ -514,7 +513,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void connectToEntropyOnline()
 	{
-		EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
+		EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
 		if (entropyLobby.isVisible())
 		{
 			entropyLobby.requestFocus();
@@ -527,7 +526,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	public void dismissCurrentReplay()
 	{
-		ScreenCache.getReplayDialog().dispose();
+		ScreenCache.getReplayDialog(IN_GAME_REPLAY).dispose();
 	}
 	
 	public void enableNewGameOption(boolean enable)
@@ -613,7 +612,7 @@ public final class MainScreen extends AbstractDevScreen
 		AchievementsUtil.unlockRewards(achievementsEarned);
 		
 		//Send an update to the Server if we're connected
-		EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
+		EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
 		if (entropyLobby.isVisible())
 		{
 			String username = entropyLobby.getUsername();
@@ -637,10 +636,10 @@ public final class MainScreen extends AbstractDevScreen
 		switch (gameMode)
 		{
 			case Entropy:
-				gamePanel = ScreenCache.getEntropyPanel();
+				gamePanel = ScreenCache.get(EntropyScreen.class);
 				break;
 			case Vectropy:
-				gamePanel = ScreenCache.getVectropyPanel();
+				gamePanel = ScreenCache.get(VectropyScreen.class);
 				break;
 			default:
 				Debug.stackTrace("Unexpected gameMode [" + gameMode + "]");
@@ -686,7 +685,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (command.equals("simulator"))
 		{
-			SimulationDialog dialog = ScreenCache.getSimulationDialog();
+			SimulationDialog dialog = ScreenCache.get(SimulationDialog.class);
 			dialog.initVariables();
 			dialog.setTitle("Simulation Window");
 			dialog.setSize(440, 500);
@@ -743,7 +742,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	public void onStart()
 	{
-		gamePanel = ScreenCache.getEntropyPanel();
+		gamePanel = ScreenCache.get(EntropyScreen.class);
 		leftPanel.add(gamePanel, BorderLayout.CENTER);
 		
 		//If we've just updated, show the change log automatically
@@ -886,21 +885,21 @@ public final class MainScreen extends AbstractDevScreen
 		Object source = arg0.getSource();
 		if (source == mntmViewHelp)
 		{
-			HelpDialog helpDialog = ScreenCache.getHelpDialog();
+			HelpDialog helpDialog = ScreenCache.get(HelpDialog.class);
 			helpDialog.initVariables();
 			helpDialog.setLocationRelativeTo(null);
 			helpDialog.setVisible(true);
 		}
 		else if (source == mntmAbout)
 		{
-			AboutDialogEntropy aboutDialog = ScreenCache.getAboutDialog();
+			AboutDialogEntropy aboutDialog = new AboutDialogEntropy();
 			aboutDialog.setLocationRelativeTo(null);
 			aboutDialog.setModal(true);
 			aboutDialog.setVisible(true);
 		}
 		else if (source == mntmReportBug)
 		{
-			BugReportDialog bugReportDialog = ScreenCache.getBugReportDialog();
+			BugReportDialog bugReportDialog = new BugReportDialog();
 			if (!bugReportDialog.isVisible())
 			{
 				bugReportDialog.setLocationRelativeTo(null);
@@ -931,7 +930,7 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			AchievementUtilKt.updateAndUnlockVanity();
 			
-			AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
+			AchievementsDialog achievementsDialog = ScreenCache.get(AchievementsDialog.class);
 			achievementsDialog.setLocationRelativeTo(null);
 			achievementsDialog.init();
 			achievementsDialog.setVisible(true);
@@ -942,7 +941,7 @@ public final class MainScreen extends AbstractDevScreen
 			int width = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_WIDTH, 875);
 			int height = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_HEIGHT, 475);
 			
-			ReplayInterface replayInterface = ScreenCache.getReplayInterface();
+			ReplayInterface replayInterface = ScreenCache.get(ReplayInterface.class);
 			replayInterface.setTitle("Replay Viewer");
 			replayInterface.setSize(width, height);
 			replayInterface.setLocationRelativeTo(null);
@@ -994,7 +993,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == btnReplay)
 		{
-			ReplayDialog replayDialog = ScreenCache.getReplayDialog();
+			ReplayDialog replayDialog = ScreenCache.getReplayDialog(IN_GAME_REPLAY);
 			if (replayDialog.isVisible())
 			{
 				replayDialog.requestFocus();

@@ -270,7 +270,7 @@ public class OnlineStatsPanel extends JPanel
 		}
 		else if (source == lblLeaderboardLink)
 		{
-			Leaderboard leaderboard = ScreenCache.getLeaderboard();
+			Leaderboard leaderboard = ScreenCache.get(Leaderboard.class);
 			if (leaderboard.isVisible())
 			{
 				leaderboard.requestFocus();

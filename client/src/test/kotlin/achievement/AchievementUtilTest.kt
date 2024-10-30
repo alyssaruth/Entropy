@@ -8,25 +8,20 @@ import io.mockk.mockk
 import io.mockk.verify
 import javax.swing.ImageIcon
 import javax.swing.JLabel
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import preference.InMemorySettingStore
 import preference.Setting
+import screen.AchievementsDialog
 import screen.MainScreen
 import screen.ScreenCache
-import testCore.AbstractTest
 import testCore.verifyNotCalled
+import util.AbstractClientTest
 import util.ClientGlobals.achievementStore
+import util.put
 import utils.Achievement
 import utils.CHATTY_THRESHOLD
 import utils.VANITY_THRESHOLD
 
-class AchievementUtilTest : AbstractTest() {
-    @BeforeEach
-    fun before() {
-        achievementStore = InMemorySettingStore()
-    }
+class AchievementUtilTest : AbstractClientTest() {
 
     @Test
     fun `Should correctly report whether an achievement is unlocked`() {
@@ -54,14 +49,14 @@ class AchievementUtilTest : AbstractTest() {
     @Test
     fun `Should notify screens when achievement is unlocked for the first time`() {
         val mainScreen = mockk<MainScreen>(relaxed = true)
-        ScreenCache.setMainScreen(mainScreen)
+        ScreenCache.put(mainScreen)
 
         unlockAchievement(Achievement.Lion)
 
         Achievement.Lion.isUnlocked() shouldBe true
 
         verify { mainScreen.showAchievementPopup(Achievement.Lion.title, any()) }
-        val tubeLabel = ScreenCache.getAchievementsDialog().getChild<JLabel>("testTube")
+        val tubeLabel = ScreenCache.get<AchievementsDialog>().getChild<JLabel>("testTube")
         tubeLabel.icon.shouldMatch(ImageIcon(javaClass.getResource("/tubes/t1.png")))
 
         clearMocks(mainScreen)

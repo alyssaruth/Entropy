@@ -18,7 +18,7 @@ class PlayOnlineDialog : SimpleDialog() {
     init {
         title = "Play Online"
         setSize(250, 125)
-        setLocationRelativeTo(ScreenCache.getMainScreen())
+        setLocationRelativeTo(ScreenCache.get())
 
         val panelCenter = JPanel()
         panelCenter.border = EmptyBorder(10, 5, 5, 5)

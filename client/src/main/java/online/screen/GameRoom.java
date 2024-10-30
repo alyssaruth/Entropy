@@ -83,7 +83,7 @@ public abstract class GameRoom extends JFrame
 		chatPanel = new OnlineChatPanel(roomName);
 		
 		setIcon();
-		setLocationRelativeTo(ScreenCache.getEntropyLobby());
+		setLocationRelativeTo(ScreenCache.get(EntropyLobby.class));
 		int width = getWidth();
 		splitPane.setDividerLocation(width - 350);
 		splitPane.setResizeWeight(1.0);

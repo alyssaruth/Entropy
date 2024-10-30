@@ -17,15 +17,16 @@ import kong.unirest.UnirestException
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
-import testCore.AbstractTest
 import testCore.getDialogMessage
 import testCore.getErrorDialog
 import testCore.getQuestionDialog
 import testCore.verifyNotCalled
+import util.AbstractClientTest
 import util.ClientGlobals
 import util.OnlineConstants
+import util.put
 
-class SessionApiTest : AbstractTest() {
+class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should POST to the correct endpoint`() {
         val httpClient = mockk<HttpClient>(relaxed = true)
@@ -102,7 +103,7 @@ class SessionApiTest : AbstractTest() {
     @Test
     fun `should boot the lobby on success`() {
         val mockLobby = mockk<EntropyLobby>(relaxed = true)
-        ScreenCache.setEntropyLobby(mockLobby)
+        ScreenCache.put(mockLobby)
 
         val lobbyMessage = LobbyMessage(emptyList(), emptyList())
         val httpClient =
@@ -115,7 +116,7 @@ class SessionApiTest : AbstractTest() {
 
         SessionApi(httpClient).beginSession("alyssa")
 
-        val lobby = ScreenCache.getEntropyLobby()
+        val lobby = ScreenCache.get<EntropyLobby>()
         verify {
             lobby.username = "alyssa"
             lobby.isVisible = true

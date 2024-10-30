@@ -2,6 +2,8 @@ package achievement
 
 import javax.swing.ImageIcon
 import preference.Setting
+import screen.AchievementsDialog
+import screen.MainScreen
 import screen.ScreenCache
 import util.ClientGlobals.achievementStore
 import utils.Achievement
@@ -24,10 +26,10 @@ fun unlockAchievement(achievement: Achievement) {
 
     achievementStore.save(Setting(achievement.settingName, false), true)
 
-    ScreenCache.getAchievementsDialog().refresh(false)
+    ScreenCache.get<AchievementsDialog>().refresh(false)
     val icon = achievement.getIcon()
 
-    val screen = ScreenCache.getMainScreen()
+    val screen = ScreenCache.get<MainScreen>()
     screen.showAchievementPopup(achievement.title, icon)
 }
 

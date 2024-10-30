@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.util.Timer;
 import java.util.*;
 
+import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
@@ -83,7 +84,7 @@ public abstract class GameScreen extends TransparentPanel
 			
 			boolean playerEnabled = player != null && player.isEnabled();
 			AchievementsUtil.unlockCoward(gameOver, playerEnabled, firstRound);
-			ScreenCache.getMainScreen().dismissCurrentReplay();
+			ScreenCache.get(MainScreen.class).dismissCurrentReplay();
 
 			initVariablesForNewGame();
 			initVariables();
@@ -212,7 +213,7 @@ public abstract class GameScreen extends TransparentPanel
 		int maxBid = GameUtil.getMaxBid(includeJokers, jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
 		bidPanel.init(maxBid, totalNumberOfCards, false, includeMoons, includeStars, false);
 		
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.removeAllElements();
 		
 		player.resetHand();
@@ -427,7 +428,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	protected void roundEnded(int playerLastToAct)
 	{
-		ScreenCache.getMainScreen().enableNewGameOption(true);
+		ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 		saveRoundForReplay();
 
 		firstRound = false;
@@ -455,7 +456,7 @@ public abstract class GameScreen extends TransparentPanel
 			}
 			else
 			{
-				ScreenCache.getMainScreen().showNextRoundButton();
+				ScreenCache.get(MainScreen.class).showNextRoundButton();
 			}
 		}
 	}
@@ -471,7 +472,7 @@ public abstract class GameScreen extends TransparentPanel
 		inGameReplay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		inGameReplay.putInt(roundsSoFar + REPLAY_INT_HISTORY_SIZE, historySize);
 		for (int i = 0; i < historySize; i++)
@@ -516,7 +517,7 @@ public abstract class GameScreen extends TransparentPanel
 		//save who started
 		inGameReplay.putInt(roundsSoFar + "PERSON_TO_START", personToStart);
 		
-		ScreenCache.getReplayDialog().roundAdded();
+		ScreenCache.getReplayDialog(IN_GAME_REPLAY).roundAdded();
 	}
 	
 	protected void saveGame()
@@ -525,7 +526,7 @@ public abstract class GameScreen extends TransparentPanel
 		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		savedGame.putInt(SAVED_GAME_INT_HISTORY_SIZE, historySize);
 		for (int i=0; i<historySize; i++)
@@ -576,7 +577,7 @@ public abstract class GameScreen extends TransparentPanel
 		boolean exitedOnChallenge = currentlyOnChallenge;
 		
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_EXITED_ON_CHALLENGE, exitedOnChallenge);
-		savedGame.put(SAVED_GAME_STRING_RESULT_TEXT, ScreenCache.getMainScreen().getResultText());
+		savedGame.put(SAVED_GAME_STRING_RESULT_TEXT, ScreenCache.get(MainScreen.class).getResultText());
 		savedGame.putInt(SAVED_GAME_INT_PLAYER_CARDS_TO_SUBTRACT, player.getCardsToSubtract());
 		savedGame.putInt(SAVED_GAME_INT_OPPONENT_ONE_CARDS_TO_SUBTRACT, opponentOne.getCardsToSubtract());
 		savedGame.putInt(SAVED_GAME_INT_OPPONENT_TWO_CARDS_TO_SUBTRACT, opponentTwo.getCardsToSubtract());
@@ -627,7 +628,7 @@ public abstract class GameScreen extends TransparentPanel
 			initialiseBidPanel();
 
 			//set up the listmodel
-			DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+			DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 			int historySize = savedGame.getInt(SAVED_GAME_INT_HISTORY_SIZE, 0);
 			for (int i = 0; i < historySize; i++)
 			{
@@ -750,9 +751,9 @@ public abstract class GameScreen extends TransparentPanel
 		int lastBidSuitCode = getLastBidSuitCode();
 		handPanel.displayAndHighlightHands(lastBidSuitCode);
 		bidPanel.enableBidPanel(false);
-		ScreenCache.getMainScreen().showNextRoundButton();
+		ScreenCache.get(MainScreen.class).showNextRoundButton();
 		String resultText = savedGame.get(SAVED_GAME_STRING_RESULT_TEXT, "");
-		ScreenCache.getMainScreen().setResultText(resultText);
+		ScreenCache.get(MainScreen.class).setResultText(resultText);
 		
 		player.setCardsToSubtract(savedGame.getInt(SAVED_GAME_INT_PLAYER_CARDS_TO_SUBTRACT, 0));
 		opponentOne.setCardsToSubtract(savedGame.getInt(SAVED_GAME_INT_OPPONENT_ONE_CARDS_TO_SUBTRACT, 0));
@@ -987,7 +988,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	public void processCpuTurn(int opponentNumber)
 	{
-		ScreenCache.getMainScreen().enableNewGameOption(false);
+		ScreenCache.get(MainScreen.class).enableNewGameOption(false);
 		currentPlayer = getPlayer(opponentNumber);
 		handPanel.selectPlayerInAwtThread(opponentNumber, true);
 		bidPanel.enableBidPanel(false);
@@ -1056,7 +1057,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	private void doHumanTurn()
 	{
-		ScreenCache.getMainScreen().enableNewGameOption(true);
+		ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 		currentPlayer = player;
 		handPanel.selectPlayerInAwtThread(0, true);
 		bidPanel.enableBidPanel(true);
@@ -1198,7 +1199,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	private void addToListmodel(Bid bid)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.add(0, bid);
 	}
 	
@@ -1218,10 +1219,10 @@ public abstract class GameScreen extends TransparentPanel
 		@Override
 		public void run()
 		{
-			ScreenCache.getMainScreen().hideResult();
+			ScreenCache.get(MainScreen.class).hideResult();
 			
 			currentlyOnChallenge = false;
-			MainScreen scrn = ScreenCache.getMainScreen();
+			MainScreen scrn = ScreenCache.get(MainScreen.class);
 			scrn.startNewRound();
 		}
 	}
@@ -1256,7 +1257,7 @@ public abstract class GameScreen extends TransparentPanel
 			{
 				//Something's gone very wrong...
 				handPanel.selectPlayerInAwtThread(opponent.getPlayerNumber(), false);
-				ScreenCache.getMainScreen().enableNewGameOption(true);
+				ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 				return;
 			}
 			

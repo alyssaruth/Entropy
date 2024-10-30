@@ -2,6 +2,7 @@ package http
 
 import http.dto.ClientMessage
 import http.dto.LobbyMessage
+import online.screen.EntropyLobby
 import screen.ScreenCache
 import utils.CoreGlobals
 import utils.CoreGlobals.logger
@@ -11,7 +12,7 @@ class WebSocketReceiver {
         val clientMessage = deserializeClientMessage(rawMessage)
         logger.info(
             "serverMessage",
-            "Received server message of type ${clientMessage::class.simpleName}"
+            "Received server message of type ${clientMessage::class.simpleName}",
         )
 
         when (clientMessage) {
@@ -36,6 +37,6 @@ class WebSocketReceiver {
         CoreGlobals.jsonMapper.readValue(rawMessage, ClientMessage::class.java)
 
     private fun handleLobbyResponse(clientMessage: LobbyMessage) {
-        ScreenCache.getEntropyLobby().syncLobby(clientMessage)
+        ScreenCache.get<EntropyLobby>().syncLobby(clientMessage)
     }
 }

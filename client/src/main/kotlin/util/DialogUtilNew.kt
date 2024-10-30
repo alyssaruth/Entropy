@@ -6,6 +6,7 @@ import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import screen.LoadingDialog
+import screen.MainScreen
 import screen.ScreenCache
 import utils.CoreGlobals.logger
 
@@ -14,31 +15,31 @@ object DialogUtilNew {
 
     @JvmStatic
     @JvmOverloads
-    fun showInfo(infoText: String, parent: Component = ScreenCache.getMainScreen()) {
+    fun showInfo(infoText: String, parent: Component = ScreenCache.get<MainScreen>()) {
         logDialogShown("Info", "Information", infoText)
         JOptionPane.showMessageDialog(
             parent,
             infoText,
             "Information",
-            JOptionPane.INFORMATION_MESSAGE
+            JOptionPane.INFORMATION_MESSAGE,
         )
         logDialogClosed("Info", null)
     }
 
-    fun showCustomMessage(message: Any, parent: Component = ScreenCache.getMainScreen()) {
+    fun showCustomMessage(message: Any, parent: Component = ScreenCache.get<MainScreen>()) {
         logDialogShown("CustomInfo", "Information", "?")
         JOptionPane.showMessageDialog(
             parent,
             message,
             "Information",
-            JOptionPane.INFORMATION_MESSAGE
+            JOptionPane.INFORMATION_MESSAGE,
         )
         logDialogClosed("CustomInfo", null)
     }
 
     @JvmStatic
     @JvmOverloads
-    fun showError(errorText: String, parent: Component? = ScreenCache.getMainScreen()) {
+    fun showError(errorText: String, parent: Component? = ScreenCache.get<MainScreen>()) {
         dismissLoadingDialog()
 
         logDialogShown("Error", "Error", errorText)
@@ -56,7 +57,7 @@ object DialogUtilNew {
     fun showQuestion(
         message: String,
         allowCancel: Boolean = false,
-        parent: Component = ScreenCache.getMainScreen()
+        parent: Component = ScreenCache.get<MainScreen>(),
     ): Int {
         logDialogShown("Question", "Question", message)
         val option =
@@ -67,7 +68,7 @@ object DialogUtilNew {
                 message,
                 "Question",
                 option,
-                JOptionPane.QUESTION_MESSAGE
+                JOptionPane.QUESTION_MESSAGE,
             )
         logDialogClosed("Question", selection)
         return selection
@@ -99,7 +100,7 @@ object DialogUtilNew {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 typedArray,
-                options.first()
+                options.first(),
             )
         val selectionStr = if (selection > -1) typedArray[selection] else null
 
@@ -111,7 +112,7 @@ object DialogUtilNew {
         title: String,
         message: String,
         options: Array<K>? = null,
-        defaultOption: K? = null
+        defaultOption: K? = null,
     ): K? {
         logDialogShown("Input", title, message)
         val selection =
@@ -122,7 +123,7 @@ object DialogUtilNew {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
-                defaultOption
+                defaultOption,
             ) as K?
 
         logDialogClosed("Input", selection)
@@ -149,7 +150,7 @@ object DialogUtilNew {
             "$type dialog shown: $message",
             "dialogType" to type,
             "dialogTitle" to title,
-            "dialogMessage" to message
+            "dialogMessage" to message,
         )
     }
 

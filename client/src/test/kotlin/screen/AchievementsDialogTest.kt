@@ -6,20 +6,11 @@ import com.github.alyssaburlton.swingtest.doMouseMove
 import com.github.alyssaburlton.swingtest.getChild
 import io.kotest.matchers.shouldBe
 import javax.swing.JLabel
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import preference.InMemorySettingStore
-import testCore.AbstractTest
-import util.ClientGlobals.achievementStore
+import util.AbstractClientTest
 import utils.Achievement
 
-class AchievementsDialogTest : AbstractTest() {
-    @BeforeEach
-    fun before() {
-        achievementStore = InMemorySettingStore()
-    }
-
+class AchievementsDialogTest : AbstractClientTest() {
     @Test
     fun `Should update achievement details on hover`() {
         unlockAchievement(Achievement.Caveman)

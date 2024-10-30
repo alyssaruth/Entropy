@@ -4,7 +4,10 @@ import achievement.AchievementSetting;
 import game.GameMode;
 import object.Bid;
 import object.Player;
+import online.screen.EntropyLobby;
 import online.screen.GameRoom;
+import screen.HelpDialog;
+import screen.MainScreen;
 import screen.RewardDialog;
 import screen.ScreenCache;
 import utils.Achievement;
@@ -299,11 +302,11 @@ public class AchievementsUtil implements Registry
 	
 	public static void unlockSecondThoughts(String roomId)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		if (!roomId.isEmpty())
 		{
 			//We're online, so need a different listmodel...
-			GameRoom room = ScreenCache.getEntropyLobby().getGameRoomForName(roomId);
+			GameRoom room = ScreenCache.get(EntropyLobby.class).getGameRoomForName(roomId);
 			listmodel = room.getListmodel();
 		}
 
@@ -462,7 +465,7 @@ public class AchievementsUtil implements Registry
 		unlockIfRequired(achievementsEarned, 50, REWARDS_BOOLEAN_CHEATS, RewardDialog.REWARD_BANNER_CHEATS);
 		
 		//Always refresh here in case there are new pages
-		ScreenCache.getHelpDialog().refreshNodes("");
+		ScreenCache.get(HelpDialog.class).refreshNodes("");
 	}
 	private static void unlockIfRequired(int achievementsEarned, int threshold, String registryNode, String imageName)
 	{

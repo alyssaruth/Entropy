@@ -10,6 +10,7 @@ import javax.swing.JPanel
 import javax.swing.JTextPane
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter
 import javax.swing.text.Highlighter
+import screen.HelpDialog
 import screen.ScreenCache
 import util.Registry
 import utils.CoreGlobals.logger
@@ -180,7 +181,7 @@ abstract class HelpPanel : JPanel() {
 
     private fun navigateToPageBasedOnKeyWord(keyWord: String) {
         logger.info("navigatedForWord", "Navigated for word $keyWord")
-        val helpDialog = ScreenCache.getHelpDialog()
+        val helpDialog = ScreenCache.get<HelpDialog>()
 
         if (keyWord.startsWith("bidd")) {
             if (javaClass.simpleName.contains("Entropy")) {

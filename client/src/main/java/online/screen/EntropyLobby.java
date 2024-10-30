@@ -9,6 +9,7 @@ import online.util.HeartbeatRunnable;
 import online.util.XmlBuilderClient;
 import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
+import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
 
@@ -370,7 +371,7 @@ public class EntropyLobby extends JFrame
 	
 	public void exit(boolean forceClose)
 	{
-		ScreenCache.getLeaderboard().dispose();
+		ScreenCache.get(Leaderboard.class).dispose();
 		closeRooms();
 		dispose();
 		
@@ -385,7 +386,7 @@ public class EntropyLobby extends JFrame
 			MessageUtil.sendMessage(params, true);
 		}
 		
-		ScreenCache.getMainScreen().maximise();
+		ScreenCache.get(MainScreen.class).maximise();
 	}
 
 	@Override

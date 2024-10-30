@@ -6,20 +6,12 @@ import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldMatch
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import preference.InMemorySettingStore
-import testCore.AbstractTest
-import util.ClientGlobals
+import util.AbstractClientTest
 import util.Images
 import utils.Achievement
 
-class AchievementBadgeTest : AbstractTest() {
-    @BeforeEach
-    fun before() {
-        ClientGlobals.achievementStore = InMemorySettingStore()
-    }
-
+class AchievementBadgeTest : AbstractClientTest() {
     @Test
     fun `Should defer to achievement for explanation and description`() {
         val badge = AchievementBadge(Achievement.Caveman)

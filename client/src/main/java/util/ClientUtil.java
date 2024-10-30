@@ -1,5 +1,6 @@
 package util;
 
+import online.screen.EntropyLobby;
 import org.w3c.dom.Document;
 import screen.ScreenCache;
 
@@ -24,10 +25,10 @@ public class ClientUtil
 
 
 	public static String getUsername() {
-		return ScreenCache.getEntropyLobby().getUsername();
+		return ScreenCache.get(EntropyLobby.class).getUsername();
 	}
 	public static boolean isOnline() {
-		return ScreenCache.getEntropyLobby().isVisible();
+		return ScreenCache.get(EntropyLobby.class).isVisible();
 	}
 	public static void sendAsyncInSingleThread(MessageSenderParams message) {
 		addToPendingMessages(message);

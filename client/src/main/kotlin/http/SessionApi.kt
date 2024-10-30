@@ -6,6 +6,7 @@ import http.dto.BeginSessionResponse
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
+import online.screen.EntropyLobby
 import screen.ScreenCache
 import util.ClientGlobals
 import util.DialogUtilNew
@@ -31,7 +32,7 @@ class SessionApi(private val httpClient: HttpClient) {
     }
 
     private fun handleConnectSuccess(response: BeginSessionResponse) {
-        val lobby = ScreenCache.getEntropyLobby()
+        val lobby = ScreenCache.get<EntropyLobby>()
         lobby.username = response.name
         lobby.setLocationRelativeTo(null)
         lobby.isVisible = true

@@ -211,7 +211,7 @@ public class ApiAmendDialog extends JDialog
 	
 	public static ApiStrategy createStrategy()
 	{
-		ApiAmendDialog dialog = ScreenCache.getApiAmendDialog();
+		ApiAmendDialog dialog = new ApiAmendDialog();
 		dialog.init(null);
 		dialog.setVisible(true);
 		
@@ -220,7 +220,7 @@ public class ApiAmendDialog extends JDialog
 	
 	public static void amendStrategy(ApiStrategy strategy)
 	{
-		ApiAmendDialog dialog = ScreenCache.getApiAmendDialog();
+		ApiAmendDialog dialog = new ApiAmendDialog();
 		dialog.init(strategy);
 		dialog.setVisible(true);
 	}

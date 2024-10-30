@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import kotlin.Pair;
+import online.screen.EntropyLobby;
 import online.util.ResponseHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -175,7 +176,7 @@ public class MessageSender implements Runnable
 			}
 			else
 			{
-				ScreenCache.getEntropyLobby().exit(true);
+				ScreenCache.get(EntropyLobby.class).exit(true);
 
 				if (!messageParms.getIgnoreResponse())
 				{

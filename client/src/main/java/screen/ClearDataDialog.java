@@ -113,9 +113,9 @@ public class ClearDataDialog extends JDialog
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();
 			DialogUtilNew.showInfo("Achievements and statistics were reset successfully.");
-			ScreenCache.getAchievementsDialog().refresh(true);
-			ScreenCache.getMainScreen().showTopAchievementPanel(false);
-			ScreenCache.getMainScreen().showBottomAchievementPanel(false);
+			ScreenCache.get(AchievementsDialog.class).refresh(true);
+			ScreenCache.get(MainScreen.class).showTopAchievementPanel(false);
+			ScreenCache.get(MainScreen.class).showBottomAchievementPanel(false);
 		}
 		
 		if (clearMyReplays)
@@ -167,7 +167,7 @@ public class ClearDataDialog extends JDialog
 	
 	private void removeStatisticsVariablesFromNode()
 	{
-		ScreenCache.getMainScreen().resetStartTime();
+		ScreenCache.get(MainScreen.class).resetStartTime();
 		achievementStore.delete(AchievementSetting.TimePlayed);
 		achievementStore.delete(AchievementSetting.BestStreak);
 		achievementStore.delete(AchievementSetting.CurrentStreak);
