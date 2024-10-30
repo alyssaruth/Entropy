@@ -7,7 +7,6 @@ import http.dto.RoomSummary;
 import object.RoomTable;
 import online.util.HeartbeatRunnable;
 import online.util.XmlBuilderClient;
-import online.util.XmlBuilderDesktop;
 import org.w3c.dom.Document;
 import screen.MainScreen;
 import screen.ScreenCache;

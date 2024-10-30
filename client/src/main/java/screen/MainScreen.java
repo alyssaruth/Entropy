@@ -9,8 +9,6 @@ import object.BidListCellRenderer;
 import object.Player;
 import online.screen.EntropyLobby;
 import online.screen.TestHarness;
-import online.util.XmlBuilderDesktop;
-import org.w3c.dom.Document;
 import util.*;
 import utils.Achievement;
 

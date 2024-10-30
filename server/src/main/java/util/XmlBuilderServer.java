@@ -1,12 +1,10 @@
 package util;
 
-import auth.UserConnection;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import server.EntropyServer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class XmlBuilderServer implements XmlConstants
@@ -39,41 +37,7 @@ public class XmlBuilderServer implements XmlConstants
 	{
 		return ACKNOWLEDGEMENT;
 	}
-	
-	public static Document getAchievementUpdateAck(EntropyServer server, String username, String achievementName, int newCount)
-	{
-		if (newCount < 0)
-		{
-			return getKickOffResponse(username, "Achievement count could not be parsed.");
-		}
-		
-		if (newCount > ACHIEVMENTS_TOTAL)
-		{
-			return getKickOffResponse(username, "Nice try.");
-		}
-		
-		//Now loop through rooms where the player is actively playing and add a chat message
-		if (!achievementName.isEmpty())
-		{
-			String message = username + " just earned " + achievementName + "!";
-			
-			ArrayList<Room> rooms = server.getRooms();
-			int size = rooms.size();
-			for (int i=0; i<size; i++)
-			{
-				Room room = rooms.get(i);
-				List<String> players = room.getCurrentPlayers();
-				if (players.contains(username))
-				{
-					OnlineMessage om = new OnlineMessage("black", message, "Game");
-					room.addToChatHistoryAndNotifyUsers(om);
-				}
-			}
-		}
-		
-		return ACKNOWLEDGEMENT;
-	}
-	
+
 	public static Document getLeaderboardResponse(List<Room> rooms) throws Throwable
 	{
 		Document response = XmlUtil.factoryNewDocument();
