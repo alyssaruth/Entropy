@@ -5,7 +5,10 @@ import preference.Setting
 import screen.AchievementsDialog
 import screen.MainScreen
 import screen.ScreenCache
+import util.AchievementsUtil
+import util.ClientGlobals
 import util.ClientGlobals.achievementStore
+import util.ClientUtil
 import utils.Achievement
 import utils.CHATTY_THRESHOLD
 import utils.VANITY_THRESHOLD
@@ -31,6 +34,13 @@ fun unlockAchievement(achievement: Achievement) {
 
     val screen = ScreenCache.get<MainScreen>()
     screen.showAchievementPopup(achievement.title, icon)
+
+    val achievementsEarned = getAchievementsEarned()
+    if (ClientUtil.isOnline()) {
+        ClientGlobals.sessionApi.updateAchievementCount(achievementsEarned)
+    }
+
+    AchievementsUtil.unlockRewards(achievementsEarned)
 }
 
 fun updateAndUnlockVanity() {

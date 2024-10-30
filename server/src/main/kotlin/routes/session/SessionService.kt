@@ -76,6 +76,8 @@ class SessionService(
         validateAchievementCount(achievementCount)
 
         sessionStore.update(session.id) { it.copy(achievementCount = achievementCount) }
+
+        ServerGlobals.lobbyService.lobbyChanged()
     }
 
     private fun validateAchievementCount(achievementCount: Int) {

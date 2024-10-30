@@ -587,8 +587,6 @@ public final class MainScreen extends AbstractDevScreen
 
 	public void showAchievementPopup(String title, ImageIcon icon)
 	{
-		int achievementsEarned = getAchievementsEarned();
-		
 		if (!bottomAchievementShowing)
 		{
 			showBottomAchievementPanel(true);
@@ -607,17 +605,6 @@ public final class MainScreen extends AbstractDevScreen
 			achievementIconBottom.setIcon(icon);
 			achievementTitleBottom.setText(title);
 			topAchievementShowing = false;
-		}
-		
-		AchievementsUtil.unlockRewards(achievementsEarned);
-		
-		//Send an update to the Server if we're connected
-		EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
-		if (entropyLobby.isVisible())
-		{
-			String username = entropyLobby.getUsername();
-			Document achievementsUpdate = XmlBuilderDesktop.factoryAchievementsUpdate(username, title, achievementsEarned);
-			MessageUtil.sendMessage(achievementsUpdate, 500);
 		}
 	}
 	

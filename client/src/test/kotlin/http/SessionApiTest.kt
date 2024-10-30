@@ -7,6 +7,7 @@ import http.Routes.BEGIN_SESSION
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import http.dto.LobbyMessage
+import http.dto.UpdateAchievementCountRequest
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -101,26 +102,41 @@ class SessionApiTest : AbstractClientTest() {
     }
 
     @Test
-    fun `should boot the lobby on success`() {
+    fun `should boot the lobby and set session id on success`() {
         val mockLobby = mockk<EntropyLobby>(relaxed = true)
         ScreenCache.put(mockLobby)
 
         val lobbyMessage = LobbyMessage(emptyList(), emptyList())
+        val sessionId = UUID.randomUUID()
         val httpClient =
             mockHttpClient(
-                SuccessResponse(
-                    200,
-                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyMessage),
-                )
+                SuccessResponse(200, BeginSessionResponse("alyssa", sessionId, lobbyMessage))
             )
 
         SessionApi(httpClient).beginSession("alyssa")
+
+        ClientGlobals.httpClient.sessionId shouldBe sessionId
 
         val lobby = ScreenCache.get<EntropyLobby>()
         verify {
             lobby.username = "alyssa"
             lobby.isVisible = true
             lobby.init(lobbyMessage)
+        }
+    }
+
+    @Test
+    fun `should be able to update achievement count`() {
+        val httpClient = mockk<HttpClient>(relaxed = true)
+
+        SessionApi(httpClient).updateAchievementCount(8)
+
+        verify {
+            httpClient.doCall<UpdateAchievementCountRequest>(
+                HttpMethod.POST,
+                Routes.ACHIEVEMENT_COUNT,
+                UpdateAchievementCountRequest(8),
+            )
         }
     }
 

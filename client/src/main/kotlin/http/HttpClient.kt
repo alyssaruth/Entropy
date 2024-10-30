@@ -4,6 +4,8 @@ import ch.qos.logback.classic.Level
 import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
+import kong.unirest.HttpRequest
+import kong.unirest.HttpRequestWithBody
 import kong.unirest.HttpResponse
 import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
@@ -13,6 +15,7 @@ import org.apache.http.HttpHeaders
 import utils.CoreGlobals.logger
 
 class HttpClient(private val baseUrl: String) {
+    var sessionId: UUID? = null
     private val jsonObjectMapper = JsonObjectMapper()
 
     inline fun <reified T : Any?> doCall(
@@ -39,16 +42,11 @@ class HttpClient(private val baseUrl: String) {
             "requestBody" to requestJson,
         )
 
-        val baseRequest =
+        val request =
             Unirest.request(method.toString(), "${baseUrl}${route}")
                 .header("X-Request-ID", requestId.toString())
-
-        val request =
-            if (requestJson != null)
-                baseRequest
-                    .header(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8")
-                    .body(requestJson)
-            else baseRequest
+                .addBody(requestJson)
+                .addSessionId()
 
         try {
             val response = request.asString()
@@ -58,6 +56,14 @@ class HttpClient(private val baseUrl: String) {
             return CommunicationError(e)
         }
     }
+
+    private fun HttpRequestWithBody.addBody(requestJson: String?) =
+        requestJson?.let {
+            header(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8").body(requestJson)
+        } ?: this
+
+    private fun HttpRequest<*>.addSessionId() =
+        sessionId?.let { id -> header(CustomHeader.SESSION_ID, id.toString()) } ?: this
 
     private fun <T : Any?> handleResponse(
         response: HttpResponse<String>,

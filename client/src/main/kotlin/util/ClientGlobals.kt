@@ -12,7 +12,7 @@ import screen.LoggingConsoleAppender
 
 object ClientGlobals {
     private val baseUrl = "http://localhost:8080"
-    private val httpClient = HttpClient(baseUrl)
+    val httpClient = HttpClient(baseUrl)
     @JvmField val loggingConsole = LoggingConsole()
     val consoleAppender = LoggingConsoleAppender(loggingConsole)
     val healthCheckApi = HealthCheckApi(httpClient)

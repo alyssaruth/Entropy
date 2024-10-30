@@ -168,10 +168,6 @@ public class EntropyLobby extends JFrame
 		
 		//Start the notification thread, this is how the server will send us unsolicited messages
 		ClientUtil.startNotificationThreads();
-
-		int achievementsEarned = getAchievementsEarned();
-		Document achievementsUpdate = XmlBuilderDesktop.factoryAchievementsUpdate(username, null, achievementsEarned);
-		MessageUtil.sendMessage(achievementsUpdate, 500);
 		
 		hmGameRoomByRoomName = new ConcurrentHashMap<>();
 		hmRoomByRoomName = new ConcurrentHashMap<>();
@@ -435,7 +431,8 @@ public class EntropyLobby extends JFrame
 				int index, boolean isSelected, boolean cellHasFocus) 
 		{
 			OnlineUser username = (OnlineUser)value;
-			return super.getListCellRendererComponent(list, StringUtil.escapeHtml(username.getName()), index, isSelected, cellHasFocus);
+			var name = StringUtil.escapeHtml(username.getName()) + " (" + username.getAchievementCount() + ")";
+			return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
 		}
 	}
 }
