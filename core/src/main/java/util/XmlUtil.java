@@ -1,9 +1,10 @@
 package util;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import utils.CoreGlobals;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,12 +13,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import utils.CoreGlobals;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 public class XmlUtil 
 {
@@ -166,30 +164,6 @@ public class XmlUtil
 		{
 			rootElement.setAttribute(attributeName, "" + bool);
 		}
-	}
-	
-	public static ArrayList<String> getListFromElement(Element root, String elementName, String attributePrefix)
-	{
-		ArrayList<String> ret = new ArrayList<>();
-		
-		NodeList elements = root.getElementsByTagName(elementName);
-		if (elements.getLength() == 0)
-		{
-			Debug.append("No such element: " + elementName);
-			return ret;
-		}
-		
-		Element element = (Element)elements.item(0);
-		int i = 0;
-		String card = element.getAttribute(attributePrefix + "-" + i);
-		while (!card.isEmpty())
-		{
-			ret.add(card);
-			i++;
-			card = element.getAttribute(attributePrefix + "-" + i);
-		}
-		
-		return ret;
 	}
 	
 	public static Element getElementIfExists(Element rootElement, String elementName)

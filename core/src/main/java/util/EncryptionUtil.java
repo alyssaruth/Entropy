@@ -7,9 +7,6 @@ import java.security.Key;
 
 public class EncryptionUtil 
 {
-	public static final int MINIMUM_PASSWORD_LENGTH = 7;
-	
-	private static final String ALGORITHM_RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding";
 	private static final String ALGORITHM_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
 	public static Base64Desktop base64Interface = new Base64Desktop();
 	
