@@ -37,6 +37,7 @@ import util.ReplayFileUtil;
 import util.ReplayRowWrapper;
 import util.TableUtil;
 
+import static screen.ScreenCacheKt.FILE_REPLAY;
 import static utils.CoreGlobals.logger;
 
 public class ReplayTable extends JTable
@@ -618,7 +619,7 @@ public class ReplayTable extends JTable
 			return;
 		}
 
-		ReplayDialog replayDialog = ScreenCache.getFileReplayDialog();
+		ReplayDialog replayDialog = ScreenCache.getReplayDialog(FILE_REPLAY);
 		replayDialog.setLocationRelativeTo(null);
 		replayDialog.setResizable(false);
 		replayDialog.initForFileReplay(filename, folder);

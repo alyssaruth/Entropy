@@ -8,10 +8,11 @@ import io.mockk.verify
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
-import testCore.AbstractTest
+import util.AbstractClientTest
+import util.put
 import utils.CoreGlobals
 
-class WebSocketReceiverTest : AbstractTest() {
+class WebSocketReceiverTest : AbstractClientTest() {
     @Test
     fun `Should report unable to handle nonsense`() {
         val receiver = WebSocketReceiver()
@@ -31,10 +32,10 @@ class WebSocketReceiverTest : AbstractTest() {
     @Test
     fun `Should refresh lobby on update`() {
         val lobby = mockk<EntropyLobby>(relaxed = true)
-        ScreenCache.setEntropyLobby(lobby)
+        ScreenCache.put(lobby)
 
         val receiver = WebSocketReceiver()
-        val lobbyMessage = LobbyMessage(emptyList(), listOf(OnlineUser("Alyssa")))
+        val lobbyMessage = LobbyMessage(emptyList(), listOf(OnlineUser("Alyssa", 5)))
         receiver.receiveMessage(CoreGlobals.jsonMapper.writeValueAsString(lobbyMessage))
 
         verify { lobby.syncLobby(lobbyMessage) }

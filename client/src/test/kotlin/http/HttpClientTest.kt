@@ -50,6 +50,21 @@ class HttpClientTest : AbstractTest() {
     }
 
     @Test
+    fun `Should pass a session id header if present`() {
+        val (client, server) = setUpWebServer()
+        server.enqueue(MockResponse().setResponseCode(HttpStatus.OK))
+        val sessionId = UUID.randomUUID()
+        client.sessionId = sessionId
+
+        client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+
+        val request = server.takeRequest()
+        val sessionIdFromHeader = request.getHeader(CustomHeader.SESSION_ID)
+
+        UUID.fromString(sessionIdFromHeader) shouldBe sessionId
+    }
+
+    @Test
     fun `Successful GET request`() {
         val (client, server) = setUpWebServer()
         val responseBody =

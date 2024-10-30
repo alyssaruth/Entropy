@@ -211,7 +211,7 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 		prefs.put(PREFERENCES_STRING_CARD_BACKS, cardBacks);
 		prefs.put(PREFERENCES_STRING_LOOK_AND_FEEL, (String)comboBoxLookAndFeel.getSelectedItem());
 		
-		ScreenCache.getMainScreen().fireAppearancePreferencesChange();
+		ScreenCache.get(MainScreen.class).fireAppearancePreferencesChange();
 	}
 	
 	private void getVariablesFromPrefs()

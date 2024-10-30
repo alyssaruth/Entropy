@@ -23,9 +23,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
+import achievement.AchievementSetting;
 import util.DateUtil;
 import util.Debug;
 import util.Registry;
+
+import static util.ClientGlobals.achievementStore;
 
 @SuppressWarnings("serial")
 public class StatisticsDialog extends JDialog
@@ -153,8 +156,8 @@ public class StatisticsDialog extends JDialog
 		NumberFormat percentFormat = NumberFormat.getPercentInstance();
 		percentFormat.setMinimumFractionDigits(1);
 		
-		double eGamesPlayed = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0);
-		double eGamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0);
+		double eGamesPlayed = achievementStore.get(AchievementSetting.EntropyGamesPlayed);
+		double eGamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon);
 		
 		String eWinRate = "N/A";
 		if (eGamesPlayed > 0)
@@ -187,9 +190,9 @@ public class StatisticsDialog extends JDialog
 	{
 		NumberFormat percentFormat = NumberFormat.getPercentInstance();
 		percentFormat.setMinimumFractionDigits(1);
-		
-		double vGamesPlayed = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0);
-		double vGamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0);
+
+		double vGamesPlayed = achievementStore.get(AchievementSetting.VectropyGamesPlayed);
+		double vGamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon);
 
 		String vWinRate = "N/A";
 		if (vGamesPlayed > 0)
@@ -215,11 +218,11 @@ public class StatisticsDialog extends JDialog
 	{
 		NumberFormat percentFormat = NumberFormat.getPercentInstance();
 		percentFormat.setMinimumFractionDigits(1);
-		
-		double eGamesPlayed = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0);
-		double eGamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0);
-		double vGamesPlayed = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0);
-		double vGamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0);
+
+		double eGamesPlayed = achievementStore.get(AchievementSetting.EntropyGamesPlayed);
+		double eGamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon);
+		double vGamesPlayed = achievementStore.get(AchievementSetting.VectropyGamesPlayed);
+		double vGamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon);
 		
 		double overallGamesPlayed = eGamesPlayed + vGamesPlayed;
 		double overallGamesWon = eGamesWon + vGamesWon;
@@ -250,11 +253,9 @@ public class StatisticsDialog extends JDialog
 		
 		sb.append("Streaks:");
 		sb.append("\n\nLongest Winning Streak: ");
-		sb.append(achievements.getInt(STATISTICS_INT_BEST_STREAK, 0));
-		sb.append("\nLongest Losing Streak: ");
-		sb.append(achievements.getInt(STATISTICS_INT_WORST_STREAK, 0));
+		sb.append(achievementStore.get(AchievementSetting.BestStreak));
 		sb.append("\nCurrent Streak: ");
-		sb.append(achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0));
+		sb.append(achievementStore.get(AchievementSetting.CurrentStreak));
 		
 		String statsString =  sb.toString();
 		streaksField.setText(statsString);
@@ -262,7 +263,8 @@ public class StatisticsDialog extends JDialog
 	
 	private void setTimePlayedText()
 	{
-		double timePlayed = System.currentTimeMillis() - ScreenCache.getMainScreen().startTime + achievements.getDouble(STATISTICS_DOUBLE_TIME_PLAYED, 0);
+		var storedTimePlayed = achievementStore.get(AchievementSetting.TimePlayed);
+		long timePlayed = System.currentTimeMillis() - ScreenCache.get(MainScreen.class).startTime + storedTimePlayed;
 		String timeFormatted = DateUtil.formatHHMMSS(timePlayed);
 		
 		timePlayedField.setText("Time played: " + timeFormatted);

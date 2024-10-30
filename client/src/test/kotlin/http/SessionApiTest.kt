@@ -7,6 +7,7 @@ import http.Routes.BEGIN_SESSION
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import http.dto.LobbyMessage
+import http.dto.UpdateAchievementCountRequest
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -17,15 +18,16 @@ import kong.unirest.UnirestException
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
-import testCore.AbstractTest
 import testCore.getDialogMessage
 import testCore.getErrorDialog
 import testCore.getQuestionDialog
 import testCore.verifyNotCalled
+import util.AbstractClientTest
 import util.ClientGlobals
 import util.OnlineConstants
+import util.put
 
-class SessionApiTest : AbstractTest() {
+class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should POST to the correct endpoint`() {
         val httpClient = mockk<HttpClient>(relaxed = true)
@@ -37,7 +39,7 @@ class SessionApiTest : AbstractTest() {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 BEGIN_SESSION,
-                BeginSessionRequest("alyssa"),
+                BeginSessionRequest("alyssa", 0),
             )
         }
     }
@@ -100,26 +102,41 @@ class SessionApiTest : AbstractTest() {
     }
 
     @Test
-    fun `should boot the lobby on success`() {
+    fun `should boot the lobby and set session id on success`() {
         val mockLobby = mockk<EntropyLobby>(relaxed = true)
-        ScreenCache.setEntropyLobby(mockLobby)
+        ScreenCache.put(mockLobby)
 
         val lobbyMessage = LobbyMessage(emptyList(), emptyList())
+        val sessionId = UUID.randomUUID()
         val httpClient =
             mockHttpClient(
-                SuccessResponse(
-                    200,
-                    BeginSessionResponse("alyssa", UUID.randomUUID(), lobbyMessage)
-                )
+                SuccessResponse(200, BeginSessionResponse("alyssa", sessionId, lobbyMessage))
             )
 
         SessionApi(httpClient).beginSession("alyssa")
 
-        val lobby = ScreenCache.getEntropyLobby()
+        ClientGlobals.httpClient.sessionId shouldBe sessionId
+
+        val lobby = ScreenCache.get<EntropyLobby>()
         verify {
             lobby.username = "alyssa"
             lobby.isVisible = true
             lobby.init(lobbyMessage)
+        }
+    }
+
+    @Test
+    fun `should be able to update achievement count`() {
+        val httpClient = mockk<HttpClient>(relaxed = true)
+
+        SessionApi(httpClient).updateAchievementCount(8)
+
+        verify {
+            httpClient.doCall<UpdateAchievementCountRequest>(
+                HttpMethod.POST,
+                Routes.ACHIEVEMENT_COUNT,
+                UpdateAchievementCountRequest(8),
+            )
         }
     }
 

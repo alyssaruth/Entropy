@@ -1,23 +1,15 @@
 package screen;
 
-import java.awt.Component;
-import java.awt.Toolkit;
+import achievement.AchievementSetting;
+import util.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import util.Debug;
-import util.DialogUtil;
-import util.Registry;
-import util.RegistryUtil;
-import util.ReplayFileUtil;
+import static util.ClientGlobals.achievementStore;
 
 public class ClearDataDialog extends JDialog
 							 implements ActionListener,
@@ -81,7 +73,7 @@ public class ClearDataDialog extends JDialog
 		
 		if (!clearOnlyStatistics && !clearAchievementsAndStatistics && !clearMyReplays && !clearImportedReplays)
 		{
-			DialogUtil.showError("You must select something to clear.");
+			DialogUtilNew.showError("You must select something to clear.");
 			return false;
 		}
 		
@@ -92,13 +84,13 @@ public class ClearDataDialog extends JDialog
 	{
 		if (clearOnlyStatistics)
 		{
-			int choice = DialogUtil.showQuestion("You have selected to reset your statistics. Whilst you will not lose earned achievements,\n"
+			int choice = DialogUtilNew.showQuestion("You have selected to reset your statistics. Whilst you will not lose earned achievements,\n"
 											   + " any progress you may have made towards locked achievements will be lost. \n\nProceed?", false);
 			
 			if (choice == JOptionPane.YES_OPTION)
 			{
-				removeStatisticsVariablesFromNode(achievements);
-				DialogUtil.showInfo("Statistics were reset successfully.");
+				removeStatisticsVariablesFromNode();
+				DialogUtilNew.showInfo("Statistics were reset successfully.");
 			}
 			else
 			{
@@ -109,21 +101,21 @@ public class ClearDataDialog extends JDialog
 		
 		if (clearAchievementsAndStatistics)
 		{
-			int choice = DialogUtil.showQuestion("Clearing your Achievements will also clear any rewards you have unlocked.\n\nProceed?", false);
+			int choice = DialogUtilNew.showQuestion("Clearing your Achievements will also clear any rewards you have unlocked.\n\nProceed?", false);
 
 			if (choice == JOptionPane.NO_OPTION)
 			{
 				return;
 			}
-			
-			RegistryUtil.clearNode(achievements);
+
+			achievementStore.clear();
 			RegistryUtil.clearNode(rewards);
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();
-			DialogUtil.showInfo("Achievements and statistics were reset successfully.");
-			ScreenCache.getAchievementsDialog().refresh(true);
-			ScreenCache.getMainScreen().showTopAchievementPanel(false);
-			ScreenCache.getMainScreen().showBottomAchievementPanel(false);
+			DialogUtilNew.showInfo("Achievements and statistics were reset successfully.");
+			ScreenCache.get(AchievementsDialog.class).refresh(true);
+			ScreenCache.get(MainScreen.class).showTopAchievementPanel(false);
+			ScreenCache.get(MainScreen.class).showBottomAchievementPanel(false);
 		}
 		
 		if (clearMyReplays)
@@ -132,19 +124,19 @@ public class ClearDataDialog extends JDialog
 
 			if (result.equals("nullReplayFiles"))
 			{
-				DialogUtil.showError("A serious error occurred deleting the personal replays.");
+				DialogUtilNew.showError("A serious error occurred deleting the personal replays.");
 			}
 			else if (result.equals("noReplays"))
 			{
-				DialogUtil.showInfo("There were no personal replays to delete.");
+				DialogUtilNew.showInfo("There were no personal replays to delete.");
 			}
 			else if (!result.isEmpty())
 			{
-				DialogUtil.showError("Replay deletion failed for the following personal replays:\n" + result);
+				DialogUtilNew.showError("Replay deletion failed for the following personal replays:\n" + result);
 			}
 			else 
 			{
-				DialogUtil.showInfo("Personal replays were deleted successfully.");
+				DialogUtilNew.showInfo("Personal replays were deleted successfully.");
 			}
 		}
 		
@@ -154,43 +146,35 @@ public class ClearDataDialog extends JDialog
 
 			if (result.equals("nullReplayFiles"))
 			{
-				DialogUtil.showError("A serious error occurred deleting the imported replays.");
+				DialogUtilNew.showError("A serious error occurred deleting the imported replays.");
 			}
 			else if (result.equals("noReplays"))
 			{
-				DialogUtil.showInfo("There were no imported replays to delete.");
+				DialogUtilNew.showInfo("There were no imported replays to delete.");
 			}
 			else if (!result.isEmpty())
 			{
-				DialogUtil.showError("Replay deletion failed for the following imported replays:\n" + result);
+				DialogUtilNew.showError("Replay deletion failed for the following imported replays:\n" + result);
 			}
 			else 
 			{
-				DialogUtil.showInfo("Imported replays were deleted successfully.");
+				DialogUtilNew.showInfo("Imported replays were deleted successfully.");
 			}
 		}
 		
 		closeDialog();
 	}
 	
-	private void removeStatisticsVariablesFromNode(Preferences achievements)
+	private void removeStatisticsVariablesFromNode()
 	{
-		try
-		{
-			ScreenCache.getMainScreen().resetStartTime();
-			achievements.putInt(STATISTICS_DOUBLE_TIME_PLAYED, 0);
-			achievements.remove(STATISTICS_INT_BEST_STREAK);
-			achievements.remove(STATISTICS_INT_CURRENT_STREAK);
-			achievements.remove(STATISTICS_INT_ENTROPY_GAMES_PLAYED);
-			achievements.remove(STATISTICS_INT_VECTROPY_GAMES_PLAYED);
-			achievements.remove(STATISTICS_INT_ENTROPY_GAMES_WON);
-			achievements.remove(STATISTICS_INT_VECTROPY_GAMES_WON);
-			achievements.remove(STATISTICS_INT_WORST_STREAK);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		ScreenCache.get(MainScreen.class).resetStartTime();
+		achievementStore.delete(AchievementSetting.TimePlayed);
+		achievementStore.delete(AchievementSetting.BestStreak);
+		achievementStore.delete(AchievementSetting.CurrentStreak);
+		achievementStore.delete(AchievementSetting.EntropyGamesPlayed);
+		achievementStore.delete(AchievementSetting.VectropyGamesPlayed);
+		achievementStore.delete(AchievementSetting.EntropyGamesWon);
+		achievementStore.delete(AchievementSetting.VectropyGamesWon);
 	}
 	
 	private void resetPreferences()

@@ -125,12 +125,6 @@ public final class Room
 					BidHistory history = currentGame.getCurrentBidHistory();
 					history.addBidForPlayer(playerNumber, bid);
 					
-					int roundNumber = currentGame.getRoundNumber();
-					if (roundNumber > 1)
-					{
-						StatisticsUtil.recordGamePlayed(username, capacity, settings.getMode());
-					}
-					
 					//Moved this into here as otherwise we set it to 0 incorrectly and a person ends up with no cards!
 					HandDetails details = currentGame.getCurrentRoundDetails();
 					ConcurrentHashMap<Integer, Integer> hmHandSizeByPlayerNumber = details.getHandSizes();
@@ -174,7 +168,6 @@ public final class Room
 	{
 		int roundNumber = currentGame.getRoundNumber();
 		String winningUsername = hmPlayerByPlayerNumber.get(winningPlayer);
-		saveStatistics(winningUsername, roundNumber);
 		resetCurrentPlayers();
 		currentGame.setWinningPlayer(winningPlayer);
 		
@@ -399,47 +392,6 @@ public final class Room
 		{
 			return potentialWinner;
 		}
-	}
-	
-	private void saveStatistics(String winningPlayer, int roundNumber)
-	{
-		//don't save any statistics if the game didn't go beyond the first round
-		if (roundNumber == 1)
-		{
-			return;
-		}
-		
-		StatisticsUtil.recordWin(winningPlayer, capacity, settings.getMode());
-		
-		int size = currentPlayers.size();
-		for (int i=0; i<size; i++)
-		{
-			String player = currentPlayers.get(i);
-			if (hmPlayerByPlayerNumber.containsValue(player))
-			{
-				//They didn't leave, so record a game played
-				StatisticsUtil.recordGamePlayed(player, capacity, settings.getMode());
-				
-				//Push out a stats notification
-				Document statsNotification = XmlBuilderServer.factoryStatisticsNotification(player);
-				String notificationString = XmlUtil.getStringFromDocument(statsNotification);
-				UserConnection usc = ServerGlobals.INSTANCE.getUscStore().findForName(player);
-				usc.sendNotificationInWorkerPool(notificationString, server, XmlConstants.SOCKET_NAME_LOBBY, null);
-			}
-		}
-	}
-	
-	public long getCurrentGameDuration()
-	{
-		long gameStart = currentGame.getGameStartMillis();
-		if (gameStart == -1
-		  || currentGame.getRoundNumber() == 1)
-		{
-			return 0;
-		}
-		
-		long currentTime = System.currentTimeMillis();
-		return (currentTime - gameStart);
 	}
 
 	/**

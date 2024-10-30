@@ -161,7 +161,7 @@ public final class GameSimulator
 	
 	private void recordWin(Player winner)
 	{
-		SimulationDialog dialog = ScreenCache.getSimulationDialog();
+		SimulationDialog dialog = ScreenCache.get(SimulationDialog.class);
 		if (winner.getNumberOfCards() == parms.getNumberOfCards())
 		{
 			dialog.recordWin(winner.getPlayerNumber(), true);
@@ -184,7 +184,7 @@ public final class GameSimulator
 		Debug.appendBanner("Opponent " + opponent, parms.getLogging());
 		if (lastBid != null)
 		{
-			ScreenCache.getSimulationDialog().recordOpportunityToChallenge(opponent.getPlayerNumber());
+			ScreenCache.get(SimulationDialog.class).recordOpportunityToChallenge(opponent.getPlayerNumber());
 		}
 		
 		StrategyParms stratParms = getStrategyParms(opponent);
@@ -213,7 +213,7 @@ public final class GameSimulator
 	{
 		log("Challenged");
 
-		SimulationDialog dialog = ScreenCache.getSimulationDialog();
+		SimulationDialog dialog = ScreenCache.get(SimulationDialog.class);
 		if (!lastBid.isOverbid(opponentZero.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
 				opponentThree.getHand(), parms.getJokerValue()))
 		{

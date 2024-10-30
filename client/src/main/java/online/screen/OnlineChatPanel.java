@@ -1,35 +1,22 @@
 package online.screen;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.prefs.Preferences;
-
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-
+import achievement.AchievementUtilKt;
 import object.LimitedDocument;
 import object.OnlineMessage;
 import online.util.XmlBuilderClient;
-
 import org.w3c.dom.Document;
-
 import screen.ReplayDialog;
-import util.AchievementsUtil;
 import util.EntropyUtil;
 import util.MessageUtil;
 import util.Registry;
 import util.StringUtil;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 public class OnlineChatPanel extends JPanel
 						     implements ActionListener, Registry
@@ -96,8 +83,8 @@ public class OnlineChatPanel extends JPanel
 		
 		Document message = XmlBuilderClient.factoryNewChatXml(roomId, username, colour, text);
 		MessageUtil.sendMessage(message, 200);
-		
-		AchievementsUtil.incrementChatCount();
+
+		AchievementUtilKt.updateAndUnlockChatty();
 	}
 	
 	public void updateChatBox(List<OnlineMessage> messages)

@@ -43,7 +43,7 @@ public class EntropyMain implements Registry
 
 		checkForUpdatesIfRequired();
 
-		MainScreen application = ScreenCache.getMainScreen();
+		MainScreen application = ScreenCache.get(MainScreen.class);
 		application.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		application.setSize(1050, 600);
 		application.setVisible(true);

@@ -1,5 +1,7 @@
 package screen;
 
+import achievement.AchievementSetting;
+import achievement.AchievementUtilKt;
 import bean.AbstractDevScreen;
 import game.GameMode;
 import object.Bid;
@@ -7,9 +9,12 @@ import object.BidListCellRenderer;
 import object.Player;
 import online.screen.EntropyLobby;
 import online.screen.TestHarness;
-import online.util.XmlBuilderDesktop;
-import org.w3c.dom.Document;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import settings.Setting;
+import settings.SettingChangeListener;
 import util.*;
+import utils.Achievement;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -22,11 +27,12 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
+import static achievement.AchievementUtilKt.getAchievementsEarned;
+import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
+import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -36,7 +42,7 @@ public final class MainScreen extends AbstractDevScreen
 							  			 ActionListener,
 							  			 Registry
 {
-	public double startTime = System.currentTimeMillis();
+	public long startTime = System.currentTimeMillis();
 	
 	private Timer timerFiveMinutes = null;
 	private Timer timerFifteenMinutes = null;
@@ -405,10 +411,8 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			history.repaint();
 			gamePanel.fireAppearancePreferencesChange();
-			ScreenCache.getHelpDialog().fireAppearancePreferencesChange();
-			ScreenCache.getReplayDialog().fireAppearancePreferencesChange();
-			ScreenCache.getFileReplayDialog().fireAppearancePreferencesChange();
-			ScreenCache.getEntropyLobby().fireAppearancePreferencesChange();
+			ScreenCache.get(HelpDialog.class).fireAppearancePreferencesChange();
+			ScreenCache.getReplayDialogs().forEach(ReplayDialog::fireAppearancePreferencesChange);
 		}
 		catch (Throwable t)
 		{
@@ -421,7 +425,7 @@ public final class MainScreen extends AbstractDevScreen
 		try
 		{
 			//online stuff
-			EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
+			EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
 			if (entropyLobby.isVisible())
 			{
 				if (!entropyLobby.confirmExit())
@@ -434,9 +438,9 @@ public final class MainScreen extends AbstractDevScreen
 				}
 			}
 			
-			double currentTimePlayed = achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0);
-			double timePlayedThisSession = System.currentTimeMillis() - startTime;
-			achievements.putDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, currentTimePlayed + timePlayedThisSession);
+			long currentTimePlayed = achievementStore.get(AchievementSetting.TimePlayed);
+			long timePlayedThisSession = System.currentTimeMillis() - startTime;
+			achievementStore.save(AchievementSetting.TimePlayed, currentTimePlayed + timePlayedThisSession);
 			
 			if (!gamePanel.gameOver && !gamePanel.firstRound)
 			{
@@ -511,7 +515,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void connectToEntropyOnline()
 	{
-		EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
+		EntropyLobby entropyLobby = ScreenCache.get(EntropyLobby.class);
 		if (entropyLobby.isVisible())
 		{
 			entropyLobby.requestFocus();
@@ -524,7 +528,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	public void dismissCurrentReplay()
 	{
-		ScreenCache.getReplayDialog().dispose();
+		ScreenCache.getReplayDialog(IN_GAME_REPLAY).dispose();
 	}
 	
 	public void enableNewGameOption(boolean enable)
@@ -542,27 +546,25 @@ public final class MainScreen extends AbstractDevScreen
 	 */
 	private void restartTimers()
 	{
-		restartTimer(ACHIEVEMENTS_BOOLEAN_FIVE_MINUTES, timerFiveMinutes, 5);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_FIFTEEN_MINUTES, timerFifteenMinutes, 15);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_THIRTY_MINUTES, timerThirtyMinutes, 30);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_SIXTY_MINUTES, timerSixtyMinutes, 60);
-		restartTimer(ACHIEVEMENTS_BOOLEAN_TWO_HOURS, timerTwoHours, 120);
+		restartTimer(Achievement.Sluggish, timerFiveMinutes, 5);
+		restartTimer(Achievement.WarmingUp, timerFifteenMinutes, 15);
+		restartTimer(Achievement.BreakingASweat, timerThirtyMinutes, 30);
+		restartTimer(Achievement.WorldClass, timerSixtyMinutes, 60);
+		restartTimer(Achievement.RecordBreaker, timerTwoHours, 120);
 	}
 	
-	private void restartTimer(String registryLocation, Timer timer, int minutes)
+	private void restartTimer(Achievement achievement, Timer timer, int minutes)
 	{
-		if (!achievements.getBoolean(registryLocation, false))
+		if (timer != null)
 		{
-			if (timer != null)
-			{
-				timer.cancel();
-			}
-			
-			timer = new Timer("Timer-" + minutes);
-			
-			TimerTask task = new AchievementsUtil.UnlockAchievementTask(registryLocation);
-			timer.schedule(task, (long) Math.max(60000*minutes - achievements.getDouble(Registry.STATISTICS_DOUBLE_TIME_PLAYED, 0), 0));
+			timer.cancel();
 		}
+
+		timer = new Timer("Timer-" + minutes);
+
+		var timePlayed = achievementStore.get(AchievementSetting.TimePlayed);
+		TimerTask task = new AchievementsUtil.UnlockAchievementTask(achievement);
+		timer.schedule(task, Math.max(60000L * minutes - timePlayed, 0));
 	}
 
 	public void showBottomAchievementPanel(boolean visible)
@@ -587,10 +589,6 @@ public final class MainScreen extends AbstractDevScreen
 
 	public void showAchievementPopup(String title, ImageIcon icon)
 	{
-		AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
-		achievementsDialog.refresh(false);
-		int achievementsEarned = achievementsDialog.getAchievementsEarned();
-		
 		if (!bottomAchievementShowing)
 		{
 			showBottomAchievementPanel(true);
@@ -610,17 +608,6 @@ public final class MainScreen extends AbstractDevScreen
 			achievementTitleBottom.setText(title);
 			topAchievementShowing = false;
 		}
-		
-		AchievementsUtil.unlockRewards(achievementsEarned);
-		
-		//Send an update to the Server if we're connected
-		EntropyLobby entropyLobby = ScreenCache.getEntropyLobby();
-		if (entropyLobby.isVisible())
-		{
-			String username = entropyLobby.getUsername();
-			Document achievementsUpdate = XmlBuilderDesktop.factoryAchievementsUpdate(username, title, achievementsEarned);
-			MessageUtil.sendMessage(achievementsUpdate, 500);
-		}
 	}
 	
 	public void minimise()
@@ -638,10 +625,10 @@ public final class MainScreen extends AbstractDevScreen
 		switch (gameMode)
 		{
 			case Entropy:
-				gamePanel = ScreenCache.getEntropyPanel();
+				gamePanel = ScreenCache.get(EntropyScreen.class);
 				break;
 			case Vectropy:
-				gamePanel = ScreenCache.getVectropyPanel();
+				gamePanel = ScreenCache.get(VectropyScreen.class);
 				break;
 			default:
 				Debug.stackTrace("Unexpected gameMode [" + gameMode + "]");
@@ -687,7 +674,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (command.equals("simulator"))
 		{
-			SimulationDialog dialog = ScreenCache.getSimulationDialog();
+			SimulationDialog dialog = ScreenCache.get(SimulationDialog.class);
 			dialog.initVariables();
 			dialog.setTitle("Simulation Window");
 			dialog.setSize(440, 500);
@@ -744,7 +731,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	public void onStart()
 	{
-		gamePanel = ScreenCache.getEntropyPanel();
+		gamePanel = ScreenCache.get(EntropyScreen.class);
 		leftPanel.add(gamePanel, BorderLayout.CENTER);
 		
 		//If we've just updated, show the change log automatically
@@ -762,9 +749,8 @@ public final class MainScreen extends AbstractDevScreen
 		cleanUpReplayNodes();
 		setViewLogsVisibility();
 		restartTimers();
-		
-		int achievementsEarned = ScreenCache.getAchievementsDialog().getAchievementsEarned();
-		AchievementsUtil.unlockRewards(achievementsEarned);
+
+		AchievementsUtil.unlockRewards(getAchievementsEarned());
 	}
 	
 	private void cleanUpReplayNodes()
@@ -804,10 +790,10 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void checkForCoward()
 	{
-		boolean gotCoward = achievements.getBoolean(Registry.ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD, false);
+		boolean gotCoward = achievementStore.get(AchievementSetting.WillUnlockCoward);
 		if (gotCoward)
 		{
-			achievements.remove(Registry.ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD);
+			achievementStore.delete(AchievementSetting.WillUnlockCoward);
 			AchievementsUtil.unlockCoward();
 		}
 	}
@@ -871,18 +857,13 @@ public final class MainScreen extends AbstractDevScreen
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
 		});
-		
-		achievements.addPreferenceChangeListener(new PreferenceChangeListener()
-		{
+
+		achievementStore.addChangeListener(new SettingChangeListener() {
 			@Override
-			public void preferenceChange(PreferenceChangeEvent arg0) 
-			{
-				String keyChanged = arg0.getKey();
-				if (keyChanged.equals(Registry.STATISTICS_DOUBLE_TIME_PLAYED))
-				{
+			public <T> void settingChanged(@NotNull Setting<T> setting, @Nullable T newValue) {
+				if (setting.equals(AchievementSetting.TimePlayed)) {
 					restartTimers();
 				}
-				
 			}
 		});
 	}
@@ -893,21 +874,21 @@ public final class MainScreen extends AbstractDevScreen
 		Object source = arg0.getSource();
 		if (source == mntmViewHelp)
 		{
-			HelpDialog helpDialog = ScreenCache.getHelpDialog();
+			HelpDialog helpDialog = ScreenCache.get(HelpDialog.class);
 			helpDialog.initVariables();
 			helpDialog.setLocationRelativeTo(null);
 			helpDialog.setVisible(true);
 		}
 		else if (source == mntmAbout)
 		{
-			AboutDialogEntropy aboutDialog = ScreenCache.getAboutDialog();
+			AboutDialogEntropy aboutDialog = new AboutDialogEntropy();
 			aboutDialog.setLocationRelativeTo(null);
 			aboutDialog.setModal(true);
 			aboutDialog.setVisible(true);
 		}
 		else if (source == mntmReportBug)
 		{
-			BugReportDialog bugReportDialog = ScreenCache.getBugReportDialog();
+			BugReportDialog bugReportDialog = new BugReportDialog();
 			if (!bugReportDialog.isVisible())
 			{
 				bugReportDialog.setLocationRelativeTo(null);
@@ -936,9 +917,9 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmAchievements)
 		{
-			AchievementsUtil.updateAndUnlockVanity();
+			AchievementUtilKt.updateAndUnlockVanity();
 			
-			AchievementsDialog achievementsDialog = ScreenCache.getAchievementsDialog();
+			AchievementsDialog achievementsDialog = ScreenCache.get(AchievementsDialog.class);
 			achievementsDialog.setLocationRelativeTo(null);
 			achievementsDialog.init();
 			achievementsDialog.setVisible(true);
@@ -949,7 +930,7 @@ public final class MainScreen extends AbstractDevScreen
 			int width = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_WIDTH, 875);
 			int height = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_HEIGHT, 475);
 			
-			ReplayInterface replayInterface = ScreenCache.getReplayInterface();
+			ReplayInterface replayInterface = ScreenCache.get(ReplayInterface.class);
 			replayInterface.setTitle("Replay Viewer");
 			replayInterface.setSize(width, height);
 			replayInterface.setLocationRelativeTo(null);
@@ -970,7 +951,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmStatistics)
 		{
-			AchievementsUtil.updateAndUnlockVanity();
+			AchievementUtilKt.updateAndUnlockVanity();
 			
 			StatisticsDialog dialog = new StatisticsDialog();
 			dialog.setTitle("Statistics");
@@ -1001,7 +982,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == btnReplay)
 		{
-			ReplayDialog replayDialog = ScreenCache.getReplayDialog();
+			ReplayDialog replayDialog = ScreenCache.getReplayDialog(IN_GAME_REPLAY);
 			if (replayDialog.isVisible())
 			{
 				replayDialog.requestFocus();

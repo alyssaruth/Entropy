@@ -5,7 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-object HealthCheckController {
+class HealthCheckController {
     private val healthCheckService = HealthCheckService()
 
     fun installRoutes(application: Application) {

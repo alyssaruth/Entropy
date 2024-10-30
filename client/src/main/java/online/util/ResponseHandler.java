@@ -32,7 +32,7 @@ public class ResponseHandler implements XmlConstants
 		
 		Element root = response.getDocumentElement();
 		String responseName = root.getNodeName();
-		EntropyLobby lobby = ScreenCache.getEntropyLobby();
+		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
 		
 		if (responseName.equals(RESPONSE_TAG_KICK_OFF))
 		{
@@ -115,7 +115,7 @@ public class ResponseHandler implements XmlConstants
 			return;
 		}
 		
-		EntropyLobby lobby = ScreenCache.getEntropyLobby();
+		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
 		if (lobby.isVisible())
 		{
 			String removalReason = root.getAttribute("RemovalReason");
@@ -217,7 +217,7 @@ public class ResponseHandler implements XmlConstants
 				
 				if (!hotswap)
 				{
-					gameRoom.setLocationRelativeTo(ScreenCache.getEntropyLobby());
+					gameRoom.setLocationRelativeTo(ScreenCache.get(EntropyLobby.class));
 					handleChatResponse(chatChild, lobby);
 				}
 			}
@@ -416,7 +416,7 @@ public class ResponseHandler implements XmlConstants
 	
 	private static void handleLeaderboardResponse(Element root)
 	{
-		Leaderboard leaderboard = ScreenCache.getLeaderboard();
+		Leaderboard leaderboard = ScreenCache.get(Leaderboard.class);
 		if (!leaderboard.isVisible())
 		{
 			//don't bother doing anything
@@ -430,8 +430,5 @@ public class ResponseHandler implements XmlConstants
 	{
 		OnlineStatsPanel statsPanel = lobby.getOnlineStatsPanel();
 		statsPanel.updateVariablesFromResponse(root);
-		
-		//Also update our local stats so we can unlock achievements
-		AchievementsUtil.updateOnlineStats(root);
 	}
 }

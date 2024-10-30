@@ -1,138 +1,52 @@
 package util;
 
-import java.awt.event.KeyEvent;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-
+import achievement.AchievementSetting;
 import game.GameMode;
 import object.Bid;
 import object.Player;
+import online.screen.EntropyLobby;
 import online.screen.GameRoom;
-
-import org.w3c.dom.Element;
-
-import screen.AchievementBadges;
+import screen.HelpDialog;
 import screen.MainScreen;
 import screen.RewardDialog;
 import screen.ScreenCache;
+import utils.Achievement;
 
-public class AchievementsUtil implements AchievementBadges
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static achievement.AchievementUtilKt.unlockAchievement;
+import static util.ClientGlobals.achievementStore;
+
+public class AchievementsUtil implements Registry
 {
 	private static final int FULL_GAME_STARTING_CARDS = 5;
-	private static final int CHATTY_THRESHOLD = 25;
 	private static final int OMNISCIENT_THRESHOLD = 10;
 	private static final int SOCIAL_THRESHOLD = 5;
 	private static final int HONEST_THRESHOLD = 5;
 	private static final int[] KONAMI_CODE = {KeyEvent.VK_UP, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_DOWN,
 											  KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
 											  KeyEvent.VK_B, KeyEvent.VK_A};
-	
-	private static final HashMap<String, String> hmRegistryLocationToAchievementName;
-	static
-	{
-		hmRegistryLocationToAchievementName = new HashMap<>();
-		
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CAVEMAN, "The Caveman");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_BURGLAR, "The Burglar");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_LION, "The Lion");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_GARDENER, "The Gardener");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_PSYCHIC, "The Psychic");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FIVE_MINUTES, "Sluggish");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FIFTEEN_MINUTES, "Warming Up");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_THIRTY_MINUTES, "Breaking a Sweat");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SIXTY_MINUTES, "World Class");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_TWO_HOURS, "Record Breaker");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_COWARD, "Coward");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SPECTATOR, "Spectator");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VANITY, "Vanity");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_UNSCATHED, "Unscathed");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_BULLETPROOF, "Bulletproof");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SUPERHUMAN, "Superhuman");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_MOMENTUM, "Momentum");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CHAIN_REACTION, "Chain Reaction");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_PERPETUAL_MOTION, "Perpetual Motion");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_PARTICIPANT, "Participant");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_HOBBYIST, "Hobbyist");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_ENTHUSIAST, "Enthusiast");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_PROFESSIONAL, "Professional");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VETERAN, "Veteran");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FIRST_TIMER, "First-Timer");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CASUAL_STRATEGIST, "Casual Strategist");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CONSISTENT_WINNER, "Consistent Winner");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_DOMINANT_FORCE, "Dominant Force");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SECOND_THOUGHTS, "Second Thoughts");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_TWO, "Blind Luck");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_THREE, "Against the Odds");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_FOUR, "Lottery Winner");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CHIMERA, "The Chimera");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_PRECISION, "Precision");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_MATHEMATICIAN, "The Mathematician");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_NUCLEAR_STRIKE, "Nuclear Strike");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_HANDICAP_TWO, "Underdog I");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_HANDICAP_THREE, "Underdog II");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_HANDICAP_FOUR, "Underdog III");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VECTROPY_ONE, "Easy as 1, 2, 3");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VECTROPY_TEN, "Base Ten");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VECTROPY_TWENTY_FIVE, "Five Squared");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_VECTROPY_FIFTY, "Half-Century");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_DISTRACTED, "Distracted");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CITIZENS_ARREST, "Citizen's Arrest");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CONNECTED, "Connected");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_RAILBIRD, "Railbird");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SOCIAL, "Social");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_BLUE_SCREEN_OF_DEATH, "Blue Screen of Death");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_WEREWOLF, "The Werewolf");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_SPACEMAN, "The Spaceman");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_KONAMI_CODE, "Nintendo");
-		
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_BOOKWORM, "Bookworm");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_CHATTY, "Chatty");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_DECEITFUL, "Deceitful");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_HONEST, "Honest");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_LOOK_AT_ME, "Look At Me!");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_MONOTONE, "Monotone");
-		hmRegistryLocationToAchievementName.put(ACHIEVEMENTS_BOOLEAN_OMNISCIENT, "Omniscient");
-	}
 
 	public static void updateStreaksForLoss()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
-		int worstStreak = achievements.getInt(STATISTICS_INT_WORST_STREAK, 0);
-
-		if (currentStreak > 0)
-		{
-			currentStreak = -1;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
-		else
-		{
-			currentStreak--;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
-
-		if (currentStreak < -worstStreak)
-		{
-			achievements.putInt(STATISTICS_INT_WORST_STREAK, -currentStreak);
-		}
+		achievementStore.save(AchievementSetting.CurrentStreak, 0);
 	}
 
 	public static void recordWin(GameMode gameMode)
 	{
 		if (gameMode == GameMode.Entropy)
 		{
-			int newGamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0) + 1;
-			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_WON, newGamesWon);
+			int newGamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon) + 1;
+			achievementStore.save(AchievementSetting.EntropyGamesWon, newGamesWon);
 		}
 		else if (gameMode == GameMode.Vectropy)
 		{
-			int newGamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0) + 1;
-			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_WON, newGamesWon);
+			int newGamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon) + 1;
+			achievementStore.save(AchievementSetting.VectropyGamesWon, newGamesWon);
 		}
 		
 		updateStreaksForWin();
@@ -150,102 +64,83 @@ public class AchievementsUtil implements AchievementBadges
 	
 	private static void updateStreaksForWin()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
-		int bestStreak = achievements.getInt(STATISTICS_INT_BEST_STREAK, 0);
-		if (currentStreak < 0)
-		{
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, 1);
-		}
-		else
-		{
-			currentStreak++;
-			achievements.putInt(STATISTICS_INT_CURRENT_STREAK, currentStreak);
-		}
+		int currentStreak = achievementStore.get(AchievementSetting.CurrentStreak) + 1;
+		achievementStore.save(AchievementSetting.CurrentStreak, currentStreak);
 
+		int bestStreak = achievementStore.get(AchievementSetting.BestStreak);
 		if (currentStreak > bestStreak)
 		{
-			achievements.putInt(STATISTICS_INT_BEST_STREAK, currentStreak);
+			achievementStore.save(AchievementSetting.BestStreak, currentStreak);
 		}
 	}
 	
 	private static void unlockWinningStreakAchievements()
 	{
-		int currentStreak = achievements.getInt(STATISTICS_INT_CURRENT_STREAK, 0);
+		int currentStreak = achievementStore.get(AchievementSetting.CurrentStreak);
 		
-		boolean momentum = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_MOMENTUM, false);
-		boolean chainReaction = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_CHAIN_REACTION, false);
-		boolean perpetualMotion = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_PERPETUAL_MOTION, false);
-		
-		if (currentStreak >= 3 && !momentum)
+		if (currentStreak >= 3)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_MOMENTUM);
+			unlockAchievement(Achievement.Momentum);
 		}
 
-		if (currentStreak >= 6 && !chainReaction)
+		if (currentStreak >= 6)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CHAIN_REACTION);
+			unlockAchievement(Achievement.ChainReaction);
 		}
 
-		if (currentStreak >= 10 && !perpetualMotion)
+		if (currentStreak >= 10)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PERPETUAL_MOTION);
+			unlockAchievement(Achievement.PerpetualMotion);
 		}
 	}
 	
 	private static void unlockEntropyWinAchievements()
 	{
-		int gamesWon = achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_WON, 0)
-					 + achievements.getInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON, 0);
+		int gamesWon = achievementStore.get(AchievementSetting.EntropyGamesWon);
 		
-		boolean firstTimer = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_FIRST_TIMER, false);
-		boolean casualStrategist = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_CASUAL_STRATEGIST, false);
-		boolean consistentWinner = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_CONSISTENT_WINNER, false);
-		boolean dominantForce = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_DOMINANT_FORCE, false);
-		
-		if (gamesWon > 0 && !firstTimer)
+		if (gamesWon > 0)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_FIRST_TIMER);
+			unlockAchievement(Achievement.FirstTimer);
 		}
 		
-		if (gamesWon >= 10 && !casualStrategist)
+		if (gamesWon >= 10)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CASUAL_STRATEGIST);
+			unlockAchievement(Achievement.CasualStrategist);
 		}
 		
-		if (gamesWon >= 25 && !consistentWinner)
+		if (gamesWon >= 25)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CONSISTENT_WINNER);
+			unlockAchievement(Achievement.ConsistentWinner);
 		}
 		
-		if (gamesWon >= 50 && !dominantForce)
+		if (gamesWon >= 50)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_DOMINANT_FORCE);
+			unlockAchievement(Achievement.DominantForce);
 		}
 	}
 	
 	private static void unlockVectropyWinAchievements()
 	{
-		int gamesWon = achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_WON, 0)
-				 + achievements.getInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON, 0);
+		int gamesWon = achievementStore.get(AchievementSetting.VectropyGamesWon);
 
 		if (gamesWon > 0)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VECTROPY_ONE);
+			unlockAchievement(Achievement.VectropyOne);
 		}
 
 		if (gamesWon >= 10)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VECTROPY_TEN);
+			unlockAchievement(Achievement.VectropyTen);
 		}
 
 		if (gamesWon >= 25)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VECTROPY_TWENTY_FIVE);
+			unlockAchievement(Achievement.VectropyTwentyFive);
 		}
 
 		if (gamesWon >= 50)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VECTROPY_FIFTY);
+			unlockAchievement(Achievement.VectropyFifty);
 		}
 	}
 
@@ -256,28 +151,25 @@ public class AchievementsUtil implements AchievementBadges
 			return;
 		}
 
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		unlockPerfectGameAchievements(numberOfRounds, totalPlayers);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		unlockPerfectGameAchievements(numberOfRounds, playerCount);
 	}
 	
 	public static void unlockPerfectGameAchievements(int numberOfRounds, int totalPlayers)
 	{
 		if (numberOfRounds == 5)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_UNSCATHED);
+			unlockAchievement(Achievement.Unscathed);
 		}
 		
 		if (numberOfRounds == 10 && totalPlayers == 3)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_BULLETPROOF);
+			unlockAchievement(Achievement.Bulletproof);
 		}
 		
 		if (numberOfRounds == 15 && totalPlayers == 4)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_SUPERHUMAN);
+			unlockAchievement(Achievement.Superhuman);
 		}
 	}
 
@@ -288,14 +180,11 @@ public class AchievementsUtil implements AchievementBadges
 			return;
 		}
 
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-
-		unlockFullBlindGameAchievements(totalPlayers, playedBlind, hasLookedAtCards, cardReveal);
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		unlockFullBlindGameAchievements(playerCount, playedBlind, hasLookedAtCards, cardReveal);
 	}
 	
-	public static void unlockFullBlindGameAchievements(int totalPlayers, boolean playedBlind, boolean hasLookedAtCards, 
+	public static void unlockFullBlindGameAchievements(int totalPlayers, boolean playedBlind, boolean hasLookedAtCards,
 	  boolean cardReveal)
 	{
 		boolean fullyBlind = playedBlind && !hasLookedAtCards;
@@ -307,17 +196,17 @@ public class AchievementsUtil implements AchievementBadges
 
 		if (totalPlayers == 2)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_TWO);
+			unlockAchievement(Achievement.BlindTwo);
 		}
 		
 		if (totalPlayers == 3)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_THREE);
+			unlockAchievement(Achievement.BlindThree);
 		}
 		
 		if (totalPlayers == 4)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_FULL_BLIND_FOUR);
+			unlockAchievement(Achievement.BlindFour);
 		}
 	}
 	
@@ -329,17 +218,14 @@ public class AchievementsUtil implements AchievementBadges
 		{
 			return;
 		}
-		
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		if (totalPlayers == 4 
+
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		if (playerCount == 4
 		  && playedBlind 
 		  && !hasLookedAtCards
 		  && !cardReveal)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_NUCLEAR_STRIKE);
+			unlockAchievement(Achievement.NuclearStrike);
 		}
 	}
 	
@@ -350,38 +236,33 @@ public class AchievementsUtil implements AchievementBadges
 		{
 			return;
 		}
-		
-		int opponentTwoCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF, 1);
-		int opponentThreeCoeff = achievements.getInt(ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF, 1);
-		int totalPlayers = 2 + opponentTwoCoeff + opponentThreeCoeff;
-		
-		if (totalPlayers == 2)
+
+		int playerCount = achievementStore.get(AchievementSetting.PlayerCount);
+		if (playerCount == 2)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_HANDICAP_TWO);
+			unlockAchievement(Achievement.HandicapTwo);
 		}
-		else if (totalPlayers == 3)
+		else if (playerCount == 3)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_HANDICAP_THREE);
+			unlockAchievement(Achievement.HandicapThree);
 		}
-		else if (totalPlayers == 4)
+		else if (playerCount == 4)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_HANDICAP_FOUR);
+			unlockAchievement(Achievement.HandicapFour);
 		}
 	}
 
 	public static void recordGamePlayed(GameMode gameMode)
 	{
-		int gamesPlayed = 1;
-		
 		if (gameMode == GameMode.Entropy)
 		{
-			gamesPlayed += achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0);
-			achievements.putInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, gamesPlayed);
+			int newGamesPlayed = achievementStore.get(AchievementSetting.EntropyGamesPlayed) + 1;
+			achievementStore.save(AchievementSetting.EntropyGamesPlayed, newGamesPlayed);
 		}
 		else if (gameMode == GameMode.Vectropy)
 		{
-			gamesPlayed += achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0);
-			achievements.putInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, gamesPlayed);
+			int newGamesPlayed = achievementStore.get(AchievementSetting.VectropyGamesPlayed) + 1;
+			achievementStore.save(AchievementSetting.VectropyGamesPlayed, newGamesPlayed);
 		}
 		
 		unlockGamesPlayedAchievements();
@@ -393,79 +274,40 @@ public class AchievementsUtil implements AchievementBadges
 
 		if (totalGamesPlayed >= 10)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PARTICIPANT);
+			unlockAchievement(Achievement.Participant);
 		}
 		if (totalGamesPlayed >= 25)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_HOBBYIST);
+			unlockAchievement(Achievement.Hobbyist);
 		}
 		if (totalGamesPlayed >= 50)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_ENTHUSIAST);
+			unlockAchievement(Achievement.Enthusiast);
 		}
 		if (totalGamesPlayed >= 100)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PROFESSIONAL);
+			unlockAchievement(Achievement.Professional);
 		}
 		if (totalGamesPlayed >= 200)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VETERAN);
+			unlockAchievement(Achievement.Veteran);
 		}
 	}
 	
 	private static int getTotalGamesPlayed()
 	{
-		return achievements.getInt(STATISTICS_INT_ENTROPY_GAMES_PLAYED, 0) 
-			 + achievements.getInt(STATISTICS_INT_VECTROPY_GAMES_PLAYED, 0)
-			 + achievements.getInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED, 0)
-			 + achievements.getInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED, 0);
-	}
-	
-	public static void updateOnlineStats(Element rootElement)
-	{
-		int entropyWins = getTotalWins("Entropy", rootElement);
-		int vectropyWins = getTotalWins("Vectropy", rootElement);
-		int entropyPlayed = entropyWins + getTotalLosses("Entropy", rootElement);
-		int vectropyPlayed = vectropyWins + getTotalLosses("Vectropy", rootElement);
-		
-		achievements.putInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON, entropyWins);
-		achievements.putInt(STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED, entropyPlayed);		
-		achievements.putInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON, vectropyWins);
-		achievements.putInt(STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED, vectropyPlayed);
-		
-		unlockGamesPlayedAchievements();
-		unlockEntropyWinAchievements();
-		unlockVectropyWinAchievements();
-	}
-	private static int getTotalWins(String mode, Element rootElement)
-	{
-		return getTotal(mode, rootElement, "Won");
-	}
-	private static int getTotalLosses(String mode, Element rootElement)
-	{
-		return getTotal(mode, rootElement, "Lost");
-	}
-	private static int getTotal(String mode, Element rootElement, String wonOrLost)
-	{
-		return XmlUtil.getAttributeInt(rootElement, mode + "2" + wonOrLost)
-				 + XmlUtil.getAttributeInt(rootElement, mode + "3" + wonOrLost)
-				 + XmlUtil.getAttributeInt(rootElement, mode + "4" + wonOrLost);
+		return achievementStore.get(AchievementSetting.EntropyGamesPlayed)
+			 + achievementStore.get(AchievementSetting.VectropyGamesPlayed);
 	}
 	
 	public static void unlockSecondThoughts(String roomId)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.getMainScreen().getListmodel();
+		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		if (!roomId.isEmpty())
 		{
 			//We're online, so need a different listmodel...
-			GameRoom room = ScreenCache.getEntropyLobby().getGameRoomForName(roomId);
+			GameRoom room = ScreenCache.get(EntropyLobby.class).getGameRoomForName(roomId);
 			listmodel = room.getListmodel();
-		}
-		
-		boolean secondThoughts = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_SECOND_THOUGHTS, false);
-		if (secondThoughts)
-		{
-			return;
 		}
 
 		int size = listmodel.size();
@@ -474,7 +316,7 @@ public class AchievementsUtil implements AchievementBadges
 			Bid bid = listmodel.get(i);
 			if (bid.isBlind())
 			{
-				unlockAchievement(ACHIEVEMENTS_BOOLEAN_SECOND_THOUGHTS);
+				unlockAchievement(Achievement.SecondThoughts);
 				return;
 			}
 		}
@@ -485,42 +327,42 @@ public class AchievementsUtil implements AchievementBadges
 	{
 		if (caveman)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CAVEMAN);
+			unlockAchievement(Achievement.Caveman);
 		}
 		
 		if (burglar)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_BURGLAR);
+			unlockAchievement(Achievement.Burglar);
 		}
 		
 		if (lion)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_LION);
+			unlockAchievement(Achievement.Lion);
 		}
 		if (werewolf)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_WEREWOLF);
+			unlockAchievement(Achievement.Werewolf);
 		}
 		
 		if (gardener)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_GARDENER);
+			unlockAchievement(Achievement.Gardener);
 		}
 		
 		if (spaceman)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_SPACEMAN);
+			unlockAchievement(Achievement.Spaceman);
 		}
 		
 		if (psychic)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PSYCHIC);
+			unlockAchievement(Achievement.Psychic);
 		}
 		
 		boolean chimera = areThreeOrMoreTrue(caveman, burglar, lion, werewolf, gardener, spaceman);
 		if (chimera)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CHIMERA);
+			unlockAchievement(Achievement.Chimera);
 		}
 	}
 	
@@ -528,27 +370,24 @@ public class AchievementsUtil implements AchievementBadges
 	{
 		if (mathematician)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_MATHEMATICIAN);
+			unlockAchievement(Achievement.Mathematician);
 		}
 		
 		if (psychic)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PSYCHIC);
+			unlockAchievement(Achievement.Psychic);
 		}
 	}
 	
 	private static boolean areThreeOrMoreTrue(boolean... b)
 	{
 		int counter = 0;
-		
-		int length = b.length;
-		for (int i=0; i<length; i++)
-		{
-			if (b[i])
-			{
-				counter++;
-			}
-		}
+
+        for (boolean value : b) {
+            if (value) {
+                counter++;
+            }
+        }
 		
 		return counter > 2;
 	}
@@ -557,7 +396,7 @@ public class AchievementsUtil implements AchievementBadges
 	{
 		if (gameOver && earnedSpectator)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_SPECTATOR);
+			unlockAchievement(Achievement.Spectator);
 		}
 	}
 	
@@ -565,7 +404,7 @@ public class AchievementsUtil implements AchievementBadges
 	{
 		if (totalRounds >= 5 && !hasOverbid)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_PRECISION);
+			unlockAchievement(Achievement.Precision);
 		}
 	}
 	
@@ -579,56 +418,37 @@ public class AchievementsUtil implements AchievementBadges
 	
 	public static void setCowardToBeUnlocked()
 	{
-		boolean cowardAchievement = achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_COWARD, false);
-		if (!cowardAchievement)
-		{
-			achievements.putBoolean(ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD, true);
-		}
+		achievementStore.save(AchievementSetting.WillUnlockCoward, true);
 	}
 	
 	public static void unlockCoward()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_COWARD);
+		unlockAchievement(Achievement.Coward);
 	}
-	
-	public static boolean isDistractedUnlocked()
-	{
-		return achievements.getBoolean(ACHIEVEMENTS_BOOLEAN_DISTRACTED, false);
-	}
+
 	public static void unlockDistracted()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_DISTRACTED);
+		unlockAchievement(Achievement.Distracted);
 	}
 	
 	public static void unlockCitizensArrest()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_CITIZENS_ARREST);
+		unlockAchievement(Achievement.CitizensArrest);
 	}
 	
 	public static void unlockConnected()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_CONNECTED);
+		unlockAchievement(Achievement.Connected);
 	}
 	
 	public static void unlockRailbird()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_RAILBIRD);
+		unlockAchievement(Achievement.Railbird);
 	}
 	
 	public static void unlockBlueScreenOfDeath()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_BLUE_SCREEN_OF_DEATH);
-	}
-	
-	public static void updateAndUnlockVanity()
-	{
-		int vanityCount = achievements.getInt(ACHIEVEMENTS_INT_VANITY_COUNT, 0) + 1;
-		achievements.putInt(ACHIEVEMENTS_INT_VANITY_COUNT, vanityCount);
-
-		if (vanityCount == 20)
-		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_VANITY);
-		}
+		unlockAchievement(Achievement.BlueScreenOfDeath);
 	}
 	
 	public static void unlockRewards(int achievementsEarned)
@@ -645,7 +465,7 @@ public class AchievementsUtil implements AchievementBadges
 		unlockIfRequired(achievementsEarned, 50, REWARDS_BOOLEAN_CHEATS, RewardDialog.REWARD_BANNER_CHEATS);
 		
 		//Always refresh here in case there are new pages
-		ScreenCache.getHelpDialog().refreshNodes("");
+		ScreenCache.get(HelpDialog.class).refreshNodes("");
 	}
 	private static void unlockIfRequired(int achievementsEarned, int threshold, String registryNode, String imageName)
 	{
@@ -659,49 +479,50 @@ public class AchievementsUtil implements AchievementBadges
 
 	public static void updateAndUnlockSocial(ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber) 
 	{
-		String achievementsList = achievements.get(ACHIEVEMENTS_STRING_SOCIAL_LIST, "");
-		
-		for (int i=0; i<4; i++)
-		{
-			Player player = hmPlayerByAdjustedPlayerNumber.get(i);
-			if (player == null)
-			{
-				continue;
-			}
-			
-			String username = player.getName();
-			if (!username.isEmpty()
-			  && !containsExact(achievementsList, username))
-			{
-				achievementsList += username;
-				achievementsList += ";";
-			}
-		}
-		
-		achievements.put(ACHIEVEMENTS_STRING_SOCIAL_LIST, achievementsList);
-		
-		String[] usernames = achievementsList.split(";");
-		int size = usernames.length;
-		if (size >= SOCIAL_THRESHOLD)
-		{
-			unlockSocial();
-		}
+		// TODO - Rethink this
+//		String achievementsList = achievements.get(ACHIEVEMENTS_STRING_SOCIAL_LIST, "");
+//
+//		for (int i=0; i<4; i++)
+//		{
+//			Player player = hmPlayerByAdjustedPlayerNumber.get(i);
+//			if (player == null)
+//			{
+//				continue;
+//			}
+//
+//			String username = player.getName();
+//			if (!username.isEmpty()
+//			  && !containsExact(achievementsList, username))
+//			{
+//				achievementsList += username;
+//				achievementsList += ";";
+//			}
+//		}
+//
+//		achievements.put(ACHIEVEMENTS_STRING_SOCIAL_LIST, achievementsList);
+//
+//		String[] usernames = achievementsList.split(";");
+//		int size = usernames.length;
+//		if (size >= SOCIAL_THRESHOLD)
+//		{
+//			unlockSocial();
+//		}
 	}
-	
-	private static boolean containsExact(String socialStr, String username)
-	{
-		return socialStr.startsWith(username + ";")
-		  || socialStr.contains(";" + username + ";");
-	}
-	
-	private static void unlockSocial()
-	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_SOCIAL);
-	}
+
+//	private static boolean containsExact(String socialStr, String username)
+//	{
+//		return socialStr.startsWith(username + ";")
+//		  || socialStr.contains(";" + username + ";");
+//	}
+//
+//	private static void unlockSocial()
+//	{
+//		unlockAchievement(Achievement.Social);
+//	}
 	
 	public static void unlockKonamiCode()
 	{
-		unlockAchievement(ACHIEVEMENTS_BOOLEAN_KONAMI_CODE);
+		unlockAchievement(Achievement.KonamiCode);
 	}
 	
 	public static boolean hasEnteredKonamiCode(ArrayList<Integer> lastTenKeys)
@@ -728,18 +549,7 @@ public class AchievementsUtil implements AchievementBadges
 	{
 		if (revealedCards.size() >= OMNISCIENT_THRESHOLD)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_OMNISCIENT);
-		}
-	}
-	
-	public static void incrementChatCount()
-	{
-		int chatCount = achievements.getInt(ACHIEVEMENTS_INT_CHAT_COUNT, 0) + 1;
-		achievements.putInt(ACHIEVEMENTS_INT_CHAT_COUNT, chatCount);
-		
-		if (chatCount >= CHATTY_THRESHOLD)
-		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_CHATTY);
+			unlockAchievement(Achievement.Omniscient);
 		}
 	}
 	
@@ -752,55 +562,27 @@ public class AchievementsUtil implements AchievementBadges
 		
 		if (!revealedDifferentSuit)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_HONEST);
+			unlockAchievement(Achievement.Honest);
 		}
 		else if (!revealedSameSuit)
 		{
-			unlockAchievement(ACHIEVEMENTS_BOOLEAN_DECEITFUL);
+			unlockAchievement(Achievement.Deceitful);
 		}
-	}
-	
-	public static ImageIcon getIconForAchievement(String registryLocation)
-	{
-		URL url = AchievementsUtil.class.getResource("/achievements/" + registryLocation + ".png");
-		return new ImageIcon(url);
-	}
-	
-	public static String getAchievementName(String registryLocation)
-	{
-		return hmRegistryLocationToAchievementName.get(registryLocation);
-	}
-	
-	public static void unlockAchievement(String registryLocation)
-	{
-		//If we've already got the achievement, do nothing
-		if (achievements.getBoolean(registryLocation, false))
-		{
-			return;
-		}
-		
-		achievements.putBoolean(registryLocation, true);
-	
-		ImageIcon icon = getIconForAchievement(registryLocation);
-		String achievementName = getAchievementName(registryLocation);
-		
-		MainScreen screen = ScreenCache.getMainScreen();
-		screen.showAchievementPopup(achievementName, icon);
 	}
 	
 	public static class UnlockAchievementTask extends TimerTask
 	{
-		private String registryLocation = "";
+		private final Achievement achievement;
 		
-		public UnlockAchievementTask(String registryLocation)
+		public UnlockAchievementTask(Achievement achievement)
 		{
-			this.registryLocation = registryLocation;
+			this.achievement = achievement;
 		}
 		
 		@Override
 		public void run() 
 		{
-			unlockAchievement(registryLocation);
+			unlockAchievement(achievement);
 		}
 	}
 }

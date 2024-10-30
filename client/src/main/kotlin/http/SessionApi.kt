@@ -1,10 +1,13 @@
 package http
 
+import achievement.getAchievementsEarned
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
+import http.dto.UpdateAchievementCountRequest
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
+import online.screen.EntropyLobby
 import screen.ScreenCache
 import util.ClientGlobals
 import util.DialogUtilNew
@@ -16,7 +19,7 @@ class SessionApi(private val httpClient: HttpClient) {
             httpClient.doCall<BeginSessionResponse>(
                 HttpMethod.POST,
                 Routes.BEGIN_SESSION,
-                BeginSessionRequest(name),
+                BeginSessionRequest(name, getAchievementsEarned()),
             )
 
         when (response) {
@@ -29,8 +32,18 @@ class SessionApi(private val httpClient: HttpClient) {
         }
     }
 
+    fun updateAchievementCount(achievementCount: Int) {
+        httpClient.doCall<UpdateAchievementCountRequest>(
+            HttpMethod.POST,
+            Routes.ACHIEVEMENT_COUNT,
+            UpdateAchievementCountRequest(achievementCount),
+        )
+    }
+
     private fun handleConnectSuccess(response: BeginSessionResponse) {
-        val lobby = ScreenCache.getEntropyLobby()
+        ClientGlobals.httpClient.sessionId = response.sessionId
+
+        val lobby = ScreenCache.get<EntropyLobby>()
         lobby.username = response.name
         lobby.setLocationRelativeTo(null)
         lobby.isVisible = true

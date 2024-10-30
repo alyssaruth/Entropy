@@ -26,8 +26,8 @@ class LobbyServiceTest : AbstractTest() {
     fun `getLobby should return rooms and online users`() {
         val (service, server, sessionStore) = makeService()
 
-        val sessionA = makeSession(name = "Alyssa")
-        val sessionB = makeSession(name = "Bob")
+        val sessionA = makeSession(name = "Alyssa", achievementCount = 4)
+        val sessionB = makeSession(name = "Bob", achievementCount = 7)
         sessionStore.putAll(sessionA, sessionB)
 
         val settings = makeGameSettings(includeMoons = true)
@@ -37,10 +37,10 @@ class LobbyServiceTest : AbstractTest() {
         copy.addToObservers("Bob")
 
         val lobby = service.getLobby()
-        lobby.users.shouldContainExactlyInAnyOrder(OnlineUser("Alyssa"), OnlineUser("Bob"))
+        lobby.users.shouldContainExactlyInAnyOrder(OnlineUser("Alyssa", 4), OnlineUser("Bob", 7))
         lobby.rooms.shouldContainExactlyInAnyOrder(
             RoomSummary("Carbon 1", settings, 4, 1, 0),
-            RoomSummary("Carbon 2", settings, 4, 0, 1)
+            RoomSummary("Carbon 2", settings, 4, 0, 1),
         )
     }
 
@@ -78,7 +78,7 @@ class LobbyServiceTest : AbstractTest() {
             server.sendViaNotificationSocket(
                 listOf(uscB, uscC),
                 any(),
-                XmlConstants.SOCKET_NAME_LOBBY
+                XmlConstants.SOCKET_NAME_LOBBY,
             )
         }
 
@@ -88,7 +88,7 @@ class LobbyServiceTest : AbstractTest() {
             server.sendViaNotificationSocket(
                 listOf(uscA, uscB, uscC),
                 any(),
-                XmlConstants.SOCKET_NAME_LOBBY
+                XmlConstants.SOCKET_NAME_LOBBY,
             )
         }
     }
@@ -97,7 +97,7 @@ class LobbyServiceTest : AbstractTest() {
         val service: LobbyService,
         val server: EntropyServer,
         val sessionStore: Store<UUID, Session>,
-        val uscStore: UserConnectionStore
+        val uscStore: UserConnectionStore,
     )
 
     private fun makeService(server: EntropyServer = EntropyServer()): SetupParams {

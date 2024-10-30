@@ -31,7 +31,6 @@ import org.w3c.dom.NodeList;
 
 import screen.ScreenCache;
 import util.DateUtil;
-import util.Debug;
 import util.EntropyColour;
 import util.MessageUtil;
 import util.TableUtil;
@@ -281,7 +280,7 @@ public class Leaderboard extends JFrame
 		}
 		
 		lastRefreshMillis = System.currentTimeMillis();
-		EntropyLobby lobby = ScreenCache.getEntropyLobby();
+		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
 		
 		String username = lobby.getUsername();
 		Document leaderboardRequest = XmlBuilderClient.factoryLeaderboardRequest(username);

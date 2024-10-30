@@ -230,12 +230,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			server.removeFromUsersOnline(usc);
 			return null;
 		}
-		else if (name.equals(ROOT_TAG_ACHIEVEMENTS_UPDATE))
-		{
-			int achievementCount = XmlUtil.getAttributeInt(root, "AchievementCount");
-			String achievementName = root.getAttribute("AchievementName");
-			return XmlBuilderServer.getAchievementUpdateAck(server, username, achievementName, achievementCount);
-		}
 		else if (name.equals(ROOT_TAG_NEW_CHAT))
 		{
 			String newMessage = root.getAttribute("MessageText");

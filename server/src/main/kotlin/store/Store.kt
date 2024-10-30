@@ -14,6 +14,11 @@ interface Store<K, T : IHasId<K>> {
     fun remove(key: K)
 
     fun putAll(vararg items: T)
+
+    fun update(key: K, updater: (T) -> T) {
+        val current = get(key)
+        put(updater(current))
+    }
 }
 
 abstract class MemoryStore<K, T : IHasId<K>> : Store<K, T> {

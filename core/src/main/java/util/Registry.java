@@ -4,18 +4,22 @@ package util;
 import java.util.prefs.Preferences;
 
 
-public interface Registry extends CoreRegistry
+public interface Registry
 {
 	public static final String NODE_ONLINE_REPLAY = "entropyReplayOnline";
 	
 	//Actual preference wrappers
-	public static final Preferences achievements = Preferences.userRoot().node("entropyAchievementsNone");
 	public static final Preferences savedGame = Preferences.userRoot().node("entropySavedgameNone");
 	public static final Preferences prefs = Preferences.userRoot().node("entropyPreferencesTuuug");
 	public static final Preferences rewards = Preferences.userRoot().node("entropyRewardsNone");
 	public static final Preferences inGameReplay = Preferences.userRoot().node("entropyReplayCurrent");
 	public static final Preferences fileReplay = Preferences.userRoot().node("entropyReplayFile");
 	public static final Preferences tempReplayStore = Preferences.userRoot().node("entropyTemp");
+	public static final Preferences instance = Preferences.userRoot().node("entropyInstance");
+
+	// instance
+	public static final String INSTANCE_INT_REPLAY_CONVERSION = "replayConversion";
+	public static final String INSTANCE_STRING_DEVICE_ID = "deviceId";
 	
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
@@ -120,77 +124,6 @@ public interface Registry extends CoreRegistry
 	public static final String REPLAY_INT_PLAYER_WON = "playerWon";
 	public static final String REPLAY_INT_GAME_MODE = "gameMode";
 	
-	//achievements
-	public static final String ACHIEVEMENTS_BOOLEAN_GARDENER = "gardener";
-	public static final String ACHIEVEMENTS_BOOLEAN_LION = "lion";
-	public static final String ACHIEVEMENTS_BOOLEAN_BURGLAR = "burglar";
-	public static final String ACHIEVEMENTS_BOOLEAN_CAVEMAN = "caveman";
-	public static final String ACHIEVEMENTS_BOOLEAN_FIVE_MINUTES = "fiveMinutes";
-	public static final String ACHIEVEMENTS_BOOLEAN_FIFTEEN_MINUTES = "fifteenMinutes";
-	public static final String ACHIEVEMENTS_BOOLEAN_THIRTY_MINUTES = "thirtyMinutes";
-	public static final String ACHIEVEMENTS_BOOLEAN_SIXTY_MINUTES = "sixtyMinutes";
-	public static final String ACHIEVEMENTS_BOOLEAN_TWO_HOURS = "twoHours";
-	public static final String ACHIEVEMENTS_BOOLEAN_COWARD = "coward";
-	public static final String ACHIEVEMENTS_BOOLEAN_SPECTATOR = "spectator";
-	public static final String ACHIEVEMENTS_BOOLEAN_VANITY = "vanity";
-	public static final String ACHIEVEMENTS_BOOLEAN_UNSCATHED = "perfectTwoPlayerGame";
-	public static final String ACHIEVEMENTS_BOOLEAN_BULLETPROOF = "perfectThreePlayerGame";
-	public static final String ACHIEVEMENTS_BOOLEAN_SUPERHUMAN = "perfectFourPlayerGame";
-	public static final String ACHIEVEMENTS_BOOLEAN_PARTICIPANT = "participant";
-	public static final String ACHIEVEMENTS_BOOLEAN_HOBBYIST = "hobbyist";
-	public static final String ACHIEVEMENTS_BOOLEAN_ENTHUSIAST = "enthusiast";
-	public static final String ACHIEVEMENTS_BOOLEAN_PROFESSIONAL = "professional";
-	public static final String ACHIEVEMENTS_BOOLEAN_VETERAN = "veteran";
-	public static final String ACHIEVEMENTS_BOOLEAN_MOMENTUM = "momentum";
-	public static final String ACHIEVEMENTS_BOOLEAN_CHAIN_REACTION = "chainReaction";
-	public static final String ACHIEVEMENTS_BOOLEAN_PERPETUAL_MOTION = "perpetualMotion";
-	public static final String ACHIEVEMENTS_BOOLEAN_FIRST_TIMER = "firstTimer";
-	public static final String ACHIEVEMENTS_BOOLEAN_CASUAL_STRATEGIST = "casualStrategist";
-	public static final String ACHIEVEMENTS_BOOLEAN_CONSISTENT_WINNER = "consistentWinner";
-	public static final String ACHIEVEMENTS_BOOLEAN_DOMINANT_FORCE = "dominantForce";
-	public static final String ACHIEVEMENTS_BOOLEAN_PSYCHIC = "psychic";
-	public static final String ACHIEVEMENTS_BOOLEAN_SECOND_THOUGHTS = "secondThoughts";
-	public static final String ACHIEVEMENTS_BOOLEAN_FULL_BLIND_TWO = "fullBlindTwo";
-	public static final String ACHIEVEMENTS_BOOLEAN_FULL_BLIND_THREE = "fullBlindThree";
-	public static final String ACHIEVEMENTS_BOOLEAN_FULL_BLIND_FOUR = "fullBlindFour";
-	public static final String ACHIEVEMENTS_BOOLEAN_CHIMERA = "chimera";
-	public static final String ACHIEVEMENTS_BOOLEAN_PRECISION = "precision";
-	public static final String ACHIEVEMENTS_BOOLEAN_MATHEMATICIAN = "mathematician";
-	public static final String ACHIEVEMENTS_BOOLEAN_NUCLEAR_STRIKE = "nuclearStrike";
-	public static final String ACHIEVEMENTS_BOOLEAN_HANDICAP_TWO = "handicapTwo";
-	public static final String ACHIEVEMENTS_BOOLEAN_HANDICAP_THREE = "handicapThree";
-	public static final String ACHIEVEMENTS_BOOLEAN_HANDICAP_FOUR = "handicapFour";
-	public static final String ACHIEVEMENTS_BOOLEAN_VECTROPY_ONE = "vectropyOne";
-	public static final String ACHIEVEMENTS_BOOLEAN_VECTROPY_TEN = "vectropyTen";
-	public static final String ACHIEVEMENTS_BOOLEAN_VECTROPY_TWENTY_FIVE = "vectropyTwentyFive";
-	public static final String ACHIEVEMENTS_BOOLEAN_VECTROPY_FIFTY = "vectropyFifty";
-	public static final String ACHIEVEMENTS_BOOLEAN_DISTRACTED = "distracted";
-	public static final String ACHIEVEMENTS_BOOLEAN_CITIZENS_ARREST = "citizensArrest";
-	public static final String ACHIEVEMENTS_BOOLEAN_CONNECTED = "connected";
-	public static final String ACHIEVEMENTS_BOOLEAN_RAILBIRD = "railbird";
-	public static final String ACHIEVEMENTS_BOOLEAN_SOCIAL = "social";
-	public static final String ACHIEVEMENTS_BOOLEAN_WEREWOLF = "werewolf";
-	public static final String ACHIEVEMENTS_BOOLEAN_SPACEMAN = "spaceman";
-	public static final String ACHIEVEMENTS_BOOLEAN_BLUE_SCREEN_OF_DEATH = "blueScreenOfDeath";
-	public static final String ACHIEVEMENTS_BOOLEAN_KONAMI_CODE	= "konamiCode";
-	
-	public static final String ACHIEVEMENTS_BOOLEAN_BOOKWORM = "bookworm";
-	public static final String ACHIEVEMENTS_BOOLEAN_CHATTY = "chatty";
-	public static final String ACHIEVEMENTS_BOOLEAN_DECEITFUL = "deceitful";
-	public static final String ACHIEVEMENTS_BOOLEAN_HONEST = "honest";
-	public static final String ACHIEVEMENTS_BOOLEAN_LOOK_AT_ME = "lookAtMe";
-	public static final String ACHIEVEMENTS_BOOLEAN_MONOTONE = "monotone";
-	public static final String ACHIEVEMENTS_BOOLEAN_OMNISCIENT = "omniscient";
-	
-	//Achievement variables, counters etc
-	public static final String ACHIEVEMENTS_BOOLEAN_WILL_UNLOCK_COWARD = "willUnlockCoward";
-	public static final String ACHIEVEMENTS_STRING_SOCIAL_LIST = "socialList";
-	public static final String ACHIEVEMENTS_LONG_BOOKWORM_TIME = "bookwormTime";
-	public static final String ACHIEVEMENTS_INT_VANITY_COUNT = "vanityCount";
-	public static final String ACHIEVEMENTS_INT_CHAT_COUNT = "chatCount";
-	public static final String ACHIEVEMENTS_INT_OPPONENT_TWO_COEFF = "opponentTwoWasEnabled";
-	public static final String ACHIEVEMENTS_INT_OPPONENT_THREE_COEFF = "opponentThreeWasEnabled";
-	
 	//rewards
 	public static final String REWARDS_BOOLEAN_FOUR_COLOURS = "fourColours";
 	//public static final String REWARDS_BOOLEAN_JOKERS = "jokers";
@@ -204,20 +137,6 @@ public interface Registry extends CoreRegistry
 	public static final String REWARDS_BOOLEAN_ILLEGAL = "illegal";
 	public static final String REWARDS_BOOLEAN_EXTRA_SUITS = "extraSuits";
 	public static final String REWARDS_BOOLEAN_CHEATS = "cheats";
-	
-	//statistics
-	public static final String STATISTICS_INT_ENTROPY_GAMES_PLAYED = "gamesPlayed";
-	public static final String STATISTICS_INT_ENTROPY_ONLINE_GAMES_PLAYED = "onlineGamesPlayed";
-	public static final String STATISTICS_INT_VECTROPY_GAMES_PLAYED = "vGamesPlayed";
-	public static final String STATISTICS_INT_VECTROPY_ONLINE_GAMES_PLAYED = "vOnlineGamesPlayed";
-	public static final String STATISTICS_INT_ENTROPY_GAMES_WON = "gamesWon";
-	public static final String STATISTICS_INT_ENTROPY_ONLINE_GAMES_WON = "onlineGamesWon";
-	public static final String STATISTICS_INT_VECTROPY_GAMES_WON = "vGamesWon";
-	public static final String STATISTICS_INT_VECTROPY_ONLINE_GAMES_WON = "vOnlineGamesWon";
-	public static final String STATISTICS_INT_BEST_STREAK = "bestStreak";
-	public static final String STATISTICS_INT_WORST_STREAK = "worstStreak";
-	public static final String STATISTICS_INT_CURRENT_STREAK = "currentStreak";
-	public static final String STATISTICS_DOUBLE_TIME_PLAYED = "timePlayed";
 	
 	//savedGame
 	public static final String SAVED_GAME_STRING_RESULT_TEXT = "resultText";
@@ -283,8 +202,6 @@ public interface Registry extends CoreRegistry
 	public static final String SAVED_GAME_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SAVED_GAME_INT_JOKER_VALUE = "jokerValue";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
-	public static final String SAVED_GAME_INT_SLIDER_MINIMUM = "sliderMinimum";
-	public static final String SAVED_GAME_INT_SLIDER_VALUE = "sliderValue";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
 	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
 	public static final String SAVED_GAME_INT_LAST_BID_SUIT_CODE = "lastBidSuitCode";

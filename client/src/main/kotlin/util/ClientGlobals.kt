@@ -7,10 +7,12 @@ import http.SessionApi
 import http.WebSocketReceiver
 import screen.LoggingConsole
 import screen.LoggingConsoleAppender
+import settings.AbstractSettingStore
+import settings.DefaultSettingStore
 
 object ClientGlobals {
     private val baseUrl = "http://localhost:8080"
-    private val httpClient = HttpClient(baseUrl)
+    val httpClient = HttpClient(baseUrl)
     @JvmField val loggingConsole = LoggingConsole()
     val consoleAppender = LoggingConsoleAppender(loggingConsole)
     val healthCheckApi = HealthCheckApi(httpClient)
@@ -18,4 +20,5 @@ object ClientGlobals {
     var sessionApi = SessionApi(httpClient)
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
+    @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-public class Debug implements CoreRegistry {
+public class Debug {
     private static DebugOutput output = null;
 
     private static ThreadFactory loggerFactory = r -> new Thread(r, "Logger");

@@ -8,7 +8,6 @@ public interface XmlConstants
 	//Client
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
 	public static final String ROOT_TAG_DISCONNECT_REQUEST			= "DisconnectRequest";
-	public static final String ROOT_TAG_ACHIEVEMENTS_UPDATE 		= "AchievementsUpdate";
 	public static final String ROOT_TAG_NEW_CHAT 					= "NewChat";
 	public static final String ROOT_TAG_ROOM_JOIN_REQUEST 			= "RoomJoinRequest";
 	public static final String ROOT_TAG_CLOSE_ROOM_REQUEST 			= "CloseRoomRequest";

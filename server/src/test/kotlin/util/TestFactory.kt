@@ -9,8 +9,9 @@ fun makeSession(
     id: UUID = UUID.randomUUID(),
     name: String = "Alyssa",
     ip: String = "1.2.3.4",
+    achievementCount: Int = 4,
     apiVersion: Int = OnlineConstants.API_VERSION
-) = Session(id, name, ip, apiVersion)
+) = Session(id, name, ip, achievementCount, apiVersion)
 
 fun makeGameSettings(
     mode: GameMode = GameMode.Entropy,
