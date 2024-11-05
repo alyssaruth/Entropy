@@ -382,8 +382,8 @@ There were 7 clubs, team ⚔️ wins by default
 
 There were 7 spades, team ⚔️ wins
 
-- Leah ➕10
-- Sara ➕15
+- Leah ➕15
+- Sara ➕10
 - David ➕15
 - Mark 🔻40
 
@@ -397,8 +397,8 @@ There were 7 spades, team ⚔️ wins
 | Player | Stack | Hand        | Bid 1 | Bid 2     |
 |--------|-------|-------------|-------|-----------|
 | Mark   | 800   | Qh 8h 5d Kc | 6s    | Challenge |
-| Leah   | 935   | Qs 8s Jd 2d | 7d    |           |
-| Sara   | 825   | Js Ts Qc 5c | 7s    |           |
+| Leah   | 940   | Qs 8s Jd 2d | 7d    |           |
+| Sara   | 820   | Js Ts Qc 5c | 7s    |           |
 | David  | 825   | 9s 2h Jc 8c | 8d    |           |
 | Alyssa | 1615  | As Kh 8d 3c | 8s    |           |
 
@@ -433,8 +433,8 @@ There were 7 spades, team ⚔️ wins
 
 | Player | Stack | Hand        | Bid 1 | Bid 2     |
 |--------|-------|-------------|-------|-----------|
-| Leah   | 735   | 9d Jc 6c 3c | 6d    | 8h        |
-| Sara   | 825   | Qs 6s 5s 7c | 6h    | 8s        |
+| Leah   | 740   | 9d Jc 6c 3c | 6d    | 8h        |
+| Sara   | 820   | Qs 6s 5s 7c | 6h    | 8s        |
 | David  | 945   | 5h Td 7d 2c | 7d    | Challenge |
 | Alyssa | 1575  | As 3h 2h Tc | 7h    |           |
 | Mark   | 920   | Js 4d Ac 4c | 8d    |           |
@@ -470,11 +470,11 @@ There were 7 spades, team ⚔️ wins
 
 | Player | Stack | Hand        | Bid 1 | Bid 2     |
 |--------|-------|-------------|-------|-----------|
-| Sara   | 725   | Th Ad 9d 6c | 5h    | 9h        |
+| Sara   | 720   | Th Ad 9d 6c | 5h    | 9h        |
 | David  | 995   | 2s Ah 6h 2h | 6h    | 10h       |
 | Alyssa | 1575  | Ks 4d Ac 2c | 7c    | Challenge |
 | Mark   | 920   | 7s Td Tc 8c | 8c    |           |
-| Leah   | 785   | 6s 4s 7h 9c | 8h    |           |
+| Leah   | 790   | 6s 4s 7h 9c | 8h    |           |
 
 ### Betting
 
@@ -508,8 +508,8 @@ There were 8 hearts, team ⚔️ wins
 | David  | 945   | Ah Qh 8d 6d | 7d        |
 | Alyssa | 1600  | Td 7d 2d 9c | 8d        |
 | Mark   | 945   | 7s 7h Tc 5c | 8h        |
-| Leah   | 785   | 2s 5h Jd 5d | 9d        |
-| Sara   | 725   | Ks Kd Qc Jc | Challenge |
+| Leah   | 790   | 2s 5h Jd 5d | 9d        |
+| Sara   | 720   | Ks Kd Qc Jc | Challenge |
 
 ### Betting
 
@@ -530,5 +530,292 @@ There were 9 diamonds, team 🛡️ wins
 - Alyssa ➕100
 - Leah ➕100
 - Sara 🔻200
+
+</details>
+
+<details>
+<summary>Hand 15</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-------------|-------|-------|-----------|
+| Alyssa | 1700  | 7s Td 5d 6c | 2h    | 6d    | 8h        |
+| Mark   | 945   | 5s 2s 7h 9c | 3s    | 6s    | 9d        |
+| Leah   | 890   | 3s Kh 9d 8d | 5d    | 7d    | 10d       |
+| Sara   | 520   | Qs 8h 5h 7c | 5h    | 7h    | Challenge |
+| David  | 945   | 9h Ad Qd 4c | 5s    | 8d    |           |
+
+### Betting
+
+👀 Deck shows Ah Jh 2h 7d 6d 4d
+
+- 🛡️ Leah: 60
+- ⚔️ Sara: 60
+- (🛡️) David: **raise** to 250
+- ❌ Alyssa: **fold**
+- ❌ Mark: **fold**
+- ❌ Leah: **fold**
+- ⚔️ Sara: **call** 190
+
+### Results
+
+There were 7 diamonds, team ⚔️ wins
+
+- Sara ➕310
+- Leah 🔻 60
+- David 🔻250
+
+</details>
+
+<details>
+<summary>Hand 16</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Mark   | 945   | As Ks Kh Qd | 2h    | 8s        |
+| Leah   | 830   | 2h Jd 3d Qc | 6d    | Challenge |
+| Sara   | 830   | 4s 3s Ad 6c | 6s    |           |
+| David  | 695   | 6s 7d 5d 9c | 7h    |           |
+| Alyssa | 1700  | Js 8s 7s Ah | 7s    |           |
+
+### Betting
+
+👀 Deck shows Qs Ts 2s 3h Jc 4c
+
+- 🛡️ Mark: 60
+- ⚔️ Leah: 60
+- (🛡️) Sara: **call** 60
+- (⚔️) David: **call** 60
+- (🛡️) Alyssa: **raise** to 360
+- 🛡️ Mark: **call** 300
+- ⚔️ Leah: **call** 300
+- (🛡️) Sara: **call** 300
+- (⚔️) David: **call** 300
+
+### Results
+
+There were 11 spades, team 🛡️ wins
+
+- Mark ➕240
+- Sara ➕240
+- Alyssa ➕240
+- Leah 🔻 360
+- David 🔻360
+
+</details>
+
+<details>
+<summary>Hand 17</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 470   | 7s 3h 4d 2d | 5h    | 9h        |
+| Sara   | 1070  | 4s 4h 6d Kc | 6s    | 9s        |
+| David  | 335   | As 8s 6h 2h | 7h    | 10s       |
+| Alyssa | 1940  | 5s Qd 3d 9c | 7s    | Challenge |
+| Mark   | 1185  | Ks 9d Jc 3c | 8s    |           |
+
+### Betting
+
+👀 Deck shows Kh Kd Tc 7c 6c 4c
+
+- 🛡️ David: 80
+- ⚔️ Alyssa: 80
+- ❌ Mark: **fold**
+- ❌ Leah: **fold**
+- (⚔️) Sara: **call** 80
+- 🛡️ David: **check**
+- ⚔️ Alyssa: **check**
+
+### Results
+
+There were 7 spades, team ⚔️ wins
+
+- Sara ➕40
+- Alyssa ➕40
+- David 🔻80
+
+</details>
+
+<details>
+<summary>Hand 18</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1     |
+|--------|-------|-------------|-----------|
+| Sara   | 1110  | Ks Jd 8d Jc | 5s        |
+| David  | 255   | As 2s 3h 5d | 7s        |
+| Alyssa | 1980  | 9s 9h Tc 9c | 8c        |
+| Mark   | 1185  | Ts 6h 4h Qd | Challenge |
+| Leah   | 470   | 7h Ad 9d 2c |           |
+
+### Betting
+
+👀 Deck shows 5s 4s Ah 2h 6c 3c
+
+- 🛡️ Alyssa: 100
+- ⚔️ Mark: 100
+- ❌ Leah: **fold**
+- ❌ Sara: **fold**
+- (⚔️) David: **raise all-in** to 255
+- 🛡️ Alyssa: **call** 155
+- ⚔️ Mark: **call** 155
+
+### Results
+
+There were 6 clubs, team ⚔️ wins
+
+- Mark ➕125
+- David ➕130
+- Alyssa 🔻255
+
+</details>
+
+<details>
+<summary>Hand 19</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| David  | 385   | Qh 5h Kd Tc | 6s    | Challenge |
+| Alyssa | 1725  | Ts Td 9d Qc | 7d    |           |
+| Mark   | 1310  | 6h 3d 5c 4c | 7h    |           |
+| Leah   | 470   | Ks Js 9h 6c | 7s    |           |
+| Sara   | 1110  | Th Qd 9c 2c | 8c    |           |
+
+### Betting
+
+👀 Deck shows Qs 9s 6s Ah 8d 7c
+
+- 🛡️ Sara: 100
+- ⚔️ David: 100
+- ❌ Alyssa: **fold**
+- ❌ Mark: **fold**
+- (⚔️) Leah: **call** 100
+- 🛡️ Sara: **check**
+- ⚔️ David: **check**
+
+### Results
+
+There were 7 clubs, team ⚔️ wins
+
+- David ➕50
+- Leah ➕50
+- Sara 🔻100
+
+</details>
+
+<details>
+<summary>Hand 20</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1     |
+|--------|-------|-------------|-----------|
+| Alyssa | 1725  | Kh 8d 4d 2c | 6s        |
+| Mark   | 1310  | 9s 7h Td Tc | 7c        |
+| Leah   | 520   | 6s Jh Kc 5c | 7s        |
+| Sara   | 1010  | Qs Qd Jc 4c | 8c        |
+| David  | 435   | Ts 5h 3h 6d | Challenge |
+
+### Betting
+
+👀 Deck shows As 2s 4h Kd 5d Qc
+
+- 🛡️ Sara: 100
+- ⚔️ David: 100
+- ❌ Alyssa: **fold**
+- ❌ Mark: **fold**
+- ❌ Leah: **fold**
+- 🛡️ Sara: **check**
+- ⚔️ David: **raise** to 300
+- ❌ Sara: **fold**
+
+### Results
+
+There were 6 clubs, team ⚔️ wins by default
+
+- David ➕100
+- Sara 🔻100
+
+</details>
+
+<details>
+<summary>Hand 21</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Mark   | 1310  | Ts 4s 3s 9d | 4c    | Challenge |
+| Leah   | 520   | Qs 4h Kc 6c | 6c    |           |
+| Sara   | 910   | Qh 5d 7d Jc | 6h    |           |
+| David  | 535   | Js Ah 9h 6h | 7h    |           |
+| Alyssa | 1725  | 7s 6d 4d 3d | 8d    |           |
+
+### Betting
+
+👀 Deck shows As 2s 4h Kd 5d Qc
+
+- 🛡️ Alyssa: 100
+- ⚔️ Mark: 100
+- (⚔️) Leah: **call** 100
+- ❌ Sara: **fold**
+- ❌ David: **fold**
+- 🛡️ Alyssa: **raise** to 400
+- ⚔️ Mark: **call** 300
+- (⚔️) Leah: **call** 300
+
+### Results
+
+There were 7 diamonds, team ⚔️ wins
+
+- Mark ➕200
+- Leah ➕200
+- Alyssa 🔻400
+
+</details>
+
+<details>
+<summary>Hand 22</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 720   | 9d 6d Qc 6c | 6s    | Challenge |
+| Sara   | 910   | 4h 4d 3c 2c | 6d    |           |
+| David  | 535   | Ts 7s Ah 9h | 7h    |           |
+| Alyssa | 1325  | 7h Td 7d 9c | 7s    |           |
+| Mark   | 1510  | Ks Kh Ac 8c | 8s    |           |
+
+### Betting
+
+👀 Deck shows 8s 5s 3h 2h Qd 5c
+
+- 🛡️ Mark: 150
+- ⚔️ Leah: 150
+- (⚔️) Sara: **call** 150
+- ❌ David: **fold**
+- (⚔️) Alyssa: **raise all-in** to 1325
+- 🛡️ Mark: **call** 1175
+- ⚔️ Leah: **call all-in** 570
+- (⚔️) Sara: **call all-in** 760
+
+### Results
+
+There were 5 spades, team ⚔️ wins
+
+- Alyssa ➕750
+- Sara ➕335
+- Leah ➕240
+- Mark 🔻1325
 
 </details>
