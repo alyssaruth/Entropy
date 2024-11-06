@@ -819,3 +819,448 @@ There were 5 spades, team ⚔️ wins
 - Mark 🔻1325
 
 </details>
+
+<details>
+<summary>Hand 23 - ❌ Mark (5th)</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Sara   | 1245  | 9s Th 9h 3d | 2h    | 8h        |
+| David  | 535   | Jd Td 2d 5c | 6h    | Challenge |
+| Alyssa | 2075  | 8s 7d Ac 7c | 6s    |           |
+| Mark   | 185   | As 7s 8h 3h | 7h    |           |
+| Leah   | 960   | 4h Qd 5d 2c | 7s    |           |
+
+### Betting
+
+👀 Deck shows 9d 8d 6d 4d Kc 6c
+
+- 🛡️ Sara: 200
+- ⚔️ David: 200
+- ❌ Alyssa: **fold**
+- (🛡️) Mark: **call all-in** 185
+- ❌ Leah: **fold**
+- 🛡️ Sara: **check**
+- ⚔️ David: **check**
+
+### Results
+
+There were 7 hearts, team ⚔️ wins
+
+- David ➕385
+- Sara 🔻200
+- Mark 🔻185  ❌ Eliminated
+
+</details>
+
+<details>
+<summary>Hand 24</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| David  | 920   | 4s 8h Jc 7c | 5d    | Challenge |
+| Alyssa | 2075  | Js Ts 5s 3d | 5s    |           |
+| Leah   | 960   | Ah Kd 8d 8c | 6d    |           |
+| Sara   | 1045  | 3s 7h 7d 5c | 6h    |           |
+
+### Betting
+
+👀 Deck shows Ks 4h Jd 9d 9c 3c
+
+- 🛡️ Sara: 200
+- ⚔️ David: 200
+- (⚔️) Alyssa: **raise** to 500
+- ❌ Leah: **fold**
+- ❌ Sara: **fold**
+- ⚔️ David: **call** 300
+
+### Results
+
+There were 4 hearts, team ⚔️ wins by default
+
+- David ➕100
+- Alyssa ➕100
+- Sara 🔻200
+
+</details>
+
+<details>
+<summary>Hand 25</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Alyssa | 2175  | 9s Qh 4d 8c | 5c    | Challenge |
+| Leah   | 960   | Ks Js 2d 6c | 5s    |           |
+| Sara   | 845   | 7s 4s 4h 7d | 6s    |           |
+| David  | 1020  | As Kd Ac 2c | 7c    |           |
+
+### Betting
+
+👀 Deck shows Ah Th 8h 6h 7c 5c
+
+- 🛡️ David: 300
+- ⚔️ Alyssa: 300
+- (⚔️) Leah: **call** 300
+- (⚔️) Sara: **raise** to 600
+- ❌ David: **fold**
+- ⚔️ Alyssa: **call**
+- (⚔️) Leah: **call** 300
+
+### Results
+
+There were 6 clubs, team ⚔️ wins by default
+
+- Alyssa ➕100
+- Leah ➕100
+- Sara ➕100
+- David 🔻300
+
+</details>
+
+<details>
+<summary>Hand 26</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 1060  | Kh 8h 7h 3h | 4d    | 6h        |
+| Sara   | 945   | 7s 6h Qd 7d | 5d    | Challenge |
+| David  | 720   | 4h Jd Kc 7c | 5s    |           |
+| Alyssa | 2275  | Ks Ah Qc 6c | 6c    |           |
+
+### Betting
+
+👀 Deck shows Jh 9d 9c 8c 5c 3c
+
+- 🛡️ Leah: 300
+- ⚔️ Sara: 300
+- ❌ David: **fold**
+- (🛡️) Alyssa: **call** 300
+- 🛡️ Leah: **raise** to 600
+- ❌ Sara: **fold**
+- (🛡️) Alyssa: **call** 300
+
+### Results
+
+There were 8 hearts, team 🛡️ wins by default
+
+- Leah ➕150
+- Alyssa ➕150
+- Sara 🔻300
+
+</details>
+
+<details>
+<summary>Hand 27</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Sara   | 645   | As 9d 8c 7c | 1c    | 5c        |
+| David  | 720   | Qs Jh 3h Qd | 2c    | 6c        |
+| Alyssa | 2425  | 9s 5s 3s 5c | 2s    | 6s        |
+| Leah   | 1210  | 5h 4h Jd Kc | 4c    | Challenge |
+
+### Betting
+
+👀 Deck shows Ts Ah 7d 6d Ac 4c
+
+- 🛡️ Alyssa: 300
+- ⚔️ Leah: 300
+- (🛡️) Sara: **call** 300
+- ❌ David: **fold**
+- 🛡️ Alyssa: **check**
+- ⚔️ Leah: **check**
+
+### Results
+
+There were 6 spades, team 🛡️ wins
+
+- Sara ➕150
+- Alyssa ➕150
+- Leah 🔻300
+
+</details>
+
+<details>
+<summary>Hand 28</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| David  | 720   | 6s 5h 5d 6c | 5s    | Challenge |
+| Alyssa | 2575  | 9h 7h 4h Qc | 6h    |           |
+| Leah   | 910   | 8s 2s Qd 9c | 6s    |           |
+| Sara   | 795   | Ah 9d 3d 5c | 7d    |           |
+
+### Betting
+
+👀 Deck shows Kh 8h 8d 2d Tc 4c
+
+- 🛡️ Sara: 400
+- ⚔️ David: 400
+- (⚔️) Alyssa: **raise all-in** to 910
+- ❌ Leah: **fold**
+- 🛡️ Sara: **fold**
+- ⚔️ David: **call all-in** 320
+
+### Results
+
+There were 5 diamonds, team ⚔️ wins by default
+
+- David ➕200
+- Alyssa ➕200
+- Sara 🔻400
+
+</details>
+
+<details>
+<summary>Hand 29 - ❌ Sara (4th)</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1     |
+|--------|-------|-------------|-----------|
+| Alyssa | 2775  | 3s Ad Jd 7c | 3s        |
+| Leah   | 910   | Qs 8s 3d 4c | 5s        |
+| Sara   | 395   | 8h 9d Jc 8c | Challenge |
+| David  | 920   | As Kc Tc 6c |           |
+
+### Betting
+
+👀 Deck shows 9s 7s 5s Jh 3h Ac
+
+- 🛡️ Leah: 400
+- ⚔️ Sara: 395 (all-in)
+- (🛡️) David: **raise all-in** to 920
+- (🛡️) Alyssa: **call** 920
+- 🛡️ Leah: **call all-in** 510
+
+### Results
+
+There were 6 spades, team 🛡️ wins
+
+- Alyssa ➕130
+- Leah ➕130
+- David ➕135
+- Sara 🔻395  ❌ Eliminated
+
+</details>
+
+<details>
+<summary>Hand 30</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 1040  | 9s Qd 8d 2d | 3d    | 4s        |
+| David  | 1055  | Js 6s 6h Td | 3s    | 5d        |
+| Alyssa | 2905  | 4h Jd 8c 2c | 4d    | Challenge |
+
+### Betting
+
+👀 Deck shows Ts Qh Jh 8h Ad 6d
+
+- 🛡️ David: 400
+- ⚔️ Alyssa: 400
+- (🛡️) Leah: **call** 400
+- 🛡️ David: **check**
+- ⚔️ Alyssa: **check**
+
+### Results
+
+There were 5 diamonds, team 🛡️ wins
+
+- Leah ➕200
+- David ➕200
+- Alyssa 🔻400
+
+</details>
+
+<details>
+<summary>Hand 31</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-------------|-------|-------|-----------|
+| David  | 1255  | Qh 3h Ac Tc | 2c    | 3h    | 5c        |
+| Alyssa | 2505  | 2s Qd Td 3d | 2s    | 4d    | Challenge |
+| Leah   | 1240  | As Kh 5h 8c | 3c    | 4h    |           |
+
+### Betting
+
+👀 Deck shows Jh 6h 4h 5d 9c 2c
+
+- 🛡️ David: 600
+- ⚔️ Alyssa: 600
+- ❌ Leah: **fold**
+- 🛡️ David: **check**
+- ⚔️ Alyssa: **check**
+
+### Results
+
+There were 5 clubs, team 🛡️ wins
+
+- David ➕600
+- Alyssa 🔻600
+
+</details>
+
+<details>
+<summary>Hand 32</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Alyssa | 1905  | 9h 8h Kd Qd | 3s    | 5d        |
+| Leah   | 1240  | As Ah Jd 3d | 4d    | 6d        |
+| David  | 1855  | 8s 5h 3h 8d | 4h    | Challenge |
+
+### Betting
+
+👀 Deck shows Qs Th 6h 2h 4d 2d
+
+- 🛡️ Leah: 600
+- ⚔️ David: 600
+- ❌ Alyssa: **fold**
+- 🛡️ Leah: **raise all-in** to 1240
+- ⚔️ David: **call** 640
+
+### Results
+
+There were 7 diamonds, team 🛡️ wins
+
+- Leah ➕1240
+- David 🔻1240
+
+</details>
+
+<details>
+<summary>Hand 33</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Leah   | 2480  | 5s 3s Td 3c | 3s    | Challenge |
+| David  | 615   | Qh 2h 5d 2c | 4s    |           |
+| Alyssa | 1905  | 2s 9h Ac Jc | 5c    |           |
+
+### Betting
+
+👀 Deck shows Ks Ts 6h 3d Tc 7c
+
+- 🛡️ Alyssa: 600
+- ⚔️ Leah: 600
+- ❌ David: **fold**
+- 🛡️ Alyssa: **check**
+- ⚔️ Leah: **check**
+
+### Results
+
+There were 5 clubs, team 🛡️ wins
+
+- Alyssa ➕600
+- Leah 🔻600
+
+</details>
+
+<details>
+<summary>Hand 34 - ❌ David (3rd)</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| David  | 615   | Js 9s Qh 6d | 3d    | 4s        |
+| Alyssa | 2505  | 7h 5h 7d 3d | 3h    | Challenge |
+| Leah   | 1880  | 6h Kd Jd 9c | 4d    |           |
+
+### Betting
+
+👀 Deck shows As 6s Ah Th Tc 2c
+
+- 🛡️ David: 615 (all-in)
+- ⚔️ Alyssa: 800
+- (⚔️) Leah: **call** 800
+- ⚔️ Alyssa: **raise all-in** to 1880
+- (⚔️) Leah: **call** 1080
+
+### Results
+
+There were 2 spades, team ⚔️ wins
+
+- Alyssa ➕305
+- Leah ➕310
+- David 🔻615  ❌ Eliminated
+
+</details>
+
+<details>
+<summary>Hand 35</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2     |
+|--------|-------|-------------|-------|-----------|
+| Alyssa | 2810  | Qs Js 2h 6d | 2d    | Challenge |
+| Leah   | 2190  | Ks 5d Tc 3c | 3c    |           |
+
+### Betting
+
+👀 Deck shows Jh 8h Qc Jc 9c 8c
+
+- 🛡️ Leah: 800
+- ⚔️ Alyssa: 800
+- 🛡️ Leah: **check**
+- ⚔️ Alyssa: **raise all-in** to 2190
+- ❌ Leah: **fold**
+
+### Results
+
+There were 2 clubs, team ⚔️ wins by default
+
+- Alyssa ➕800
+- Leah 🔻800
+
+</details>
+
+<details>
+<summary>Hand 36 - ❌ Leah (2nd)</summary>
+
+### Bids
+
+| Player | Stack | Hand        | Bid 1 | Bid 2 | Bid 3     |
+|--------|-------|-------------|-------|-------|-----------|
+| Leah   | 1390  | Js 7h Kd Ac | 2s    | 4c    | Challenge |
+| Alyssa | 3610  | 7d 9c 8c 6c | 3c    | 5c    |           |
+
+### Betting
+
+👀 Deck shows 9s 7s Jd 5d Jc 7c
+
+- 🛡️ Alyssa: 800
+- ⚔️ Leah: 800
+- 🛡️ Alyssa: **raise all-in** to 1390
+- ⚔️ Leah: **call all-in** 590
+
+### Results
+
+There were 5 clubs, team 🛡️ wins
+
+- Alyssa ➕1390
+- Leah 🔻1390  ❌ Eliminated
+
+</details>
