@@ -17,7 +17,7 @@ object ClientGlobals {
     val consoleAppender = LoggingConsoleAppender(loggingConsole)
     val healthCheckApi = HealthCheckApi(httpClient)
     val devApi = DevApi(httpClient)
-    var sessionApi = SessionApi(httpClient)
+    @JvmField var sessionApi = SessionApi(httpClient)
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
     @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")

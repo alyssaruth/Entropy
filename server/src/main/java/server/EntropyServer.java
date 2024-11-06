@@ -8,7 +8,6 @@ import object.OnlineMessage;
 import object.Room;
 import object.ServerRunnable;
 import object.ServerThread;
-import org.w3c.dom.Document;
 import util.*;
 
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ public final class EntropyServer implements OnlineConstants {
 
         Debug.append("Starting permanent threads");
 
-        startInactiveCheckRunnable();
         startListenerThreads();
 
         Debug.appendBanner("Server is ready - accepting connections");
@@ -111,13 +109,6 @@ public final class EntropyServer implements OnlineConstants {
         Debug.append("Finished creating " + hmRoomByName.size() + " rooms");
     }
 
-    private void startInactiveCheckRunnable() {
-        InactiveCheckRunnable runnable = new InactiveCheckRunnable(this);
-
-        ServerThread inactiveCheckThread = new ServerThread(runnable, "InactiveCheck");
-        inactiveCheckThread.start();
-    }
-
     private void startListenerThreads() {
         try {
             ServerThread listenerThread = new ServerThread(new MessageListener(this, SERVER_PORT_NUMBER));
@@ -132,37 +123,7 @@ public final class EntropyServer implements OnlineConstants {
         ServerGlobals.workerPool.executeServerRunnable(runnable);
     }
 
-    public void removeFromUsersOnline(UserConnection usc) {
-        //Null these out so we don't try to send any more notifications
-        usc.destroyNotificationSockets();
-
-        //Need to remove them from rooms too
-        String username = usc.getName();
-        if (username != null) {
-            ColourGenerator.freeUpColour(usc.getColour());
-
-            List<Room> rooms = getRooms();
-            for (int i = 0; i < rooms.size(); i++) {
-                Room room = rooms.get(i);
-                room.removeFromObservers(username);
-                room.removePlayer(username, false);
-            }
-
-            Debug.append(username + " has disconnected");
-        }
-
-        //Now remove the user connection.
-        ServerGlobals.INSTANCE.getUscStore().remove(usc.getIpAddress());
-        if (ServerGlobals.INSTANCE.getUscStore().getAll().size() == 0
-                && username != null) {
-            resetLobby();
-            return;
-        }
-
-        ServerGlobals.lobbyService.lobbyChanged();
-    }
-
-    private void resetLobby() {
+    public void resetLobby() {
         int countRemoved = 0;
 
         List<Room> rooms = getRooms();
@@ -178,10 +139,10 @@ public final class EntropyServer implements OnlineConstants {
 
         //Log out if we've actually removed some rooms
         if (countRemoved > 0) {
-            Debug.append("Removed " + countRemoved + " excess rooms");
+            logger.info("roomsRemoved", "Removed " + countRemoved + " excess rooms");
         }
 
-        Debug.append("Cleared lobby messages");
+        logger.info("clearedMessages", "Cleared lobby messages");
         lobbyMessages.clear();
     }
 

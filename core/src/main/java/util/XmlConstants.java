@@ -7,7 +7,6 @@ public interface XmlConstants
 {
 	//Client
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
-	public static final String ROOT_TAG_DISCONNECT_REQUEST			= "DisconnectRequest";
 	public static final String ROOT_TAG_NEW_CHAT 					= "NewChat";
 	public static final String ROOT_TAG_ROOM_JOIN_REQUEST 			= "RoomJoinRequest";
 	public static final String ROOT_TAG_CLOSE_ROOM_REQUEST 			= "CloseRoomRequest";
@@ -41,6 +40,4 @@ public interface XmlConstants
 	public static final String RESPONSE_TAG_ACKNOWLEDGEMENT = "Acknowledgement";
 	public static final String RESPONSE_TAG_STACK_TRACE = "StackTrace";
 	public static final String RESPONSE_TAG_SOCKET_TIME_OUT = "SocketTimeOut";
-	
-	public static final String REMOVAL_REASON_FAILED_USERNAME_CHECK = "There has been an authentication error.";
 }

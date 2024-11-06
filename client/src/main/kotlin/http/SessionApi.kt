@@ -8,6 +8,7 @@ import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
 import online.screen.EntropyLobby
+import screen.MainScreen
 import screen.ScreenCache
 import util.ClientGlobals
 import util.DialogUtilNew
@@ -40,6 +41,11 @@ class SessionApi(private val httpClient: HttpClient) {
         )
     }
 
+    fun finishSession() {
+        httpClient.doCall<Unit>(HttpMethod.POST, Routes.FINISH_SESSION)
+        ClientGlobals.httpClient.sessionId = null
+    }
+
     private fun handleConnectSuccess(response: BeginSessionResponse) {
         ClientGlobals.httpClient.sessionId = response.sessionId
 
@@ -48,6 +54,8 @@ class SessionApi(private val httpClient: HttpClient) {
         lobby.setLocationRelativeTo(null)
         lobby.isVisible = true
         lobby.init(response.lobby)
+
+        ScreenCache.get<MainScreen>().minimise()
     }
 
     private fun handleBeginSessionFailure(response: FailureResponse<*>) =

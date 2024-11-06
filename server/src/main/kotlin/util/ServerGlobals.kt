@@ -5,6 +5,7 @@ import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import routes.lobby.LobbyService
+import routes.session.SessionService
 import server.EntropyServer
 import store.MemoryUserConnectionStore
 import store.SessionStore
@@ -33,4 +34,5 @@ object ServerGlobals {
     val server: EntropyServer = EntropyServer()
 
     @JvmField val lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore)
+    @JvmField val sessionService = SessionService(sessionStore, uscStore)
 }

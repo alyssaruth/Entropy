@@ -202,7 +202,6 @@ public class MessageSender implements Runnable
 		
 		String name = rootElement.getTagName();
 		
-		return name.equals(XmlConstants.ROOT_TAG_NEW_CHAT)
-		    || name.equals(XmlConstants.ROOT_TAG_DISCONNECT_REQUEST);
+		return name.equals(XmlConstants.ROOT_TAG_NEW_CHAT);
 	}
 }
