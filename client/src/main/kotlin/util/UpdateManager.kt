@@ -1,13 +1,16 @@
 package util
 
 import bean.LinkLabel
+import http.CommunicationError
+import http.FailureResponse
+import http.HttpClient
+import http.SuccessResponse
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JLabel
 import javax.swing.JOptionPane
 import javax.swing.JPanel
-import kong.unirest.Unirest
-import kong.unirest.json.JSONObject
+import kong.unirest.HttpMethod
 import kotlin.system.exitProcess
 import utils.CoreGlobals.logger
 
@@ -21,44 +24,50 @@ class UpdateManager {
         // Show this here, checking the CRC can take time
         logger.info("updateCheck", "Checking for updates - my version is $currentVersion")
 
-        val jsonResponse = queryLatestReleaseJson(OnlineConstants.ENTROPY_REPOSITORY_URL)
-        jsonResponse ?: return
+        val metadata = queryLatestRelease(OnlineConstants.ENTROPY_REPOSITORY_URL)
+        metadata ?: return
 
-        val metadata = parseUpdateMetadata(jsonResponse)
-        if (metadata == null || !shouldUpdate(currentVersion, metadata)) {
+        if (!shouldUpdate(currentVersion, metadata)) {
             return
         }
 
-        startUpdate(metadata.getArgs(), Runtime.getRuntime())
+        startUpdate(metadata.toScriptArgs(), Runtime.getRuntime())
     }
 
-    fun queryLatestReleaseJson(repositoryUrl: String): JSONObject? {
+    fun queryLatestRelease(repositoryUrl: String): UpdateMetadata? {
         try {
             DialogUtilNew.showLoadingDialog("Checking for updates...")
 
-            val response = Unirest.get("$repositoryUrl/releases/latest").asJson()
-            if (response.status != 200) {
-                logger.error(
-                    "updateError",
-                    "Received non-success HTTP status: ${response.status} - ${response.statusText}",
-                    "responseBody" to response.body,
-                )
-                DialogUtilNew.showError("Failed to check for updates (unable to connect).")
-                return null
+            val client = HttpClient(repositoryUrl)
+            val result = client.doCall<UpdateMetadata>(HttpMethod.GET, "/releases/latest")
+            return when (result) {
+                is CommunicationError -> {
+                    logger.error(
+                        "updateError",
+                        "Caught ${result.unirestException} checking for updates",
+                        result.unirestException
+                    )
+                    DialogUtilNew.showError("Failed to check for updates (unable to connect).")
+                    null
+                }
+                is FailureResponse -> {
+                    logger.error(
+                        "updateError",
+                        "Received non-success HTTP status: ${result.statusCode} - ${result.body}",
+                        "responseBody" to result.body
+                    )
+                    DialogUtilNew.showError("Failed to check for updates (unexpected error).")
+                    null
+                }
+                is SuccessResponse -> result.body
             }
-
-            return response.body.`object`
-        } catch (t: Throwable) {
-            logger.error("updateError", "Caught $t checking for updates", t)
-            DialogUtilNew.showError("Failed to check for updates (unable to connect).")
-            return null
         } finally {
             DialogUtilNew.dismissLoadingDialog()
         }
     }
 
     fun shouldUpdate(currentVersion: String, metadata: UpdateMetadata): Boolean {
-        val newVersion = metadata.version
+        val newVersion = metadata.tag_name
         if (newVersion == currentVersion) {
             logger.info("updateResult", "Up to date")
             return false
@@ -74,7 +83,7 @@ class UpdateManager {
 
         val answer =
             DialogUtilNew.showQuestion(
-                "An update is available (${metadata.version}). Would you like to download it now?",
+                "An update is available (${metadata.tag_name}). Would you like to download it now?",
                 false,
             )
         return answer == JOptionPane.YES_OPTION
@@ -92,27 +101,6 @@ class UpdateManager {
         panel.add(linkLabel, BorderLayout.SOUTH)
 
         DialogUtilNew.showCustomMessage(panel)
-    }
-
-    fun parseUpdateMetadata(responseJson: JSONObject): UpdateMetadata? {
-        return try {
-            val remoteVersion = responseJson.getString("tag_name")
-            val assets = responseJson.getJSONArray("assets")
-            val asset = assets.getJSONObject(0)
-
-            val assetId = asset.getLong("id")
-            val fileName = asset.getString("name")
-            val size = asset.getLong("size")
-            UpdateMetadata(remoteVersion, assetId, fileName, size)
-        } catch (t: Throwable) {
-            logger.error(
-                "parseError",
-                "Error parsing update response",
-                t,
-                "responseBody" to responseJson,
-            )
-            null
-        }
     }
 
     fun startUpdate(args: String, runtime: Runtime) {
@@ -140,13 +128,4 @@ class UpdateManager {
         val updateScript = javaClass.getResource("/update/update.bat").readText()
         updateFile.writeText(updateScript)
     }
-}
-
-data class UpdateMetadata(
-    val version: String,
-    val assetId: Long,
-    val fileName: String,
-    val size: Long,
-) {
-    fun getArgs() = "$size $version $fileName $assetId"
 }

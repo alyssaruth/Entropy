@@ -34,7 +34,7 @@ class HttpClientTest : AbstractTest() {
         val (client, server) = setUpWebServer()
         server.enqueue(MockResponse().setResponseCode(HttpStatus.OK))
 
-        client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
 
         val request = server.takeRequest()
         val requestId = request.getHeader("X-Request-ID")
@@ -56,7 +56,7 @@ class HttpClientTest : AbstractTest() {
         val sessionId = UUID.randomUUID()
         client.sessionId = sessionId
 
-        client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
 
         val request = server.takeRequest()
         val sessionIdFromHeader = request.getHeader(CustomHeader.SESSION_ID)
@@ -93,7 +93,7 @@ class HttpClientTest : AbstractTest() {
         server.enqueue(MockResponse().setResponseCode(HttpStatus.NOT_FOUND))
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe FailureResponse(HttpStatus.NOT_FOUND, null, null)
+        response shouldBe FailureResponse(HttpStatus.NOT_FOUND, "", null, null)
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 404 for GET /test-endpoint"
@@ -113,7 +113,12 @@ class HttpClientTest : AbstractTest() {
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
         response shouldBe
-            FailureResponse(HttpStatus.CONFLICT, ClientErrorCode("oh.dear"), "a bid already exists")
+            FailureResponse(
+                HttpStatus.CONFLICT,
+                """{"errorCode":"oh.dear","errorMessage":"a bid already exists"}""",
+                ClientErrorCode("oh.dear"),
+                "a bid already exists"
+            )
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
@@ -143,7 +148,7 @@ class HttpClientTest : AbstractTest() {
         server.enqueue(successResponse)
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe SuccessResponse(200, null)
+        response shouldBe SuccessResponse(200, Unit)
 
         server.requestCount shouldBe 2
     }
@@ -157,7 +162,7 @@ class HttpClientTest : AbstractTest() {
         server.enqueue(MockResponse().setResponseCode(HttpStatus.NO_CONTENT))
 
         val response = client.doCall<Unit>(HttpMethod.POST, "/test-endpoint", request)
-        response shouldBe SuccessResponse(HttpStatus.NO_CONTENT, null)
+        response shouldBe SuccessResponse(HttpStatus.NO_CONTENT, Unit)
 
         val capturedRequest = server.takeRequest()
         capturedRequest.method shouldBe "POST"

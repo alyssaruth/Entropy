@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.SwingUtilities
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
-import kong.unirest.json.JSONException
-import kong.unirest.json.JSONObject
 import logging.errorObject
 import logging.findLogField
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -43,32 +43,34 @@ class UpdateManagerTest : AbstractTest() {
     @BeforeEach
     fun beforeEach() {
         Unirest.config().reset()
-        Unirest.config().connectTimeout(2000)
         Unirest.config().socketTimeout(2000)
     }
 
     /** Communication */
     @Test
-    @Tag("integration")
     fun `Should log out an unexpected HTTP response, along with the full JSON payload`() {
-        val errorMessage =
-            queryLatestReleastJsonExpectingError("https://api.github.com/repos/alyssaburlton/foo")
-        errorMessage shouldBe "Failed to check for updates (unable to connect)."
+        val server = MockWebServer()
+        server.start()
+        server.enqueue(MockResponse().setResponseCode(404).setBody("Not Found"))
+
+        val errorMessage = queryLatestReleastJsonExpectingError(server.url("root").toString())
+        errorMessage shouldBe "Failed to check for updates (unexpected error)."
 
         val log = verifyLog("updateError", Level.ERROR)
-        log.message shouldBe "Received non-success HTTP status: 404 - Not Found"
-        log.findLogField("responseBody").toString() shouldContain """"message":"Not Found""""
+        log.message shouldContain "Received non-success HTTP status: 404"
+        log.findLogField("responseBody").toString() shouldContain "Not Found"
 
         findWindow<LoadingDialog>()!!.shouldNotBeVisible()
     }
 
     @Test
-    @Tag("integration")
     fun `Should catch and log any exceptions communicating over HTTPS`() {
-        Unirest.config().connectTimeout(100)
         Unirest.config().socketTimeout(100)
 
-        val errorMessage = queryLatestReleastJsonExpectingError("https://ww.blargh.zcss.w")
+        val server = MockWebServer()
+        server.start()
+
+        val errorMessage = queryLatestReleastJsonExpectingError(server.url("root").toString())
         errorMessage shouldBe "Failed to check for updates (unable to connect)."
 
         val errorLog = verifyLog("updateError", Level.ERROR)
@@ -78,7 +80,7 @@ class UpdateManagerTest : AbstractTest() {
     }
 
     private fun queryLatestReleastJsonExpectingError(repositoryUrl: String): String {
-        val result = runAsync { UpdateManager().queryLatestReleaseJson(repositoryUrl) }
+        val result = runAsync { UpdateManager().queryLatestRelease(repositoryUrl) }
 
         val error = getErrorDialog()
         val errorText = error.getDialogMessage()
@@ -95,11 +97,10 @@ class UpdateManagerTest : AbstractTest() {
     @Tag("integration")
     fun `Should retrieve a valid latest asset from the remote repo`() {
         val responseJson =
-            UpdateManager().queryLatestReleaseJson(OnlineConstants.ENTROPY_REPOSITORY_URL)!!
+            UpdateManager().queryLatestRelease(OnlineConstants.ENTROPY_REPOSITORY_URL)!!
 
-        val version = responseJson.getString("tag_name")
-        version.shouldStartWith("v")
-        responseJson.getJSONArray("assets").length() shouldBeGreaterThan 0
+        responseJson.tag_name.shouldStartWith("v")
+        responseJson.assets.size shouldBeGreaterThan 0
     }
 
     /** Parsing */
@@ -117,45 +118,35 @@ class UpdateManagerTest : AbstractTest() {
                     ]
                 }"""
 
-        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))!!
-        metadata.version shouldBe "foo"
-        metadata.assetId shouldBe 123456
-        metadata.fileName shouldBe "Dartzee_v_foo.jar"
-        metadata.size shouldBe 1
+        val server = MockWebServer()
+        server.start()
+        server.enqueue(MockResponse().setBody(json))
+
+        val expectedMetadata =
+            UpdateMetadata("foo", listOf(ReleaseAsset(123456L, "Dartzee_v_foo.jar", 1)))
+
+        val metadata = UpdateManager().queryLatestRelease(server.url("root").toString())
+        metadata shouldBe expectedMetadata
     }
 
     @Test
     fun `Should log an error if no tag_name is present`() {
         val json = "{\"other_tag\":\"foo\"}"
-        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
-        metadata shouldBe null
+        val server = MockWebServer()
+        server.start()
+        server.enqueue(MockResponse().setBody(json))
 
-        val log = verifyLog("parseError", Level.ERROR)
-        log.errorObject().shouldBeInstanceOf<JSONException>()
-        log.findLogField("responseBody").toString() shouldBe json
-    }
+        val errorMessage = queryLatestReleastJsonExpectingError(server.url("root").toString())
+        errorMessage shouldBe "Failed to check for updates (unexpected error)."
 
-    @Test
-    fun `Should log an error if no assets are found`() {
-        val json = """{"assets":[],"tag_name":"foo"}"""
-        val metadata = UpdateManager().parseUpdateMetadata(JSONObject(json))
-        metadata shouldBe null
-
-        val log = verifyLog("parseError", Level.ERROR)
-        log.errorObject().shouldBeInstanceOf<JSONException>()
-        log.findLogField("responseBody").toString() shouldBe json
+        verifyLog("responseParseError", Level.ERROR)
     }
 
     /** Should update? */
     @Test
     fun `Should not proceed with the update if the versions match`() {
-        val metadata =
-            UpdateMetadata(
-                OnlineConstants.ENTROPY_VERSION_NUMBER,
-                123456,
-                "EntropyLive_x_y.jar",
-                100,
-            )
+        val asset = ReleaseAsset(123456, "EntropyLive_x_y.jar", 100)
+        val metadata = UpdateMetadata(OnlineConstants.ENTROPY_VERSION_NUMBER, listOf(asset))
 
         UpdateManager().shouldUpdate(OnlineConstants.ENTROPY_VERSION_NUMBER, metadata) shouldBe
             false
@@ -167,7 +158,8 @@ class UpdateManagerTest : AbstractTest() {
     fun `Should show an info and not proceed to auto update if OS is not windows`() {
         ClientUtil.operatingSystem = "foo"
 
-        val metadata = UpdateMetadata("v100", 123456, "Dartzee_x_y.jar", 100)
+        val asset = ReleaseAsset(123456, "EntropyLive_x_y.jar", 100)
+        val metadata = UpdateMetadata("v100", listOf(asset))
         shouldUpdateAsync(OnlineConstants.ENTROPY_VERSION_NUMBER, metadata).get() shouldBe false
 
         val log = verifyLog("updateAvailable")
@@ -183,7 +175,8 @@ class UpdateManagerTest : AbstractTest() {
     fun `Should not proceed with the update if user selects 'No'`() {
         ClientUtil.operatingSystem = "windows"
 
-        val metadata = UpdateMetadata("foo", 123456, "Dartzee_x_y.jar", 100)
+        val asset = ReleaseAsset(123456, "EntropyLive_x_y.jar", 100)
+        val metadata = UpdateMetadata("foo", listOf(asset))
         val result = shouldUpdateAsync("bar", metadata)
 
         val question = getQuestionDialog()
@@ -199,7 +192,8 @@ class UpdateManagerTest : AbstractTest() {
     fun `Should proceed with the update if user selects 'Yes'`() {
         ClientUtil.operatingSystem = "windows"
 
-        val metadata = UpdateMetadata("foo", 123456, "Dartzee_x_y.jar", 100)
+        val asset = ReleaseAsset(123456, "EntropyLive_x_y.jar", 100)
+        val metadata = UpdateMetadata("foo", listOf(asset))
         val result = shouldUpdateAsync("bar", metadata)
 
         val question = getQuestionDialog()

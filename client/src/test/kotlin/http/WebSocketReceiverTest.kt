@@ -36,6 +36,8 @@ class WebSocketReceiverTest : AbstractClientTest() {
 
         val receiver = WebSocketReceiver()
         val lobbyMessage = LobbyMessage(emptyList(), listOf(OnlineUser("Alyssa", 5)))
+        val thing = CoreGlobals.jsonMapper.writeValueAsString(lobbyMessage)
+        println(thing)
         receiver.receiveMessage(CoreGlobals.jsonMapper.writeValueAsString(lobbyMessage))
 
         verify { lobby.syncLobby(lobbyMessage) }
