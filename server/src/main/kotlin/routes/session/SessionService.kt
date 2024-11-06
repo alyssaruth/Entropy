@@ -13,7 +13,6 @@ import java.util.*
 import `object`.Room
 import routes.ClientException
 import store.Store
-import util.ColourGenerator
 import util.OnlineConstants
 import util.ServerGlobals
 import utils.Achievement
@@ -78,9 +77,6 @@ class SessionService(
     fun finishSession(session: Session) {
         val usc = uscStore.get(session.ip)
         usc.destroyNotificationSockets()
-
-        // Need to remove them from rooms too
-        ColourGenerator.freeUpColour(usc.colour)
 
         val rooms: List<Room> = ServerGlobals.server.getRooms()
         rooms.forEach { room ->

@@ -33,6 +33,6 @@ object ServerGlobals {
 
     val server: EntropyServer = EntropyServer()
 
-    @JvmField val lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore)
-    @JvmField val sessionService = SessionService(sessionStore, uscStore)
+    @JvmField var lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore)
+    @JvmField var sessionService = SessionService(sessionStore, uscStore)
 }

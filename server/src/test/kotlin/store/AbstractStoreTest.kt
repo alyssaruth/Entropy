@@ -82,4 +82,17 @@ abstract class AbstractStoreTest<K, T : IHasId<K>> {
         store.find(makeIdA()) shouldBe makeItemA()
         store.find(makeIdB()) shouldBe null
     }
+
+    @Test
+    fun `Should be able to count items`() {
+        val store = makeStore()
+        store.count() shouldBe 0
+
+        store.put(makeItemA())
+        store.put(makeItemB())
+        store.count() shouldBe 2
+
+        store.remove(makeIdA())
+        store.count() shouldBe 1
+    }
 }

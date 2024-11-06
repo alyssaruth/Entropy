@@ -140,6 +140,18 @@ class SessionApiTest : AbstractClientTest() {
         }
     }
 
+    @Test
+    fun `should send a finish session request and clear the session id`() {
+        ClientGlobals.httpClient.sessionId = UUID.randomUUID()
+
+        val httpClient = mockk<HttpClient>(relaxed = true)
+        SessionApi(httpClient).finishSession()
+
+        verify { httpClient.doCall<Unit>(HttpMethod.POST, Routes.FINISH_SESSION) }
+
+        ClientGlobals.httpClient.sessionId shouldBe null
+    }
+
     private fun mockHttpClient(response: ApiResponse<BeginSessionResponse>): HttpClient {
         val httpClient = mockk<HttpClient>(relaxed = true)
         every {

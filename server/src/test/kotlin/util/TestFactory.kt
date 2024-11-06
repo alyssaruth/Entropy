@@ -1,6 +1,7 @@
 package util
 
 import auth.Session
+import auth.UserConnection
 import game.GameMode
 import game.GameSettings
 import java.util.*
@@ -10,8 +11,10 @@ fun makeSession(
     name: String = "Alyssa",
     ip: String = "1.2.3.4",
     achievementCount: Int = 4,
-    apiVersion: Int = OnlineConstants.API_VERSION
+    apiVersion: Int = OnlineConstants.API_VERSION,
 ) = Session(id, name, ip, achievementCount, apiVersion)
+
+fun makeUserConnection(session: Session) = UserConnection(session.ip, session.name)
 
 fun makeGameSettings(
     mode: GameMode = GameMode.Entropy,
@@ -21,7 +24,7 @@ fun makeGameSettings(
     includeStars: Boolean = false,
     negativeJacks: Boolean = false,
     cardReveal: Boolean = false,
-    illegalAllowed: Boolean = true
+    illegalAllowed: Boolean = true,
 ) =
     GameSettings(
         mode,
@@ -31,5 +34,5 @@ fun makeGameSettings(
         includeStars,
         negativeJacks,
         cardReveal,
-        illegalAllowed
+        illegalAllowed,
     )
