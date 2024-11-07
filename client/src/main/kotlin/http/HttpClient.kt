@@ -1,7 +1,7 @@
 package http
 
 import ch.qos.logback.classic.Level
-import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.core.JsonProcessingException
 import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
@@ -78,7 +78,7 @@ class HttpClient(private val baseUrl: String) {
             try {
                 val body = parseBody(response, responseType)
                 SuccessResponse(response.status, body)
-            } catch (e: JsonMappingException) {
+            } catch (e: JsonProcessingException) {
                 logger.error(
                     "responseParseError",
                     "Failed to parse response",
