@@ -8,6 +8,7 @@ import io.kotest.matchers.maps.shouldContainKeys
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
 import java.util.UUID
 import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
@@ -34,7 +35,7 @@ class HttpClientTest : AbstractTest() {
         val (client, server) = setUpWebServer()
         server.enqueue(MockResponse().setResponseCode(HttpStatus.OK))
 
-        client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
 
         val request = server.takeRequest()
         val requestId = request.getHeader("X-Request-ID")
@@ -56,7 +57,7 @@ class HttpClientTest : AbstractTest() {
         val sessionId = UUID.randomUUID()
         client.sessionId = sessionId
 
-        client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
 
         val request = server.takeRequest()
         val sessionIdFromHeader = request.getHeader(CustomHeader.SESSION_ID)
@@ -90,10 +91,12 @@ class HttpClientTest : AbstractTest() {
     @Test
     fun `GET with generic error response`() {
         val (client, server) = setUpWebServer()
-        server.enqueue(MockResponse().setResponseCode(HttpStatus.NOT_FOUND))
+        server.enqueue(
+            MockResponse().setResponseCode(HttpStatus.NOT_FOUND).setBody("I looked everywhere")
+        )
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe FailureResponse(HttpStatus.NOT_FOUND, null, null)
+        response shouldBe FailureResponse(HttpStatus.NOT_FOUND, "I looked everywhere", null, null)
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 404 for GET /test-endpoint"
@@ -113,7 +116,12 @@ class HttpClientTest : AbstractTest() {
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
         response shouldBe
-            FailureResponse(HttpStatus.CONFLICT, ClientErrorCode("oh.dear"), "a bid already exists")
+            FailureResponse(
+                HttpStatus.CONFLICT,
+                """{"errorCode":"oh.dear","errorMessage":"a bid already exists"}""",
+                ClientErrorCode("oh.dear"),
+                "a bid already exists"
+            )
 
         val responseLog = verifyLog("http.response", Level.ERROR)
         responseLog.message shouldBe "Received 409 for GET /test-endpoint"
@@ -143,7 +151,7 @@ class HttpClientTest : AbstractTest() {
         server.enqueue(successResponse)
 
         val response = client.doCall<Unit>(HttpMethod.GET, "/test-endpoint")
-        response shouldBe SuccessResponse(200, null)
+        response shouldBe SuccessResponse(200, Unit)
 
         server.requestCount shouldBe 2
     }
@@ -157,7 +165,7 @@ class HttpClientTest : AbstractTest() {
         server.enqueue(MockResponse().setResponseCode(HttpStatus.NO_CONTENT))
 
         val response = client.doCall<Unit>(HttpMethod.POST, "/test-endpoint", request)
-        response shouldBe SuccessResponse(HttpStatus.NO_CONTENT, null)
+        response shouldBe SuccessResponse(HttpStatus.NO_CONTENT, Unit)
 
         val capturedRequest = server.takeRequest()
         capturedRequest.method shouldBe "POST"
@@ -175,6 +183,24 @@ class HttpClientTest : AbstractTest() {
         responseLog.findLogField(KEY_REQUEST_ID) shouldBe requestLog.findLogField(KEY_REQUEST_ID)
         responseLog.findLogField("responseCode") shouldBe 204
         responseLog.findLogField("responseBody") shouldBe ""
+    }
+
+    @Test
+    fun `Should handle JSON parse errors`() {
+        val (client, server) = setUpWebServer()
+        val responseBody = """{
+            "fieldOne": "foo",
+        }"""
+
+        server.enqueue(MockResponse().setBody(responseBody))
+
+        val response = client.doCall<TestApiResponse>(HttpMethod.GET, "/test-endpoint")
+        response.shouldBeInstanceOf<FailureResponse<TestApiResponse>>()
+        response.statusCode shouldBe 200
+        response.body shouldBe responseBody
+        response.errorCode shouldBe JSON_PARSE_ERROR
+
+        verifyLog("responseParseError", Level.ERROR)
     }
 
     @Test

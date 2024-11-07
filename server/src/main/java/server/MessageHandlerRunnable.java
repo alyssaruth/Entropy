@@ -209,28 +209,10 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		String id = root.getAttribute("RoomId");
 		String username = root.getAttribute("Username");
 		String name = root.getNodeName();
-		
-		String usernameForThisConnection = usc.getName();
-		if (usernameForThisConnection == null
-		  || !usernameForThisConnection.equals(username))
-		{
-			Debug.stackTrace("Failed username check for IP " + ipAddress + ": client passed up " + username
-						   + " but connected as " + usernameForThisConnection);
-			Debug.appendWithoutDate("Message passed up: " + messageStr);
 
-			server.removeFromUsersOnline(usc);
-
-			return XmlBuilderServer.getKickOffResponse(usernameForThisConnection, REMOVAL_REASON_FAILED_USERNAME_CHECK);
-		}
-		
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_DISCONNECT_REQUEST))
-		{
-			server.removeFromUsersOnline(usc);
-			return null;
-		}
-		else if (name.equals(ROOT_TAG_NEW_CHAT))
+		if (name.equals(ROOT_TAG_NEW_CHAT))
 		{
 			String newMessage = root.getAttribute("MessageText");
 			String colour = root.getAttribute("Colour");

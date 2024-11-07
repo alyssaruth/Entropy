@@ -1,24 +1,24 @@
 package http
 
 import ch.qos.logback.classic.Level
+import com.fasterxml.jackson.core.JsonProcessingException
 import http.dto.ClientErrorResponse
 import java.util.*
 import kong.unirest.HttpMethod
 import kong.unirest.HttpRequest
 import kong.unirest.HttpRequestWithBody
 import kong.unirest.HttpResponse
-import kong.unirest.JsonObjectMapper
 import kong.unirest.Unirest
 import kong.unirest.UnirestException
 import logging.KEY_REQUEST_ID
 import org.apache.http.HttpHeaders
+import utils.CoreGlobals.jsonMapper
 import utils.CoreGlobals.logger
 
 class HttpClient(private val baseUrl: String) {
     var sessionId: UUID? = null
-    private val jsonObjectMapper = JsonObjectMapper()
 
-    inline fun <reified T : Any?> doCall(
+    inline fun <reified T : Any> doCall(
         method: HttpMethod,
         route: String,
         payload: Any? = null,
@@ -26,14 +26,14 @@ class HttpClient(private val baseUrl: String) {
         return doCall(method, route, payload, T::class.java)
     }
 
-    fun <T> doCall(
+    fun <T : Any> doCall(
         method: HttpMethod,
         route: String,
         payload: Any? = null,
-        responseType: Class<T>?,
+        responseType: Class<T>,
     ): ApiResponse<T> {
         val requestId = UUID.randomUUID()
-        val requestJson = payload?.let { jsonObjectMapper.writeValue(payload) }
+        val requestJson = payload?.let { jsonMapper.writeValueAsString(payload) }
 
         logger.info(
             "http.request",
@@ -65,27 +65,52 @@ class HttpClient(private val baseUrl: String) {
     private fun HttpRequest<*>.addSessionId() =
         sessionId?.let { id -> header(CustomHeader.SESSION_ID, id.toString()) } ?: this
 
-    private fun <T : Any?> handleResponse(
+    private fun <T : Any> handleResponse(
         response: HttpResponse<String>,
         requestId: UUID,
         route: String,
         method: HttpMethod,
         requestJson: String?,
-        responseType: Class<T>?,
+        responseType: Class<T>,
     ): ApiResponse<T> =
         if (response.isSuccess) {
             logResponse(Level.INFO, requestId, route, method, requestJson, response)
-            val body = jsonObjectMapper.readValue(response.body, responseType)
-            SuccessResponse(response.status, body)
+            try {
+                val body = parseBody(response, responseType)
+                SuccessResponse(response.status, body)
+            } catch (e: JsonProcessingException) {
+                logger.error(
+                    "responseParseError",
+                    "Failed to parse response",
+                    e,
+                    KEY_REQUEST_ID to requestId,
+                    "requestBody" to requestJson,
+                    "responseCode" to response.status,
+                    "responseBody" to response.body?.toString(),
+                )
+                FailureResponse(response.status, response.body, JSON_PARSE_ERROR, e.message)
+            }
         } else {
             val errorResponse = tryParseErrorResponse(response)
             logResponse(Level.ERROR, requestId, route, method, requestJson, response, errorResponse)
-            FailureResponse(response.status, errorResponse?.errorCode, errorResponse?.errorMessage)
+            FailureResponse(
+                response.status,
+                response.body,
+                errorResponse?.errorCode,
+                errorResponse?.errorMessage
+            )
+        }
+
+    private fun <T : Any> parseBody(response: HttpResponse<String>, responseType: Class<T>): T =
+        if (responseType == Unit::class.java) {
+            Unit as T
+        } else {
+            jsonMapper.readValue(response.body, responseType)
         }
 
     private fun tryParseErrorResponse(response: HttpResponse<String>) =
         try {
-            jsonObjectMapper.readValue(response.body, ClientErrorResponse::class.java)
+            jsonMapper.readValue(response.body, ClientErrorResponse::class.java)
         } catch (e: Exception) {
             null
         }

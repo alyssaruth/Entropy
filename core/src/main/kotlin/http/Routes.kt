@@ -5,4 +5,5 @@ object Routes {
     const val DEV_COMMAND = "/dev-command"
     const val BEGIN_SESSION = "/begin-session"
     const val ACHIEVEMENT_COUNT = "/achievement-count"
+    const val FINISH_SESSION = "/finish-session"
 }

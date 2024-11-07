@@ -15,16 +15,6 @@ public class XmlBuilderClient implements XmlConstants
 		return XmlUtil.factorySimpleMessage(username, ROOT_TAG_HEARTBEAT);
 	}
 	
-	public static Document factoryDisconnectRequest(String username)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_DISCONNECT_REQUEST);
-		rootElement.setAttribute("Username", username);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryNewChatXml(String roomId, String username, String colour, String message)
 	{
 		Document document = XmlUtil.factoryNewDocument();

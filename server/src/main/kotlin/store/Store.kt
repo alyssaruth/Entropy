@@ -15,6 +15,8 @@ interface Store<K, T : IHasId<K>> {
 
     fun putAll(vararg items: T)
 
+    fun count(): Int
+
     fun update(key: K, updater: (T) -> T) {
         val current = get(key)
         put(updater(current))
@@ -41,4 +43,6 @@ abstract class MemoryStore<K, T : IHasId<K>> : Store<K, T> {
     override fun putAll(vararg items: T) {
         items.forEach(::put)
     }
+
+    override fun count() = map.size
 }

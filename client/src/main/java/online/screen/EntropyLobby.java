@@ -6,8 +6,6 @@ import http.dto.OnlineUser;
 import http.dto.RoomSummary;
 import object.RoomTable;
 import online.util.HeartbeatRunnable;
-import online.util.XmlBuilderClient;
-import org.w3c.dom.Document;
 import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static achievement.AchievementUtilKt.getAchievementsEarned;
 import static util.Images.ICON_ONLINE;
 
 public class EntropyLobby extends JFrame
@@ -373,12 +370,7 @@ public class EntropyLobby extends JFrame
 		if (!forceClose)
 		{
 			//Send a disconnect message.
-			Document disconnectRequest = XmlBuilderClient.factoryDisconnectRequest(username);
-			String messageString = XmlUtil.getStringFromDocument(disconnectRequest);
-			
-			MessageSenderParams params = new MessageSenderParams(messageString, 0, 5);
-			params.setExpectResponse(false);
-			MessageUtil.sendMessage(params, true);
+			ClientGlobals.sessionApi.finishSession();
 		}
 		
 		ScreenCache.get(MainScreen.class).maximise();

@@ -10,14 +10,13 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.requiresSession
-import util.ServerGlobals
+import util.ServerGlobals.sessionService
 
 class SessionController {
-    private val sessionService = SessionService(ServerGlobals.sessionStore, ServerGlobals.uscStore)
-
     fun installRoutes(application: Application) {
         application.routing {
             post(Routes.BEGIN_SESSION) { beginSession(call) }
+            post(Routes.FINISH_SESSION) { finishSession(call) }
             post(Routes.ACHIEVEMENT_COUNT) { updateAchievementCount(call) }
         }
     }
@@ -28,6 +27,12 @@ class SessionController {
         val response = sessionService.beginSession(request, ip)
         call.respond(response)
     }
+
+    private suspend fun finishSession(call: ApplicationCall) =
+        requiresSession(call) { session ->
+            sessionService.finishSession(session)
+            call.respond(HttpStatusCode.NoContent)
+        }
 
     private suspend fun updateAchievementCount(call: ApplicationCall) =
         requiresSession(call) { session ->

@@ -10,11 +10,13 @@ import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import io.ktor.http.*
 import java.util.*
+import `object`.Room
 import routes.ClientException
 import store.Store
 import util.OnlineConstants
 import util.ServerGlobals
 import utils.Achievement
+import utils.CoreGlobals.logger
 
 class SessionService(
     private val sessionStore: Store<UUID, Session>,
@@ -70,6 +72,28 @@ class SessionService(
         return if (currentNames.contains(nameToCheck))
             return ensureUnique(requestedName, currentNames, suffix + 1)
         else nameToCheck
+    }
+
+    fun finishSession(session: Session) {
+        val usc = uscStore.get(session.ip)
+        usc.destroyNotificationSockets()
+
+        val rooms: List<Room> = ServerGlobals.server.getRooms()
+        rooms.forEach { room ->
+            room.removeFromObservers(usc.name)
+            room.removePlayer(usc.name, false)
+        }
+
+        uscStore.remove(session.ip)
+        sessionStore.remove(session.id)
+
+        logger.info("finishSession", "Session ended for ${usc.name}")
+
+        if (sessionStore.count() == 0) {
+            ServerGlobals.server.resetLobby()
+        }
+
+        ServerGlobals.lobbyService.lobbyChanged()
     }
 
     fun updateAchievementCount(session: Session, achievementCount: Int) {

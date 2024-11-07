@@ -14,7 +14,9 @@ import testCore.shouldMatchJson
 import util.ApplicationTest
 import util.OnlineConstants
 import util.ServerGlobals.sessionStore
+import util.ServerGlobals.uscStore
 import util.makeSession
+import util.makeUserConnection
 
 class SessionControllerTest : ApplicationTest() {
     @Test
@@ -37,6 +39,27 @@ class SessionControllerTest : ApplicationTest() {
     }
 
     @Test
+    fun `Should reject a finish session call without a session`() = testApplication {
+        val response = client.post(Routes.FINISH_SESSION, ::buildFinishSessionRequest)
+        response.status shouldBe HttpStatusCode.Unauthorized
+    }
+
+    @Test
+    fun `Should be able to finish a session`() = testApplication {
+        val session = makeSession(achievementCount = 4)
+        val usc = makeUserConnection(session)
+        sessionStore.put(session)
+        uscStore.put(usc)
+
+        val response =
+            client.post(Routes.FINISH_SESSION) { buildFinishSessionRequest(this, session.id) }
+        response.status shouldBe HttpStatusCode.NoContent
+
+        sessionStore.count() shouldBe 0
+        uscStore.count() shouldBe 0
+    }
+
+    @Test
     fun `Should reject an update achievement call without a session`() = testApplication {
         val response = client.post(Routes.ACHIEVEMENT_COUNT, ::buildAchievementUpdateRequest)
         response.status shouldBe HttpStatusCode.Unauthorized
@@ -55,6 +78,10 @@ class SessionControllerTest : ApplicationTest() {
 
         val updatedSession = sessionStore.get(session.id)
         updatedSession.achievementCount shouldBe 8
+    }
+
+    private fun buildFinishSessionRequest(builder: HttpRequestBuilder, sessionId: UUID? = null) {
+        sessionId?.let { builder.header(CustomHeader.SESSION_ID, sessionId) }
     }
 
     private fun buildAchievementUpdateRequest(

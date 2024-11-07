@@ -47,7 +47,7 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should handle a response indicating an update is required and check for updates`() {
         ClientGlobals.updateManager = mockk(relaxed = true)
-        val httpClient = mockHttpClient(FailureResponse(422, UPDATE_REQUIRED, "oh no"))
+        val httpClient = mockHttpClient(FailureResponse(422, "", UPDATE_REQUIRED, "oh no"))
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
@@ -65,7 +65,7 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should not check for updates if 'No' is answered`() {
         ClientGlobals.updateManager = mockk(relaxed = true)
-        val httpClient = mockHttpClient(FailureResponse(422, UPDATE_REQUIRED, "oh no"))
+        val httpClient = mockHttpClient(FailureResponse(422, "", UPDATE_REQUIRED, "oh no"))
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
@@ -81,7 +81,9 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should show an error for an unexpected error`() {
         val httpClient =
-            mockHttpClient(FailureResponse(422, ClientErrorCode("bad"), "Internal Server Error"))
+            mockHttpClient(
+                FailureResponse(422, "", ClientErrorCode("bad"), "Internal Server Error")
+            )
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
@@ -138,6 +140,18 @@ class SessionApiTest : AbstractClientTest() {
                 UpdateAchievementCountRequest(8),
             )
         }
+    }
+
+    @Test
+    fun `should send a finish session request and clear the session id`() {
+        ClientGlobals.httpClient.sessionId = UUID.randomUUID()
+
+        val httpClient = mockk<HttpClient>(relaxed = true)
+        SessionApi(httpClient).finishSession()
+
+        verify { httpClient.doCall<Unit>(HttpMethod.POST, Routes.FINISH_SESSION) }
+
+        ClientGlobals.httpClient.sessionId shouldBe null
     }
 
     private fun mockHttpClient(response: ApiResponse<BeginSessionResponse>): HttpClient {
