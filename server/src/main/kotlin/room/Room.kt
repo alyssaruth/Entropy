@@ -15,12 +15,12 @@ import `object`.OnlineMessage
 import `object`.Player
 import server.EntropyServer
 import util.CardsUtil
-import util.Debug
 import util.EntropyUtil
 import util.ServerGlobals
 import util.ServerGlobals.uscStore
 import util.XmlBuilderServer
 import util.XmlConstants
+import utils.CoreGlobals.logger
 
 class Room(
     val name: String,
@@ -32,19 +32,19 @@ class Room(
 
     private val hmPlayerByPlayerNumber = ExtendedConcurrentHashMap<Int, String>()
     private val hmFormerPlayerByPlayerNumber: ConcurrentHashMap<Int, String> = ConcurrentHashMap()
-    val chatHistory: ArrayList<OnlineMessage> = ArrayList()
-    private val currentPlayers: MutableList<String> = ArrayList()
-    private val observers: MutableList<String> = ArrayList()
+    val chatHistory: MutableList<OnlineMessage> = mutableListOf()
+    private val currentPlayers: MutableList<String> = mutableListOf()
+    private val observers: MutableList<String> = mutableListOf()
     private var previousGame: GameWrapper? = null
     private var currentGame: GameWrapper? = null
 
     val isFull: Boolean
         get() = currentPlayers.size == capacity
 
-    val isEmpty: Boolean
+    private val isEmpty: Boolean
         get() = (currentPlayers.isEmpty() && observers.isEmpty())
 
-    fun clearChatIfEmpty() {
+    private fun clearChatIfEmpty() {
         synchronized(this) {
             if (!isEmpty) {
                 return
@@ -55,27 +55,22 @@ class Room(
 
     fun addToCurrentPlayers(username: String, playerNumber: Int): Int {
         synchronized(this) {
-            val existingUsername: String? = hmPlayerByPlayerNumber.get(playerNumber)
+            val existingUsername: String? = hmPlayerByPlayerNumber[playerNumber]
             if (existingUsername != null) {
-                Debug.append(
-                    (username +
-                        " tried to join room " +
-                        name +
-                        " as player " +
-                        playerNumber +
-                        " but the space was taken by " +
-                        existingUsername)
+                logger.info(
+                    "seatTaken",
+                    "$username tried to join $name as player $playerNumber but seat was taken by $existingUsername"
                 )
                 return -1
             }
 
             if (hmPlayerByPlayerNumber.containsValue(username)) {
-                Debug.append(username + " tried to join room " + name + " twice!")
+                logger.info("doubleJoin", "$username tried to join $name twice!")
                 return -1
             }
 
             currentPlayers.add(username)
-            hmPlayerByPlayerNumber.put(playerNumber, username)
+            hmPlayerByPlayerNumber[playerNumber] = username
             observers.remove(username)
 
             notifyAllPlayersOfPlayerChange(username, false)
@@ -85,8 +80,8 @@ class Room(
     }
 
     fun removePlayer(username: String, fireLobbyChanged: Boolean) {
-        for (playerNumber in 0 until capacity) {
-            val user: String? = hmPlayerByPlayerNumber.get(playerNumber)
+        for (playerNumber in 0 ..< capacity) {
+            val user: String? = hmPlayerByPlayerNumber[playerNumber]
             if ((user != null && (username == user))) {
                 hmPlayerByPlayerNumber.remove(playerNumber)
                 hmFormerPlayerByPlayerNumber[playerNumber] = user
@@ -105,8 +100,8 @@ class Room(
 
                 // There is a game in progress
                 if (currentGame!!.gameEndMillis == -1L) {
-                    val bid: LeftBid = LeftBid()
-                    val player: Player =
+                    val bid = LeftBid()
+                    val player =
                         Player(playerNumber, EntropyUtil.getColourForPlayerNumber(playerNumber))
                     player.name = username
                     bid.player = player
@@ -117,7 +112,7 @@ class Room(
                     // Moved this into here as otherwise we set it to 0 incorrectly and a person
                     // ends up with no cards!
                     val details: HandDetails = currentGame!!.currentRoundDetails
-                    val hmHandSizeByPlayerNumber: ConcurrentHashMap<Int, Int> = details.handSizes
+                    val hmHandSizeByPlayerNumber = details.handSizes
                     hmHandSizeByPlayerNumber[playerNumber] = 0
                 }
 
@@ -143,9 +138,9 @@ class Room(
         userToExclude: String?,
         blocking: Boolean
     ) {
-        val usersToNotify: HashSet<String> = allUsersInRoom
+        var usersToNotify = allUsersInRoom
         if (userToExclude != null) {
-            usersToNotify.remove(userToExclude)
+            usersToNotify = usersToNotify.minus(userToExclude)
         }
 
         val uscs: List<UserConnection> = uscStore.getAllForNames(usersToNotify)
@@ -159,12 +154,12 @@ class Room(
 
     private fun finishCurrentGame(winningPlayer: Int) {
         val roundNumber: Int = currentGame!!.roundNumber
-        val winningUsername: String? = hmPlayerByPlayerNumber.get(winningPlayer)
+        val winningUsername: String? = hmPlayerByPlayerNumber[winningPlayer]
         resetCurrentPlayers()
         currentGame!!.winningPlayer = winningPlayer
 
         if (roundNumber > 1) {
-            val om: OnlineMessage = OnlineMessage("black", "$winningUsername won!", "Game")
+            val om = OnlineMessage("black", "$winningUsername won!", "Game")
             addToChatHistoryAndNotifyUsers(om)
         }
 
@@ -178,8 +173,8 @@ class Room(
     @JvmOverloads
     fun resetCurrentPlayers(fireLobbyChanged: Boolean = true) {
         currentPlayers.clear()
-        for (i in 0 until capacity) {
-            val username: String? = hmPlayerByPlayerNumber.get(i)
+        for (i in 0 ..< capacity) {
+            val username: String? = hmPlayerByPlayerNumber[i]
             if (username != null) {
                 currentPlayers.add(username)
             }
@@ -211,36 +206,29 @@ class Room(
     }
 
     fun initialiseGame() {
-        try {
-            val gameId: String = "G" + System.currentTimeMillis()
-            if (currentGame != null) {
-                previousGame = currentGame!!.factoryCopy()
-            }
-
-            currentGame = GameWrapper(gameId)
-
-            val details = HandDetails()
-            val hmHandSizeByPlayerNumber: ExtendedConcurrentHashMap<Int, Int> =
-                ExtendedConcurrentHashMap()
-            for (i in 0 until capacity) {
-                hmHandSizeByPlayerNumber[i] = 5
-            }
-
-            val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> =
-                dealHandsHashMap(hmHandSizeByPlayerNumber)
-
-            details.hands = hmHandByPlayerNumber
-            details.handSizes = hmHandSizeByPlayerNumber
-            currentGame!!.setDetailsForRound(1, details)
-
-            val personToStart: Int = Random().nextInt(capacity)
-
-            val history = BidHistory()
-            history.personToStart = personToStart
-            currentGame!!.setBidHistoryForRound(1, history)
-        } catch (t: Throwable) {
-            Debug.stackTrace(t)
+        val gameId: String = "G" + System.currentTimeMillis()
+        if (currentGame != null) {
+            previousGame = currentGame!!.factoryCopy()
         }
+
+        currentGame = GameWrapper(gameId)
+
+        val details = HandDetails()
+        val hmHandSizeByPlayerNumber = ExtendedConcurrentHashMap<Int, Int>()
+        for (i in 0 ..< capacity) {
+            hmHandSizeByPlayerNumber[i] = 5
+        }
+
+        val hmHandByPlayerNumber = dealHandsHashMap(hmHandSizeByPlayerNumber)
+        details.hands = hmHandByPlayerNumber
+        details.handSizes = hmHandSizeByPlayerNumber
+        currentGame!!.setDetailsForRound(1, details)
+
+        val personToStart: Int = Random().nextInt(capacity)
+
+        val history = BidHistory()
+        history.personToStart = personToStart
+        currentGame!!.setBidHistoryForRound(1, history)
     }
 
     fun handleChallenge(
@@ -250,8 +238,8 @@ class Room(
         challengedNumber: Int,
         bid: Bid
     ) {
-        val game: GameWrapper? = getGameForId(gameId)
-        val details: HandDetails = game!!.getDetailsForRound(roundNumber)
+        val game = getGameForId(gameId)
+        val details: HandDetails = game.getDetailsForRound(roundNumber)
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
         if (bid.isOverbid(hmHandByPlayerNumber, settings.jokerValue)) {
             // bidder loses
@@ -269,8 +257,8 @@ class Room(
         bidderNumber: Int,
         bid: Bid
     ) {
-        val game: GameWrapper? = getGameForId(gameId)
-        val details: HandDetails = game!!.getDetailsForRound(roundNumber)
+        val game = getGameForId(gameId)
+        val details: HandDetails = game.getDetailsForRound(roundNumber)
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
         if (
             bid.isPerfect(
@@ -286,24 +274,22 @@ class Room(
         }
     }
 
-    fun setUpNextRound(losingPlayerNumber: Int) {
+    private fun setUpNextRound(losingPlayerNumber: Int) {
         val currentRoundNumber: Int = currentGame!!.roundNumber
 
         var nextRoundDetails: HandDetails? =
             currentGame!!.getDetailsForRound(currentRoundNumber + 1)
         if (nextRoundDetails != null) {
-            Debug.stackTrace("Trying to set up next round but it's not null. Room $name")
+            logger.error("doubleRound", "Trying to set up next round but it's not null. Room $name")
             return
         }
 
         val currentRoundDetails: HandDetails = currentGame!!.getDetailsForRound(currentRoundNumber)
-        val hmHandSizeByPlayerNumber: ExtendedConcurrentHashMap<Int, Int> =
-            currentRoundDetails.handSizes
-        val handSize: Int? = hmHandSizeByPlayerNumber.get(losingPlayerNumber)
-        val newHandSize: Int = max(0.0, (handSize!! - 1).toDouble()).toInt()
+        val hmHandSizeByPlayerNumber = currentRoundDetails.handSizes
+        val handSize = hmHandSizeByPlayerNumber.getValue(losingPlayerNumber)
+        val newHandSize: Int = max(0, handSize - 1)
 
-        val hmHandSizeByPlayerNumberForNextRound: ExtendedConcurrentHashMap<Int, Int> =
-            hmHandSizeByPlayerNumber.factoryCopy()
+        val hmHandSizeByPlayerNumberForNextRound = hmHandSizeByPlayerNumber.factoryCopy()
         hmHandSizeByPlayerNumberForNextRound[losingPlayerNumber] = newHandSize
 
         val potentialWinner: Int = getWinningPlayer(hmHandSizeByPlayerNumberForNextRound)
@@ -311,15 +297,15 @@ class Room(
             finishCurrentGame(potentialWinner)
         } else {
             nextRoundDetails = HandDetails()
-            nextRoundDetails.setHandSizes(hmHandSizeByPlayerNumberForNextRound)
+            nextRoundDetails.handSizes = hmHandSizeByPlayerNumberForNextRound
 
             val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> =
                 dealHandsHashMap(hmHandSizeByPlayerNumberForNextRound)
 
-            nextRoundDetails.setHands(hmHandByPlayerNumber)
+            nextRoundDetails.hands = hmHandByPlayerNumber
             currentGame!!.setDetailsForRound(currentRoundNumber + 1, nextRoundDetails)
 
-            val history: BidHistory = BidHistory()
+            val history = BidHistory()
             history.personToStart = losingPlayerNumber
             currentGame!!.setBidHistoryForRound(currentRoundNumber + 1, history)
 
@@ -361,83 +347,56 @@ class Room(
     }
 
     private fun getWinningPlayer(hmHandSizeByPlayerNumber: ConcurrentHashMap<Int, Int>): Int {
-        var activePlayers: Int = 0
-        var potentialWinner: Int = 0
+        var activePlayers = 0
+        var potentialWinner = 0
 
-        for (i in 0 until capacity) {
-            val handSize: Int = (hmHandSizeByPlayerNumber.get(i))!!
+        for (i in 0 ..< capacity) {
+            val handSize: Int = hmHandSizeByPlayerNumber.getValue(i)
             if (handSize > 0) {
                 activePlayers++
                 potentialWinner = i
             }
         }
 
-        if (activePlayers > 1) {
-            return -1
+        return if (activePlayers > 1) {
+            -1
         } else {
-            return potentialWinner
+            potentialWinner
         }
     }
 
-    val allUsersInRoom: HashSet<String>
-        /**
-         * Returns a HashSet since it's possible for a player to be present as a player AND an
-         * observer. This occurs if they've left but the game is still going - we keep the reference
-         * as a player so others can't take the seat. They obviously then have the option to join as
-         * an observer.
-         */
-        get() {
-            val ret: ArrayList<String> = getCurrentPlayers()
-            ret.addAll(getObservers())
-
-            val hs: HashSet<String> = HashSet(ret)
-            return hs
-        }
+    /**
+     * Returns a set since it's possible for a player to be present as a player AND an observer.
+     * This occurs if they've left but the game is still going - we keep the reference as a player
+     * so others can't take the seat. They obviously then have the option to join as an observer.
+     */
+    private val allUsersInRoom: Set<String>
+        get() = (currentPlayers + observers).toSet()
 
     val isGameInProgress: Boolean
-        get() {
-            // This no longer works
-            // return currentGame != null;
-            // return currentPlayers.size() == capacity && (waitingForPlayerToSeeResult == null);
-            return currentPlayers.size == capacity
-        }
-
-    fun getCurrentPlayers(): ArrayList<String> {
-        return ArrayList(currentPlayers)
-    }
+        get() = currentPlayers.size == capacity
 
     val currentPlayerCount: Int
-        get() {
-            return currentPlayers.size
-        }
-
-    fun getObservers(): ArrayList<String> {
-        return ArrayList(observers)
-    }
+        get() = currentPlayers.size
 
     val observerCount: Int
-        get() {
-            return observers.size
-        }
+        get() = observers.size
 
-    /** HashMap gets/sets */
     fun getPlayer(playerNumber: Int): String? {
-        return hmPlayerByPlayerNumber.get(playerNumber)
+        return hmPlayerByPlayerNumber[playerNumber]
     }
 
     fun getFormerPlayer(playerNumber: Int): String? {
-        return hmFormerPlayerByPlayerNumber.get(playerNumber)
+        return hmFormerPlayerByPlayerNumber[playerNumber]
     }
 
-    fun getGameForId(gameId: String): GameWrapper? {
-        val currentId: String = currentGame!!.gameId
-        if ((gameId == currentId)) {
-            return currentGame
+    private fun getGameForId(gameId: String): GameWrapper {
+        if (gameId == currentGame?.gameId) {
+            return currentGame!!
         }
 
-        val previousId: String = previousGame!!.gameId
-        if ((gameId == previousId)) {
-            return previousGame
+        if ((gameId == previousGame?.gameId)) {
+            return previousGame!!
         }
 
         throw RuntimeException("Got a null game for room $name and gameId $gameId")
@@ -449,10 +408,10 @@ class Room(
         }
 
         if (previousGame == null) {
-            Debug.append(
-                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null."
+            logger.warn(
+                "staleGameId",
+                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null. Current: ${currentGame?.gameId}"
             )
-            Debug.appendWithoutDate("Current: " + currentGame!!.gameId)
             return currentGame
         }
 
@@ -461,11 +420,11 @@ class Room(
             return currentGame
         }
 
-        Debug.append(
-            "Tried to get next game for gameId $previousGameIdFromClient but this didn't match my previous game."
+        logger.warn(
+            "staleGameId",
+            "Tried to get next game for gameId $previousGameIdFromClient but this did not match. Previous [${previousGame?.gameId}],  Current [${currentGame?.gameId}]"
         )
-        Debug.appendWithoutDate("Previous: " + previousGame!!.gameId)
-        Debug.appendWithoutDate("Current: " + currentGame!!.gameId)
+
         return currentGame
     }
 
@@ -484,15 +443,14 @@ class Room(
         roundNumber: Int,
         newBid: Bid?
     ): Boolean {
-        val game: GameWrapper? = getGameForId(gameId)
+        val game = getGameForId(gameId)
 
-        val history: BidHistory = game!!.getBidHistoryForRound(roundNumber)
+        val history: BidHistory = game.getBidHistoryForRound(roundNumber)
         val added: Boolean = history.addBidForPlayer(playerNumber, newBid)
 
         if (added) {
             // Notify all other capacity
-            val bidNotification: String =
-                XmlBuilderServer.getBidNotification(name, playerNumber, newBid)
+            val bidNotification = XmlBuilderServer.getBidNotification(name, playerNumber, newBid)
             notifyAllUsersViaGameSocket(bidNotification, null, false)
         }
 
@@ -506,13 +464,10 @@ class Room(
 
         chatHistory.add(message)
 
-        val chatMessage: String = XmlBuilderServer.getChatNotification(name, message)
-        val users: HashSet<String> = allUsersInRoom
-        val uscs: List<UserConnection> = uscStore.getAllForNames(users)
+        val chatMessage = XmlBuilderServer.getChatNotification(name, message)
+        val uscs = uscStore.getAllForNames(allUsersInRoom)
         server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false)
     }
 
-    override fun toString(): String {
-        return name
-    }
+    override fun toString() = name
 }
