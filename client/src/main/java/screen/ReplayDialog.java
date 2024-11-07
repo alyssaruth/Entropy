@@ -10,6 +10,8 @@ import java.awt.Panel;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -64,10 +66,10 @@ public class ReplayDialog extends JFrame
 	private boolean opponentTwoEnabled = true;
 	private boolean opponentThreeEnabled = true;
 	
-	private String[] opponentOneHand = new String[5];
-	private String[] playerHand = new String[5];
-	private String[] opponentTwoHand = new String[5];
-	private String[] opponentThreeHand = new String[5];
+	private List<String> opponentOneHand = new ArrayList<>();
+	private List<String> playerHand = new ArrayList<>();
+	private List<String> opponentTwoHand = new ArrayList<>();
+	private List<String> opponentThreeHand = new ArrayList<>();
 	
 	private int jokerValue = 2;
 	private boolean includeMoons = false;
@@ -584,26 +586,26 @@ public class ReplayDialog extends JFrame
 		opponentOneNumberOfCards = replay.getInt(roundNumber + REPLAY_INT_OPPONENT_ONE_NUMBER_OF_CARDS, 0);
 		opponentTwoNumberOfCards = replay.getInt(roundNumber + REPLAY_INT_OPPONENT_TWO_NUMBER_OF_CARDS, 0);
 		opponentThreeNumberOfCards = replay.getInt(roundNumber + REPLAY_INT_OPPONENT_THREE_NUMBER_OF_CARDS, 0);
-		opponentThreeHand = new String[opponentThreeNumberOfCards];
-		opponentTwoHand = new String[opponentTwoNumberOfCards];
-		opponentOneHand = new String[opponentOneNumberOfCards];
-		playerHand = new String[playerNumberOfCards];
+		opponentThreeHand = new ArrayList<>();
+		opponentTwoHand = new ArrayList<>();
+		opponentOneHand = new ArrayList<>();
+		playerHand = new ArrayList<>();
 
 		for (int i = 0; i < playerNumberOfCards; i++)
 		{
-			playerHand[i] = replay.get(roundNumber + REPLAY_STRING_PLAYER_HAND + i, "");
+			playerHand.add(replay.get(roundNumber + REPLAY_STRING_PLAYER_HAND + i, ""));
 		}
 		for (int i = 0; i < opponentOneNumberOfCards; i++)
 		{
-			opponentOneHand[i] = replay.get(roundNumber + REPLAY_STRING_OPPONENT_ONE_HAND + i, "");
+			opponentOneHand.add(replay.get(roundNumber + REPLAY_STRING_OPPONENT_ONE_HAND + i, ""));
 		}
 		for (int i = 0; i < opponentTwoNumberOfCards; i++)
 		{
-			opponentTwoHand[i] = replay.get(roundNumber + REPLAY_STRING_OPPONENT_TWO_HAND + i, "");
+			opponentTwoHand.add(replay.get(roundNumber + REPLAY_STRING_OPPONENT_TWO_HAND + i, ""));
 		}
 		for (int i = 0; i < opponentThreeNumberOfCards; i++)
 		{
-			opponentThreeHand[i] = replay.get(roundNumber + REPLAY_STRING_OPPONENT_THREE_HAND + i, "");
+			opponentThreeHand.add(replay.get(roundNumber + REPLAY_STRING_OPPONENT_THREE_HAND + i, ""));
 		}
 	}
 	
@@ -633,13 +635,13 @@ public class ReplayDialog extends JFrame
 		displayHand(opponentThreeCards, opponentThreeHand, opponentThreeNumberOfCards);
 	}
 	
-	private void displayHand(JLabel[] cardLabels, String hand[], int handSize)
+	private void displayHand(JLabel[] cardLabels, List<String> hand, int handSize)
 	{
 		for (int i = 0; i < 5; i++)
 		{
 			if (i < handSize)
 			{
-				ImageIcon card = GameUtil.getImageForCard(hand[i], deckDirectory, jokerDirectory, numberOfColours);
+				ImageIcon card = GameUtil.getImageForCard(hand.get(i), deckDirectory, jokerDirectory, numberOfColours);
 				cardLabels[i].setIcon(card);
 			}
 			else
@@ -657,21 +659,21 @@ public class ReplayDialog extends JFrame
 		highlightHand(suitCode, opponentThreeHand, opponentThreeCards);
 	}
 	
-	private void highlightHand(int suitCode, String[] hand, JLabel[] cards)
+	private void highlightHand(int suitCode, List<String> hand, JLabel[] cards)
 	{
-		int size = hand.length;
+		int size = hand.size();
 		
 		for (int i=0; i<size; i++)
 		{
-			boolean isRelevant = CardsUtil.isRelevant(hand[i], suitCode);
+			boolean isRelevant = CardsUtil.isRelevant(hand.get(i), suitCode);
 			if (!isRelevant)
 			{
-				ImageIcon fadedIcon = GameUtil.getFadedImageForCard(hand[i], deckDirectory);
+				ImageIcon fadedIcon = GameUtil.getFadedImageForCard(hand.get(i), deckDirectory);
 				cards[i].setIcon(fadedIcon);
 			}
 			else
 			{
-				ImageIcon normalIcon = GameUtil.getImageForCard(hand[i], deckDirectory, jokerDirectory, numberOfColours);
+				ImageIcon normalIcon = GameUtil.getImageForCard(hand.get(i), deckDirectory, jokerDirectory, numberOfColours);
 				cards[i].setIcon(normalIcon);
 			}
 		}

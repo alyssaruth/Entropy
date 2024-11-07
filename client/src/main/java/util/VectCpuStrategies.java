@@ -1,6 +1,7 @@
 package util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -57,7 +58,7 @@ public class VectCpuStrategies
 		Random coin = new Random();
 		
 		//Get the variables we're interested in
-		String hand[] = opponent.getHand();
+		List<String> hand = opponent.getHand();
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
 		double totalCards = parms.getTotalNumberOfCards();
 		int jokerValue = parms.getJokerValue();
@@ -116,7 +117,7 @@ public class VectCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			double unseenCards = parms.getTotalNumberOfCards() - hand.length;
+			double unseenCards = parms.getTotalNumberOfCards() - hand.size();
 			
 			double thirdThreshold = Math.floor(totalCards/3);
 			
@@ -181,7 +182,7 @@ public class VectCpuStrategies
 		boolean logging = parms.getLogging();
 		Debug.append("EV strategy for this turn", logging);
 		Random coin = new Random();
-		String hand[] = opponent.getHand();
+		List<String> hand = opponent.getHand();
 		
 		//Parms
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();

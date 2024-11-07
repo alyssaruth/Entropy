@@ -1,6 +1,7 @@
 package object;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 /**
@@ -13,7 +14,7 @@ public class Player
 	private int cardsToSubtract = 0;
 	private boolean enabled = false;
 	private String strategy = null;
-	private String[] hand = null;
+	private List<String> hand = null;
 	private ArrayList<String> revealedCards = new ArrayList<>();
 	
 	private int playerNumber = -1;
@@ -29,7 +30,7 @@ public class Player
 	{
 		for (int i=0; i<numberOfCards; i++)
 		{
-			replay.put(replayStr + i, hand[i]);
+			replay.put(replayStr + i, hand.get(i));
 		}
 	}
 	
@@ -47,11 +48,11 @@ public class Player
 	  String numberOfCardsStr)
 	{
 		numberOfCards = registry.getInt(numberOfCardsStr, 0);
-		hand = new String[numberOfCards];
+		hand = new ArrayList<>();
 		
 		for (int i = 0; i < numberOfCards; i++)
 		{
-			hand[i] = registry.get(handStr + i, "");
+			hand.add(registry.get(handStr + i, ""));
 			
 			String revealedCard = registry.get(revealedCardStr + i, "");
 			if (!revealedCard.isEmpty())
@@ -74,7 +75,7 @@ public class Player
 	
 	public void resetHand()
 	{
-		hand = new String[numberOfCards];
+		hand = new ArrayList<>();
 		revealedCards = new ArrayList<>();
 	}
 	
@@ -99,9 +100,9 @@ public class Player
 	}
 	public boolean handContainsCard(String card)
 	{
-		for (int i=0; i<hand.length; i++)
+		for (int i=0; i<hand.size(); i++)
 		{
-			String handCard = hand[i];
+			String handCard = hand.get(i);
 			if (handCard.equals(card))
 			{
 				return true;
@@ -113,9 +114,9 @@ public class Player
 	public ArrayList<String> getCardsNotOnShow()
 	{
 		ArrayList<String> ret = new ArrayList<>();
-		for (int i=0; i<hand.length; i++)
+		for (int i=0; i<hand.size(); i++)
 		{
-			String card = hand[i];
+			String card = hand.get(i);
 			if (!revealedCards.contains(card))
 			{
 				ret.add(card);
@@ -178,13 +179,13 @@ public class Player
 	{
 		this.strategy = strategy;
 	}
-	public String[] getHand()
+	public List<String> getHand()
 	{
 		return hand;
 	}
-	public void setHand(String[] hand)
+	public void setHand(List<String> hand)
 	{
-		numberOfCards = hand.length;
+		numberOfCards = hand.size();
 		this.hand = hand;
 	}
 	public String getColour()

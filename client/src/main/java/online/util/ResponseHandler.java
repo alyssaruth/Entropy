@@ -386,12 +386,12 @@ public class ResponseHandler implements XmlConstants
 			Element child = (Element)children.item(i);
 			int playerNumber = XmlUtil.getAttributeInt(child, "PlayerNumber");
 			
-			String[] hand = getHandFromElement(child);
+			List<String> hand = getHandFromElement(child);
 			gameRoom.setHand(playerNumber, hand);
 		}
 	}
 	
-	public static String[] getHandFromElement(Element handElement)
+	public static List<String> getHandFromElement(Element handElement)
 	{
 		List<String> cards = new ArrayList<>();
 		
@@ -404,14 +404,7 @@ public class ResponseHandler implements XmlConstants
 			}
 		}
 		
-		int size = cards.size();
-		String[] hand = new String[size];
-		for (int j=0; j<size; j++)
-		{
-			hand[j] = cards.get(j);
-		}
-		
-		return hand;
+		return cards;
 	}
 	
 	private static void handleLeaderboardResponse(Element root)

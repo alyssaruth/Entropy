@@ -10,7 +10,7 @@ import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import io.ktor.http.*
 import java.util.*
-import `object`.Room
+import room.Room
 import routes.ClientException
 import store.Store
 import util.OnlineConstants

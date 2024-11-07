@@ -2,6 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import object.EntropyBid;
@@ -14,7 +15,7 @@ public class MarkStrategySuitWrapper
 	private int bestSuit = -1;
 	private int worstSuit = -1;
 	
-	public MarkStrategySuitWrapper(String[] hand, int jokerValue, boolean includeMoons, boolean includeStars, EntropyBid bid)
+	public MarkStrategySuitWrapper(List<String> hand, int jokerValue, boolean includeMoons, boolean includeStars, EntropyBid bid)
 	{
 		applicableSuits.add(CardsUtil.SUIT_CLUBS);
 		applicableSuits.add(CardsUtil.SUIT_DIAMONDS);

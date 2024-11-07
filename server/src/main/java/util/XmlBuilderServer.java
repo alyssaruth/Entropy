@@ -3,6 +3,7 @@ package util;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import room.Room;
 import server.EntropyServer;
 
 import java.util.List;
@@ -331,10 +332,10 @@ public class XmlBuilderServer implements XmlConstants
 			Element handElement = response.createElement("Hand");
 			handElement.setAttribute("PlayerNumber", "" + i);
 			
-			String[] hand = details.getHand(i);
-			for (int j=0; j<hand.length; j++)
+			List<String> hand = details.getHand(i);
+			for (int j=0; j<hand.size(); j++)
 			{
-				handElement.setAttribute("Card-" + j, hand[j]);
+				handElement.setAttribute("Card-" + j, hand.get(j));
 			}
 			rootElement.appendChild(handElement);
 		}
@@ -446,17 +447,17 @@ public class XmlBuilderServer implements XmlConstants
 		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
-			String[] hand = details.getHand(i);
-			if (hand.length == 0)
+			List<String> hand = details.getHand(i);
+			if (hand.isEmpty())
 			{
 				continue;
 			}
 			
 			Element handElement = response.createElement("Hand");
 			handElement.setAttribute("PlayerNumber", "" + i);
-			for (int j=0; j<hand.length; j++)
+			for (int j=0; j<hand.size(); j++)
 			{
-				handElement.setAttribute("Card-" + j, hand[j]);
+				handElement.setAttribute("Card-" + j, hand.get(j));
 			}
 			rootElement.appendChild(handElement);
 		}

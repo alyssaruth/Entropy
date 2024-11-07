@@ -2,6 +2,7 @@ package object;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
@@ -115,7 +116,7 @@ public class EntropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(String[] handOne, String[] handTwo, String[] handThree, String[] handFour, 
+	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
 							 int jokerValue, boolean includeMoons, boolean includeStars) 
 	{
 		int perfectBidAmount = EntropyUtil.getPerfectBidAmount(handOne, handTwo, handThree, handFour, jokerValue);
@@ -124,14 +125,14 @@ public class EntropyBid extends Bid
 		return bidSuitCode == perfectBidSuitCode && bidAmount == perfectBidAmount;
 	}
 	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue) 
+	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
 	{
 		int total = CardsUtil.countSuit(bidSuitCode, hmHandByPlayerNumber, jokerValue);
 		return bidAmount > total;
 	}
 	
 	@Override
-	public boolean isOverbid(String[] handOne, String[] handTwo, String[] handThree, String[] handFour, int jokerValue) 
+	public boolean isOverbid(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour, int jokerValue)
 	{
 		int total = CardsUtil.countSuit(bidSuitCode, handOne, handTwo, handThree, handFour, jokerValue);
 		return bidAmount > total;

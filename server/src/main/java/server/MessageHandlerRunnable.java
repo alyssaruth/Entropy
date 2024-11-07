@@ -15,12 +15,12 @@ import javax.crypto.SecretKey;
 import auth.UserConnection;
 import http.LegacyConstants;
 import object.NotificationSocket;
-import object.Room;
 import object.ServerRunnable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import room.Room;
 import util.*;
 import utils.CoreGlobals;
 

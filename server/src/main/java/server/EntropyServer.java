@@ -5,9 +5,9 @@ import game.GameMode;
 import game.GameSettings;
 import logging.LoggerUncaughtExceptionHandler;
 import object.OnlineMessage;
-import object.Room;
 import object.ServerRunnable;
 import object.ServerThread;
+import room.Room;
 import util.*;
 
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public final class EntropyServer implements OnlineConstants {
         int size = rooms.size();
         for (int i = 0; i < size; i++) {
             Room room = rooms.get(i);
-            if (room.getIsCopy()) {
+            if (room.isCopy()) {
                 String roomName = room.getName();
                 hmRoomByName.remove(roomName);
                 countRemoved++;
@@ -266,7 +266,7 @@ public final class EntropyServer implements OnlineConstants {
         Room newRoom = registerNewRoom(newRoomName, capacity, settings);
 
         if (newRoom != null) {
-            newRoom.setIsCopy(true);
+            newRoom.setCopy(true);
             ServerGlobals.lobbyService.lobbyChanged();
         }
 

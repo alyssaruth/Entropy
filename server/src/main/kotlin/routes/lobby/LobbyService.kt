@@ -6,7 +6,7 @@ import http.dto.LobbyMessage
 import http.dto.OnlineUser
 import http.dto.RoomSummary
 import java.util.*
-import `object`.Room
+import room.Room
 import server.EntropyServer
 import store.Store
 import store.UserConnectionStore
