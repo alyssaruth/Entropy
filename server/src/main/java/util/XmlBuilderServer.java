@@ -211,7 +211,8 @@ public class XmlBuilderServer implements XmlConstants
 					
 					if (room.isFull())
 					{
-						server.registerCopy(room);
+						var copy = room.makeCopy();
+						server.registerNewRoom(copy);
 					}
 				}
 				else

@@ -26,17 +26,16 @@ class Room(
     val name: String,
     val settings: GameSettings,
     val capacity: Int,
+    val isCopy: Boolean,
     private val server: EntropyServer
 ) {
-    var isCopy: Boolean = false
-
     private val hmPlayerByPlayerNumber = ExtendedConcurrentHashMap<Int, String>()
     private val hmFormerPlayerByPlayerNumber: ConcurrentHashMap<Int, String> = ConcurrentHashMap()
     val chatHistory: MutableList<OnlineMessage> = mutableListOf()
     private val currentPlayers: MutableList<String> = mutableListOf()
     private val observers: MutableList<String> = mutableListOf()
     private var previousGame: GameWrapper? = null
-    private var currentGame: GameWrapper? = null
+    private var currentGame: GameWrapper = initialiseGame()
 
     val isFull: Boolean
         get() = currentPlayers.size == capacity
@@ -153,17 +152,18 @@ class Room(
     }
 
     private fun finishCurrentGame(winningPlayer: Int) {
-        val roundNumber: Int = currentGame!!.roundNumber
+        val roundNumber: Int = currentGame.roundNumber
         val winningUsername: String? = hmPlayerByPlayerNumber[winningPlayer]
         resetCurrentPlayers()
-        currentGame!!.winningPlayer = winningPlayer
+        currentGame.winningPlayer = winningPlayer
 
         if (roundNumber > 1) {
             val om = OnlineMessage("black", "$winningUsername won!", "Game")
             addToChatHistoryAndNotifyUsers(om)
         }
 
-        initialiseGame()
+        previousGame = currentGame.factoryCopy()
+        currentGame = initialiseGame()
 
         // Notify everyone that the game is over now we've finished setting up
         val notification: String = XmlBuilderServer.factoryGameOverNotification(this, winningPlayer)
@@ -205,13 +205,10 @@ class Room(
         clearChatIfEmpty()
     }
 
-    fun initialiseGame() {
+    private fun initialiseGame(): GameWrapper {
         val gameId: String = "G" + System.currentTimeMillis()
-        if (currentGame != null) {
-            previousGame = currentGame!!.factoryCopy()
-        }
 
-        currentGame = GameWrapper(gameId)
+        val newGame = GameWrapper(gameId)
 
         val details = HandDetails()
         val hmHandSizeByPlayerNumber = ExtendedConcurrentHashMap<Int, Int>()
@@ -222,13 +219,15 @@ class Room(
         val hmHandByPlayerNumber = dealHandsHashMap(hmHandSizeByPlayerNumber)
         details.hands = hmHandByPlayerNumber
         details.handSizes = hmHandSizeByPlayerNumber
-        currentGame!!.setDetailsForRound(1, details)
+        newGame.setDetailsForRound(1, details)
 
-        val personToStart: Int = Random().nextInt(capacity)
+        val personToStart = Random().nextInt(capacity)
 
         val history = BidHistory()
         history.personToStart = personToStart
-        currentGame!!.setBidHistoryForRound(1, history)
+        newGame.setBidHistoryForRound(1, history)
+
+        return newGame
     }
 
     fun handleChallenge(
@@ -467,6 +466,10 @@ class Room(
         val chatMessage = XmlBuilderServer.getChatNotification(name, message)
         val uscs = uscStore.getAllForNames(allUsersInRoom)
         server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false)
+    }
+
+    fun makeCopy(): Room {
+        return this
     }
 
     override fun toString() = name

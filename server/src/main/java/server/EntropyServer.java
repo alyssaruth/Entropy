@@ -216,61 +216,25 @@ public final class EntropyServer implements OnlineConstants {
         return room.getChatHistory();
     }
 
-    public Room registerNewRoom(String roomName, int capacity, GameSettings settings) {
-        return registerNewRoom(roomName, settings.getMode(), capacity, settings.getJokerQuantity(), settings.getJokerValue(),
-                settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed(), settings.getNegativeJacks(),
-                settings.getCardReveal());
-    }
-
-    private void registerNewRoom(String roomName, GameMode mode, int players, int jokerQuantity, int jokerValue) {
-        registerNewRoom(roomName, mode, players, jokerQuantity, jokerValue, false, false, false, false, false);
-    }
-
-    private Room registerNewRoom(String roomName, GameMode mode, int players, int jokerQuantity, int jokerValue,
-                                 boolean includeMoons, boolean includeStars, boolean illegalAllowed, boolean negativeJacks,
-                                 boolean cardReveal) {
+    public Room registerNewRoom(Room room) {
         Iterator<String> it = hmRoomByName.keySet().iterator();
         for (; it.hasNext(); ) {
             String id = it.next();
-            Room room = hmRoomByName.get(id);
-
-            String nameToCheck = room.getName();
-            if (nameToCheck.equals(roomName)) {
-                Debug.append("Not creating room " + nameToCheck + " as a room with that name already exists.");
+            Room existingRoom = hmRoomByName.get(id);
+            String nameToCheck = existingRoom.getName();
+            if (nameToCheck.equals(room.getName())) {
+                logger.warn("duplicateRoom", "Not creating room " + nameToCheck + " as a room with that name already exists.");
                 return null;
             }
         }
 
-        GameSettings settings = new GameSettings(mode, jokerQuantity, jokerValue, includeMoons, includeStars,
-                negativeJacks, cardReveal, illegalAllowed);
+        hmRoomByName.put(room.getName(), room);
 
-        Room room = new Room(roomName, settings, players, this);
-        room.initialiseGame();
-        hmRoomByName.put(roomName, room);
-
-        Debug.append("Room created: " + roomName);
-        return room;
-    }
-
-    public Room registerCopy(Room room) {
-        String roomName = room.getName();
-        int capacity = room.getCapacity();
-        GameSettings settings = room.getSettings();
-
-        int index = roomName.indexOf(' ') + 1;
-        String roomNumberStr = roomName.substring(index);
-        int roomNumber = Integer.parseInt(roomNumberStr);
-
-        String newRoomName = roomName.substring(0, index) + (roomNumber + 1);
-
-        Room newRoom = registerNewRoom(newRoomName, capacity, settings);
-
-        if (newRoom != null) {
-            newRoom.setCopy(true);
+        if (room.isCopy()) {
             ServerGlobals.lobbyService.lobbyChanged();
         }
 
-        return newRoom;
+        return room;
     }
 
     public ArrayList<Room> getRooms() {
