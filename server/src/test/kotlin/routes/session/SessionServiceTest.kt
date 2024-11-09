@@ -154,10 +154,10 @@ class SessionServiceTest : AbstractTest() {
 
     @Test
     fun `Should support finishing a session`() {
-        val sessionA = makeSession(ip = "1.2.3.4")
+        val sessionA = makeSession(name = "Alyssa")
         val uscA = makeUserConnection(sessionA)
 
-        val sessionB = makeSession(ip = "5.6.7.8")
+        val sessionB = makeSession(name = "Leah")
         val uscB = makeUserConnection(sessionB)
         val (service, sessionStore, uscStore) = makeService()
         sessionStore.putAll(sessionA, sessionB)
