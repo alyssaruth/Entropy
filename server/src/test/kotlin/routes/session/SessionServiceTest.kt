@@ -136,7 +136,6 @@ class SessionServiceTest : AbstractTest() {
 
         val usc = uscStore.getAll().only()
         usc.name shouldBe "Alyssa"
-        usc.ipAddress shouldBe "1.2.3.4"
     }
 
     @Test

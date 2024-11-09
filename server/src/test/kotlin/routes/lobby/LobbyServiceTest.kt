@@ -57,7 +57,7 @@ class LobbyServiceTest : AbstractTest() {
     fun `Should do nothing if told to exclude the only user`() {
         val server = mockk<EntropyServer>(relaxed = true)
         val (service, _, _, uscStore) = makeService(server = server)
-        val usc = UserConnection("1.2.3.4", "Alyssa")
+        val usc = UserConnection("Alyssa")
         uscStore.put(usc)
         service.lobbyChanged(usc)
 
@@ -68,9 +68,9 @@ class LobbyServiceTest : AbstractTest() {
     fun `Should notify the correct users`() {
         val server = mockk<EntropyServer>(relaxed = true)
         val (service, _, _, uscStore) = makeService(server = server)
-        val uscA = UserConnection("1.2.3.4", "Alyssa")
-        val uscB = UserConnection("5.6.7.8", "Bob")
-        val uscC = UserConnection("0.0.0.0", "Cat")
+        val uscA = UserConnection("Alyssa")
+        val uscB = UserConnection("Bob")
+        val uscC = UserConnection("Cat")
         uscStore.putAll(uscA, uscB, uscC)
 
         service.lobbyChanged(uscA)

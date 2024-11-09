@@ -14,7 +14,7 @@ fun makeSession(
     apiVersion: Int = OnlineConstants.API_VERSION,
 ) = Session(id, name, ip, achievementCount, apiVersion)
 
-fun makeUserConnection(session: Session) = UserConnection(session.ip, session.name)
+fun makeUserConnection(session: Session) = UserConnection(session.name)
 
 fun makeGameSettings(
     mode: GameMode = GameMode.Entropy,

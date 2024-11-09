@@ -31,8 +31,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 	private Socket clientSocket = null;
 	private String messageStr = null;
 	private UserConnection usc = null;
-	private SecretKey symmetricKey = null;
-	private String ipAddress = null;
+	private SecretKey symmetricKey = LegacyConstants.INSTANCE.getSYMMETRIC_KEY();
 	private boolean notificationSocket = false;
 	
 	public MessageHandlerRunnable(EntropyServer server, Socket clientSocket)
@@ -57,25 +56,25 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			osw = new OutputStreamWriter(os, "US-ASCII");
 			
 			clientSocket.setSoTimeout(120 * 1000); //2 minutes
-			initVariablesFromSocket();
 			
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			encryptedMessage = in.readLine();
-
-			//Now get the response
-			Document response = getResponse(encryptedMessage);
+			processMessage(encryptedMessage);
 			
 			//If messageStr is null here, just return out
 			if (messageStr == null)
 			{
 				return;
 			}
-			
+
+			//Now get the response
 			Document message = XmlUtil.getDocumentFromXmlString(messageStr);
 			Element root = message.getDocumentElement();
 			name = root.getNodeName();
 			String username = root.getAttribute("Username");
-			
+			usc = ServerGlobals.INSTANCE.getUscStore().find(username);
+
+			Document response = getResponse();
 			if (notificationSocket)
 			{
 				usc.replaceNotificationSocket(name, new NotificationSocket(clientSocket, os, osw, in));
@@ -138,62 +137,43 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		}
 	}
 	
-	private void initVariablesFromSocket()
-	{
-		InetAddress address = clientSocket.getInetAddress();
-		ipAddress = address.getHostAddress();
-		usc = ServerGlobals.INSTANCE.getUscStore().find(ipAddress);
-		
-		if (usc != null)
-		{
-			symmetricKey = LegacyConstants.INSTANCE.getSYMMETRIC_KEY();
-		}
-	}
-	
 	/**
 	 * Gets the response to be sent to the client. Returns null if there is an error.
 	 */
-	private Document getResponse(String encryptedMessage) throws Throwable
-	{
+	private void processMessage(String encryptedMessage) {
 		Document unencryptedDocument = XmlUtil.getDocumentFromXmlString(encryptedMessage, true);
 		if (unencryptedDocument != null)
 		{
 			//We've been sent an unencrypted XML message. Either this is the client agreeing a new
 			//symmetric key, or else it's someone using an old version of Entropy/sending crap.
 			messageStr = encryptedMessage;
-			return handleUnencryptedMessage(unencryptedDocument);
-		}
-
-		if (symmetricKey == null)
-		{
-			//This client hasn't agreed a symmetric key with us. Stack trace and return null.
-			//Don't blacklist for this. Whilst it shouldn't happen, I can replicate this just by connecting to the
-			//server then hibernating the PC until I've been kicked off. Still stack trace for now.
-			//server.incrementFunctionsReceivedAndHandledForMessage("NO_SYMMETRIC_KEY");
-			//server.addToBlacklist(ipAddress, "NO_SYMMETRIC_KEY");
-			Debug.stackTrace("Received non-XML message from an IP with no symmetric key: " + ipAddress + ". Message: " + encryptedMessage);
-			return null;
+			handleUnencryptedMessage(unencryptedDocument);
 		}
 
 		//Decrypt the message with the symmetric key
 		messageStr = EncryptionUtil.decrypt(encryptedMessage, symmetricKey);
 		if (messageStr == null)
 		{
-			Debug.append("Failed to decrypt message " + encryptedMessage + " from IP " + ipAddress);
+			Debug.append("Failed to decrypt message " + encryptedMessage);
+		}
+	}
+	private Document getResponse() throws Throwable
+	{
+		if (messageStr == null)
+		{
 			return null;
 		}
 		
 		return getResponseForMessage();
 	}
 	
-	private Document handleUnencryptedMessage(Document message)
+	private void handleUnencryptedMessage(Document message)
 	{
 		Element root = message.getDocumentElement();
 		String name = root.getNodeName();
 
 		CoreGlobals.logger.info("unencrypted.message", "Received unencrypted " + name + " message. Probably using out of date version? "
 				  + "Message: " + messageStr);
-		return null;
 	}
 	
 	private Document getResponseForMessage() throws Throwable
