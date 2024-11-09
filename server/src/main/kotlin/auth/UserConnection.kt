@@ -16,8 +16,8 @@ private val ALL_SOCKETS =
         XmlConstants.SOCKET_NAME_LOBBY
     )
 
-data class UserConnection(val ipAddress: String, val name: String) : IHasId<String> {
-    override val id = ipAddress
+data class UserConnection(val name: String) : IHasId<String> {
+    override val id = name
 
     val colour: String = ColourGenerator.generateNextColour()
     var lastActive: Long = -1
@@ -61,7 +61,7 @@ data class UserConnection(val ipAddress: String, val name: String) : IHasId<Stri
         return hmSocketBySocketName[socketType]
     }
 
-    override fun toString() = "$name @ $ipAddress"
+    override fun toString() = name
 
     fun sendNotificationInWorkerPool(
         message: String?,

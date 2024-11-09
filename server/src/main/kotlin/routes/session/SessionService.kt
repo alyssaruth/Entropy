@@ -54,7 +54,7 @@ class SessionService(
             }
 
         // Also populate legacy user connection
-        val usc = UserConnection(ip, name)
+        val usc = UserConnection(name)
         usc.setLastActiveNow()
         uscStore.put(usc)
         ServerGlobals.lobbyService.lobbyChanged(usc)
@@ -75,7 +75,7 @@ class SessionService(
     }
 
     fun finishSession(session: Session) {
-        val usc = uscStore.get(session.ip)
+        val usc = uscStore.get(session.name)
         usc.destroyNotificationSockets()
 
         val rooms: List<Room> = ServerGlobals.server.getRooms()
@@ -84,7 +84,7 @@ class SessionService(
             room.removePlayer(usc.name, false)
         }
 
-        uscStore.remove(session.ip)
+        uscStore.remove(session.name)
         sessionStore.remove(session.id)
 
         logger.info("finishSession", "Session ended for ${usc.name}")
