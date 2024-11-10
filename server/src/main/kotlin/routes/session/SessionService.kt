@@ -78,7 +78,7 @@ class SessionService(
         val usc = uscStore.get(session.name)
         usc.destroyNotificationSockets()
 
-        val rooms: List<Room> = ServerGlobals.server.getRooms()
+        val rooms: List<Room> = ServerGlobals.roomStore.getAll()
         rooms.forEach { room ->
             room.removeFromObservers(usc.name)
             room.removePlayer(usc.name, false)

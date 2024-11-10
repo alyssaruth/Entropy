@@ -4,8 +4,10 @@ import org.junit.jupiter.api.BeforeEach
 import routes.lobby.LobbyService
 import routes.session.SessionService
 import store.MemoryUserConnectionStore
+import store.RoomStore
 import store.SessionStore
 import testCore.AbstractTest
+import util.ServerGlobals.roomStore
 import util.ServerGlobals.sessionStore
 import util.ServerGlobals.uscStore
 
@@ -15,7 +17,9 @@ abstract class ApplicationTest : AbstractTest() {
     fun beforeEach() {
         sessionStore = SessionStore()
         uscStore = MemoryUserConnectionStore()
-        ServerGlobals.lobbyService = LobbyService(ServerGlobals.server, sessionStore, uscStore)
+        roomStore = RoomStore()
+        ServerGlobals.lobbyService =
+            LobbyService(ServerGlobals.server, sessionStore, uscStore, roomStore)
         ServerGlobals.sessionService = SessionService(sessionStore, uscStore)
     }
 }

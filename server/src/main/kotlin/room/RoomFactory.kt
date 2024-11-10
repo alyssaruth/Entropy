@@ -2,11 +2,12 @@ package room
 
 import game.GameMode
 import game.GameSettings
+import java.util.*
 import util.ServerGlobals
 
 object RoomFactory {
     fun registerStarterRooms() {
-        makeStarterRooms().forEach(ServerGlobals.server::registerNewRoom)
+        makeStarterRooms().forEach(ServerGlobals.roomStore::put)
     }
 
     private fun makeStarterRooms(): List<Room> {
@@ -17,7 +18,7 @@ object RoomFactory {
             val capacities = listOf(2, 3, 4)
 
             capacities.flatMap { capacity ->
-                configs.map { Room(elementGenerator.next(), it, capacity) }
+                configs.map { Room(UUID.randomUUID(), elementGenerator.next(), it, capacity) }
             }
         }
     }

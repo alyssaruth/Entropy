@@ -13,6 +13,7 @@ import `object`.HandDetails
 import `object`.LeftBid
 import `object`.OnlineMessage
 import `object`.Player
+import store.IHasId
 import util.CardsUtil
 import util.EntropyUtil
 import util.ServerGlobals
@@ -22,11 +23,12 @@ import util.XmlConstants
 import utils.CoreGlobals.logger
 
 class Room(
+    override val id: UUID,
     private val baseName: String,
     val settings: GameSettings,
     val capacity: Int,
     private val index: Int = 1,
-) {
+) : IHasId<UUID> {
     private val hmPlayerByPlayerNumber = ExtendedConcurrentHashMap<Int, String>()
     private val hmFormerPlayerByPlayerNumber: ConcurrentHashMap<Int, String> = ConcurrentHashMap()
     val chatHistory: MutableList<OnlineMessage> = mutableListOf()
@@ -476,7 +478,7 @@ class Room(
         )
     }
 
-    fun makeCopy() = Room(baseName, settings, capacity, index + 1)
+    fun makeCopy() = Room(UUID.randomUUID(), baseName, settings, capacity, index + 1)
 
     override fun toString() = name
 }

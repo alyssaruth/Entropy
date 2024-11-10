@@ -13,26 +13,6 @@ public class XmlBuilderServer implements XmlConstants
 	//Cached acknowledgements
 	//AJH 28 Feb 2015 - Made these final - they don't change
 	private static final Document ACKNOWLEDGEMENT = XmlUtil.factorySimpleMessage(RESPONSE_TAG_ACKNOWLEDGEMENT);
-
-	private static final int ACHIEVMENTS_TOTAL = 80;
-	
-	public static Document getKickOffResponse(String username, String reason)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-
-		Element rootElement = response.createElement(RESPONSE_TAG_KICK_OFF);
-		rootElement.setAttribute("RemovalReason", reason);
-		
-		if (username != null
-		  && !username.isEmpty())
-		{
-			rootElement.setAttribute("Username", username);
-			Debug.appendBanner("Kicking off " + username + ". Reason: " + reason);
-		}
-		
-		response.appendChild(rootElement);
-		return response;
-	}
 	
 	public static Document getAcknowledgement()
 	{
@@ -211,8 +191,7 @@ public class XmlBuilderServer implements XmlConstants
 					
 					if (room.isFull())
 					{
-						var copy = room.makeCopy();
-						server.registerNewRoom(copy);
+						ServerGlobals.INSTANCE.getRoomStore().addCopy(room);
 					}
 				}
 				else

@@ -33,12 +33,6 @@ public class ResponseHandler implements XmlConstants
 		Element root = response.getDocumentElement();
 		String responseName = root.getNodeName();
 		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
-		
-		if (responseName.equals(RESPONSE_TAG_KICK_OFF))
-		{
-			handleKickOff(root);
-			return;
-		}
 
 		if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
 		{
@@ -102,27 +96,6 @@ public class ResponseHandler implements XmlConstants
 		else
 		{
 			throw new Throwable("Unexpected response.");
-		}
-	}
-	
-	private static void handleKickOff(Element root)
-	{
-		ConnectingDialog dialog = ScreenCache.getConnectingDialog();
-		if (dialog.isVisible())
-		{
-			dialog.dismissDialog();
-			DialogUtil.showErrorLater("Unable to connect to the Entropy server.");
-			return;
-		}
-		
-		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
-		if (lobby.isVisible())
-		{
-			String removalReason = root.getAttribute("RemovalReason");
-			String message = removalReason + "\nEntropyOnline will now exit.";
-			DialogUtil.showErrorLater(message);
-			
-			lobby.exit(true);
 		}
 	}
 	

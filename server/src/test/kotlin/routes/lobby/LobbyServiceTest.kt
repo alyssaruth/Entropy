@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import room.Room
 import server.EntropyServer
 import store.MemoryUserConnectionStore
+import store.RoomStore
 import store.SessionStore
 import store.Store
 import store.UserConnectionStore
@@ -25,18 +26,18 @@ import util.makeSession
 class LobbyServiceTest : AbstractTest() {
     @Test
     fun `getLobby should return rooms and online users`() {
-        val (service, server, sessionStore) = makeService()
+        val (service, _, sessionStore, _, roomStore) = makeService()
 
         val sessionA = makeSession(name = "Alyssa", achievementCount = 4)
         val sessionB = makeSession(name = "Bob", achievementCount = 7)
         sessionStore.putAll(sessionA, sessionB)
 
         val settings = makeGameSettings(includeMoons = true)
-        val roomOne = Room("Carbon", settings, 4)
+        val roomOne = Room(UUID.randomUUID(), "Carbon", settings, 4)
         val roomTwo = roomOne.makeCopy()
 
-        server.registerNewRoom(roomOne)
-        server.registerNewRoom(roomTwo)
+        roomStore.put(roomOne)
+        roomStore.put(roomTwo)
 
         roomOne.addToCurrentPlayers("Alyssa", 0)
         roomTwo.addToObservers("Bob")
@@ -103,11 +104,19 @@ class LobbyServiceTest : AbstractTest() {
         val server: EntropyServer,
         val sessionStore: Store<UUID, Session>,
         val uscStore: UserConnectionStore,
+        val roomStore: RoomStore,
     )
 
     private fun makeService(server: EntropyServer = EntropyServer()): SetupParams {
         val store = SessionStore()
         val uscStore = MemoryUserConnectionStore()
-        return SetupParams(LobbyService(server, store, uscStore), server, store, uscStore)
+        val roomStore = RoomStore()
+        return SetupParams(
+            LobbyService(server, store, uscStore, roomStore),
+            server,
+            store,
+            uscStore,
+            roomStore
+        )
     }
 }

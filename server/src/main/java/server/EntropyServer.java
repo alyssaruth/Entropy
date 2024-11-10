@@ -10,16 +10,13 @@ import room.RoomFactory;
 import util.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static utils.CoreGlobals.logger;
 
 public final class EntropyServer implements OnlineConstants {
     //Caches
-    private ConcurrentHashMap<String, Room> hmRoomByName = new ConcurrentHashMap<>();
     private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
 
     //Seed
@@ -61,26 +58,10 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public void resetLobby() {
-        int countRemoved = 0;
+        ServerGlobals.INSTANCE.getRoomStore().reset();
 
-        List<Room> rooms = getRooms();
-        int size = rooms.size();
-        for (int i = 0; i < size; i++) {
-            Room room = rooms.get(i);
-            if (room.isCopy()) {
-                String roomName = room.getName();
-                hmRoomByName.remove(roomName);
-                countRemoved++;
-            }
-        }
-
-        //Log out if we've actually removed some rooms
-        if (countRemoved > 0) {
-            logger.info("roomsRemoved", "Removed " + countRemoved + " excess rooms");
-        }
-
-        logger.info("clearedMessages", "Cleared lobby messages");
         lobbyMessages.clear();
+        logger.info("clearedMessages", "Cleared lobby messages");
     }
 
     public void addToChatHistory(String id, String message, String colour, String username) {
@@ -90,10 +71,10 @@ public final class EntropyServer implements OnlineConstants {
 
     public void addAdminMessage(String message) {
         OnlineMessage messageObj = new OnlineMessage("black", message, "Admin");
-        Iterator<String> it = hmRoomByName.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String name = it.next();
-            addToChatHistory(name, messageObj);
+
+        var rooms = ServerGlobals.INSTANCE.getRoomStore().getAll();
+        for (Room room :  rooms) {
+            room.addToChatHistoryAndNotifyUsers(messageObj);
         }
 
         addToChatHistory(LOBBY_ID, messageObj);
@@ -107,8 +88,10 @@ public final class EntropyServer implements OnlineConstants {
             String chatMessage = XmlBuilderServer.getChatNotification(name, message);
             sendViaNotificationSocket(usersToNotify, chatMessage, XmlConstants.SOCKET_NAME_CHAT);
         } else {
-            Room room = hmRoomByName.get(name);
-            room.addToChatHistoryAndNotifyUsers(message);
+            Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(name);
+            if (room != null) {
+                room.addToChatHistoryAndNotifyUsers(message);
+            }
         }
     }
 
@@ -149,46 +132,8 @@ public final class EntropyServer implements OnlineConstants {
             return lobbyMessages;
         }
 
-        Room room = hmRoomByName.get(id);
+        Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(id);
         return room.getChatHistory();
-    }
-
-    public Room registerNewRoom(Room room) {
-        Iterator<String> it = hmRoomByName.keySet().iterator();
-        for (; it.hasNext(); ) {
-            String id = it.next();
-            Room existingRoom = hmRoomByName.get(id);
-            String nameToCheck = existingRoom.getName();
-            if (nameToCheck.equals(room.getName())) {
-                logger.warn("duplicateRoom", "Not creating room " + nameToCheck + " as a room with that name already exists.");
-                return null;
-            }
-        }
-
-        hmRoomByName.put(room.getName(), room);
-
-        if (room.isCopy()) {
-            ServerGlobals.lobbyService.lobbyChanged();
-        }
-
-        return room;
-    }
-
-    public ArrayList<Room> getRooms() {
-        ArrayList<Room> list = new ArrayList<>();
-        Iterator<String> it = hmRoomByName.keySet().iterator();
-
-        for (; it.hasNext(); ) {
-            String id = it.next();
-            Room room = hmRoomByName.get(id);
-            list.add(room);
-        }
-
-        return list;
-    }
-
-    public Room getRoomForName(String name) {
-        return hmRoomByName.get(name);
     }
 
     /**
