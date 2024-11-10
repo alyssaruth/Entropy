@@ -1462,6 +1462,7 @@ public abstract class GameRoom extends JFrame
 		MessageUtil.sendMessage(illegal, 0);
 	}
 
+	public String getRoomName() { return roomName; }
 	public int getJokerValue()
 	{
 		return settings.getJokerValue();
