@@ -1,13 +1,12 @@
 package server;
 
 import auth.UserConnection;
-import game.GameMode;
-import game.GameSettings;
 import logging.LoggerUncaughtExceptionHandler;
 import object.OnlineMessage;
 import object.ServerRunnable;
 import object.ServerThread;
 import room.Room;
+import room.RoomFactory;
 import util.*;
 
 import java.util.ArrayList;
@@ -38,75 +37,13 @@ public final class EntropyServer implements OnlineConstants {
     private void onStart() {
         Debug.appendBanner("Start-Up");
 
-        registerDefaultRooms();
+        RoomFactory.INSTANCE.registerStarterRooms();
 
         Debug.append("Starting permanent threads");
 
         startListenerThreads();
 
         Debug.appendBanner("Server is ready - accepting connections");
-    }
-
-    private void registerDefaultRooms() {
-        Debug.append("Creating rooms...");
-
-        //Entropy
-        //2 player
-        registerNewRoom("Potassium 1", GameMode.Entropy, 2, 0, 2);
-        registerNewRoom("Zinc 1", GameMode.Entropy, 2, 2, 2);
-        registerNewRoom("Helium 1", GameMode.Entropy, 2, 4, 3);
-        registerNewRoom("Magnesium 1", GameMode.Entropy, 2, 2, 2, true, true, true, false, false);
-        registerNewRoom("Cobalt 1", GameMode.Entropy, 2, 0, 2, true, true, false, false, false);
-        registerNewRoom("Chlorine 1", GameMode.Entropy, 2, 0, 2, true, true, false, true, false);
-        registerNewRoom("Gold 1", GameMode.Entropy, 2, 0, 2, false, false, true, false, false);
-        registerNewRoom("Lithium 1", GameMode.Entropy, 2, 2, 2, false, false, false, true, true);
-        registerNewRoom("Beryllium 1", GameMode.Entropy, 2, 0, 2, true, true, false, false, true);
-
-        //3 player
-        registerNewRoom("Bromine 1", GameMode.Entropy, 3, 0, 2);
-        registerNewRoom("Argon 1", GameMode.Entropy, 3, 2, 2);
-        registerNewRoom("Hydrogen 1", GameMode.Entropy, 3, 4, 3);
-        registerNewRoom("Zirconium 1", GameMode.Entropy, 3, 2, 2, true, true, true, false, false);
-        registerNewRoom("Calcium 1", GameMode.Entropy, 3, 0, 2, true, true, false, false, false);
-        registerNewRoom("Iron 1", GameMode.Entropy, 3, 2, 2, true, false, false, true, false);
-        registerNewRoom("Palladium 1", GameMode.Entropy, 3, 3, 3, true, true, true, false, true);
-
-        //4 player
-        registerNewRoom("Nickel 1", GameMode.Entropy, 4, 0, 2);
-        registerNewRoom("Sodium 1", GameMode.Entropy, 4, 2, 2);
-        registerNewRoom("Phosphorus 1", GameMode.Entropy, 4, 4, 3);
-        registerNewRoom("Titanium 1", GameMode.Entropy, 4, 0, 2, true, true, false, true, false);
-        registerNewRoom("Gallium 1", GameMode.Entropy, 4, 2, 2, true, true, false, false, true);
-
-        //Vectropy
-        //2 player
-        registerNewRoom("Oxygen 1", GameMode.Vectropy, 2, 0, 2);
-        registerNewRoom("Neon 1", GameMode.Vectropy, 2, 2, 2);
-        registerNewRoom("Copper 1", GameMode.Vectropy, 2, 4, 3);
-        registerNewRoom("Manganese 1", GameMode.Vectropy, 2, 2, 2, true, true, true, false, false);
-        registerNewRoom("Selenium 1", GameMode.Vectropy, 2, 0, 2, true, true, false, false, false);
-        registerNewRoom("Chromium 1", GameMode.Vectropy, 2, 0, 2, true, true, false, true, false);
-        registerNewRoom("Silver 1", GameMode.Vectropy, 2, 0, 2, false, false, true, false, false);
-        registerNewRoom("Antimony 1", GameMode.Vectropy, 2, 2, 2, false, false, false, true, true);
-        registerNewRoom("Tungsten 1", GameMode.Vectropy, 2, 0, 2, true, true, false, false, true);
-
-        //3 player
-        registerNewRoom("Carbon 1", GameMode.Vectropy, 3, 0, 2);
-        registerNewRoom("Silicon 1", GameMode.Vectropy, 3, 2, 2);
-        registerNewRoom("Nitrogen 1", GameMode.Vectropy, 3, 4, 3);
-        registerNewRoom("Sulphur 1", GameMode.Vectropy, 3, 2, 2, true, true, true, false, false);
-        registerNewRoom("Fluorine 1", GameMode.Vectropy, 3, 0, 2, true, true, false, false, false);
-        registerNewRoom("Tin 1", GameMode.Vectropy, 3, 2, 2, true, false, false, true, false);
-        registerNewRoom("Indium 1", GameMode.Vectropy, 3, 3, 3, true, true, true, false, true);
-
-        //4 player
-        registerNewRoom("Iodine 1", GameMode.Vectropy, 4, 0, 2);
-        registerNewRoom("Lead 1", GameMode.Vectropy, 4, 2, 2);
-        registerNewRoom("Uranium 1", GameMode.Vectropy, 4, 4, 3);
-        registerNewRoom("Vanadium 1", GameMode.Vectropy, 4, 0, 2, true, true, false, true, false);
-        registerNewRoom("Xenon 1", GameMode.Vectropy, 4, 2, 2, true, true, false, false, true);
-
-        Debug.append("Finished creating " + hmRoomByName.size() + " rooms");
     }
 
     private void startListenerThreads() {

@@ -13,7 +13,6 @@ import `object`.HandDetails
 import `object`.LeftBid
 import `object`.OnlineMessage
 import `object`.Player
-import server.EntropyServer
 import util.CardsUtil
 import util.EntropyUtil
 import util.ServerGlobals
@@ -23,11 +22,10 @@ import util.XmlConstants
 import utils.CoreGlobals.logger
 
 class Room(
-    val name: String,
+    private val baseName: String,
     val settings: GameSettings,
     val capacity: Int,
-    val isCopy: Boolean,
-    private val server: EntropyServer
+    private val index: Int = 1,
 ) {
     private val hmPlayerByPlayerNumber = ExtendedConcurrentHashMap<Int, String>()
     private val hmFormerPlayerByPlayerNumber: ConcurrentHashMap<Int, String> = ConcurrentHashMap()
@@ -36,6 +34,12 @@ class Room(
     private val observers: MutableList<String> = mutableListOf()
     private var previousGame: GameWrapper? = null
     private var currentGame: GameWrapper = initialiseGame()
+
+    val name: String
+        get() = "$baseName $index"
+
+    val isCopy: Boolean
+        get() = index > 1
 
     val isFull: Boolean
         get() = currentPlayers.size == capacity
@@ -89,28 +93,28 @@ class Room(
                 notifyAllPlayersOfPlayerChange(username, true)
 
                 // The game has not started
-                if (currentGame!!.gameStartMillis == -1L) {
+                if (currentGame.gameStartMillis == -1L) {
                     // Unset the countdown if it's going, reset current capacity and get out of this
                     // madness
-                    currentGame!!.countdownStartMillis = -1
+                    currentGame.countdownStartMillis = -1
                     resetCurrentPlayers(fireLobbyChanged)
                     return
                 }
 
                 // There is a game in progress
-                if (currentGame!!.gameEndMillis == -1L) {
+                if (currentGame.gameEndMillis == -1L) {
                     val bid = LeftBid()
                     val player =
                         Player(playerNumber, EntropyUtil.getColourForPlayerNumber(playerNumber))
                     player.name = username
                     bid.player = player
 
-                    val history: BidHistory = currentGame!!.currentBidHistory
+                    val history: BidHistory = currentGame.currentBidHistory
                     history.addBidForPlayer(playerNumber, bid)
 
                     // Moved this into here as otherwise we set it to 0 incorrectly and a person
                     // ends up with no cards!
-                    val details: HandDetails = currentGame!!.currentRoundDetails
+                    val details: HandDetails = currentGame.currentRoundDetails
                     val hmHandSizeByPlayerNumber = details.handSizes
                     hmHandSizeByPlayerNumber[playerNumber] = 0
                 }
@@ -143,7 +147,7 @@ class Room(
         }
 
         val uscs: List<UserConnection> = uscStore.getAllForNames(usersToNotify)
-        server.sendViaNotificationSocket(
+        ServerGlobals.server.sendViaNotificationSocket(
             uscs,
             notification,
             XmlConstants.SOCKET_NAME_GAME,
@@ -274,16 +278,15 @@ class Room(
     }
 
     private fun setUpNextRound(losingPlayerNumber: Int) {
-        val currentRoundNumber: Int = currentGame!!.roundNumber
+        val currentRoundNumber: Int = currentGame.roundNumber
 
-        var nextRoundDetails: HandDetails? =
-            currentGame!!.getDetailsForRound(currentRoundNumber + 1)
+        var nextRoundDetails: HandDetails? = currentGame.getDetailsForRound(currentRoundNumber + 1)
         if (nextRoundDetails != null) {
             logger.error("doubleRound", "Trying to set up next round but it's not null. Room $name")
             return
         }
 
-        val currentRoundDetails: HandDetails = currentGame!!.getDetailsForRound(currentRoundNumber)
+        val currentRoundDetails: HandDetails = currentGame.getDetailsForRound(currentRoundNumber)
         val hmHandSizeByPlayerNumber = currentRoundDetails.handSizes
         val handSize = hmHandSizeByPlayerNumber.getValue(losingPlayerNumber)
         val newHandSize: Int = max(0, handSize - 1)
@@ -302,13 +305,13 @@ class Room(
                 dealHandsHashMap(hmHandSizeByPlayerNumberForNextRound)
 
             nextRoundDetails.hands = hmHandByPlayerNumber
-            currentGame!!.setDetailsForRound(currentRoundNumber + 1, nextRoundDetails)
+            currentGame.setDetailsForRound(currentRoundNumber + 1, nextRoundDetails)
 
             val history = BidHistory()
             history.personToStart = losingPlayerNumber
-            currentGame!!.setBidHistoryForRound(currentRoundNumber + 1, history)
+            currentGame.setBidHistoryForRound(currentRoundNumber + 1, history)
 
-            currentGame!!.roundNumber = currentRoundNumber + 1
+            currentGame.roundNumber = currentRoundNumber + 1
 
             val newRoundNotification: String =
                 XmlBuilderServer.factoryNewRoundNotification(
@@ -325,7 +328,7 @@ class Room(
     ): ConcurrentHashMap<Int, List<String>> {
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = ConcurrentHashMap()
 
-        val seed: Long = server.generateSeed()
+        val seed: Long = ServerGlobals.server.generateSeed()
         val deck =
             CardsUtil.createAndShuffleDeck(
                 true,
@@ -390,8 +393,8 @@ class Room(
     }
 
     private fun getGameForId(gameId: String): GameWrapper {
-        if (gameId == currentGame?.gameId) {
-            return currentGame!!
+        if (gameId == currentGame.gameId) {
+            return currentGame
         }
 
         if ((gameId == previousGame?.gameId)) {
@@ -401,7 +404,7 @@ class Room(
         throw RuntimeException("Got a null game for room $name and gameId $gameId")
     }
 
-    fun getNextGameForId(previousGameIdFromClient: String): GameWrapper? {
+    fun getNextGameForId(previousGameIdFromClient: String): GameWrapper {
         if (previousGameIdFromClient.isEmpty()) {
             return currentGame
         }
@@ -409,30 +412,30 @@ class Room(
         if (previousGame == null) {
             logger.warn(
                 "staleGameId",
-                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null. Current: ${currentGame?.gameId}"
+                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null. Current: ${currentGame.gameId}"
             )
             return currentGame
         }
 
         val previousGameId: String = previousGame!!.gameId
-        if ((previousGameId == previousGameIdFromClient)) {
+        if (previousGameId == previousGameIdFromClient) {
             return currentGame
         }
 
         logger.warn(
             "staleGameId",
-            "Tried to get next game for gameId $previousGameIdFromClient but this did not match. Previous [${previousGame?.gameId}],  Current [${currentGame?.gameId}]"
+            "Tried to get next game for gameId $previousGameIdFromClient but this did not match. Previous [${previousGame?.gameId}],  Current [${currentGame.gameId}]"
         )
 
         return currentGame
     }
 
     fun getLastBidForPlayer(playerNumber: Int, roundNumber: Int): Bid? {
-        if ((currentGame == null || playerNumber == -1)) {
+        if (playerNumber == -1) {
             return null
         }
 
-        val history: BidHistory = currentGame!!.getBidHistoryForRound(roundNumber)
+        val history: BidHistory = currentGame.getBidHistoryForRound(roundNumber)
         return history.getLastBidForPlayer(playerNumber)
     }
 
@@ -465,12 +468,15 @@ class Room(
 
         val chatMessage = XmlBuilderServer.getChatNotification(name, message)
         val uscs = uscStore.getAllForNames(allUsersInRoom)
-        server.sendViaNotificationSocket(uscs, chatMessage, XmlConstants.SOCKET_NAME_CHAT, false)
+        ServerGlobals.server.sendViaNotificationSocket(
+            uscs,
+            chatMessage,
+            XmlConstants.SOCKET_NAME_CHAT,
+            false
+        )
     }
 
-    fun makeCopy(): Room {
-        return this
-    }
+    fun makeCopy() = Room(baseName, settings, capacity, index + 1)
 
     override fun toString() = name
 }

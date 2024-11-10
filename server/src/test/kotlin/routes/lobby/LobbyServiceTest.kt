@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
+import room.Room
 import server.EntropyServer
 import store.MemoryUserConnectionStore
 import store.SessionStore
@@ -31,10 +32,14 @@ class LobbyServiceTest : AbstractTest() {
         sessionStore.putAll(sessionA, sessionB)
 
         val settings = makeGameSettings(includeMoons = true)
-        val room = server.registerNewRoom("Carbon 1", 4, settings)
-        room.addToCurrentPlayers("Alyssa", 0)
-        val copy = server.registerCopy(room)
-        copy.addToObservers("Bob")
+        val roomOne = Room("Carbon", settings, 4)
+        val roomTwo = roomOne.makeCopy()
+
+        server.registerNewRoom(roomOne)
+        server.registerNewRoom(roomTwo)
+
+        roomOne.addToCurrentPlayers("Alyssa", 0)
+        roomTwo.addToObservers("Bob")
 
         val lobby = service.getLobby()
         lobby.users.shouldContainExactlyInAnyOrder(OnlineUser("Alyssa", 4), OnlineUser("Bob", 7))
