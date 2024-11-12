@@ -10,7 +10,7 @@ import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
 import io.ktor.http.*
 import java.util.*
-import `object`.Room
+import room.Room
 import routes.ClientException
 import store.Store
 import util.OnlineConstants
@@ -78,7 +78,7 @@ class SessionService(
         val usc = uscStore.get(session.name)
         usc.destroyNotificationSockets()
 
-        val rooms: List<Room> = ServerGlobals.server.getRooms()
+        val rooms: List<Room> = ServerGlobals.roomStore.getAll()
         rooms.forEach { room ->
             room.removeFromObservers(usc.name)
             room.removePlayer(usc.name, false)

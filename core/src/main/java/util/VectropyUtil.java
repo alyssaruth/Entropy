@@ -2,6 +2,7 @@ package util;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
@@ -10,17 +11,17 @@ import object.VectropyBid;
 
 public class VectropyUtil 
 {	
-	public static boolean isOverbid(VectropyBid bid, ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue)
+	public static boolean isOverbid(VectropyBid bid, ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
 	{
-		String[] playerHand = hmHandByPlayerNumber.get(0);
-		String[] opponentOneHand = hmHandByPlayerNumber.get(1);
-		String[] opponentTwoHand = hmHandByPlayerNumber.get(2);
-		String[] opponentThreeHand = hmHandByPlayerNumber.get(3);
+		List<String> playerHand = hmHandByPlayerNumber.get(0);
+		List<String> opponentOneHand = hmHandByPlayerNumber.get(1);
+		List<String> opponentTwoHand = hmHandByPlayerNumber.get(2);
+		List<String> opponentThreeHand = hmHandByPlayerNumber.get(3);
 		
 		return isOverbid(bid, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
 	}
 	
-	public static boolean isOverbid(VectropyBid bid, String[] playerHand, String[] opponentOneHand, String[] opponentTwoHand, String[] opponentThreeHand, int jokerValue) 
+	public static boolean isOverbid(VectropyBid bid, List<String> playerHand, List<String> opponentOneHand, List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue)
 	{
 		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
 		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
@@ -37,18 +38,18 @@ public class VectropyUtil
 			|| bid.getStars() > maxStars;
 	}
 	
-	public static String getResult(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue, int suitCode,
+	public static String getResult(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue, int suitCode,
 								   boolean includeMoons, boolean includeStars)
 	{
-		String[] playerHand = hmHandByPlayerNumber.get(0);
-		String[] opponentOneHand = hmHandByPlayerNumber.get(1);
-		String[] opponentTwoHand = hmHandByPlayerNumber.get(2);
-		String[] opponentThreeHand = hmHandByPlayerNumber.get(3);
+		List<String> playerHand = hmHandByPlayerNumber.get(0);
+		List<String> opponentOneHand = hmHandByPlayerNumber.get(1);
+		List<String> opponentTwoHand = hmHandByPlayerNumber.get(2);
+		List<String> opponentThreeHand = hmHandByPlayerNumber.get(3);
 		
 		return getResult(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue, suitCode, includeMoons, includeStars);
 	}
 	
-	public static String getResult(String[] playerHand, String[] opponentOneHand, String[] opponentTwoHand, String[] opponentThreeHand, 
+	public static String getResult(List<String> playerHand, List<String> opponentOneHand, List<String> opponentTwoHand, List<String> opponentThreeHand,
 								   int jokerValue, int suitCode, boolean includeMoons, boolean includeStars)
 	{
 		Preferences prefs = Registry.prefs;
@@ -137,8 +138,8 @@ public class VectropyUtil
 		return ret;
 	}
 	
-	public static double[] getDifferenceVector(VectropyBid bid, String[] hand, int jokerValue, 
-											boolean includeMoons, boolean includeStars)
+	public static double[] getDifferenceVector(VectropyBid bid, List<String> hand, int jokerValue,
+											   boolean includeMoons, boolean includeStars)
 	{
 		int clubsCount = CardsUtil.countClubs(hand, jokerValue) - bid.getClubs();
 		int diamondsCount = CardsUtil.countDiamonds(hand, jokerValue) - bid.getDiamonds();

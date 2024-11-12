@@ -2,6 +2,8 @@ package util;
 
 import object.EntropyBid;
 
+import java.util.List;
+
 
 public class EntropyUtil 
 {	
@@ -14,8 +16,8 @@ public class EntropyUtil
 		return bidNumberFacedWith + 1;
 	}
 
-	public static int getPerfectBidAmount(String[] playerHand, String[] opponentOneHand, 
-			String[] opponentTwoHand, String[] opponentThreeHand, int jokerValue)
+	public static int getPerfectBidAmount(List<String> playerHand, List<String> opponentOneHand,
+			List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue)
 	{
 		int perfectBidAmount = 0;
 		for (int i=0; i<6; i++)
@@ -30,8 +32,8 @@ public class EntropyUtil
 		return perfectBidAmount;
 	}
 
-	public static int getPerfectBidSuitCode(String[] playerHand, String[] opponentOneHand, 
-			String[] opponentTwoHand, String[] opponentThreeHand, int jokerValue, boolean includeStars)
+	public static int getPerfectBidSuitCode(List<String> playerHand, List<String> opponentOneHand,
+											List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue, boolean includeStars)
 	{
 		int diamondsTotal = CardsUtil.countDiamonds(playerHand, jokerValue) 
 				+ CardsUtil.countDiamonds(opponentOneHand, jokerValue) 

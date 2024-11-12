@@ -2,6 +2,7 @@ package object;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
@@ -263,7 +264,7 @@ public class VectropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(String[] handOne, String[] handTwo, String[] handThree, String[] handFour, 
+	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
 							 int jokerValue, boolean includeMoons, boolean includeStars) 
 	{
 		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, handOne, handTwo, handThree, handFour, jokerValue);
@@ -282,14 +283,14 @@ public class VectropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue) 
+	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
 	{
 		return VectropyUtil.isOverbid(this, hmHandByPlayerNumber, jokerValue);
 	}
 	
 	@Override
-	public boolean isOverbid(String[] handOne, String[] handTwo,
-			String[] handThree, String[] handFour, int jokerValue)
+	public boolean isOverbid(List<String> handOne, List<String> handTwo,
+							 List<String> handThree, List<String> handFour, int jokerValue)
 	{
 		return VectropyUtil.isOverbid(this, handOne, handTwo, handThree, handFour, jokerValue);
 	}

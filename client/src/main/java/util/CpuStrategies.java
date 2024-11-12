@@ -4,6 +4,7 @@ import game.GameMode;
 import object.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -270,23 +271,13 @@ public class CpuStrategies
 	/**
 	 * Card reveal helpers
 	 */
-	public static String[] getCombinedArrayOfCardsICanSee(String[] hand, StrategyParms parms)
+	public static List<String> getCombinedArrayOfCardsICanSee(List<String> hand, StrategyParms parms)
 	{
 		ArrayList<String> revealedCards = parms.getCardsOnShowFromOpponents();
-		int size = hand.length + revealedCards.size();
-		
-		String[] ret = new String[size];
-		for (int i=0; i<hand.length; i++)
-		{
-			ret[i] = hand[i];
-		}
-		
-		for (int i=0; i<revealedCards.size(); i++)
-		{
-			ret[hand.length + i] = revealedCards.get(i);
-		}
-		
-		return ret;
+		var result = new ArrayList<String>();
+		result.addAll(hand);
+		result.addAll(revealedCards);
+		return result;
 	}
 	
 	/**

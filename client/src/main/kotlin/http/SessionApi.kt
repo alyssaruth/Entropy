@@ -34,7 +34,7 @@ class SessionApi(private val httpClient: HttpClient) {
     }
 
     fun updateAchievementCount(achievementCount: Int) {
-        httpClient.doCall<UpdateAchievementCountRequest>(
+        httpClient.doCall<Unit>(
             HttpMethod.POST,
             Routes.ACHIEVEMENT_COUNT,
             UpdateAchievementCountRequest(achievementCount),

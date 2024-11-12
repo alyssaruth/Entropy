@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
@@ -60,7 +61,7 @@ public abstract class GameRoom extends JFrame
 	public Bid lastBid = null;
 	
 	private ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber = new ConcurrentHashMap<>();
-	public ConcurrentHashMap<Integer, String[]> hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<Integer, List<String>> hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Integer, Bid> hmBidByPlayerNumber = new ConcurrentHashMap<>();
 	private int personToStartLocal = -1;
 	private int personToStart = -1;
@@ -494,7 +495,7 @@ public abstract class GameRoom extends JFrame
 			newPlayer.setEnabled(true);
 			hmPlayerByAdjustedPlayerNumber.put(adjustedNo, newPlayer);
 			
-			handPanel.initialisePlayer(adjustedNo, username, colour);
+			handPanel.initialisePlayer(adjustedNo, username, colour, 5);
 			handPanel.activateEmptySeats();
 		}
 		else
@@ -679,7 +680,7 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	public void setHand(int playerNumber, String[] hand)
+	public void setHand(int playerNumber, List<String> hand)
 	{
 		int playerNumberAdjusted = adjustForMe(playerNumber);
 		hmHandByAdjustedPlayerNumber.put(playerNumberAdjusted, hand);
@@ -892,7 +893,7 @@ public abstract class GameRoom extends JFrame
 			return;
 		}
 		
-		handPanel.resetPlayers();
+		handPanel.resetPlayers(5);
 		clearScreenAfterGameEnd();
 		
 		int currentSize = hmPlayerByAdjustedPlayerNumber.size();
@@ -970,7 +971,7 @@ public abstract class GameRoom extends JFrame
 		{
 			Map.Entry<Integer, Player> entry = it.next();
 			int playerNumberAdjusted = entry.getKey();
-			String[] hand = hmHandByAdjustedPlayerNumber.get(playerNumberAdjusted);
+			List<String> hand = hmHandByAdjustedPlayerNumber.get(playerNumberAdjusted);
 			
 			Player player = entry.getValue();
 			boolean enabled = hand != null;
@@ -978,7 +979,7 @@ public abstract class GameRoom extends JFrame
 			
 			if (enabled)
 			{
-				player.setNumberOfCards(hand.length);
+				player.setNumberOfCards(hand.size());
 				player.resetHand();
 			}
 			else if (playerNumberAdjusted == playerNumberLocal)
@@ -994,10 +995,10 @@ public abstract class GameRoom extends JFrame
 		
 		for (int i=0; i<MAX_NUMBER_OF_PLAYERS; i++)
 		{
-			String[] hand = hmHandByAdjustedPlayerNumber.get(i);
+			List<String> hand = hmHandByAdjustedPlayerNumber.get(i);
 			if (hand != null)
 			{
-				total += hand.length;
+				total += hand.size();
 			}
 		}
 		
@@ -1112,28 +1113,28 @@ public abstract class GameRoom extends JFrame
 		int opponentTwoNumberOfCards = 0;
 		int opponentThreeNumberOfCards = 0;
 		
-		String[] playerHand = hmHandByAdjustedPlayerNumber.get(ADJUSTED_PLAYER_NUMBER_ME);
+		List<String> playerHand = hmHandByAdjustedPlayerNumber.get(ADJUSTED_PLAYER_NUMBER_ME);
 		if (playerHand != null)
 		{
-			playerNumberOfCards = playerHand.length;
+			playerNumberOfCards = playerHand.size();
 		}
 		
-		String[] opponentOneHand = hmHandByAdjustedPlayerNumber.get(1);
+		List<String> opponentOneHand = hmHandByAdjustedPlayerNumber.get(1);
 		if (opponentOneHand != null)
 		{
-			opponentOneNumberOfCards = opponentOneHand.length;
+			opponentOneNumberOfCards = opponentOneHand.size();
 		}
 		
-		String[] opponentTwoHand = hmHandByAdjustedPlayerNumber.get(2);
+		List<String> opponentTwoHand = hmHandByAdjustedPlayerNumber.get(2);
 		if (opponentTwoHand != null)
 		{
-			opponentTwoNumberOfCards = opponentTwoHand.length;
+			opponentTwoNumberOfCards = opponentTwoHand.size();
 		}
 		
-		String[] opponentThreeHand = hmHandByAdjustedPlayerNumber.get(3);
+		List<String> opponentThreeHand = hmHandByAdjustedPlayerNumber.get(3);
 		if (opponentThreeHand != null)
 		{
-			opponentThreeNumberOfCards = opponentThreeHand.length;
+			opponentThreeNumberOfCards = opponentThreeHand.size();
 		}
 		
 		//save the player hands
@@ -1144,19 +1145,19 @@ public abstract class GameRoom extends JFrame
 
 		for (int i=0; i<playerNumberOfCards; i++)
 		{
-			replay.put(roundNumber + REPLAY_STRING_PLAYER_HAND + i, playerHand[i]);
+			replay.put(roundNumber + REPLAY_STRING_PLAYER_HAND + i, playerHand.get(i));
 		}
 		for (int i=0; i<opponentOneNumberOfCards; i++)
 		{
-			replay.put(roundNumber + REPLAY_STRING_OPPONENT_ONE_HAND + i, opponentOneHand[i]);
+			replay.put(roundNumber + REPLAY_STRING_OPPONENT_ONE_HAND + i, opponentOneHand.get(i));
 		}
 		for (int i=0; i<opponentTwoNumberOfCards; i++)
 		{
-			replay.put(roundNumber + REPLAY_STRING_OPPONENT_TWO_HAND + i, opponentTwoHand[i]);
+			replay.put(roundNumber + REPLAY_STRING_OPPONENT_TWO_HAND + i, opponentTwoHand.get(i));
 		}
 		for (int i=0; i<opponentThreeNumberOfCards; i++)
 		{
-			replay.put(roundNumber + REPLAY_STRING_OPPONENT_THREE_HAND + i, opponentThreeHand[i]);
+			replay.put(roundNumber + REPLAY_STRING_OPPONENT_THREE_HAND + i, opponentThreeHand.get(i));
 		}
 	}
 	
@@ -1461,6 +1462,7 @@ public abstract class GameRoom extends JFrame
 		MessageUtil.sendMessage(illegal, 0);
 	}
 
+	public String getRoomName() { return roomName; }
 	public int getJokerValue()
 	{
 		return settings.getJokerValue();

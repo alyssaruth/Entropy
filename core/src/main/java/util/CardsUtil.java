@@ -53,7 +53,7 @@ public class CardsUtil
 		}
 	}
 
-	public static int countSuit(String hand[], int suit, int jokerValue)
+	public static int countSuit(List<String> hand, int suit, int jokerValue)
 	{
 		int count = 0;
 		if (suit == SUIT_CLUBS)
@@ -158,7 +158,7 @@ public class CardsUtil
 		return list;
 	}
 	
-	public static HashMap<Integer, Double> getEvBySuitHashMapIncludingMyHand(String[] hand, StrategyParms parms)
+	public static HashMap<Integer, Double> getEvBySuitHashMapIncludingMyHand(List<String> hand, StrategyParms parms)
 	{
 		double evClubs = getExpectedValueForSuitIncludingMyHand(hand, SUIT_CLUBS, parms);
 		double evDiamonds = getExpectedValueForSuitIncludingMyHand(hand, SUIT_DIAMONDS, parms);
@@ -178,7 +178,7 @@ public class CardsUtil
 		return hmEvBySuit;
 	}
 
-	private static double getExpectedValueForSuitIncludingMyHand(String[] hand, int suitCode, StrategyParms parms)
+	private static double getExpectedValueForSuitIncludingMyHand(List<String> hand, int suitCode, StrategyParms parms)
 	{
 		double ev = 0;
 		
@@ -191,13 +191,13 @@ public class CardsUtil
 		
 		List<String> deck = createAndShuffleDeck(includeJokers, jokerQuantity, includeMoons, includeStars, negativeJacks);
 		
-		int handSize = hand.length;
+		int handSize = hand.size();
 		int totalCardsNotIncludingMine = parms.getTotalNumberOfCards() - handSize;
 		
 		//go through the deck and take out the cards that we can see
 		for (int i=0; i<handSize; i++)
 		{
-			String handCard = hand[i];
+			String handCard = hand.get(i);
 			int deckSize = deck.size();
 			
 			for (int j=0; j<deckSize; j++)
@@ -216,39 +216,40 @@ public class CardsUtil
 		
 		for (int i=0; i<remainingCards; i++)
 		{
-			String[] cardToCheck = {deck.get(i)};
+			ArrayList<String> cardToCheck = new ArrayList<>();
+			cardToCheck.add(deck.get(i));
 			ev += countSuit(cardToCheck, suitCode, jokerValue);
 		}
 		
 		return countSuit(hand, suitCode, jokerValue) + (ev * totalCardsNotIncludingMine)/remainingCards;
 	}
 
-	public static int countClubs(String[] hand, int jokerValue)
+	public static int countClubs(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("c", hand, jokerValue);
 	}
-	public static int countDiamonds(String[] hand, int jokerValue)
+	public static int countDiamonds(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("d", hand, jokerValue);
 	}
-	public static int countHearts(String[] hand, int jokerValue)
+	public static int countHearts(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("h", hand, jokerValue);
 	}
-	public static int countSpades(String[] hand, int jokerValue)
+	public static int countSpades(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("s", hand, jokerValue);
 	}
-	public static int countMoons(String[] hand, int jokerValue)
+	public static int countMoons(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("m", hand, jokerValue);
 	}
-	public static int countStars(String[] hand, int jokerValue)
+	public static int countStars(List<String> hand, int jokerValue)
 	{
 		return actuallyCountSuit("x", hand, jokerValue);
 	}
 	
-	private static int actuallyCountSuit(String suit, String[] hand, int jokerValue)
+	private static int actuallyCountSuit(String suit, List<String> hand, int jokerValue)
 	{
 		if (hand == null)
 		{
@@ -256,25 +257,25 @@ public class CardsUtil
 		}
 		
 		int count = 0;
-		for (int i=0; i<hand.length; i++)
+		for (int i=0; i<hand.size(); i++)
 		{
-			if (hand[i].equals("A" + suit))
+			if (hand.get(i).equals("A" + suit))
 			{
 				count += 2;
 			}
-			else if (hand[i].contains("A"))
+			else if (hand.get(i).contains("A"))
 			{
 				count++;
 			}
-			else if (hand[i].startsWith("Jo"))
+			else if (hand.get(i).startsWith("Jo"))
 			{
 				count += jokerValue;
 			}
-			else if (hand[i].equals("-J" + suit))
+			else if (hand.get(i).equals("-J" + suit))
 			{
 				count--;
 			}
-			else if (hand[i].contains(suit))
+			else if (hand.get(i).contains(suit))
 			{
 				count++;
 			}
@@ -282,8 +283,8 @@ public class CardsUtil
 		return count;
 	}
 
-	public static int countSuit(int suitCode, String[] playerHand, String[] opponentOneHand, 
-			String[] opponentTwoHand, String[] opponentThreeHand, int jokerValue)
+	public static int countSuit(int suitCode, List<String> playerHand, List<String> opponentOneHand,
+			List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue)
 	{
 		return countSuit(playerHand, suitCode, jokerValue) 
 			+ countSuit(opponentOneHand, suitCode, jokerValue)
@@ -291,12 +292,12 @@ public class CardsUtil
 			+ countSuit(opponentThreeHand, suitCode, jokerValue);
 	}
 	
-	public static int countSuit(int suitCode, ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue)
+	public static int countSuit(int suitCode, ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
 	{
 		int total = 0;
 		for (int i=0; i<4; i++)
 		{
-			String[] hand = hmHandByPlayerNumber.get(i);
+			List<String> hand = hmHandByPlayerNumber.get(i);
 			if (hand != null)
 			{
 				total += countSuit(hand, suitCode, jokerValue);
@@ -421,12 +422,12 @@ public class CardsUtil
 		return suits;
 	}
 	
-	public static boolean containsNonJoker(String[] cards)
+	public static boolean containsNonJoker(List<String> cards)
 	{
-		int size = cards.length;
+		int size = cards.size();
 		for (int i=0; i<size; i++)
 		{
-			String card = cards[i];
+			String card = cards.get(i);
 			if (!card.contains("Jo"))
 			{
 				return true;
@@ -436,9 +437,9 @@ public class CardsUtil
 		return false;
 	}
 	
-	public static String getHandStr(String[] hand)
+	public static String getHandStr(List<String> hand)
 	{
-		int length = hand.length;
+		int length = hand.size();
 		String handStr = "[";
 		for (int i=0; i<length; i++)
 		{
@@ -447,7 +448,7 @@ public class CardsUtil
 				handStr += ", ";
 			}
 			
-			handStr += hand[i];
+			handStr += hand.get(i);
 		}
 		
 		handStr += "]";

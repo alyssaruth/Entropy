@@ -1,6 +1,7 @@
 package screen;
 
 import java.awt.BorderLayout;
+import java.util.List;
 
 import game.GameMode;
 import object.EntropyAchievementsTracker;
@@ -119,10 +120,10 @@ public class EntropyScreen extends GameScreen
 		else if (command.equals("perfectbid"))
 		{
 			cheatUsed = true;
-			String[] playerHand = player.getHand();
-			String[] opponentOneHand = opponentOne.getHand();
-			String[] opponentTwoHand = opponentTwo.getHand();
-			String[] opponentThreeHand = opponentThree.getHand();
+			List<String> playerHand = player.getHand();
+			List<String> opponentOneHand = opponentOne.getHand();
+			List<String> opponentTwoHand = opponentTwo.getHand();
+			List<String> opponentThreeHand = opponentThree.getHand();
 			int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue, includeStars);
 			int perfectBidAmount = EntropyUtil.getPerfectBidAmount(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
 			String suit = CardsUtil.getSuitDesc(perfectBidAmount, perfectBidSuitCode);

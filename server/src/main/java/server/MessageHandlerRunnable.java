@@ -15,12 +15,12 @@ import javax.crypto.SecretKey;
 import auth.UserConnection;
 import http.LegacyConstants;
 import object.NotificationSocket;
-import object.Room;
 import object.ServerRunnable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import room.Room;
 import util.*;
 import utils.CoreGlobals;
 
@@ -39,8 +39,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		this.server = server;
 		this.clientSocket = clientSocket;
 	}
-	
-	@SuppressWarnings("resource")
+
 	@Override
 	public void run() 
 	{
@@ -189,6 +188,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		String id = root.getAttribute("RoomId");
 		String username = root.getAttribute("Username");
 		String name = root.getNodeName();
+		Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(id);
 
 		usc.setLastActiveNow();
 		
@@ -211,7 +211,6 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		}
 		else if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
 		{
-			Room room = server.getRoomForName(id);
 			String observerStr = root.getAttribute("Observer");
 			int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");
 			
@@ -219,26 +218,20 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		}
 		else if (name.equals(ROOT_TAG_CLOSE_ROOM_REQUEST))
 		{
-			Room room = server.getRoomForName(id);
-			
 			return XmlBuilderServer.getCloseRoomResponse(room, username);
 		}
 		else if (name.equals(ROOT_TAG_OBSERVER_REQUEST))
 		{
-			Room room = server.getRoomForName(id);
-			
 			return XmlBuilderServer.getObserverResponse(room);
 		}
 		else if (name.equals(ROOT_TAG_NEW_GAME_REQUEST))
 		{
-			Room room = server.getRoomForName(id);
 			String currentGameId = root.getAttribute("CurrentGameId");
 			
 			return XmlBuilderServer.getNewGameResponse(room, currentGameId);
 		}
 		else if (name.equals(ROOT_TAG_BID))
 		{
-			Room room = server.getRoomForName(id);
 			String gameId = root.getAttribute("GameId");
 			int roundNumber = XmlUtil.getAttributeInt(root, "RoundNumber");
 			String bidStr = root.getAttribute("Bid");
@@ -248,7 +241,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		}
 		else if (name.equals(ROOT_TAG_LEADERBOARD_REQUEST))
 		{
-			List<Room> rooms = server.getRooms();
+			List<Room> rooms = ServerGlobals.INSTANCE.getRoomStore().getAll();
 			return XmlBuilderServer.getLeaderboardResponse(rooms);
 		}
 		else if (name.endsWith(SOCKET_NAME_SUFFIX))

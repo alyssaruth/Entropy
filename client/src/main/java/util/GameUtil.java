@@ -108,7 +108,7 @@ public class GameUtil
 		{
 			int playerNumberOfCards = playerToPopulate.getNumberOfCards();
 			int playerToBeDealt = playerNumberOfCards;
-			String[] playerHand = playerToPopulate.getHand();
+			List<String> playerHand = playerToPopulate.getHand();
 			
 			while (playerToBeDealt > 0)
 			{
@@ -118,7 +118,7 @@ public class GameUtil
 				}
 				
 				String card = deck.remove(0);
-				playerHand[(playerNumberOfCards - playerToBeDealt)] = card;
+				playerHand.add(card);
 				hand += card;
 
 				playerToBeDealt--;

@@ -8,6 +8,7 @@ import routes.lobby.LobbyService
 import routes.session.SessionService
 import server.EntropyServer
 import store.MemoryUserConnectionStore
+import store.RoomStore
 import store.SessionStore
 import store.Store
 import store.UserConnectionStore
@@ -20,6 +21,7 @@ private const val KEEP_ALIVE_TIME = 20
 object ServerGlobals {
     var uscStore: UserConnectionStore = MemoryUserConnectionStore()
     var sessionStore: Store<UUID, Session> = SessionStore()
+    var roomStore: RoomStore = RoomStore()
 
     @JvmField
     val workerPool =
@@ -33,6 +35,7 @@ object ServerGlobals {
 
     val server: EntropyServer = EntropyServer()
 
-    @JvmField var lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore)
+    @JvmField
+    var lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore, roomStore)
     @JvmField var sessionService = SessionService(sessionStore, uscStore)
 }

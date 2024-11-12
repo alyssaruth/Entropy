@@ -6,8 +6,9 @@ import http.dto.LobbyMessage
 import http.dto.OnlineUser
 import http.dto.RoomSummary
 import java.util.*
-import `object`.Room
+import room.Room
 import server.EntropyServer
+import store.RoomStore
 import store.Store
 import store.UserConnectionStore
 import util.XmlConstants
@@ -17,9 +18,10 @@ class LobbyService(
     private val server: EntropyServer,
     private val sessionStore: Store<UUID, Session>,
     private val uscStore: UserConnectionStore,
+    private val roomStore: RoomStore,
 ) {
     fun getLobby(): LobbyMessage {
-        val rooms = server.rooms.map { it.toSummary() }
+        val rooms = roomStore.getAll().map { it.toSummary() }
         val users = sessionStore.getAll().map { OnlineUser(it.name, it.achievementCount) }
         return LobbyMessage(rooms, users)
     }

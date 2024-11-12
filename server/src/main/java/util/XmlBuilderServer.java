@@ -3,6 +3,7 @@ package util;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import room.Room;
 import server.EntropyServer;
 
 import java.util.List;
@@ -12,26 +13,6 @@ public class XmlBuilderServer implements XmlConstants
 	//Cached acknowledgements
 	//AJH 28 Feb 2015 - Made these final - they don't change
 	private static final Document ACKNOWLEDGEMENT = XmlUtil.factorySimpleMessage(RESPONSE_TAG_ACKNOWLEDGEMENT);
-
-	private static final int ACHIEVMENTS_TOTAL = 80;
-	
-	public static Document getKickOffResponse(String username, String reason)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-
-		Element rootElement = response.createElement(RESPONSE_TAG_KICK_OFF);
-		rootElement.setAttribute("RemovalReason", reason);
-		
-		if (username != null
-		  && !username.isEmpty())
-		{
-			rootElement.setAttribute("Username", username);
-			Debug.appendBanner("Kicking off " + username + ". Reason: " + reason);
-		}
-		
-		response.appendChild(rootElement);
-		return response;
-	}
 	
 	public static Document getAcknowledgement()
 	{
@@ -210,7 +191,7 @@ public class XmlBuilderServer implements XmlConstants
 					
 					if (room.isFull())
 					{
-						server.registerCopy(room);
+						ServerGlobals.INSTANCE.getRoomStore().addCopy(room);
 					}
 				}
 				else
@@ -331,10 +312,10 @@ public class XmlBuilderServer implements XmlConstants
 			Element handElement = response.createElement("Hand");
 			handElement.setAttribute("PlayerNumber", "" + i);
 			
-			String[] hand = details.getHand(i);
-			for (int j=0; j<hand.length; j++)
+			List<String> hand = details.getHand(i);
+			for (int j=0; j<hand.size(); j++)
 			{
-				handElement.setAttribute("Card-" + j, hand[j]);
+				handElement.setAttribute("Card-" + j, hand.get(j));
 			}
 			rootElement.appendChild(handElement);
 		}
@@ -446,17 +427,17 @@ public class XmlBuilderServer implements XmlConstants
 		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
-			String[] hand = details.getHand(i);
-			if (hand.length == 0)
+			List<String> hand = details.getHand(i);
+			if (hand.isEmpty())
 			{
 				continue;
 			}
 			
 			Element handElement = response.createElement("Hand");
 			handElement.setAttribute("PlayerNumber", "" + i);
-			for (int j=0; j<hand.length; j++)
+			for (int j=0; j<hand.size(); j++)
 			{
-				handElement.setAttribute("Card-" + j, hand[j]);
+				handElement.setAttribute("Card-" + j, hand.get(j));
 			}
 			rootElement.appendChild(handElement);
 		}

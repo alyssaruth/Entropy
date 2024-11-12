@@ -1,9 +1,6 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Vector;
+import java.util.*;
 
 import object.Bid;
 import object.ChallengeBid;
@@ -61,7 +58,7 @@ public class EntCpuStrategies
 		EntropyBid bid = (EntropyBid)parms.getLastBid();
 		
 		Random rand = new Random();
-		String hand[] = opponent.getHand();
+		List<String> hand = opponent.getHand();
 		
 		//Parms
 		boolean includeMoons = parms.getIncludeMoons();
@@ -194,7 +191,7 @@ public class EntCpuStrategies
 			{
 				Debug.append("Couldn't automatically minbid any suit", logging);
 				double jokerThreshold = Math.floor((jokerQuantity * jokerValue)/(double)(suitsInPlay*2));
-				double threshold = bidSuitCount + totalCards - hand.length + jokerThreshold - 1;
+				double threshold = bidSuitCount + totalCards - hand.size() + jokerThreshold - 1;
 				
 				Debug.append("Bonkers threshold is " + threshold, logging);
 				if (bidAmountFacedWith > threshold)
@@ -302,7 +299,7 @@ public class EntCpuStrategies
 		Random coin = new Random();
 		int decision = coin.nextInt(2);
 		int decisionTwo = coin.nextInt(2);
-		String[] hand = opponent.getHand();
+		List<String> hand = opponent.getHand();
 
 		if (bid == null)
 		{
@@ -400,9 +397,9 @@ public class EntCpuStrategies
 		
 		Debug.append("EV strategy for this turn", logging);
 		Random coin = new Random();
-		String[] hand = opponent.getHand();
+		List<String> hand = opponent.getHand();
 		
-		int totalOpponentCards = totalCards - hand.length;
+		int totalOpponentCards = totalCards - hand.size();
 		if (bid == null)
 		{
 			Debug.append("Starting this round", logging);

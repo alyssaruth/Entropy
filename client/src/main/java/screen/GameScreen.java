@@ -770,10 +770,10 @@ public abstract class GameScreen extends TransparentPanel
 	
 	protected String getMaxBidsStr()
 	{
-		String[] playerHand = player.getHand();
-		String[] opponentOneHand = opponentOne.getHand();
-		String[] opponentTwoHand = opponentTwo.getHand();
-		String[] opponentThreeHand = opponentThree.getHand();
+		List<String> playerHand = player.getHand();
+		List<String> opponentOneHand = opponentOne.getHand();
+		List<String> opponentTwoHand = opponentTwo.getHand();
+		List<String> opponentThreeHand = opponentThree.getHand();
 		
 		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
 		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
@@ -807,7 +807,7 @@ public abstract class GameScreen extends TransparentPanel
 			int jokersToAdd = random.nextInt(5) + 1; //1-5
 			logger.info("rainingJokers", "Adding " + jokersToAdd + " jokers");
 			
-			String[] allCards = getConcatenatedHands();
+			List<String> allCards = getConcatenatedHands();
 			
 			while (CardsUtil.containsNonJoker(allCards) && jokersToAdd > 0)
 			{
@@ -824,25 +824,25 @@ public abstract class GameScreen extends TransparentPanel
 	{
 		Random rand = new Random();
 		String jokerToAdd = "Jo" + rand.nextInt(4); //0, 1, 2, 3
-		String[] hand = pickHandWithNonJokerAtRandom();
+		List<String> hand = pickHandWithNonJokerAtRandom();
 		
-		int length = hand.length;
+		int length = hand.size();
 		int position = (rand.nextInt(length));
-		String cardToReplace = hand[position];
+		String cardToReplace = hand.get(position);
 		if (cardToReplace.contains("Jo"))
 		{
 			replaceRandomCardWithJoker();
 			return;
 		}
 
-		hand[position] = jokerToAdd;
+		hand.set(position, jokerToAdd);
 	}
 	
-	private String[] pickHandWithNonJokerAtRandom()
+	private List<String> pickHandWithNonJokerAtRandom()
 	{
-		String[][] allHands = {player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), opponentThree.getHand()};
+		List<String>[] allHands = new List[]{player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), opponentThree.getHand()};
 		Random rand = new Random();
-		String[] hand = allHands[rand.nextInt(4)];
+		List<String> hand = allHands[rand.nextInt(4)];
 		
 		if (!CardsUtil.containsNonJoker(hand))
 		{
@@ -854,42 +854,19 @@ public abstract class GameScreen extends TransparentPanel
 		}
 	}
 	
-	public String[] getConcatenatedHands()
+	public List<String> getConcatenatedHands()
 	{
-		String[] playerHand = player.getHand();
-		String[] opponentOneHand = opponentOne.getHand();
-		String[] opponentTwoHand = opponentTwo.getHand();
-		String[] opponentThreeHand = opponentThree.getHand();
-		
-		int length = playerHand.length + opponentOneHand.length + opponentTwoHand.length + opponentThreeHand.length;
-		String[] allCards = new String[length];
-		
-		int fromIndex = 0;
-		for (int i=0; i<playerHand.length; i++)
-		{
-			allCards[fromIndex] = playerHand[i];
-			fromIndex++;
-		}
-		
-		for (int i=0; i<opponentOneHand.length; i++)
-		{
-			allCards[fromIndex] = opponentOneHand[i];
-			fromIndex++;
-		}
-		
-		for (int i=0; i<opponentTwoHand.length; i++)
-		{
-			allCards[fromIndex] = opponentTwoHand[i];
-			fromIndex++;
-		}
-		
-		for (int i=0; i<opponentThreeHand.length; i++)
-		{
-			allCards[fromIndex] = opponentThreeHand[i];
-			fromIndex++;
-		}
-		
-		return allCards;
+		List<String> playerHand = player.getHand();
+		List<String> opponentOneHand = opponentOne.getHand();
+		List<String> opponentTwoHand = opponentTwo.getHand();
+		List<String> opponentThreeHand = opponentThree.getHand();
+
+		var result = new ArrayList<String>();
+		result.addAll(playerHand);
+		result.addAll(opponentOneHand);
+		result.addAll(opponentTwoHand);
+		result.addAll(opponentThreeHand);
+		return result;
 	}
 	
 	private void processPlayerBid()

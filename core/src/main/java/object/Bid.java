@@ -2,6 +2,7 @@
 package object;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
@@ -21,10 +22,10 @@ public abstract class Bid
 	
 	public abstract boolean higherThan(Bid bid);
 	public abstract boolean isOverAchievementThreshold();
-	public abstract boolean isPerfect(String[] handOne, String[] handTwo, String[] handThree, String[] handFour, 
+	public abstract boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
 									  int jokerValue, boolean includeMoons, boolean includeStars);
-	public abstract boolean isOverbid(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue);
-	public abstract boolean isOverbid(String[] handOne, String[] handTwo, String[] handThree, String[] handFour, int jokerValue);
+	public abstract boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue);
+	public abstract boolean isOverbid(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour, int jokerValue);
 	
 	/**
 	 *  Used for:
@@ -79,13 +80,13 @@ public abstract class Bid
 		return xmlStr;
 	}
 	
-	public boolean isPerfect(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue, 
+	public boolean isPerfect(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue,
 							 boolean includeMoons, boolean includeStars)
 	{
-		String[] handOne = hmHandByPlayerNumber.get(0);
-		String[] handTwo = hmHandByPlayerNumber.get(1);
-		String[] handThree = hmHandByPlayerNumber.get(2);
-		String[] handFour = hmHandByPlayerNumber.get(3);
+		List<String> handOne = hmHandByPlayerNumber.get(0);
+		List<String> handTwo = hmHandByPlayerNumber.get(1);
+		List<String> handThree = hmHandByPlayerNumber.get(2);
+		List<String> handFour = hmHandByPlayerNumber.get(3);
 		
 		return isPerfect(handOne, handTwo, handThree, handFour, jokerValue, includeMoons, includeStars);
 	}

@@ -33,12 +33,6 @@ public class ResponseHandler implements XmlConstants
 		Element root = response.getDocumentElement();
 		String responseName = root.getNodeName();
 		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
-		
-		if (responseName.equals(RESPONSE_TAG_KICK_OFF))
-		{
-			handleKickOff(root);
-			return;
-		}
 
 		if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
 		{
@@ -102,27 +96,6 @@ public class ResponseHandler implements XmlConstants
 		else
 		{
 			throw new Throwable("Unexpected response.");
-		}
-	}
-	
-	private static void handleKickOff(Element root)
-	{
-		ConnectingDialog dialog = ScreenCache.getConnectingDialog();
-		if (dialog.isVisible())
-		{
-			dialog.dismissDialog();
-			DialogUtil.showErrorLater("Unable to connect to the Entropy server.");
-			return;
-		}
-		
-		EntropyLobby lobby = ScreenCache.get(EntropyLobby.class);
-		if (lobby.isVisible())
-		{
-			String removalReason = root.getAttribute("RemovalReason");
-			String message = removalReason + "\nEntropyOnline will now exit.";
-			DialogUtil.showErrorLater(message);
-			
-			lobby.exit(true);
 		}
 	}
 	
@@ -386,12 +359,12 @@ public class ResponseHandler implements XmlConstants
 			Element child = (Element)children.item(i);
 			int playerNumber = XmlUtil.getAttributeInt(child, "PlayerNumber");
 			
-			String[] hand = getHandFromElement(child);
+			List<String> hand = getHandFromElement(child);
 			gameRoom.setHand(playerNumber, hand);
 		}
 	}
 	
-	public static String[] getHandFromElement(Element handElement)
+	public static List<String> getHandFromElement(Element handElement)
 	{
 		List<String> cards = new ArrayList<>();
 		
@@ -404,14 +377,7 @@ public class ResponseHandler implements XmlConstants
 			}
 		}
 		
-		int size = cards.size();
-		String[] hand = new String[size];
-		for (int j=0; j<size; j++)
-		{
-			hand[j] = cards.get(j);
-		}
-		
-		return hand;
+		return cards;
 	}
 	
 	private static void handleLeaderboardResponse(Element root)

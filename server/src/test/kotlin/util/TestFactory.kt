@@ -5,6 +5,7 @@ import auth.UserConnection
 import game.GameMode
 import game.GameSettings
 import java.util.*
+import room.Room
 
 fun makeSession(
     id: UUID = UUID.randomUUID(),
@@ -36,3 +37,11 @@ fun makeGameSettings(
         cardReveal,
         illegalAllowed,
     )
+
+fun makeRoom(
+    id: UUID = UUID.randomUUID(),
+    baseName: String = "Sodium",
+    settings: GameSettings = GameSettings(GameMode.Entropy),
+    capacity: Int = 2,
+    index: Int = 1,
+) = Room(id, baseName, settings, capacity, index)

@@ -1,5 +1,6 @@
 package object;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
@@ -16,8 +17,8 @@ public abstract class FakeBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(String[] handOne, String[] handTwo,
-			String[] handThree, String[] handFour, int jokerValue,
+	public boolean isPerfect(List<String> handOne, List<String> handTwo,
+			List<String> handThree, List<String> handFour, int jokerValue,
 			boolean includeMoons, boolean includeStars) 
 	{
 		Debug.stackTrace("Calling unimplemented method: isPerfect");
@@ -25,15 +26,15 @@ public abstract class FakeBid extends Bid
 	}
 	
 	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber, int jokerValue) 
+	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
 	{
 		Debug.stackTrace("Calling unimplemented method: isOverbid");
 		return false;
 	}
 	
 	@Override
-	public boolean isOverbid(String[] handOne, String[] handTwo,
-			String[] handThree, String[] handFour, int jokerValue)
+	public boolean isOverbid(List<String> handOne, List<String> handTwo,
+							 List<String> handThree, List<String> handFour, int jokerValue)
 	{
 		Debug.stackTrace("Calling unimplemented method: isOverbid");
 		return false;

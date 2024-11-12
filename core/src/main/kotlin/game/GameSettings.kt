@@ -2,11 +2,11 @@ package game
 
 data class GameSettings(
     val mode: GameMode,
-    val jokerQuantity: Int,
-    val jokerValue: Int,
-    val includeMoons: Boolean,
-    val includeStars: Boolean,
-    val negativeJacks: Boolean,
-    val cardReveal: Boolean,
-    val illegalAllowed: Boolean
+    val jokerQuantity: Int = 0,
+    val jokerValue: Int = 0,
+    val includeMoons: Boolean = false,
+    val includeStars: Boolean = false,
+    val negativeJacks: Boolean = false,
+    val cardReveal: Boolean = false,
+    val illegalAllowed: Boolean = false
 )

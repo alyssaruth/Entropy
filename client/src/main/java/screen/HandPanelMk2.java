@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -242,24 +244,24 @@ public class HandPanelMk2 extends TransparentPanel
 	private final JLabel lblOpponentTwoSeat = new JLabel("");
 	private final JLabel lblOpponentThreeSeat = new JLabel("");
 	
-	public void displayHandsInGame(String[] playerHand, String[] opponentOneHand, 
-								   String[] opponentTwoHand, String[] opponentThreeHand)
+	public void displayHandsInGame(List<String> playerHand, List<String> opponentOneHand,
+								   List<String> opponentTwoHand, List<String> opponentThreeHand)
 	{
 		initialiseCardLabels(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand);
 	}
 	
-	public void displayHandsOnline(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber)
+	public void displayHandsOnline(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber)
 	{
-		String[] playerHand = hmHandByPlayerNumber.get(0);
-		String[] opponentOneHand = hmHandByPlayerNumber.get(1);
-		String[] opponentTwoHand = hmHandByPlayerNumber.get(2);
-		String[] opponentThreeHand = hmHandByPlayerNumber.get(3);
+		List<String> playerHand = hmHandByPlayerNumber.get(0);
+		List<String> opponentOneHand = hmHandByPlayerNumber.get(1);
+		List<String> opponentTwoHand = hmHandByPlayerNumber.get(2);
+		List<String> opponentThreeHand = hmHandByPlayerNumber.get(3);
 		
 		initialiseCardLabels(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand);
 	}
 	
-	private void initialiseCardLabels(String[] playerHand, String[] opponentOneHand, String[] opponentTwoHand,
-	  String[] opponentThreeHand)
+	private void initialiseCardLabels(List<String> playerHand, List<String> opponentOneHand, List<String> opponentTwoHand,
+	  List<String> opponentThreeHand)
 	{
 		resetPlayerCardPositions();
 		
@@ -279,12 +281,12 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	private void initialiseCardLabelsForPlayer(String[] hand, CardLabel[] labels, boolean faceUp)
+	private void initialiseCardLabelsForPlayer(List<String> hand, CardLabel[] labels, boolean faceUp)
 	{
 		int size = 0;
 		if (hand != null)
 		{
-			size = hand.length;
+			size = hand.size();
 		}
 		
 		for (int i=0; i<labels.length; i++)
@@ -294,7 +296,7 @@ public class HandPanelMk2 extends TransparentPanel
 			
 			if (i<size)
 			{
-				String card = hand[i];
+				String card = hand.get(i);
 				labels[i].setCard(card);
 				labels[i].setVisible(true);
 			}
@@ -305,6 +307,17 @@ public class HandPanelMk2 extends TransparentPanel
 			}
 		}
 		
+		refreshIcons(labels);
+	}
+
+	private void makePlaceholderHand(CardLabel[] labels, int handSize) {
+		for (int i=0; i<handSize; i++) {
+			labels[i].setFaceUp(false);
+			labels[i].setFaded(false);
+			labels[i].setCard(null);
+			labels[i].setVisible(true);
+		}
+
 		refreshIcons(labels);
 	}
 	
@@ -372,7 +385,7 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	public void initialisePlayer(int playerNumber, String name, String colour)
+	public void initialisePlayer(int playerNumber, String name, String colour, int startingNumberOfCards)
 	{
 		PlayerLabel label = getPlayerLabelForPlayerNumber(playerNumber);
 		label.setText(name);
@@ -383,19 +396,19 @@ public class HandPanelMk2 extends TransparentPanel
 		{
 		case 0:
 			playerName = name;
-			initialiseCardLabelsForPlayer(new String[5], playerCards, false);
+			makePlaceholderHand(playerCards, startingNumberOfCards);
 			break;
 		case 1:
 			opponentOneName = name;
-			initialiseCardLabelsForPlayer(new String[5], opponentOneCards, false);
+			makePlaceholderHand(opponentOneCards, startingNumberOfCards);
 			break;
 		case 2:
 			opponentTwoName = name;
-			initialiseCardLabelsForPlayer(new String[5], opponentTwoCards, false);
+			makePlaceholderHand(opponentTwoCards, startingNumberOfCards);
 			break;
 		case 3:
 			opponentThreeName = name;
-			initialiseCardLabelsForPlayer(new String[5], opponentThreeCards, false);
+			makePlaceholderHand(opponentThreeCards, startingNumberOfCards);
 			break;
 		default:
 			Debug.stackTrace("Unexpected playerNumber [" + playerNumber + "]");
@@ -675,23 +688,23 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	public void resetPlayers()
+	public void resetPlayers(int startingNumberOfCards)
 	{
 		resetPlayerCardPositions();
 		
-		resetPlayer(0, playerName);
-		resetPlayer(1, opponentOneName);
-		resetPlayer(2, opponentTwoName);
-		resetPlayer(3, opponentThreeName);
+		resetPlayer(0, playerName, startingNumberOfCards);
+		resetPlayer(1, opponentOneName, startingNumberOfCards);
+		resetPlayer(2, opponentTwoName, startingNumberOfCards);
+		resetPlayer(3, opponentThreeName, startingNumberOfCards);
 	}
 	
-	private void resetPlayer(int playerNumber, String name)
+	private void resetPlayer(int playerNumber, String name, int startingNumberOfCards)
 	{
 		PlayerLabel label = getPlayerLabelForPlayerNumber(playerNumber);
 		label.setText(name);
 		if (label.isVisible())
 		{
-			initialisePlayer(playerNumber, name, label.getColour());
+			initialisePlayer(playerNumber, name, label.getColour(), startingNumberOfCards);
 		}
 	}
 	

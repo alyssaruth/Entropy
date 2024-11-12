@@ -15,10 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class ApiUtil implements Registry
 {
@@ -151,12 +148,12 @@ public class ApiUtil implements Registry
 
 		rootElement.setAttribute("GameMode", gameMode.name());
 		
-		String[] playerHand = player.getHand();
+		List<String> playerHand = player.getHand();
 		Element handElement = document.createElement("PlayerHand");
-		int length = playerHand.length;
+		int length = playerHand.size();
 		for (int i=0; i<length; i++)
 		{
-			handElement.setAttribute("Card-" + i, playerHand[i]);
+			handElement.setAttribute("Card-" + i, playerHand.get(i));
 		}
 		
 		rootElement.appendChild(handElement);

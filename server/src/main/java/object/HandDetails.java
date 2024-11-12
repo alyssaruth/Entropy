@@ -1,10 +1,11 @@
 package object;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HandDetails 
 {
-	private ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber = new ConcurrentHashMap<>();
 	private ExtendedConcurrentHashMap<Integer, Integer> hmHandSizeByPlayerNumber = new ExtendedConcurrentHashMap<>();
 	
 	public ExtendedConcurrentHashMap<Integer, Integer> getHandSizes()
@@ -15,16 +16,16 @@ public class HandDetails
 	{
 		this.hmHandSizeByPlayerNumber = hmHandSizeByPlayerNumber;
 	}
-	public ConcurrentHashMap<Integer, String[]> getHands()
+	public ConcurrentHashMap<Integer, List<String>> getHands()
 	{
 		return hmHandByPlayerNumber;
 	}
-	public void setHands(ConcurrentHashMap<Integer, String[]> hmHandByPlayerNumber)
+	public void setHands(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber)
 	{
 		this.hmHandByPlayerNumber = hmHandByPlayerNumber;
 	}
 	
-	public String[] getHand(int playerNumber)
+	public List<String> getHand(int playerNumber)
 	{
 		return hmHandByPlayerNumber.get(playerNumber);
 	}
@@ -34,7 +35,7 @@ public class HandDetails
 		String handsStr = "Hands: ";
 		for (int i=0; i<4; i++)
 		{
-			String[] hand = hmHandByPlayerNumber.get(i);
+			List<String> hand = hmHandByPlayerNumber.get(i);
 			if (hand == null)
 			{
 				continue;
@@ -52,10 +53,10 @@ public class HandDetails
 		return handsStr;
 	}
 	
-	private String prettyPrintHand(String[] hand)
+	private String prettyPrintHand(List<String> hand)
 	{
 		String ret = "[";
-		int handSize = hand.length;
+		int handSize = hand.size();
 		for (int i=0; i<handSize; i++)
 		{
 			if (i > 0)
@@ -63,7 +64,7 @@ public class HandDetails
 				ret += ", ";
 			}
 			
-			ret += hand[i];
+			ret += hand.get(i);
 		}
 		
 		ret += "]";

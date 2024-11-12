@@ -30,7 +30,6 @@ public interface XmlConstants
 	public static final String RESPONSE_TAG_STATISTICS_NOTIFICATION = "StatisticsNotification";
 	
 	//Server responses
-	public static final String RESPONSE_TAG_KICK_OFF = "KickOff";
 	public static final String RESPONSE_TAG_LEADERBOARD = "LeaderboardResponse";
 	public static final String RESPONSE_TAG_JOIN_ROOM_RESPONSE = "JoinRoomAck";
 	public static final String RESPONSE_TAG_CLOSE_ROOM_RESPONSE = "CloseRoomAck";
