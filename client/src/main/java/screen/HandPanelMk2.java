@@ -315,6 +315,7 @@ public class HandPanelMk2 extends TransparentPanel
 			labels[i].setFaceUp(false);
 			labels[i].setFaded(false);
 			labels[i].setCard(null);
+			labels[i].setVisible(true);
 		}
 
 		refreshIcons(labels);
