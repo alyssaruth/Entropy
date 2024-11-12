@@ -85,7 +85,7 @@ data class Room(
     }
 
     fun removePlayer(username: String, fireLobbyChanged: Boolean) {
-        for (playerNumber in 0..<capacity) {
+        for (playerNumber in 0 ..< capacity) {
             val user: String? = hmPlayerByPlayerNumber[playerNumber]
             if ((user != null && (username == user))) {
                 hmPlayerByPlayerNumber.remove(playerNumber)
@@ -179,7 +179,7 @@ data class Room(
     @JvmOverloads
     fun resetCurrentPlayers(fireLobbyChanged: Boolean = true) {
         currentPlayers.clear()
-        for (i in 0..<capacity) {
+        for (i in 0 ..< capacity) {
             val username: String? = hmPlayerByPlayerNumber[i]
             if (username != null) {
                 currentPlayers.add(username)
@@ -218,7 +218,7 @@ data class Room(
 
         val details = HandDetails()
         val hmHandSizeByPlayerNumber = ExtendedConcurrentHashMap<Int, Int>()
-        for (i in 0..<capacity) {
+        for (i in 0 ..< capacity) {
             hmHandSizeByPlayerNumber[i] = 5
         }
 
@@ -341,9 +341,9 @@ data class Room(
                 seed,
             )
 
-        for (i in 0..<capacity) {
+        for (i in 0 ..< capacity) {
             val size: Int = hmHandSizeByPlayerNumber.getValue(i)
-            val hand = (0..<size).map { deck.removeAt(0) }
+            val hand = (0 ..< size).map { deck.removeAt(0) }
             hmHandByPlayerNumber[i] = hand
         }
 
@@ -354,7 +354,7 @@ data class Room(
         var activePlayers = 0
         var potentialWinner = 0
 
-        for (i in 0..<capacity) {
+        for (i in 0 ..< capacity) {
             val handSize: Int = hmHandSizeByPlayerNumber.getValue(i)
             if (handSize > 0) {
                 activePlayers++
