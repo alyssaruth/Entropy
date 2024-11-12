@@ -309,6 +309,16 @@ public class HandPanelMk2 extends TransparentPanel
 		
 		refreshIcons(labels);
 	}
+
+	private void makePlaceholderHand(CardLabel[] labels, int handSize) {
+		for (int i=0; i<handSize; i++) {
+			labels[i].setFaceUp(false);
+			labels[i].setFaded(false);
+			labels[i].setCard(null);
+		}
+
+		refreshIcons(labels);
+	}
 	
 	private void refreshIcons()
 	{
@@ -374,7 +384,7 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	public void initialisePlayer(int playerNumber, String name, String colour)
+	public void initialisePlayer(int playerNumber, String name, String colour, int startingNumberOfCards)
 	{
 		PlayerLabel label = getPlayerLabelForPlayerNumber(playerNumber);
 		label.setText(name);
@@ -385,19 +395,19 @@ public class HandPanelMk2 extends TransparentPanel
 		{
 		case 0:
 			playerName = name;
-			initialiseCardLabelsForPlayer(new ArrayList<>(), playerCards, false);
+			makePlaceholderHand(playerCards, startingNumberOfCards);
 			break;
 		case 1:
 			opponentOneName = name;
-			initialiseCardLabelsForPlayer(new ArrayList<>(), opponentOneCards, false);
+			makePlaceholderHand(opponentOneCards, startingNumberOfCards);
 			break;
 		case 2:
 			opponentTwoName = name;
-			initialiseCardLabelsForPlayer(new ArrayList<>(), opponentTwoCards, false);
+			makePlaceholderHand(opponentTwoCards, startingNumberOfCards);
 			break;
 		case 3:
 			opponentThreeName = name;
-			initialiseCardLabelsForPlayer(new ArrayList<>(), opponentThreeCards, false);
+			makePlaceholderHand(opponentThreeCards, startingNumberOfCards);
 			break;
 		default:
 			Debug.stackTrace("Unexpected playerNumber [" + playerNumber + "]");
@@ -677,23 +687,23 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	public void resetPlayers()
+	public void resetPlayers(int startingNumberOfCards)
 	{
 		resetPlayerCardPositions();
 		
-		resetPlayer(0, playerName);
-		resetPlayer(1, opponentOneName);
-		resetPlayer(2, opponentTwoName);
-		resetPlayer(3, opponentThreeName);
+		resetPlayer(0, playerName, startingNumberOfCards);
+		resetPlayer(1, opponentOneName, startingNumberOfCards);
+		resetPlayer(2, opponentTwoName, startingNumberOfCards);
+		resetPlayer(3, opponentThreeName, startingNumberOfCards);
 	}
 	
-	private void resetPlayer(int playerNumber, String name)
+	private void resetPlayer(int playerNumber, String name, int startingNumberOfCards)
 	{
 		PlayerLabel label = getPlayerLabelForPlayerNumber(playerNumber);
 		label.setText(name);
 		if (label.isVisible())
 		{
-			initialisePlayer(playerNumber, name, label.getColour());
+			initialisePlayer(playerNumber, name, label.getColour(), startingNumberOfCards);
 		}
 	}
 	

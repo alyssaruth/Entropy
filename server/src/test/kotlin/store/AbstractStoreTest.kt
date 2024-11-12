@@ -5,8 +5,9 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import testCore.AbstractTest
 
-abstract class AbstractStoreTest<K, T : IHasId<K>> {
+abstract class AbstractStoreTest<K, T : IHasId<K>> : AbstractTest() {
     abstract fun makeStore(): Store<K, T>
 
     abstract fun makeIdA(): K

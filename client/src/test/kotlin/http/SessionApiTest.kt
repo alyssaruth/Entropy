@@ -134,7 +134,7 @@ class SessionApiTest : AbstractClientTest() {
         SessionApi(httpClient).updateAchievementCount(8)
 
         verify {
-            httpClient.doCall<UpdateAchievementCountRequest>(
+            httpClient.doCall<Unit>(
                 HttpMethod.POST,
                 Routes.ACHIEVEMENT_COUNT,
                 UpdateAchievementCountRequest(8),

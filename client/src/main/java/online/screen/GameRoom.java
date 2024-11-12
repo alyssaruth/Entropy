@@ -495,7 +495,7 @@ public abstract class GameRoom extends JFrame
 			newPlayer.setEnabled(true);
 			hmPlayerByAdjustedPlayerNumber.put(adjustedNo, newPlayer);
 			
-			handPanel.initialisePlayer(adjustedNo, username, colour);
+			handPanel.initialisePlayer(adjustedNo, username, colour, 5);
 			handPanel.activateEmptySeats();
 		}
 		else
@@ -893,7 +893,7 @@ public abstract class GameRoom extends JFrame
 			return;
 		}
 		
-		handPanel.resetPlayers();
+		handPanel.resetPlayers(5);
 		clearScreenAfterGameEnd();
 		
 		int currentSize = hmPlayerByAdjustedPlayerNumber.size();

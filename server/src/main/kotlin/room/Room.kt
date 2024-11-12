@@ -22,7 +22,7 @@ import util.XmlBuilderServer
 import util.XmlConstants
 import utils.CoreGlobals.logger
 
-class Room(
+data class Room(
     override val id: UUID,
     private val baseName: String,
     val settings: GameSettings,
@@ -64,7 +64,7 @@ class Room(
             if (existingUsername != null) {
                 logger.info(
                     "seatTaken",
-                    "$username tried to join $name as player $playerNumber but seat was taken by $existingUsername"
+                    "$username tried to join $name as player $playerNumber but seat was taken by $existingUsername",
                 )
                 return -1
             }
@@ -85,7 +85,7 @@ class Room(
     }
 
     fun removePlayer(username: String, fireLobbyChanged: Boolean) {
-        for (playerNumber in 0 ..< capacity) {
+        for (playerNumber in 0..<capacity) {
             val user: String? = hmPlayerByPlayerNumber[playerNumber]
             if ((user != null && (username == user))) {
                 hmPlayerByPlayerNumber.remove(playerNumber)
@@ -141,7 +141,7 @@ class Room(
     private fun notifyAllUsersViaGameSocket(
         notification: String,
         userToExclude: String?,
-        blocking: Boolean
+        blocking: Boolean,
     ) {
         var usersToNotify = allUsersInRoom
         if (userToExclude != null) {
@@ -153,7 +153,7 @@ class Room(
             uscs,
             notification,
             XmlConstants.SOCKET_NAME_GAME,
-            blocking
+            blocking,
         )
     }
 
@@ -179,7 +179,7 @@ class Room(
     @JvmOverloads
     fun resetCurrentPlayers(fireLobbyChanged: Boolean = true) {
         currentPlayers.clear()
-        for (i in 0 ..< capacity) {
+        for (i in 0..<capacity) {
             val username: String? = hmPlayerByPlayerNumber[i]
             if (username != null) {
                 currentPlayers.add(username)
@@ -218,7 +218,7 @@ class Room(
 
         val details = HandDetails()
         val hmHandSizeByPlayerNumber = ExtendedConcurrentHashMap<Int, Int>()
-        for (i in 0 ..< capacity) {
+        for (i in 0..<capacity) {
             hmHandSizeByPlayerNumber[i] = 5
         }
 
@@ -241,7 +241,7 @@ class Room(
         roundNumber: Int,
         playerNumber: Int,
         challengedNumber: Int,
-        bid: Bid
+        bid: Bid,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
@@ -260,7 +260,7 @@ class Room(
         roundNumber: Int,
         playerNumber: Int,
         bidderNumber: Int,
-        bid: Bid
+        bid: Bid,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
@@ -270,7 +270,7 @@ class Room(
                 hmHandByPlayerNumber,
                 settings.jokerValue,
                 settings.includeMoons,
-                settings.includeStars
+                settings.includeStars,
             )
         ) {
             setUpNextRound(bidderNumber)
@@ -319,7 +319,7 @@ class Room(
                 XmlBuilderServer.factoryNewRoundNotification(
                     this,
                     nextRoundDetails,
-                    losingPlayerNumber
+                    losingPlayerNumber,
                 )
             notifyAllUsersViaGameSocket(newRoundNotification, null, false)
         }
@@ -338,12 +338,12 @@ class Room(
                 settings.includeMoons,
                 settings.includeStars,
                 settings.negativeJacks,
-                seed
+                seed,
             )
 
-        for (i in 0 ..< capacity) {
+        for (i in 0..<capacity) {
             val size: Int = hmHandSizeByPlayerNumber.getValue(i)
-            val hand = (0 ..< size).map { deck.removeAt(0) }
+            val hand = (0..<size).map { deck.removeAt(0) }
             hmHandByPlayerNumber[i] = hand
         }
 
@@ -354,7 +354,7 @@ class Room(
         var activePlayers = 0
         var potentialWinner = 0
 
-        for (i in 0 ..< capacity) {
+        for (i in 0..<capacity) {
             val handSize: Int = hmHandSizeByPlayerNumber.getValue(i)
             if (handSize > 0) {
                 activePlayers++
@@ -414,7 +414,7 @@ class Room(
         if (previousGame == null) {
             logger.warn(
                 "staleGameId",
-                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null. Current: ${currentGame.gameId}"
+                "Tried to get next game for gameId $previousGameIdFromClient but previous game was null. Current: ${currentGame.gameId}",
             )
             return currentGame
         }
@@ -426,7 +426,7 @@ class Room(
 
         logger.warn(
             "staleGameId",
-            "Tried to get next game for gameId $previousGameIdFromClient but this did not match. Previous [${previousGame?.gameId}],  Current [${currentGame.gameId}]"
+            "Tried to get next game for gameId $previousGameIdFromClient but this did not match. Previous [${previousGame?.gameId}],  Current [${currentGame.gameId}]",
         )
 
         return currentGame
@@ -445,7 +445,7 @@ class Room(
         gameId: String,
         playerNumber: Int,
         roundNumber: Int,
-        newBid: Bid?
+        newBid: Bid?,
     ): Boolean {
         val game = getGameForId(gameId)
 
@@ -474,7 +474,7 @@ class Room(
             uscs,
             chatMessage,
             XmlConstants.SOCKET_NAME_CHAT,
-            false
+            false,
         )
     }
 
