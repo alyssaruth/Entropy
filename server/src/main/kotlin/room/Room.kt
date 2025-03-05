@@ -68,7 +68,7 @@ data class Room(
         } else "gray"
     }
 
-    fun attemptToJoinAsPlayer(username: String, playerNumber: Int): Int? {
+    fun attemptToSitDown(username: String, playerNumber: Int): Int? {
         synchronized(this) {
             val existingUsername: String? = hmPlayerByPlayerNumber[playerNumber]
             if (existingUsername != null) {

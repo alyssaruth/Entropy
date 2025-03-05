@@ -151,7 +151,7 @@ public class XmlBuilderServer implements XmlConstants
 		{
 			if (!room.isFull())
 			{
-				playerNumber = room.attemptToJoinAsPlayer(username, playerNumber);
+				playerNumber = room.attemptToSitDown(username, playerNumber);
 				rootElement.setAttribute("PlayerNumber", "" + playerNumber);
 
 				if (room.isFull())

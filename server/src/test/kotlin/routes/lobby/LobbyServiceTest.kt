@@ -39,7 +39,7 @@ class LobbyServiceTest : AbstractTest() {
         roomStore.put(roomOne)
         roomStore.put(roomTwo)
 
-        roomOne.attemptToJoinAsPlayer("Alyssa", 0)
+        roomOne.attemptToSitDown("Alyssa", 0)
         roomTwo.addToObservers("Bob")
 
         val lobby = service.getLobby()
