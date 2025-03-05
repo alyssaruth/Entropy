@@ -11,6 +11,7 @@ import routes.ClientException
 import routes.chat.ChatController
 import routes.dev.DevController
 import routes.health.HealthCheckController
+import routes.room.RoomController
 import routes.session.SessionController
 import utils.CoreGlobals.logger
 
@@ -40,4 +41,5 @@ fun Application.configureRouting() {
     SessionController().installRoutes(this)
     DevController().installRoutes(this)
     ChatController().installRoutes(this)
+    RoomController().installRoutes(this)
 }
