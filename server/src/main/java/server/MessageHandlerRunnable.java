@@ -76,6 +76,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			Document response = getResponse();
 			if (notificationSocket)
 			{
+				CoreGlobals.logger.info("socket", "Setting up notification socket " + name + " for " + username);
 				usc.replaceNotificationSocket(name, new NotificationSocket(clientSocket, os, osw, in));
 			}
 			
@@ -192,24 +193,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_NEW_CHAT))
-		{
-			String newMessage = root.getAttribute("MessageText");
-			String colour = root.getAttribute("Colour");
-			String admin = root.getAttribute("Admin");
-			
-			if (!admin.isEmpty())
-			{
-				server.addAdminMessage(newMessage);
-			}
-			else
-			{
-				server.addToChatHistory(id, newMessage, colour, username);
-			}
-			
-			return XmlBuilderServer.getAcknowledgement();
-		}
-		else if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
+		if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
 		{
 			String observerStr = root.getAttribute("Observer");
 			int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");

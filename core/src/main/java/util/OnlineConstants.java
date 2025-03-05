@@ -14,6 +14,4 @@ public interface OnlineConstants
 	//Port numbers
 	//Live
 	public static final int SERVER_PORT_NUMBER = 1142;
-	
-	public static final String LOBBY_ID = "Lobby";
 }

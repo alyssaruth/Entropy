@@ -13,6 +13,7 @@ object CoreGlobals {
     val slf4jLogger: LogbackLogger = LoggerFactory.getLogger("entropy") as LogbackLogger
     @JvmField var logger: Logger = Logger(slf4jLogger)
     var clock: Clock = Clock.systemUTC()
+    @JvmField
     val jsonMapper: ObjectMapper =
         JsonMapper()
             .registerKotlinModule()

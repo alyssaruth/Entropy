@@ -1,6 +1,7 @@
 package util
 
 import org.junit.jupiter.api.BeforeEach
+import routes.chat.ChatService
 import routes.lobby.LobbyService
 import routes.session.SessionService
 import store.MemoryUserConnectionStore
@@ -21,5 +22,6 @@ abstract class ApplicationTest : AbstractTest() {
         ServerGlobals.lobbyService =
             LobbyService(ServerGlobals.server, sessionStore, uscStore, roomStore)
         ServerGlobals.sessionService = SessionService(sessionStore, uscStore)
+        ServerGlobals.chatService = ChatService(ServerGlobals.server, roomStore, uscStore)
     }
 }

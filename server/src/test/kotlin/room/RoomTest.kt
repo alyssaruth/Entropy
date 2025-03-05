@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
-import util.makeGameSettings
+import testCore.makeGameSettings
 import util.makeRoom
 
 class RoomTest : AbstractTest() {
@@ -31,5 +31,14 @@ class RoomTest : AbstractTest() {
         copy.name shouldBe "Yttrium 2"
         copy.settings shouldBe settings
         copy.capacity shouldBe room.capacity
+    }
+
+    @Test
+    fun `Should calculate the correct colour for a player`() {
+        val room = makeRoom()
+        room.getColourForPlayer("Alyssa") shouldBe "gray"
+
+        room.addToCurrentPlayers("Alyssa", 1)
+        room.getColourForPlayer("Alyssa") shouldBe "blue"
     }
 }

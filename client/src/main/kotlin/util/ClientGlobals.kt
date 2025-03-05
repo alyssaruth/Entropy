@@ -1,5 +1,6 @@
 package util
 
+import http.ChatApi
 import http.DevApi
 import http.HealthCheckApi
 import http.HttpClient
@@ -18,6 +19,7 @@ object ClientGlobals {
     val healthCheckApi = HealthCheckApi(httpClient)
     val devApi = DevApi(httpClient)
     @JvmField var sessionApi = SessionApi(httpClient)
+    @JvmField val chatApi = ChatApi(httpClient)
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
     @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")

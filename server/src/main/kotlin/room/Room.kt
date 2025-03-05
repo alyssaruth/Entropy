@@ -2,6 +2,7 @@ package room
 
 import auth.UserConnection
 import game.GameSettings
+import http.dto.OnlineMessage
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
@@ -11,7 +12,6 @@ import `object`.ExtendedConcurrentHashMap
 import `object`.GameWrapper
 import `object`.HandDetails
 import `object`.LeftBid
-import `object`.OnlineMessage
 import `object`.Player
 import store.IHasId
 import util.CardsUtil
@@ -58,7 +58,16 @@ data class Room(
         }
     }
 
-    fun addToCurrentPlayers(username: String, playerNumber: Int): Int {
+    fun getColourForPlayer(playerName: String): String {
+        val playerNumber =
+            hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
+
+        return if (playerNumber != null) {
+            EntropyUtil.getColourForPlayerNumber(playerNumber)
+        } else "gray"
+    }
+
+    fun addToCurrentPlayers(username: String, playerNumber: Int): Int? {
         synchronized(this) {
             val existingUsername: String? = hmPlayerByPlayerNumber[playerNumber]
             if (existingUsername != null) {
@@ -165,7 +174,7 @@ data class Room(
 
         if (roundNumber > 1) {
             val om = OnlineMessage("black", "$winningUsername won!", "Game")
-            addToChatHistoryAndNotifyUsers(om)
+            addToChatHistory(om)
         }
 
         previousGame = currentGame.factoryCopy()
@@ -374,7 +383,7 @@ data class Room(
      * This occurs if they've left but the game is still going - we keep the reference as a player
      * so others can't take the seat. They obviously then have the option to join as an observer.
      */
-    private val allUsersInRoom: Set<String>
+    val allUsersInRoom: Set<String>
         get() = (currentPlayers + observers).toSet()
 
     val isGameInProgress: Boolean
@@ -461,21 +470,8 @@ data class Room(
         return added
     }
 
-    fun addToChatHistoryAndNotifyUsers(message: OnlineMessage) {
-        if (isEmpty) {
-            return
-        }
-
+    fun addToChatHistory(message: OnlineMessage) {
         chatHistory.add(message)
-
-        val chatMessage = XmlBuilderServer.getChatNotification(name, message)
-        val uscs = uscStore.getAllForNames(allUsersInRoom)
-        ServerGlobals.server.sendViaNotificationSocket(
-            uscs,
-            chatMessage,
-            XmlConstants.SOCKET_NAME_CHAT,
-            false,
-        )
     }
 
     fun makeCopy() = Room(UUID.randomUUID(), baseName, settings, capacity, index + 1)

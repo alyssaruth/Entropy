@@ -15,27 +15,6 @@ public class XmlBuilderClient implements XmlConstants
 		return XmlUtil.factorySimpleMessage(username, ROOT_TAG_HEARTBEAT);
 	}
 	
-	public static Document factoryNewChatXml(String roomId, String username, String colour, String message)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_NEW_CHAT);
-		
-		if (message.startsWith("/admin "))
-		{
-			message = message.substring("/admin ".length());
-			rootElement.setAttribute("Admin", "true");
-		}
-		
-		rootElement.setAttribute("RoomId", roomId);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("MessageText", message);
-		rootElement.setAttribute("Colour", colour);
-		
-		document.appendChild(rootElement);
-		
-		return document;
-	}
-	
 	public static Document factoryRoomJoinRequestXml(String id, String username, boolean observer, int playerNumber)
 	{
 		Document document = XmlUtil.factoryNewDocument();

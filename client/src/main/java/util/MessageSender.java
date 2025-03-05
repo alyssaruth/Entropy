@@ -94,18 +94,9 @@ public class MessageSender implements Runnable
 			
 			return encryptedResponseString;
 		}
-		catch (SocketException t)
+		catch (SocketException | SocketTimeoutException t)
 		{
 			return retryOrStackTrace(t);
-		}
-		catch (SocketTimeoutException ste)
-		{
-			if (!isResponseIgnored(messageString))
-			{
-				return retryOrStackTrace(ste);
-			}
-			
-			return null;
 		}
 		catch (Throwable t)
 		{
@@ -186,22 +177,5 @@ public class MessageSender implements Runnable
 			
 			return null;
 		}
-	}
-	
-	private boolean isResponseIgnored(String xmlStr)
-	{
-		Document document = XmlUtil.getDocumentFromXmlString(xmlStr);
-		if (document == null)
-		{
-			//I've had this be null here on Live. Just return false so we re-send
-			Debug.stackTrace("NULL document when checking if response is ignored for message " + xmlStr);
-			return false;
-		}
-		
-		Element rootElement = document.getDocumentElement();
-		
-		String name = rootElement.getTagName();
-		
-		return name.equals(XmlConstants.ROOT_TAG_NEW_CHAT);
 	}
 }
