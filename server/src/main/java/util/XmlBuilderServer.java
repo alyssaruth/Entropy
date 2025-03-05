@@ -1,6 +1,10 @@
 package util;
 
-import object.*;
+import http.dto.OnlineMessage;
+import object.Bid;
+import object.BidHistory;
+import object.GameWrapper;
+import object.HandDetails;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import room.Room;
@@ -84,43 +88,6 @@ public class XmlBuilderServer implements XmlConstants
 			roomStatsElement.setAttribute("RoomDuration", "0");
 			root.appendChild(roomStatsElement);
 		}
-	}
-	
-	public static Document factoryStatisticsNotification(String username)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-		Element statsElement = createStatisticsElement(response, username);
-		response.appendChild(statsElement);
-		return response;
-	}
-	
-	private static Document appendStatisticsResponse(Document response, String username)
-	{
-		Element rootElement = response.getDocumentElement();
-		Element statsElement = createStatisticsElement(response, username);
-		
-		rootElement.appendChild(statsElement);
-		return response;
-	}
-	
-	private static Element createStatisticsElement(Document response, String username)
-	{
-		Element statsElement = response.createElement(RESPONSE_TAG_STATISTICS_NOTIFICATION);
-		addWinsAndLossesToElement(statsElement, username);
-		
-		return statsElement;
-	}
-	
-	public static String getChatNotification(String roomName, OnlineMessage chatMessage)
-	{
-		Document notification = XmlUtil.factoryNewDocument();
-		Element root = notification.createElement(RESPONSE_TAG_CHAT_NOTIFICATION);
-		root.setAttribute("RoomName", roomName);
-		
-		appendChatMessage(notification, root, chatMessage, -1);
-		
-		notification.appendChild(root);
-		return XmlUtil.getStringFromDocument(notification);
 	}
 	
 	private static void appendCurrentChatElement(Document response, String roomName, EntropyServer server)

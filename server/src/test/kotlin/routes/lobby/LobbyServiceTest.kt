@@ -18,9 +18,9 @@ import store.SessionStore
 import store.Store
 import store.UserConnectionStore
 import testCore.AbstractTest
+import testCore.makeGameSettings
 import testCore.verifyNotCalled
 import util.XmlConstants
-import util.makeGameSettings
 import util.makeSession
 
 class LobbyServiceTest : AbstractTest() {
@@ -116,7 +116,7 @@ class LobbyServiceTest : AbstractTest() {
             server,
             store,
             uscStore,
-            roomStore
+            roomStore,
         )
     }
 }

@@ -4,6 +4,7 @@ import auth.Session
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
+import routes.chat.ChatService
 import routes.lobby.LobbyService
 import routes.session.SessionService
 import server.EntropyServer
@@ -38,4 +39,5 @@ object ServerGlobals {
     @JvmField
     var lobbyService: LobbyService = LobbyService(server, sessionStore, uscStore, roomStore)
     @JvmField var sessionService = SessionService(sessionStore, uscStore)
+    var chatService = ChatService(server, roomStore, uscStore)
 }

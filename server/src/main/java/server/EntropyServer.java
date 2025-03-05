@@ -1,24 +1,23 @@
 package server;
 
 import auth.UserConnection;
+import http.dto.OnlineMessage;
 import logging.LoggerUncaughtExceptionHandler;
-import object.OnlineMessage;
 import object.ServerRunnable;
 import object.ServerThread;
 import room.Room;
 import room.RoomFactory;
-import util.*;
+import util.Debug;
+import util.DebugOutputSystemOut;
+import util.OnlineConstants;
+import util.ServerGlobals;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static utils.CoreGlobals.logger;
 
 public final class EntropyServer implements OnlineConstants {
-    //Caches
-    private ArrayList<OnlineMessage> lobbyMessages = new ArrayList<>();
-
     //Seed
     private static long currentSeedLong = 4613352884640512L;
 
@@ -60,39 +59,7 @@ public final class EntropyServer implements OnlineConstants {
     public void resetLobby() {
         ServerGlobals.INSTANCE.getRoomStore().reset();
 
-        lobbyMessages.clear();
         logger.info("clearedMessages", "Cleared lobby messages");
-    }
-
-    public void addToChatHistory(String id, String message, String colour, String username) {
-        OnlineMessage messageObj = new OnlineMessage(colour, message, username);
-        addToChatHistory(id, messageObj);
-    }
-
-    public void addAdminMessage(String message) {
-        OnlineMessage messageObj = new OnlineMessage("black", message, "Admin");
-
-        var rooms = ServerGlobals.INSTANCE.getRoomStore().getAll();
-        for (Room room :  rooms) {
-            room.addToChatHistoryAndNotifyUsers(messageObj);
-        }
-
-        addToChatHistory(LOBBY_ID, messageObj);
-    }
-
-    private void addToChatHistory(String name, OnlineMessage message) {
-        if (name.equals(LOBBY_ID)) {
-            lobbyMessages.add(message);
-            List<UserConnection> usersToNotify = ServerGlobals.INSTANCE.getUscStore().getAll();
-
-            String chatMessage = XmlBuilderServer.getChatNotification(name, message);
-            sendViaNotificationSocket(usersToNotify, chatMessage, XmlConstants.SOCKET_NAME_CHAT);
-        } else {
-            Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(name);
-            if (room != null) {
-                room.addToChatHistoryAndNotifyUsers(message);
-            }
-        }
     }
 
     public void sendViaNotificationSocket(List<UserConnection> uscs, String message, String socketName) {
@@ -128,10 +95,6 @@ public final class EntropyServer implements OnlineConstants {
     }
 
     public List<OnlineMessage> getChatHistory(String id) {
-        if (id.equals(LOBBY_ID)) {
-            return lobbyMessages;
-        }
-
         Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(id);
         return room.getChatHistory();
     }

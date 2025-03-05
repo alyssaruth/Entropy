@@ -8,6 +8,7 @@ import io.ktor.server.logging.toLogString
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import routes.ClientException
+import routes.chat.ChatController
 import routes.dev.DevController
 import routes.health.HealthCheckController
 import routes.session.SessionController
@@ -20,7 +21,7 @@ fun Application.configureRouting() {
                 "clientError",
                 "Error handling ${call.request.toLogString()}: ${cause.message}",
                 "clientErrorCode" to cause.errorCode,
-                "clientErrorMessage" to cause.message
+                "clientErrorMessage" to cause.message,
             )
             call.respond(cause.statusCode, ClientErrorResponse(cause.errorCode, cause.message))
         }
@@ -30,7 +31,7 @@ fun Application.configureRouting() {
             logger.error("internalServerError", errorMessage, cause)
             call.respond(
                 HttpStatusCode.InternalServerError,
-                ClientErrorResponse(INTERNAL_SERVER_ERROR, errorMessage)
+                ClientErrorResponse(INTERNAL_SERVER_ERROR, errorMessage),
             )
         }
     }
@@ -38,4 +39,5 @@ fun Application.configureRouting() {
     HealthCheckController().installRoutes(this)
     SessionController().installRoutes(this)
     DevController().installRoutes(this)
+    ChatController().installRoutes(this)
 }

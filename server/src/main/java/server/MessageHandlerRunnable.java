@@ -192,24 +192,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_NEW_CHAT))
-		{
-			String newMessage = root.getAttribute("MessageText");
-			String colour = root.getAttribute("Colour");
-			String admin = root.getAttribute("Admin");
-			
-			if (!admin.isEmpty())
-			{
-				server.addAdminMessage(newMessage);
-			}
-			else
-			{
-				server.addToChatHistory(id, newMessage, colour, username);
-			}
-			
-			return XmlBuilderServer.getAcknowledgement();
-		}
-		else if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
+		if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
 		{
 			String observerStr = root.getAttribute("Observer");
 			int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");

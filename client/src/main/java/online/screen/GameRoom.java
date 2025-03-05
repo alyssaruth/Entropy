@@ -81,7 +81,7 @@ public abstract class GameRoom extends JFrame
 		splitPane.setOpaque(false);
 		setContentPane(bgPanel);
 		
-		chatPanel = new OnlineChatPanel(roomName);
+		chatPanel = new OnlineChatPanel(roomName, false);
 		
 		setIcon();
 		setLocationRelativeTo(ScreenCache.get(EntropyLobby.class));
@@ -1008,16 +1008,11 @@ public abstract class GameRoom extends JFrame
 	public void setObserver(boolean observer)
 	{
 		this.observer = observer;
-		if (observer)
-		{
-			chatPanel.setColour("gray");
-		}
 	}
 	public void setUsername(String username)
 	{
 		this.username = username;
 		setTitle("Room: " + roomName + " (" + username + ")");
-		chatPanel.setUsername(username);
 	}
 	public void setPlayerNumber(int playerNumber)
 	{
@@ -1030,8 +1025,6 @@ public abstract class GameRoom extends JFrame
 		{
 			playerNumberLocal = -1;
 		}
-		
-		chatPanel.setColourForPlayerNumber(playerNumber);
 	}
 	public int getRoundNumber()
 	{

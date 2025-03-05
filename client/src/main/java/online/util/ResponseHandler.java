@@ -2,7 +2,7 @@
 package online.util;
 
 import object.Bid;
-import object.OnlineMessage;
+import http.dto.OnlineMessage;
 import online.screen.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,10 +37,6 @@ public class ResponseHandler implements XmlConstants
 		if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
 		{
 			//do nothing
-		}
-		else if (responseName.equals(RESPONSE_TAG_CHAT_NOTIFICATION))
-		{
-			handleChatResponse(root, lobby);
 		}
 		else if (responseName.equals(RESPONSE_TAG_JOIN_ROOM_RESPONSE))
 		{

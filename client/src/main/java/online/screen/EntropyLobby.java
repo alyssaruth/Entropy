@@ -134,7 +134,7 @@ public class EntropyLobby extends JFrame
 	private final JPanel filterPanel = new JPanel();
 	private final JPanel settingsPanel = new JPanel();
 	private final JButton btnSettings = new JButton("");
-	private final OnlineChatPanel chatPanel = new OnlineChatPanel(LOBBY_ID);
+	private final OnlineChatPanel chatPanel = new OnlineChatPanel(null, false);
 	
 	public void init(LobbyMessage lobbyMessage)
 	{
@@ -181,7 +181,7 @@ public class EntropyLobby extends JFrame
 	
 	public OnlineChatPanel getChatPanelForRoomName(String roomName)
 	{
-		if (roomName.equals(LOBBY_ID))
+		if (roomName == null)
 		{
 			return chatPanel;
 		}
@@ -269,7 +269,6 @@ public class EntropyLobby extends JFrame
 			{
 				if (!chatPanel.getInitted())
 				{
-					chatPanel.setUsername(username);
 					chatPanel.init();
 					chatPanel.setWrapWidth(200);
 					chatPanel.setEnabled(true);

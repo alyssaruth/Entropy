@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
-import util.makeGameSettings
+import testCore.makeGameSettings
 import util.makeRoom
 
 class RoomTest : AbstractTest() {

@@ -2,6 +2,7 @@ package http
 
 import http.dto.ClientMessage
 import http.dto.LobbyMessage
+import http.dto.NewChatMessage
 import online.screen.EntropyLobby
 import screen.ScreenCache
 import utils.CoreGlobals
@@ -17,6 +18,7 @@ class WebSocketReceiver {
 
         when (clientMessage) {
             is LobbyMessage -> handleLobbyResponse(clientMessage)
+            is NewChatMessage -> handleNewChatResponse(clientMessage)
         }
     }
 
@@ -38,5 +40,11 @@ class WebSocketReceiver {
 
     private fun handleLobbyResponse(clientMessage: LobbyMessage) {
         ScreenCache.get<EntropyLobby>().syncLobby(clientMessage)
+    }
+
+    private fun handleNewChatResponse(clientMessage: NewChatMessage) {
+        val chatPanel =
+            ScreenCache.get<EntropyLobby>().getChatPanelForRoomName(clientMessage.roomName)
+        chatPanel.updateChatBox(clientMessage.message)
     }
 }

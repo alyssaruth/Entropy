@@ -1,13 +1,9 @@
 package online.screen;
 
 import achievement.AchievementUtilKt;
+import http.dto.OnlineMessage;
 import object.LimitedDocument;
-import object.OnlineMessage;
-import online.util.XmlBuilderClient;
-import org.w3c.dom.Document;
 import screen.ReplayDialog;
-import util.EntropyUtil;
-import util.MessageUtil;
 import util.Registry;
 import util.StringUtil;
 
@@ -18,18 +14,18 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+import static util.ClientGlobals.chatApi;
+
 public class OnlineChatPanel extends JPanel
 						     implements ActionListener, Registry
-{	
-	private String username = null;
+{
 	private String roomId = null;
-	private String colour = "";
 	
 	private int wrapWidth = 234;
 	
 	private boolean initted = false;
 	
-	public OnlineChatPanel(String roomId)
+	public OnlineChatPanel(String roomId, boolean readOnly)
 	{
 		this.roomId = roomId;
 		
@@ -41,7 +37,7 @@ public class OnlineChatPanel extends JPanel
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBar(null);
 		
-		if (roomId != null)
+		if (readOnly)
 		{
 			add(textField, BorderLayout.SOUTH);
 			textField.setDocument(new LimitedDocument(100));
@@ -80,9 +76,8 @@ public class OnlineChatPanel extends JPanel
 		}
 		
 		textField.setText("");
-		
-		Document message = XmlBuilderClient.factoryNewChatXml(roomId, username, colour, text);
-		MessageUtil.sendMessage(message, 200);
+
+		chatApi.sendChat(text, roomId);
 
 		AchievementUtilKt.updateAndUnlockChatty();
 	}
@@ -126,21 +121,6 @@ public class OnlineChatPanel extends JPanel
 	public boolean getInitted()
 	{
 		return initted;
-	}
-	
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
-	
-	public void setColour(String colour)
-	{
-		this.colour = colour;
-	}
-	
-	public void setColourForPlayerNumber(int playerNumber)
-	{
-		colour = EntropyUtil.getColourForPlayerNumber(playerNumber);
 	}
 	
 	public void saveRecentChat(Preferences replay, int roundNumber)

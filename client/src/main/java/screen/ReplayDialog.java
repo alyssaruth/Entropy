@@ -35,7 +35,7 @@ import javax.swing.text.StyledDocument;
 
 import object.Bid;
 import object.BidListCellRenderer;
-import object.OnlineMessage;
+import http.dto.OnlineMessage;
 import object.PlayerLabel;
 import online.screen.GameRoom;
 import online.screen.OnlineChatPanel;
@@ -318,7 +318,7 @@ public class ReplayDialog extends JFrame
 	private final JToggleButton starFilter = new JToggleButton("");
 	private final JToggleButton noFilter = new JToggleButton("");
 	private final ButtonGroup filterGroup = new ButtonGroup();
-	private final OnlineChatPanel chatPanel = new OnlineChatPanel(null);
+	private final OnlineChatPanel chatPanel = new OnlineChatPanel(null, true);
 
 	public void initForInGameReplay()
 	{
