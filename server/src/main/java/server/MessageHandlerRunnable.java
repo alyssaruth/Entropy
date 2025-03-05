@@ -76,6 +76,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			Document response = getResponse();
 			if (notificationSocket)
 			{
+				CoreGlobals.logger.info("socket", "Setting up notification socket " + name + " for " + username);
 				usc.replaceNotificationSocket(name, new NotificationSocket(clientSocket, os, osw, in));
 			}
 			

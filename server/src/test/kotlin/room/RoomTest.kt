@@ -32,4 +32,13 @@ class RoomTest : AbstractTest() {
         copy.settings shouldBe settings
         copy.capacity shouldBe room.capacity
     }
+
+    @Test
+    fun `Should calculate the correct colour for a player`() {
+        val room = makeRoom()
+        room.getColourForPlayer("Alyssa") shouldBe "gray"
+
+        room.addToCurrentPlayers("Alyssa", 1)
+        room.getColourForPlayer("Alyssa") shouldBe "blue"
+    }
 }

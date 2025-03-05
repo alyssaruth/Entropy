@@ -37,7 +37,7 @@ public class OnlineChatPanel extends JPanel
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBar(null);
 		
-		if (readOnly)
+		if (!readOnly)
 		{
 			add(textField, BorderLayout.SOUTH);
 			textField.setDocument(new LimitedDocument(100));

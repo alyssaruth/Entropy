@@ -132,7 +132,7 @@ public class ResponseHandler implements XmlConstants
 		String messageText = child.getAttribute("MessageText");
 		String colour = child.getAttribute("Colour");
 		
-		return new OnlineMessage(colour, messageText, username);
+		return new OnlineMessage(colour, username, messageText);
 	}
 
 	private static void handleJoinRoomAck(final Element root, final EntropyLobby lobby)
