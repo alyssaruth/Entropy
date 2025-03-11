@@ -395,7 +395,8 @@ public abstract class GameRoom extends JFrame
 		handPanel.setUsername(username);
 		handPanel.setPlayers(players);
 		handPanel.setPlayerNumber(playerNumber);
-		handPanel.setRoomId(roomName);
+		handPanel.setRoomId(id);
+		handPanel.setRoomName(roomName);
 		handPanel.activateEmptySeats();
 	}
 	

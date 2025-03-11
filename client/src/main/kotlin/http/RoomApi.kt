@@ -2,6 +2,8 @@ package http
 
 import http.dto.JoinRoomRequest
 import http.dto.JoinRoomResponse
+import http.dto.SitDownRequest
+import java.util.UUID
 import kong.unirest.HttpMethod
 import online.screen.EntropyLobby
 import online.screen.GameRoom
@@ -30,5 +32,10 @@ class RoomApi(private val httpClient: HttpClient) {
         room.init(false)
         room.synchronisePlayers(response.players, response.formerPlayers)
         room.chatPanel.updateChatBox(response.chatHistory)
+    }
+
+    fun sitDown(roomId: UUID, seat: Int) {
+        val response =
+            httpClient.doCall<Unit>(HttpMethod.POST, Routes.SIT_DOWN, SitDownRequest(roomId, seat))
     }
 }

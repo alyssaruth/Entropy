@@ -2,6 +2,7 @@ package routes.room
 
 import auth.Session
 import http.INVALID_ROOM_ID
+import http.SEAT_TAKEN
 import http.dto.JoinRoomRequest
 import http.dto.JoinRoomResponse
 import http.dto.SitDownRequest
@@ -22,6 +23,10 @@ class RoomService(private val roomStore: RoomStore) {
 
     fun sitDown(session: Session, request: SitDownRequest) {
         val room = lookupRoom(request.roomId)
+
+        val result =
+            room.attemptToSitDown(session.name, request.playerNumber)
+                ?: throw ClientException(HttpStatusCode.Conflict, SEAT_TAKEN, "")
     }
 
     fun standUp(session: Session, request: StandUpRequest) {

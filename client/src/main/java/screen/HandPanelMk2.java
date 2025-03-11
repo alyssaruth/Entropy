@@ -13,10 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
@@ -39,7 +39,8 @@ public class HandPanelMk2 extends TransparentPanel
 	private boolean revealListenerActive = false;
 	
 	//Need these for standing up/sitting down
-	private String roomId = "";
+	private UUID roomId = null;
+	private String roomName = "";
 	private String username = "";
 	private int players = 2;
 	private int playerNumber = 0;
@@ -48,7 +49,7 @@ public class HandPanelMk2 extends TransparentPanel
 	
 	private RevealListener listener = null;
 	
-	public HandPanelMk2(RevealListener listener) 
+	public HandPanelMk2(RevealListener listener)
 	{
 		try
 		{
@@ -756,9 +757,10 @@ public class HandPanelMk2 extends TransparentPanel
 	{
 		this.username = username;
 	}
-	public void setRoomId(String roomId)
+	public void setRoomId(UUID roomId) { this.roomId = roomId; }
+	public void setRoomName(String roomName)
 	{
-		this.roomId = roomId;
+		this.roomName = roomName;
 	}
 	public String getPlayerName()
 	{
@@ -798,7 +800,7 @@ public class HandPanelMk2 extends TransparentPanel
 	{
 		try
 		{
-			AchievementsUtil.unlockSecondThoughts(roomId);
+			AchievementsUtil.unlockSecondThoughts(roomName);
 			
 			for (int i=0; i <playerCards.length; i++)
 			{
@@ -946,8 +948,9 @@ public class HandPanelMk2 extends TransparentPanel
 		{
 			playerNumber = 3;
 		}
-		
-		Document sitDownRequest = XmlBuilderClient.factoryRoomJoinRequestXml(roomId, username, false, playerNumber);
+
+
+		Document sitDownRequest = XmlBuilderClient.factoryRoomJoinRequestXml(roomName, username, false, playerNumber);
 		MessageUtil.sendMessage(sitDownRequest, 0);
 	}
 	
