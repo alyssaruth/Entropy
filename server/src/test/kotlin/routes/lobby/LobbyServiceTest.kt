@@ -45,8 +45,8 @@ class LobbyServiceTest : AbstractTest() {
         val lobby = service.getLobby()
         lobby.users.shouldContainExactlyInAnyOrder(OnlineUser("Alyssa", 4), OnlineUser("Bob", 7))
         lobby.rooms.shouldContainExactlyInAnyOrder(
-            RoomSummary("Carbon 1", settings, 4, 1, 0),
-            RoomSummary("Carbon 2", settings, 4, 0, 1),
+            RoomSummary(roomOne.id, "Carbon 1", settings, 4, 1, 0),
+            RoomSummary(roomTwo.id, "Carbon 2", settings, 4, 0, 1),
         )
     }
 

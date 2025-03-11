@@ -2,6 +2,7 @@ package room
 
 import auth.UserConnection
 import game.GameSettings
+import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -478,6 +479,9 @@ data class Room(
     fun addToChatHistory(message: OnlineMessage) {
         chatHistory.add(message)
     }
+
+    fun buildJoinRoomResponse() =
+        JoinRoomResponse(chatHistory, hmPlayerByPlayerNumber.toMap(), hmFormerPlayerByPlayerNumber)
 
     fun makeCopy() = Room(UUID.randomUUID(), baseName, settings, capacity, index + 1)
 

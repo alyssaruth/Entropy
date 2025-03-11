@@ -40,6 +40,7 @@ public abstract class GameRoom extends JFrame
 	private static final int ADJUSTED_PLAYER_NUMBER_ME = 0;
 
 
+	private final UUID id;
 	private final String roomName;
 	private final int players;
 	private final GameSettings settings;
@@ -71,8 +72,9 @@ public abstract class GameRoom extends JFrame
 	public ReplayDialog replayDialog = new ReplayDialog();
 	public BidPanel bidPanel = null;
 	
-	public GameRoom(String roomName, GameSettings settings, int players)
+	public GameRoom(UUID id, String roomName, GameSettings settings, int players)
 	{
+		this.id = id;
 		this.roomName = roomName;
 		this.settings = settings;
 		this.players = players;
@@ -185,11 +187,11 @@ public abstract class GameRoom extends JFrame
 		
 		if (mode == GameMode.Entropy)
 		{
-			ret = new EntropyRoom(roomName, settings, capacity);
+			ret = new EntropyRoom(room.getId(), roomName, settings, capacity);
 		}
 		else if (mode == GameMode.Vectropy)
 		{
-			ret = new VectropyRoom(roomName, settings, capacity);
+			ret = new VectropyRoom(room.getId(), roomName, settings, capacity);
 		}
 
 		return ret;
@@ -409,8 +411,8 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	public void synchronisePlayers(HashMap<Integer, String> serverHmPlayerByPlayerNumber,
-	  HashMap<Integer, String> serverHmFormerPlayerByPlayerNumber)
+	public void synchronisePlayers(Map<Integer, String> serverHmPlayerByPlayerNumber,
+								   Map<Integer, String> serverHmFormerPlayerByPlayerNumber)
 	{
 		//Add any players the server has that we don't
 		addPlayersFromServer(serverHmPlayerByPlayerNumber, true);
@@ -439,7 +441,7 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	private void addPlayersFromServer(HashMap<Integer, String> hmPlayerByPlayerNumber, boolean active)
+	private void addPlayersFromServer(Map<Integer, String> hmPlayerByPlayerNumber, boolean active)
 	{
 		Iterator<Integer> it = hmPlayerByPlayerNumber.keySet().iterator();
 		for (; it.hasNext();)
@@ -455,7 +457,7 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	private void processPlayersLeaving(HashMap<Integer, String> serverHmPlayerByPlayerNumber)
+	private void processPlayersLeaving(Map<Integer, String> serverHmPlayerByPlayerNumber)
 	{
 		for (int i=0; i<MAX_NUMBER_OF_PLAYERS; i++)
 		{
@@ -1456,6 +1458,7 @@ public abstract class GameRoom extends JFrame
 	}
 
 	public String getRoomName() { return roomName; }
+	public UUID getId() { return id; }
 	public int getJokerValue()
 	{
 		return settings.getJokerValue();

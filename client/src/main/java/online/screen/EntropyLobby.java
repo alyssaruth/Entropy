@@ -30,8 +30,6 @@ public class EntropyLobby extends JFrame
 						  implements WindowListener,
 						  			 ActionListener
 {
-	public static final String LOBBY_ID = "Lobby";
-	
 	//Declaring these as 'Map' to fix obscure Java8 bug
 	private Map<String, GameRoom> hmGameRoomByRoomName = new ConcurrentHashMap<>();
 	private Map<String, RoomSummary> hmRoomByRoomName = new ConcurrentHashMap<>();
