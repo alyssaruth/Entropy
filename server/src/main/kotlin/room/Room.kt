@@ -4,6 +4,7 @@ import auth.UserConnection
 import game.GameSettings
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
+import http.dto.RoomStateResponse
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
@@ -405,10 +406,6 @@ data class Room(
         return hmPlayerByPlayerNumber[playerNumber]
     }
 
-    fun getFormerPlayer(playerNumber: Int): String? {
-        return hmFormerPlayerByPlayerNumber[playerNumber]
-    }
-
     private fun getGameForId(gameId: String): GameWrapper {
         if (gameId == currentGame.gameId) {
             return currentGame
@@ -481,7 +478,14 @@ data class Room(
     }
 
     fun buildJoinRoomResponse() =
-        JoinRoomResponse(chatHistory, hmPlayerByPlayerNumber.toMap(), hmFormerPlayerByPlayerNumber)
+        JoinRoomResponse(
+            chatHistory,
+            hmPlayerByPlayerNumber.toMap(),
+            hmFormerPlayerByPlayerNumber.toMap(),
+        )
+
+    fun buildRoomStateResponse() =
+        RoomStateResponse(hmPlayerByPlayerNumber.toMap(), hmFormerPlayerByPlayerNumber.toMap())
 
     fun makeCopy() = Room(UUID.randomUUID(), baseName, settings, capacity, index + 1)
 

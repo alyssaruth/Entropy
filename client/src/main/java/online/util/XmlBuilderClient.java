@@ -15,21 +15,6 @@ public class XmlBuilderClient implements XmlConstants
 		return XmlUtil.factorySimpleMessage(username, ROOT_TAG_HEARTBEAT);
 	}
 	
-	public static Document factoryRoomJoinRequestXml(String id, String username, boolean observer, int playerNumber)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		
-		Element rootElement = document.createElement(ROOT_TAG_ROOM_JOIN_REQUEST);
-		String optionStr = observer? "Observer":"Player";
-		rootElement.setAttribute(optionStr, "true");
-		rootElement.setAttribute("RoomId", id);
-		rootElement.setAttribute("Username", username);
-		rootElement.setAttribute("PlayerNumber", "" + playerNumber);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryCloseRoomRequestXml(String id, String username)
 	{
 		Document document = XmlUtil.factoryNewDocument();

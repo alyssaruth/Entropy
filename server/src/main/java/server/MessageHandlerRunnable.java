@@ -193,14 +193,7 @@ public class MessageHandlerRunnable implements ServerRunnable,
 
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_ROOM_JOIN_REQUEST))
-		{
-			String observerStr = root.getAttribute("Observer");
-			int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");
-			
-			return XmlBuilderServer.getRoomJoinResponse(room, username, observerStr, playerNumber, server);
-		}
-		else if (name.equals(ROOT_TAG_CLOSE_ROOM_REQUEST))
+		if (name.equals(ROOT_TAG_CLOSE_ROOM_REQUEST))
 		{
 			return XmlBuilderServer.getCloseRoomResponse(room, username);
 		}

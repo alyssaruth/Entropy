@@ -31,14 +31,14 @@ class RoomController {
     private suspend fun sitDown(call: ApplicationCall) =
         requiresSession(call) { session ->
             val request = call.receive<SitDownRequest>()
-            roomService.sitDown(session, request)
-            call.respond(HttpStatusCode.NoContent)
+            val response = roomService.sitDown(session, request)
+            call.respond(HttpStatusCode.OK, response)
         }
 
     private suspend fun standUp(call: ApplicationCall) =
         requiresSession(call) { session ->
             val request = call.receive<StandUpRequest>()
-            roomService.standUp(session, request)
-            call.respond(HttpStatusCode.NoContent)
+            val response = roomService.standUp(session, request)
+            call.respond(HttpStatusCode.OK, response)
         }
 }

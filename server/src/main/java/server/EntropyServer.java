@@ -1,11 +1,9 @@
 package server;
 
 import auth.UserConnection;
-import http.dto.OnlineMessage;
 import logging.LoggerUncaughtExceptionHandler;
 import object.ServerRunnable;
 import object.ServerThread;
-import room.Room;
 import room.RoomFactory;
 import util.Debug;
 import util.DebugOutputSystemOut;
@@ -92,11 +90,6 @@ public final class EntropyServer implements OnlineConstants {
                 }
             }
         }
-    }
-
-    public List<OnlineMessage> getChatHistory(String id) {
-        Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(id);
-        return room.getChatHistory();
     }
 
     /**

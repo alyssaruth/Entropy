@@ -281,6 +281,8 @@ public abstract class GameRoom extends JFrame
 	
 	public void initPlayer()
 	{
+		adjustSize();
+
 		resetVariables(true);
 		
 		btnStandUp.setVisible(true);
@@ -1294,9 +1296,8 @@ public abstract class GameRoom extends JFrame
 			
 			AchievementsUtil.unlockCoward();
 		}
-		
-		Document request = XmlBuilderClient.factoryRoomJoinRequestXml(roomName, username, true, -1);
-		MessageUtil.sendMessage(request, 0);
+
+		ClientGlobals.roomApi.standUp(this);
 	}
 	
 	public void waitingForPlayers()

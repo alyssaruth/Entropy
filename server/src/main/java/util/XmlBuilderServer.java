@@ -1,6 +1,5 @@
 package util;
 
-import http.dto.OnlineMessage;
 import object.Bid;
 import object.BidHistory;
 import object.GameWrapper;
@@ -8,7 +7,6 @@ import object.HandDetails;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import room.Room;
-import server.EntropyServer;
 
 import java.util.List;
 
@@ -90,95 +88,6 @@ public class XmlBuilderServer implements XmlConstants
 		}
 	}
 	
-	private static void appendCurrentChatElement(Document response, String roomName, EntropyServer server)
-	{
-		Element root = response.getDocumentElement();
-		Element rootChatElement = response.createElement(RESPONSE_TAG_CHAT_NOTIFICATION);
-		rootChatElement.setAttribute("RoomName", roomName);
-
-		List<OnlineMessage> onlineMessages = server.getChatHistory(roomName);
-		int size = onlineMessages.size();
-		int startIndex = 0;
-		if (size > 10)
-		{
-			startIndex = size - 10;
-		}
-		
-		appendChatMessages(response, rootChatElement, onlineMessages, startIndex);
-		root.appendChild(rootChatElement);
-	}
-	
-	private static void appendChatMessages(Document response, Element root, List<OnlineMessage> chatHistory, 
-	  int startIndex)
-	{
-		for (int i=startIndex; i<chatHistory.size(); i++)
-		{
-			OnlineMessage message = chatHistory.get(i);
-			int index = i - startIndex;
-			appendChatMessage(response, root, message, index);
-		}
-	}
-	
-	private static void appendChatMessage(Document response, Element root, OnlineMessage message, int index)
-	{
-		Element messageElement = response.createElement("Message");
-		
-		if (index > -1)
-		{
-			messageElement.setAttribute("Index", "" + index);
-		}
-		
-		messageElement.setAttribute("MessageText", message.getText());
-		messageElement.setAttribute("Colour", message.getColour());
-		messageElement.setAttribute("Username", message.getUsername());
-		
-		root.appendChild(messageElement);
-	}
-	
-	public static Document getRoomJoinResponse(Room room, String username, String observerStr, int playerNumber, EntropyServer server)
-	{
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_JOIN_ROOM_RESPONSE);
-		rootElement.setAttribute("RoomId", room.getName());
-		
-		boolean observer = !observerStr.isEmpty();
-		if (observer)
-		{
-			room.addToObservers(username);
-			rootElement.setAttribute("Observer", "true");
-		}
-		else
-		{
-			if (!room.isFull())
-			{
-				playerNumber = room.attemptToSitDown(username, playerNumber);
-				rootElement.setAttribute("PlayerNumber", "" + playerNumber);
-
-				if (room.isFull())
-				{
-					ServerGlobals.INSTANCE.getRoomStore().addCopy(room);
-				}
-			}
-			else
-			{
-				rootElement.setAttribute("RoomFull", "true");
-			}
-		}
-		
-		response.appendChild(rootElement);
-		
-		//Append the current chat history and players for this room
-		appendCurrentChatElement(response, room.getName(), server);
-		addPlayers(room, rootElement);
-		
-		if (observer)
-		{
-			addFormerPlayers(room, rootElement);
-		}
-		
-		return response;
-	}
-	
 	public static Document getCloseRoomResponse(Room room, String username) 
 	{
 		Document response = XmlUtil.factoryNewDocument();
@@ -251,18 +160,6 @@ public class XmlBuilderServer implements XmlConstants
 			if (username != null)
 			{
 				rootElement.setAttribute("Player-" + i, username);
-			}
-		}
-	}
-	private static void addFormerPlayers(Room room, Element rootElement)
-	{
-		int numberOfPlayers = room.getCapacity();
-		for (int i=0; i<numberOfPlayers; i++)
-		{
-			String username = room.getFormerPlayer(i);
-			if (username != null)
-			{
-				rootElement.setAttribute("FormerPlayer-" + i, username);
 			}
 		}
 	}

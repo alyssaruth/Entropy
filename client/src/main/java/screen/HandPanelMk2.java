@@ -2,8 +2,6 @@ package screen;
 
 import object.CardLabel;
 import object.PlayerLabel;
-import online.util.XmlBuilderClient;
-import org.w3c.dom.Document;
 import util.*;
 
 import javax.swing.*;
@@ -950,8 +948,7 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 
 
-		Document sitDownRequest = XmlBuilderClient.factoryRoomJoinRequestXml(roomName, username, false, playerNumber);
-		MessageUtil.sendMessage(sitDownRequest, 0);
+		ClientGlobals.roomApi.sitDown(roomId, playerNumber);
 	}
 	
 	private void setCardIcon(CardLabel cardLabel, boolean faded)

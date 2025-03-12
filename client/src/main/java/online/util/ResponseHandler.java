@@ -2,15 +2,16 @@
 package online.util;
 
 import object.Bid;
-import http.dto.OnlineMessage;
-import online.screen.*;
+import online.screen.EntropyLobby;
+import online.screen.GameRoom;
+import online.screen.Leaderboard;
+import online.screen.OnlineStatsPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import screen.ScreenCache;
 import util.*;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,10 +38,6 @@ public class ResponseHandler implements XmlConstants
 		if (responseName.equals(RESPONSE_TAG_ACKNOWLEDGEMENT))
 		{
 			//do nothing
-		}
-		else if (responseName.equals(RESPONSE_TAG_JOIN_ROOM_RESPONSE))
-		{
-			handleJoinRoomAck(root, lobby);
 		}
 		else if (responseName.equals(RESPONSE_TAG_CLOSE_ROOM_RESPONSE))
 		{
@@ -93,104 +90,6 @@ public class ResponseHandler implements XmlConstants
 		{
 			throw new Throwable("Unexpected response.");
 		}
-	}
-	
-	private static void handleChatResponse(Element root, EntropyLobby lobby)
-	{
-		String name = root.getAttribute("RoomName");
-		OnlineChatPanel panel = lobby.getChatPanelForRoomName(name);
-		
-		NodeList children = root.getElementsByTagName("Message");
-		int length = children.getLength();
-		if (length == 1)
-		{
-			Element child = (Element)children.item(0);
-			OnlineMessage message = getOnlineMessageFromChild(child);
-			panel.updateChatBox(message);
-		}
-		else
-		{
-			//If we have more than one tag, we could parse them in any order. Build up a list of the messages,
-			//paying attention to the extra 'Index' attribute
-			List<OnlineMessage> messages = new ArrayList<>();
-			for (int i=0; i<length; i++)
-			{
-				Element child = (Element)children.item(i);
-				OnlineMessage message = getOnlineMessageFromChild(child);
-				int index = XmlUtil.getAttributeInt(child, "Index", -1);
-				
-				messages.add(index, message);
-			}
-			
-			panel.updateChatBox(messages);
-		}
-	}
-	
-	private static OnlineMessage getOnlineMessageFromChild(Element child)
-	{
-		String username = child.getAttribute("Username");
-		String messageText = child.getAttribute("MessageText");
-		String colour = child.getAttribute("Colour");
-		
-		return new OnlineMessage(colour, username, messageText);
-	}
-
-	private static void handleJoinRoomAck(final Element root, final EntropyLobby lobby)
-	{
-		String username = lobby.getUsername();
-		
-		String id = root.getAttribute("RoomId");
-		String roomFull = root.getAttribute("RoomFull");
-		
-		if (!roomFull.isEmpty())
-		{
-			DialogUtil.showErrorLater("The room you are trying to join is now full.");
-			return;
-		}
-		
-		String observer = root.getAttribute("Observer");
-		int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");
-		if (observer.isEmpty() && playerNumber == -1)
-		{
-			DialogUtil.showErrorLater("The seat you tried to take is now occupied.");
-			return;
-		}
-		
-		final GameRoom gameRoom = lobby.getGameRoomForName(id);
-		final boolean hotswap = gameRoom.isVisible();
-		gameRoom.setUsername(username);
-		
-		if (observer.isEmpty())
-		{
-			gameRoom.adjustSize();
-			gameRoom.setObserver(false);
-			
-			gameRoom.setPlayerNumber(playerNumber);
-		}
-		else
-		{
-			gameRoom.setObserver(true);
-		}
-		
-		final Element chatChild = XmlUtil.getElementIfExists(root, RESPONSE_TAG_CHAT_NOTIFICATION);
-		
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				gameRoom.setVisible(true);
-				gameRoom.init(hotswap);
-				
-				synchronisePlayers(gameRoom, root);
-				
-				if (!hotswap)
-				{
-					gameRoom.setLocationRelativeTo(ScreenCache.get(EntropyLobby.class));
-					handleChatResponse(chatChild, lobby);
-				}
-			}
-		});
 	}
 	
 	private static void handleCloseRoomAck(Element root, EntropyLobby lobby)
