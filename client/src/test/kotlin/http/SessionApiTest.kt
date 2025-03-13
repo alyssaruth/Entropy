@@ -15,6 +15,7 @@ import io.mockk.verify
 import java.util.UUID
 import kong.unirest.HttpMethod
 import kong.unirest.UnirestException
+import makeFailureResponse
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
@@ -47,7 +48,7 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should handle a response indicating an update is required and check for updates`() {
         ClientGlobals.updateManager = mockk(relaxed = true)
-        val httpClient = mockHttpClient(FailureResponse(422, "", UPDATE_REQUIRED, "oh no"))
+        val httpClient = mockHttpClient(makeFailureResponse(UPDATE_REQUIRED))
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
@@ -65,7 +66,7 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should not check for updates if 'No' is answered`() {
         ClientGlobals.updateManager = mockk(relaxed = true)
-        val httpClient = mockHttpClient(FailureResponse(422, "", UPDATE_REQUIRED, "oh no"))
+        val httpClient = mockHttpClient(makeFailureResponse(UPDATE_REQUIRED))
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
@@ -81,9 +82,7 @@ class SessionApiTest : AbstractClientTest() {
     @Test
     fun `should show an error for an unexpected error`() {
         val httpClient =
-            mockHttpClient(
-                FailureResponse(422, "", ClientErrorCode("bad"), "Internal Server Error")
-            )
+            mockHttpClient(makeFailureResponse(ClientErrorCode("bad"), "Internal Server Error"))
 
         SessionApi(httpClient).beginSession("alyssa")
         flushEdt()
