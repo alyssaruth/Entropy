@@ -9,12 +9,12 @@ import http.dto.BeginSessionResponse
 import http.dto.LobbyMessage
 import http.dto.UpdateAchievementCountRequest
 import io.kotest.matchers.shouldBe
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.UUID
 import kong.unirest.HttpMethod
 import kong.unirest.UnirestException
+import mockHttpClient
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
@@ -154,12 +154,6 @@ class SessionApiTest : AbstractClientTest() {
         ClientGlobals.httpClient.sessionId shouldBe null
     }
 
-    private fun mockHttpClient(response: ApiResponse<BeginSessionResponse>): HttpClient {
-        val httpClient = mockk<HttpClient>(relaxed = true)
-        every {
-            httpClient.doCall<BeginSessionResponse>(HttpMethod.POST, BEGIN_SESSION, any())
-        } returns response
-
-        return httpClient
-    }
+    private fun mockHttpClient(response: ApiResponse<BeginSessionResponse>): HttpClient =
+        mockHttpClient(response, HttpMethod.POST, BEGIN_SESSION)
 }

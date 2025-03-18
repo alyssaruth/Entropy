@@ -2,6 +2,7 @@ package screen;
 
 import object.CardLabel;
 import object.PlayerLabel;
+import online.screen.EntropyLobby;
 import util.*;
 
 import javax.swing.*;
@@ -192,6 +193,11 @@ public class HandPanelMk2 extends TransparentPanel
 			playerCard5.addMouseListener(this);
 			
 			distractedTimer = new Timer("Timer-Distracted");
+
+			lblPlayer.setName("PlayerOneLabel");
+			lblOpponentOne.setName("PlayerTwoLabel");
+			lblOpponentTwo.setName("PlayerThreeLabel");
+			lblOpponentThree.setName("PlayerFourLabel");
 		}
 		catch (Throwable t)
 		{
@@ -948,7 +954,8 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 
 
-		ClientGlobals.roomApi.sitDown(roomId, playerNumber);
+		var room = ScreenCache.get(EntropyLobby.class).getGameRoomForId(roomId);
+		ClientGlobals.roomApi.sitDown(room, playerNumber);
 	}
 	
 	private void setCardIcon(CardLabel cardLabel, boolean faded)

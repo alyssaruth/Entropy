@@ -2,7 +2,9 @@ package testCore
 
 import game.GameMode
 import game.GameSettings
+import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
+import http.dto.RoomStateResponse
 import http.dto.RoomSummary
 import java.util.UUID
 
@@ -41,3 +43,14 @@ fun makeRoomSummary(
     players: Int = 2,
     observers: Int = 1,
 ) = RoomSummary(id, name, gameSettings, capacity, players, observers)
+
+fun makeJoinRoomResponse(
+    chatHistory: List<OnlineMessage> = listOf(makeOnlineMessage()),
+    players: Map<Int, String> = mapOf(1 to "Alyssa"),
+    formerPlayers: Map<Int, String> = emptyMap(),
+) = JoinRoomResponse(chatHistory, players, formerPlayers)
+
+fun makeRoomStateResponse(
+    players: Map<Int, String> = mapOf(1 to "Alyssa"),
+    formerPlayers: Map<Int, String> = emptyMap(),
+) = RoomStateResponse(players, formerPlayers)

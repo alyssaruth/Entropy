@@ -5,8 +5,6 @@ import http.dto.JoinRoomResponse
 import http.dto.RoomStateResponse
 import http.dto.SitDownRequest
 import http.dto.StandUpRequest
-import java.util.UUID
-import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
 import online.screen.EntropyLobby
 import online.screen.GameRoom
@@ -37,16 +35,16 @@ class RoomApi(private val httpClient: HttpClient) {
         room.chatPanel.updateChatBox(response.chatHistory)
     }
 
-    fun sitDown(roomId: UUID, seat: Int) {
+    fun sitDown(room: GameRoom, seat: Int) {
         val response =
             httpClient.doCall<RoomStateResponse>(
                 HttpMethod.POST,
                 Routes.SIT_DOWN,
-                SitDownRequest(roomId, seat),
+                SitDownRequest(room.id, seat),
             )
 
         when (response) {
-            is SuccessResponse<RoomStateResponse> -> handleSitDown(roomId, seat, response.body)
+            is SuccessResponse<RoomStateResponse> -> handleSitDown(room, seat, response.body)
             is FailureResponse -> handleSitDownFailure(response)
             is CommunicationError ->
                 DialogUtilNew.showErrorLater(
@@ -55,8 +53,7 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    private fun handleSitDown(roomId: UUID, seat: Int, response: RoomStateResponse) {
-        val room = ScreenCache.get<EntropyLobby>().getGameRoomForId(roomId)
+    private fun handleSitDown(room: GameRoom, seat: Int, response: RoomStateResponse) {
         room.setObserver(false)
         room.setPlayerNumber(seat)
         room.init(true)
@@ -64,12 +61,9 @@ class RoomApi(private val httpClient: HttpClient) {
     }
 
     private fun handleSitDownFailure(response: FailureResponse<*>) {
-        SwingUtilities.invokeLater {
-            when (response.errorCode) {
-                SEAT_TAKEN -> DialogUtilNew.showError("This seat has been taken.")
-                else ->
-                    DialogUtilNew.showError("An unexpected error occurred trying to take a seat.")
-            }
+        when (response.errorCode) {
+            SEAT_TAKEN -> DialogUtilNew.showError("This seat has been taken.")
+            else -> DialogUtilNew.showError("An unexpected error occurred trying to take a seat.")
         }
     }
 
