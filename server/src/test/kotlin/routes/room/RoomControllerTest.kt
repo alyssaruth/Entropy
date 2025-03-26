@@ -23,7 +23,7 @@ import util.makeSession
 class RoomControllerTest : ApplicationTest() {
     @Test
     fun `Should reject a joinRoom call without a session`() = testApplication {
-        val response = client.post(Routes.JOIN_ROOM, ::buildJoinRoomRequest)
+        val response = client.post(Routes.JOIN_ROOM, ::buildSimpleRoomRequest)
         response.status shouldBe HttpStatusCode.Unauthorized
     }
 
@@ -37,7 +37,7 @@ class RoomControllerTest : ApplicationTest() {
         ServerGlobals.roomStore.put(room)
 
         val response =
-            client.post(Routes.JOIN_ROOM) { buildJoinRoomRequest(this, room.id, session.id) }
+            client.post(Routes.JOIN_ROOM) { buildSimpleRoomRequest(this, room.id, session.id) }
         response.status shouldBe HttpStatusCode.OK
         response.bodyAsText() shouldMatchJson
             """
@@ -51,7 +51,7 @@ class RoomControllerTest : ApplicationTest() {
         room.observerCount shouldBe 1
     }
 
-    private fun buildJoinRoomRequest(
+    private fun buildSimpleRoomRequest(
         builder: HttpRequestBuilder,
         roomId: UUID = UUID.randomUUID(),
         sessionId: UUID? = null,
@@ -116,7 +116,7 @@ class RoomControllerTest : ApplicationTest() {
 
     @Test
     fun `Should reject a standUp call without a session`() = testApplication {
-        val response = client.post(Routes.STAND_UP, ::buildStandUpRequest)
+        val response = client.post(Routes.STAND_UP, ::buildSimpleRoomRequest)
         response.status shouldBe HttpStatusCode.Unauthorized
     }
 
@@ -131,7 +131,7 @@ class RoomControllerTest : ApplicationTest() {
         ServerGlobals.roomStore.put(room)
 
         val response =
-            client.post(Routes.STAND_UP) { buildStandUpRequest(this, room.id, session.id) }
+            client.post(Routes.STAND_UP) { buildSimpleRoomRequest(this, room.id, session.id) }
         response.status shouldBe HttpStatusCode.OK
         response.bodyAsText() shouldMatchJson
             """
@@ -142,20 +142,27 @@ class RoomControllerTest : ApplicationTest() {
         """
     }
 
-    private fun buildStandUpRequest(
-        builder: HttpRequestBuilder,
-        roomId: UUID = UUID.randomUUID(),
-        sessionId: UUID? = null,
-    ) {
-        builder.contentType(ContentType.Application.Json)
-        sessionId?.let { builder.header(CustomHeader.SESSION_ID, sessionId) }
-        builder.setBody(
-            """
-                {
-                    "roomId": "$roomId"
-                }
-            """
-                .trimIndent()
-        )
+    @Test
+    fun `Should reject a leaveRoom call without a session`() = testApplication {
+        val response = client.post(Routes.LEAVE_ROOM, ::buildSimpleRoomRequest)
+        response.status shouldBe HttpStatusCode.Unauthorized
+    }
+
+    @Test
+    fun `Should be able to leave a room`() = testApplication {
+        val session = makeSession(name = "Alyssa")
+        ServerGlobals.sessionStore.put(session)
+
+        val room = makeRoom()
+        room.attemptToSitDown("Alyssa", 1)
+        room.attemptToSitDown("Leah", 2)
+        ServerGlobals.roomStore.put(room)
+
+        val response =
+            client.post(Routes.LEAVE_ROOM) { buildSimpleRoomRequest(this, room.id, session.id) }
+        response.status shouldBe HttpStatusCode.NoContent
+
+        room.getPlayer(1) shouldBe null
+        room.getPlayer(2) shouldBe "Leah"
     }
 }

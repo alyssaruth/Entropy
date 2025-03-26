@@ -2,11 +2,10 @@ package routes.room
 
 import http.INVALID_ROOM_ID
 import http.SEAT_TAKEN
-import http.dto.JoinRoomRequest
 import http.dto.JoinRoomResponse
 import http.dto.RoomStateResponse
+import http.dto.SimpleRoomRequest
 import http.dto.SitDownRequest
-import http.dto.StandUpRequest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import java.util.UUID
@@ -28,7 +27,7 @@ class RoomServiceTest : AbstractTest() {
         val (service) = makeService()
         val ex =
             shouldThrow<ClientException> {
-                service.joinRoom(makeSession(), JoinRoomRequest(NON_EXISTENT_ROOM_ID))
+                service.joinRoom(makeSession(), SimpleRoomRequest(NON_EXISTENT_ROOM_ID))
             }
 
         ex.errorCode shouldBe INVALID_ROOM_ID
@@ -43,7 +42,7 @@ class RoomServiceTest : AbstractTest() {
         room.attemptToSitDown("Rafi", 1)
 
         val session = makeSession(name = "Kevin")
-        val response = service.joinRoom(session, JoinRoomRequest(VALID_ROOM_ID))
+        val response = service.joinRoom(session, SimpleRoomRequest(VALID_ROOM_ID))
 
         response shouldBe JoinRoomResponse(listOf(chatMessage), mapOf(1 to "Rafi"), emptyMap())
     }
@@ -86,7 +85,7 @@ class RoomServiceTest : AbstractTest() {
         val (service) = makeService()
         val ex =
             shouldThrow<ClientException> {
-                service.standUp(makeSession(), StandUpRequest(NON_EXISTENT_ROOM_ID))
+                service.standUp(makeSession(), SimpleRoomRequest(NON_EXISTENT_ROOM_ID))
             }
 
         ex.errorCode shouldBe INVALID_ROOM_ID
@@ -98,8 +97,40 @@ class RoomServiceTest : AbstractTest() {
         val room = roomStore.get(VALID_ROOM_ID)
         room.attemptToSitDown("Kevin", 1)
         room.attemptToSitDown("Bob", 2)
-        val response = service.standUp(makeSession(name = "Kevin"), StandUpRequest(VALID_ROOM_ID))
+        val response =
+            service.standUp(makeSession(name = "Kevin"), SimpleRoomRequest(VALID_ROOM_ID))
         response shouldBe RoomStateResponse(mapOf(2 to "Bob"), emptyMap())
+    }
+
+    @Test
+    fun `leaveRoom should throw a client error if room ID is not valid`() {
+        val (service) = makeService()
+        val ex =
+            shouldThrow<ClientException> {
+                service.leaveRoom(makeSession(), SimpleRoomRequest(NON_EXISTENT_ROOM_ID))
+            }
+
+        ex.errorCode shouldBe INVALID_ROOM_ID
+    }
+
+    @Test
+    fun `leaveRoom should remove an observer`() {
+        val (service, roomStore) = makeService()
+        val room = roomStore.get(VALID_ROOM_ID)
+        room.addToObservers("Kevin")
+        service.leaveRoom(makeSession(name = "Kevin"), SimpleRoomRequest(VALID_ROOM_ID))
+
+        room.observerCount shouldBe 0
+    }
+
+    @Test
+    fun `leaveRoom should remove a player`() {
+        val (service, roomStore) = makeService()
+        val room = roomStore.get(VALID_ROOM_ID)
+        room.attemptToSitDown("Kevin", 0)
+        service.leaveRoom(makeSession(name = "Kevin"), SimpleRoomRequest(VALID_ROOM_ID))
+
+        room.getPlayer(0) shouldBe null
     }
 
     private fun makeService(): Pair<RoomService, RoomStore> {

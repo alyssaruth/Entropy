@@ -88,19 +88,6 @@ public class XmlBuilderServer implements XmlConstants
 		}
 	}
 	
-	public static Document getCloseRoomResponse(Room room, String username) 
-	{
-		Document response = XmlUtil.factoryNewDocument();
-		Element rootElement = response.createElement(RESPONSE_TAG_CLOSE_ROOM_RESPONSE);
-		rootElement.setAttribute("RoomId", room.getName());
-
-		room.removeFromObservers(username);
-		room.removePlayer(username, true);
-		
-		response.appendChild(rootElement);
-		return response;
-	}
-	
 	public static String getPlayerNotification(Room room)
 	{
 		Document response = XmlUtil.factoryNewDocument();

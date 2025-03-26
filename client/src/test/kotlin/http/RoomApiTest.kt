@@ -6,13 +6,13 @@ import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
 import getMessages
 import http.Routes.JOIN_ROOM
+import http.Routes.LEAVE_ROOM
 import http.Routes.SIT_DOWN
 import http.Routes.STAND_UP
-import http.dto.JoinRoomRequest
 import http.dto.JoinRoomResponse
 import http.dto.RoomStateResponse
+import http.dto.SimpleRoomRequest
 import http.dto.SitDownRequest
-import http.dto.StandUpRequest
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.verify
@@ -50,7 +50,7 @@ class RoomApiTest : AbstractTest() {
             httpClient.doCall<JoinRoomResponse>(
                 HttpMethod.POST,
                 JOIN_ROOM,
-                JoinRoomRequest(room.id),
+                SimpleRoomRequest(room.id),
             )
         }
 
@@ -149,8 +149,7 @@ class RoomApiTest : AbstractTest() {
     fun `Should POST to stand up and update the room if successful`() {
         val room = GameRoom.factoryCreate(makeRoomSummary())
         room.username = "Alyssa"
-        room.observer = false
-        room.addOrUpdatePlayer(0, "Alyssa")
+        room.initPlayer()
 
         val response = makeRoomStateResponse(players = emptyMap())
         val httpClient = mockStandUp(SuccessResponse(HttpStatus.SC_OK, response))
@@ -158,7 +157,11 @@ class RoomApiTest : AbstractTest() {
         api.standUp(room)
 
         verify {
-            httpClient.doCall<RoomStateResponse>(HttpMethod.POST, STAND_UP, StandUpRequest(room.id))
+            httpClient.doCall<RoomStateResponse>(
+                HttpMethod.POST,
+                STAND_UP,
+                SimpleRoomRequest(room.id)
+            )
         }
 
         room.observer shouldBe true
@@ -172,8 +175,7 @@ class RoomApiTest : AbstractTest() {
     fun `Should show an error if something else goes wrong standing up`() {
         val room = GameRoom.factoryCreate(makeRoomSummary())
         room.username = "Alyssa"
-        room.observer = false
-        room.addOrUpdatePlayer(0, "Alyssa")
+        room.initPlayer()
 
         val httpClient = mockStandUp(makeFailureResponse())
 
@@ -188,6 +190,45 @@ class RoomApiTest : AbstractTest() {
         error.getDialogMessage() shouldBe "An error occurred attempting to stand up."
     }
 
+    @Test
+    fun `Should POST to leave-room and close the room if successful`() {
+        val room = GameRoom.factoryCreate(makeRoomSummary())
+        room.username = "Alyssa"
+        room.initPlayer()
+        room.isVisible = true
+
+        val httpClient = mockLeaveRoom(SuccessResponse(HttpStatus.SC_NO_CONTENT, Unit))
+
+        runAsync {
+            val api = RoomApi(httpClient)
+            api.leaveRoom(room)
+        }
+
+        verify { httpClient.doCall<Unit>(HttpMethod.POST, LEAVE_ROOM, SimpleRoomRequest(room.id)) }
+
+        room.shouldNotBeVisible()
+    }
+
+    @Test
+    fun `Should show an error if something else goes wrong leaving a room`() {
+        val room = GameRoom.factoryCreate(makeRoomSummary())
+        room.username = "Alyssa"
+        room.initPlayer()
+        room.isVisible = true
+
+        val httpClient = mockLeaveRoom(makeFailureResponse())
+
+        runAsync {
+            val api = RoomApi(httpClient)
+            api.leaveRoom(room)
+        }
+
+        room.shouldBeVisible()
+
+        val error = getErrorDialog()
+        error.getDialogMessage() shouldBe "An error occurred trying to leave this room."
+    }
+
     private fun mockJoinRoom(response: ApiResponse<JoinRoomResponse>): HttpClient =
         mockHttpClient(response, HttpMethod.POST, JOIN_ROOM)
 
@@ -196,4 +237,7 @@ class RoomApiTest : AbstractTest() {
 
     private fun mockStandUp(response: ApiResponse<RoomStateResponse>): HttpClient =
         mockHttpClient(response, HttpMethod.POST, STAND_UP)
+
+    private fun mockLeaveRoom(response: ApiResponse<Unit>): HttpClient =
+        mockHttpClient(response, HttpMethod.POST, LEAVE_ROOM)
 }

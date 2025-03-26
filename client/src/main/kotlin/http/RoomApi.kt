@@ -1,10 +1,9 @@
 package http
 
-import http.dto.JoinRoomRequest
 import http.dto.JoinRoomResponse
 import http.dto.RoomStateResponse
+import http.dto.SimpleRoomRequest
 import http.dto.SitDownRequest
-import http.dto.StandUpRequest
 import kong.unirest.HttpMethod
 import online.screen.EntropyLobby
 import online.screen.GameRoom
@@ -17,7 +16,7 @@ class RoomApi(private val httpClient: HttpClient) {
             httpClient.doCall<JoinRoomResponse>(
                 HttpMethod.POST,
                 Routes.JOIN_ROOM,
-                JoinRoomRequest(room.id),
+                SimpleRoomRequest(room.id),
             )
 
         when (response) {
@@ -72,12 +71,26 @@ class RoomApi(private val httpClient: HttpClient) {
             httpClient.doCall<RoomStateResponse>(
                 HttpMethod.POST,
                 Routes.STAND_UP,
-                StandUpRequest(room.id),
+                SimpleRoomRequest(room.id),
             )
 
         when (response) {
             is SuccessResponse<RoomStateResponse> -> handleStandUp(room, response.body)
             else -> DialogUtilNew.showError("An error occurred attempting to stand up.")
+        }
+    }
+
+    fun leaveRoom(room: GameRoom) {
+        val response =
+            httpClient.doCall<Unit>(
+                HttpMethod.POST,
+                Routes.LEAVE_ROOM,
+                SimpleRoomRequest(room.id),
+            )
+
+        when (response) {
+            is SuccessResponse<Unit> -> room.closeWindow()
+            else -> DialogUtilNew.showError("An error occurred trying to leave this room.")
         }
     }
 

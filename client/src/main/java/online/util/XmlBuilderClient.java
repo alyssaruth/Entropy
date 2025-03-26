@@ -15,19 +15,6 @@ public class XmlBuilderClient implements XmlConstants
 		return XmlUtil.factorySimpleMessage(username, ROOT_TAG_HEARTBEAT);
 	}
 	
-	public static Document factoryCloseRoomRequestXml(String id, String username)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		
-		Element rootElement = document.createElement(ROOT_TAG_CLOSE_ROOM_REQUEST);
-		
-		rootElement.setAttribute("RoomId", id);
-		rootElement.setAttribute("Username", username);
-		
-		document.appendChild(rootElement);
-		return document;
-	}
-	
 	public static Document factoryObserverRequest(String roomId, String username)
 	{
 		Document document = XmlUtil.factoryNewDocument();

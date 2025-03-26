@@ -39,10 +39,6 @@ public class ResponseHandler implements XmlConstants
 		{
 			//do nothing
 		}
-		else if (responseName.equals(RESPONSE_TAG_CLOSE_ROOM_RESPONSE))
-		{
-			handleCloseRoomAck(root, lobby);
-		}
 		else if (responseName.equals(RESPONSE_TAG_PLAYER_NOTIFICATION))
 		{
 			handlePlayerNotification(root, lobby);
@@ -91,13 +87,7 @@ public class ResponseHandler implements XmlConstants
 			throw new Throwable("Unexpected response.");
 		}
 	}
-	
-	private static void handleCloseRoomAck(Element root, EntropyLobby lobby)
-	{
-		String id = root.getAttribute("RoomId");
-		GameRoom gameRoom = lobby.getGameRoomForName(id);
-		gameRoom.closeWindow();
-	}
+
 	private static void handlePlayerNotification(Element root, EntropyLobby lobby)
 	{
 		String name = root.getAttribute("RoomName");

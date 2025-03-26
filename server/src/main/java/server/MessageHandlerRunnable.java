@@ -187,17 +187,12 @@ public class MessageHandlerRunnable implements ServerRunnable,
 		
 		Element root = document.getDocumentElement();
 		String id = root.getAttribute("RoomId");
-		String username = root.getAttribute("Username");
 		String name = root.getNodeName();
 		Room room = ServerGlobals.INSTANCE.getRoomStore().findForName(id);
 
 		usc.setLastActiveNow();
 		
-		if (name.equals(ROOT_TAG_CLOSE_ROOM_REQUEST))
-		{
-			return XmlBuilderServer.getCloseRoomResponse(room, username);
-		}
-		else if (name.equals(ROOT_TAG_OBSERVER_REQUEST))
+		if (name.equals(ROOT_TAG_OBSERVER_REQUEST))
 		{
 			return XmlBuilderServer.getObserverResponse(room);
 		}

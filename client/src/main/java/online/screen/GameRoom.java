@@ -1217,8 +1217,7 @@ public abstract class GameRoom extends JFrame
 		if (option == JOptionPane.YES_OPTION)
 		{
 			handPanel.cancelTimer();
-			Document leftRoomMessage = XmlBuilderClient.factoryCloseRoomRequestXml(roomName, username);
-			MessageUtil.sendMessage(leftRoomMessage, 0);
+			ClientGlobals.roomApi.leaveRoom(this);
 		}
 	}
 	

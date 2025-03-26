@@ -10,4 +10,5 @@ object Routes {
     const val JOIN_ROOM = "/join-room"
     const val SIT_DOWN = "/sit-down"
     const val STAND_UP = "/stand-up"
+    const val LEAVE_ROOM = "/leave-room"
 }
