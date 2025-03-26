@@ -1,5 +1,6 @@
 package http
 
+import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
@@ -53,6 +54,7 @@ class RoomApiTest : AbstractTest() {
             )
         }
 
+        flushEdt()
         room.shouldBeVisible()
         room.chatPanel.getMessages() shouldBe response.chatHistory
         room.observer shouldBe true
