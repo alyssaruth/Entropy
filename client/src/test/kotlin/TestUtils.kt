@@ -13,7 +13,7 @@ import online.screen.OnlineChatPanel
 
 fun OnlineChatPanel.getMessages(): List<OnlineMessage> {
     val listModel = getChild<JList<OnlineMessage>>().model
-    return (0..<listModel.size).map(listModel::getElementAt)
+    return (0 ..< listModel.size).map(listModel::getElementAt)
 }
 
 inline fun <reified T : Any> mockHttpClient(
