@@ -2,7 +2,9 @@ package room
 
 import auth.UserConnection
 import game.GameSettings
+import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
+import http.dto.RoomStateResponse
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
@@ -17,6 +19,7 @@ import store.IHasId
 import util.CardsUtil
 import util.EntropyUtil
 import util.ServerGlobals
+import util.ServerGlobals.roomStore
 import util.ServerGlobals.uscStore
 import util.XmlBuilderServer
 import util.XmlConstants
@@ -67,7 +70,7 @@ data class Room(
         } else "gray"
     }
 
-    fun addToCurrentPlayers(username: String, playerNumber: Int): Int? {
+    fun attemptToSitDown(username: String, playerNumber: Int): Int? {
         synchronized(this) {
             val existingUsername: String? = hmPlayerByPlayerNumber[playerNumber]
             if (existingUsername != null) {
@@ -75,17 +78,21 @@ data class Room(
                     "seatTaken",
                     "$username tried to join $name as player $playerNumber but seat was taken by $existingUsername",
                 )
-                return -1
+                return null
             }
 
             if (hmPlayerByPlayerNumber.containsValue(username)) {
                 logger.info("doubleJoin", "$username tried to join $name twice!")
-                return -1
+                return null
             }
 
             currentPlayers.add(username)
             hmPlayerByPlayerNumber[playerNumber] = username
             observers.remove(username)
+
+            if (isFull) {
+                roomStore.addCopy(this)
+            }
 
             notifyAllPlayersOfPlayerChange(username, false)
             ServerGlobals.lobbyService.lobbyChanged()
@@ -399,10 +406,6 @@ data class Room(
         return hmPlayerByPlayerNumber[playerNumber]
     }
 
-    fun getFormerPlayer(playerNumber: Int): String? {
-        return hmFormerPlayerByPlayerNumber[playerNumber]
-    }
-
     private fun getGameForId(gameId: String): GameWrapper {
         if (gameId == currentGame.gameId) {
             return currentGame
@@ -473,6 +476,16 @@ data class Room(
     fun addToChatHistory(message: OnlineMessage) {
         chatHistory.add(message)
     }
+
+    fun buildJoinRoomResponse() =
+        JoinRoomResponse(
+            chatHistory,
+            hmPlayerByPlayerNumber.toMap(),
+            hmFormerPlayerByPlayerNumber.toMap(),
+        )
+
+    fun buildRoomStateResponse() =
+        RoomStateResponse(hmPlayerByPlayerNumber.toMap(), hmFormerPlayerByPlayerNumber.toMap())
 
     fun makeCopy() = Room(UUID.randomUUID(), baseName, settings, capacity, index + 1)
 

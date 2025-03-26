@@ -8,4 +8,7 @@ object Routes {
     const val FINISH_SESSION = "/finish-session"
     const val CHAT = "/chat"
     const val JOIN_ROOM = "/join-room"
+    const val SIT_DOWN = "/sit-down"
+    const val STAND_UP = "/stand-up"
+    const val LEAVE_ROOM = "/leave-room"
 }

@@ -1,6 +1,7 @@
 package online.screen;
 
 import java.awt.BorderLayout;
+import java.util.UUID;
 
 import game.GameSettings;
 import object.Bid;
@@ -15,9 +16,9 @@ public class EntropyRoom extends GameRoom
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
-	public EntropyRoom(String roomName, GameSettings settings, int players)
+	public EntropyRoom(UUID id, String roomName, GameSettings settings, int players)
 	{
-		super(roomName, settings, players);
+		super(id, roomName, settings, players);
 		
 		bidPanel = new EntropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);

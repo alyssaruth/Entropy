@@ -40,6 +40,7 @@ public abstract class GameRoom extends JFrame
 	private static final int ADJUSTED_PLAYER_NUMBER_ME = 0;
 
 
+	private final UUID id;
 	private final String roomName;
 	private final int players;
 	private final GameSettings settings;
@@ -71,8 +72,9 @@ public abstract class GameRoom extends JFrame
 	public ReplayDialog replayDialog = new ReplayDialog();
 	public BidPanel bidPanel = null;
 	
-	public GameRoom(String roomName, GameSettings settings, int players)
+	public GameRoom(UUID id, String roomName, GameSettings settings, int players)
 	{
+		this.id = id;
 		this.roomName = roomName;
 		this.settings = settings;
 		this.players = players;
@@ -185,11 +187,11 @@ public abstract class GameRoom extends JFrame
 		
 		if (mode == GameMode.Entropy)
 		{
-			ret = new EntropyRoom(roomName, settings, capacity);
+			ret = new EntropyRoom(room.getId(), roomName, settings, capacity);
 		}
 		else if (mode == GameMode.Vectropy)
 		{
-			ret = new VectropyRoom(roomName, settings, capacity);
+			ret = new VectropyRoom(room.getId(), roomName, settings, capacity);
 		}
 
 		return ret;
@@ -279,6 +281,8 @@ public abstract class GameRoom extends JFrame
 	
 	public void initPlayer()
 	{
+		adjustSize();
+
 		resetVariables(true);
 		
 		btnStandUp.setVisible(true);
@@ -393,7 +397,8 @@ public abstract class GameRoom extends JFrame
 		handPanel.setUsername(username);
 		handPanel.setPlayers(players);
 		handPanel.setPlayerNumber(playerNumber);
-		handPanel.setRoomId(roomName);
+		handPanel.setRoomId(id);
+		handPanel.setRoomName(roomName);
 		handPanel.activateEmptySeats();
 	}
 	
@@ -409,8 +414,8 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	public void synchronisePlayers(HashMap<Integer, String> serverHmPlayerByPlayerNumber,
-	  HashMap<Integer, String> serverHmFormerPlayerByPlayerNumber)
+	public void synchronisePlayers(Map<Integer, String> serverHmPlayerByPlayerNumber,
+								   Map<Integer, String> serverHmFormerPlayerByPlayerNumber)
 	{
 		//Add any players the server has that we don't
 		addPlayersFromServer(serverHmPlayerByPlayerNumber, true);
@@ -439,7 +444,7 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	private void addPlayersFromServer(HashMap<Integer, String> hmPlayerByPlayerNumber, boolean active)
+	private void addPlayersFromServer(Map<Integer, String> hmPlayerByPlayerNumber, boolean active)
 	{
 		Iterator<Integer> it = hmPlayerByPlayerNumber.keySet().iterator();
 		for (; it.hasNext();)
@@ -455,7 +460,7 @@ public abstract class GameRoom extends JFrame
 		}
 	}
 	
-	private void processPlayersLeaving(HashMap<Integer, String> serverHmPlayerByPlayerNumber)
+	private void processPlayersLeaving(Map<Integer, String> serverHmPlayerByPlayerNumber)
 	{
 		for (int i=0; i<MAX_NUMBER_OF_PLAYERS; i++)
 		{
@@ -1212,8 +1217,7 @@ public abstract class GameRoom extends JFrame
 		if (option == JOptionPane.YES_OPTION)
 		{
 			handPanel.cancelTimer();
-			Document leftRoomMessage = XmlBuilderClient.factoryCloseRoomRequestXml(roomName, username);
-			MessageUtil.sendMessage(leftRoomMessage, 0);
+			ClientGlobals.roomApi.leaveRoom(this);
 		}
 	}
 	
@@ -1291,9 +1295,8 @@ public abstract class GameRoom extends JFrame
 			
 			AchievementsUtil.unlockCoward();
 		}
-		
-		Document request = XmlBuilderClient.factoryRoomJoinRequestXml(roomName, username, true, -1);
-		MessageUtil.sendMessage(request, 0);
+
+		ClientGlobals.roomApi.standUp(this);
 	}
 	
 	public void waitingForPlayers()
@@ -1456,6 +1459,7 @@ public abstract class GameRoom extends JFrame
 	}
 
 	public String getRoomName() { return roomName; }
+	public UUID getId() { return id; }
 	public int getJokerValue()
 	{
 		return settings.getJokerValue();

@@ -22,6 +22,7 @@ import java.beans.Beans;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static util.Images.ICON_ONLINE;
@@ -30,8 +31,6 @@ public class EntropyLobby extends JFrame
 						  implements WindowListener,
 						  			 ActionListener
 {
-	public static final String LOBBY_ID = "Lobby";
-	
 	//Declaring these as 'Map' to fix obscure Java8 bug
 	private Map<String, GameRoom> hmGameRoomByRoomName = new ConcurrentHashMap<>();
 	private Map<String, RoomSummary> hmRoomByRoomName = new ConcurrentHashMap<>();
@@ -203,6 +202,10 @@ public class EntropyLobby extends JFrame
 	public GameRoom getGameRoomForName(String roomName)
 	{
 		return hmGameRoomByRoomName.get(roomName);
+	}
+
+	public GameRoom getGameRoomForId(UUID id) {
+		return hmGameRoomByRoomName.values().stream().filter(gameRoom -> gameRoom.getId().equals(id)).findFirst().orElse(null);
 	}
 	
 	public void addOrUpdateRoom(String roomName, RoomSummary room)

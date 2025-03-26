@@ -7,8 +7,6 @@ public interface XmlConstants
 {
 	//Client
 	public static final String ROOT_TAG_HEARTBEAT					= "Heartbeat";
-	public static final String ROOT_TAG_ROOM_JOIN_REQUEST 			= "RoomJoinRequest";
-	public static final String ROOT_TAG_CLOSE_ROOM_REQUEST 			= "CloseRoomRequest";
 	public static final String ROOT_TAG_OBSERVER_REQUEST 			= "ObserverRequest";
 	public static final String ROOT_TAG_NEW_GAME_REQUEST 			= "NewGameRequest";
 	public static final String ROOT_TAG_BID 						= "Bid";
@@ -21,7 +19,6 @@ public interface XmlConstants
 	public static final String SOCKET_NAME_LOBBY					= "Lobby" + SOCKET_NAME_SUFFIX;
 	
 	//Server notifications
-	public static final String RESPONSE_TAG_CHAT_NOTIFICATION = "ChatNotification";
 	public static final String RESPONSE_TAG_PLAYER_NOTIFICATION = "PlayerNotification";
 	public static final String RESPONSE_TAG_BID_NOTIFICATION = "BidNotification";
 	public static final String RESPONSE_TAG_NEW_ROUND_NOTIFICATION = "NewRoundNotification";
@@ -30,8 +27,6 @@ public interface XmlConstants
 	
 	//Server responses
 	public static final String RESPONSE_TAG_LEADERBOARD = "LeaderboardResponse";
-	public static final String RESPONSE_TAG_JOIN_ROOM_RESPONSE = "JoinRoomAck";
-	public static final String RESPONSE_TAG_CLOSE_ROOM_RESPONSE = "CloseRoomAck";
 	public static final String RESPONSE_TAG_OBSERVER_RESPONSE = "ObserverResponse";
 	public static final String RESPONSE_TAG_NEW_GAME = "NewGameResponse";
 	

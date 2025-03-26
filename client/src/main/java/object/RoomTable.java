@@ -7,6 +7,7 @@ import online.screen.EntropyLobby;
 import online.screen.GameRoom;
 import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
+import util.ClientGlobals;
 import util.EntropyColour;
 import util.MessageUtil;
 import util.TableUtil;
@@ -300,8 +301,7 @@ public final class RoomTable extends JTable
 		
 		if (!gameRoom.isVisible())
 		{
-			Document joinRequest = XmlBuilderClient.factoryRoomJoinRequestXml(roomName, lobby.getUsername(), true, -1);
-			MessageUtil.sendMessage(joinRequest, 0);
+			ClientGlobals.roomApi.joinRoom(gameRoom);
 		}
 		else
 		{

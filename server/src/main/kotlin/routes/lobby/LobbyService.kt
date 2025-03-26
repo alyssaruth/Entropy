@@ -42,5 +42,5 @@ class LobbyService(
     }
 
     private fun Room.toSummary() =
-        RoomSummary(name, settings, capacity, currentPlayerCount, observerCount)
+        RoomSummary(id, name, settings, capacity, currentPlayerCount, observerCount)
 }

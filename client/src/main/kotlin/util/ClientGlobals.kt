@@ -4,6 +4,7 @@ import http.ChatApi
 import http.DevApi
 import http.HealthCheckApi
 import http.HttpClient
+import http.RoomApi
 import http.SessionApi
 import http.WebSocketReceiver
 import screen.LoggingConsole
@@ -20,6 +21,7 @@ object ClientGlobals {
     val devApi = DevApi(httpClient)
     @JvmField var sessionApi = SessionApi(httpClient)
     @JvmField val chatApi = ChatApi(httpClient)
+    @JvmField val roomApi = RoomApi(httpClient)
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
     @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")

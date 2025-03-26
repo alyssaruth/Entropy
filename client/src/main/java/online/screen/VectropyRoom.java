@@ -1,6 +1,7 @@
 package online.screen;
 
 import java.awt.BorderLayout;
+import java.util.UUID;
 
 import game.GameSettings;
 import object.Bid;
@@ -11,9 +12,9 @@ public class VectropyRoom extends GameRoom
 {
 	private boolean earnedMathematician = false;
 	
-	public VectropyRoom(String roomName, GameSettings settings, int players)
+	public VectropyRoom(UUID id, String roomName, GameSettings settings, int players)
 	{
-		super(roomName, settings, players);
+		super(id, roomName, settings, players);
 		
 		bidPanel = new VectropyBidPanel();
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);

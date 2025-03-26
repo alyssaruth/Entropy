@@ -38,7 +38,7 @@ class RoomTest : AbstractTest() {
         val room = makeRoom()
         room.getColourForPlayer("Alyssa") shouldBe "gray"
 
-        room.addToCurrentPlayers("Alyssa", 1)
+        room.attemptToSitDown("Alyssa", 1)
         room.getColourForPlayer("Alyssa") shouldBe "blue"
     }
 }

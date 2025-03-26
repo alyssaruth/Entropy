@@ -1,6 +1,7 @@
 package screen.online
 
 import com.github.alyssaburlton.swingtest.clickOk
+import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
@@ -35,6 +36,7 @@ class PlayOnlineDialogTest : AbstractTest() {
         dlg.isVisible = true
         dlg.getChild<JTextField>().text = "Alyssa"
         dlg.clickOk()
+        flushEdt()
 
         dlg.shouldNotBeVisible()
         verify { ClientGlobals.sessionApi.beginSession("Alyssa") }
