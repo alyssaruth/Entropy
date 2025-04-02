@@ -6,16 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HandDetails 
 {
 	private ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber = new ConcurrentHashMap<>();
-	private ExtendedConcurrentHashMap<Integer, Integer> hmHandSizeByPlayerNumber = new ExtendedConcurrentHashMap<>();
 	
-	public ExtendedConcurrentHashMap<Integer, Integer> getHandSizes()
-	{
-		return hmHandSizeByPlayerNumber;
-	}
-	public void setHandSizes(ExtendedConcurrentHashMap<Integer, Integer> hmHandSizeByPlayerNumber)
-	{
-		this.hmHandSizeByPlayerNumber = hmHandSizeByPlayerNumber;
-	}
 	public ConcurrentHashMap<Integer, List<String>> getHands()
 	{
 		return hmHandByPlayerNumber;

@@ -93,23 +93,6 @@ public class GameWrapper
 		BidHistory history = hmBidHistoryByRoundNumber.get(roundNumber);
 		return history.getPersonToStart();
 	}
-	public Bid getNextBidForPlayer(int playerNumber, int roundNumber, Bid latestBid)
-	{
-		BidHistory history = hmBidHistoryByRoundNumber.get(roundNumber);
-		if (history == null)
-		{
-			//Returning null here will be like 'waiting for player'
-			logger.error("noBidHistory", "Got NULL bid history for gameId " + gameId + " and round " + roundNumber + ". Dump follows.");
-			debugDump("Game");
-			return null;
-		}
-		
-		return history.getNextBidForPlayer(playerNumber, latestBid);
-	}
-	public long getCountdownStartMillis()
-	{
-		return countdownStartMillis;
-	}
 	public long getCountdownTimeRemaining()
 	{
 		long timeElapsed = System.currentTimeMillis() - countdownStartMillis;
@@ -199,6 +182,5 @@ public class GameWrapper
 		sb.append("\n	Last player to act: " + history.getLastPlayerToAct());
 		sb.append("\n	BidHistory: " + history);
 		sb.append("\n	" + details.getHandsForLogging());
-		sb.append("\n	hmHandSizeByPlayerNumber: " + details.getHandSizes());
 	}
 }
