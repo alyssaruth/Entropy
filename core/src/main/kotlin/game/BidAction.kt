@@ -9,4 +9,6 @@ abstract class BidAction<B : BidAction<B>> : PlayerAction() {
     abstract fun overAchievementThreshold(): Boolean
 
     abstract fun isPerfect(hands: List<List<String>>, settings: GameSettings): Boolean
+
+    abstract fun isOverbid(hands: List<List<String>>, settings: GameSettings): Boolean
 }
