@@ -11,12 +11,15 @@ data class EntropyBidAction(
     override fun overAchievementThreshold() = amount >= 5
 
     override fun isPerfect(hands: List<List<String>>, settings: GameSettings): Boolean {
-        TODO("Not yet implemented")
+        val perfectAmount = perfectBidAmount(hands.flatten(), settings.jokerValue)
+        val perfectSuit =
+            perfectBidSuit(hands.flatten(), settings.jokerValue, settings.includeStars)
+
+        return amount == perfectAmount && suit == perfectSuit
     }
 
-    override fun isOverbid(hands: List<List<String>>, settings: GameSettings): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isOverbid(hands: List<List<String>>, settings: GameSettings) =
+        amount > countSuit(suit, hands.flatten(), settings.jokerValue)
 
     override fun higherThan(other: EntropyBidAction): Boolean {
         if (amount > other.amount) {
