@@ -2,7 +2,7 @@ package game
 
 data class EntropyBidAction(
     override val playerName: String,
-    override val cardToReveal: String,
+    override val cardToReveal: String?,
     override val blind: Boolean,
     val amount: Int,
     val suit: Suit,
@@ -10,16 +10,15 @@ data class EntropyBidAction(
 
     override fun overAchievementThreshold() = amount >= 5
 
-    override fun isPerfect(hands: List<List<String>>, settings: GameSettings): Boolean {
-        val perfectAmount = perfectBidAmount(hands.flatten(), settings.jokerValue)
-        val perfectSuit =
-            perfectBidSuit(hands.flatten(), settings.jokerValue, settings.includeStars)
+    override fun isPerfect(cards: List<String>, settings: GameSettings): Boolean {
+        val perfectAmount = perfectBidAmount(cards, settings.jokerValue)
+        val perfectSuit = perfectBidSuit(cards, settings.jokerValue, settings.includeStars)
 
         return amount == perfectAmount && suit == perfectSuit
     }
 
-    override fun isOverbid(hands: List<List<String>>, settings: GameSettings) =
-        amount > countSuit(suit, hands.flatten(), settings.jokerValue)
+    override fun isOverbid(cards: List<String>, settings: GameSettings) =
+        amount > countSuit(suit, cards, settings.jokerValue)
 
     override fun higherThan(other: EntropyBidAction): Boolean {
         if (amount > other.amount) {

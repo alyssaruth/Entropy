@@ -113,7 +113,7 @@ data class Room(
                 if (currentGame.gameStartMillis == -1L) {
                     // Unset the countdown if it's going, reset current capacity and get out of this
                     // madness
-                    currentGame.countdownStartMillis = -1
+                    currentGame.setCountdownStartMillis(-1)
                     resetCurrentPlayers(fireLobbyChanged)
                     return
                 }
@@ -129,11 +129,12 @@ data class Room(
                     val history: BidHistory = currentGame.currentBidHistory
                     history.addBidForPlayer(playerNumber, bid)
 
+                    // TODO - Hand size thing
                     // Moved this into here as otherwise we set it to 0 incorrectly and a person
                     // ends up with no cards!
-                    val details: HandDetails = currentGame.currentRoundDetails
-                    val hmHandSizeByPlayerNumber = details.handSizes
-                    hmHandSizeByPlayerNumber[playerNumber] = 0
+                    //                    val details: HandDetails = currentGame.currentRoundDetails
+                    //                    val hmHandSizeByPlayerNumber = details.handSizes
+                    //                    hmHandSizeByPlayerNumber[playerNumber] = 0
                 }
 
                 val playerSize: Int = hmPlayerByPlayerNumber.size

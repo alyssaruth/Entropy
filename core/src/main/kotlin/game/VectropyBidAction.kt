@@ -28,14 +28,14 @@ data class VectropyBidAction(
 
     override fun overAchievementThreshold() = getTotal() >= 5
 
-    override fun isPerfect(hands: List<List<String>>, settings: GameSettings): Boolean =
-        evaluateAllSuits(hands.flatten(), settings, ::isPerfect).all { it }
+    override fun isPerfect(cards: List<String>, settings: GameSettings): Boolean =
+        evaluateAllSuits(cards, settings, ::isPerfect).all { it }
 
     private fun isPerfect(cards: List<String>, amount: Int?, suit: Suit, settings: GameSettings) =
         amount?.let { amount == countSuit(suit, cards, settings.jokerValue) } ?: true
 
-    override fun isOverbid(hands: List<List<String>>, settings: GameSettings): Boolean =
-        evaluateAllSuits(hands.flatten(), settings, ::isOverbid).none { it }
+    override fun isOverbid(cards: List<String>, settings: GameSettings): Boolean =
+        evaluateAllSuits(cards, settings, ::isOverbid).none { it }
 
     private fun isOverbid(cards: List<String>, amount: Int?, suit: Suit, settings: GameSettings) =
         amount?.let { amount > countSuit(suit, cards, settings.jokerValue) } ?: false
