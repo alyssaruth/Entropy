@@ -18,5 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 abstract class PlayerAction {
     abstract val playerName: String
 
-    abstract fun htmlString(): String
+    abstract fun plainString(): String
+
+    open fun htmlString() = plainString()
 }

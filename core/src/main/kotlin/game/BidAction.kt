@@ -11,4 +11,7 @@ abstract class BidAction<B : BidAction<B>> : PlayerAction() {
     abstract fun isPerfect(cards: List<String>, settings: GameSettings): Boolean
 
     abstract fun isOverbid(cards: List<String>, settings: GameSettings): Boolean
+
+    override fun toString() =
+        plainString() + if (cardToReveal != null) " (Shows: $cardToReveal)" else ""
 }

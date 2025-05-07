@@ -54,7 +54,7 @@ data class VectropyBidAction(
             condition(cards, stars, Suit.Stars, settings),
         )
 
-    override fun htmlString(): String {
+    override fun plainString(): String {
         fun optional(amount: Int?) = if (amount == null) " " else " $amount,"
 
         return "($clubs, $diamonds, $hearts,${optional(moons)} $spades,${optional(stars)})"
