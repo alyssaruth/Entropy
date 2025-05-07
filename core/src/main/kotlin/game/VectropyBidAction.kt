@@ -2,7 +2,6 @@ package game
 
 data class VectropyBidAction(
     override val playerName: String,
-    override val cardToReveal: String,
     override val blind: Boolean,
     val clubs: Int,
     val diamonds: Int,

@@ -205,7 +205,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
 	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
 	public static final String SAVED_GAME_INT_LAST_BID_SUIT_CODE = "lastBidSuitCode";
-	public static final String SAVED_GAME_INT_BID_SUIT_CODE = "bidSuitCode";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "opponentThreeNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";
@@ -213,6 +212,7 @@ public interface Registry
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
 	public static final String SAVED_GAME_INT_HISTORY_SIZE = "historySize";
 	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
+	public static final String SAVED_GAME_STRING_BID_SUIT = "bidSuit";
 
 	//statics for default values etc
 	public static final String TWO_COLOURS = "twocolour";

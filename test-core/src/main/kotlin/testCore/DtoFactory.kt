@@ -63,4 +63,4 @@ fun makeEntropyBidAction(
     player: String = "Alyssa",
     cardToReveal: String? = null,
     blind: Boolean = false,
-) = EntropyBidAction(player, cardToReveal, blind, amount, suit)
+) = EntropyBidAction(player, blind, amount, suit).also { it.cardToReveal = cardToReveal }

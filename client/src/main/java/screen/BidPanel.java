@@ -2,10 +2,11 @@ package screen;
 
 import java.util.prefs.Preferences;
 
+import game.BidAction;
 import object.Bid;
 import util.BidListener;
 
-public abstract class BidPanel extends TransparentPanel
+public abstract class BidPanel<B extends BidAction<B>> extends TransparentPanel
 {
 	public BidListener listener = null;
 	public int maxBid = -1;
@@ -19,7 +20,7 @@ public abstract class BidPanel extends TransparentPanel
 	public abstract void saveState(Preferences savedGame);
 	public abstract void fireAppearancePreferencesChange();
 	public abstract void init(int maxBid, int totalNumberOfCards, boolean online, boolean includeMoons, boolean includeStars, boolean illegalAllowed);
-	public abstract void adjust(Bid bid);
+	public abstract void adjust(B bid);
 	
 	public void addBidListener(BidListener listener)
 	{

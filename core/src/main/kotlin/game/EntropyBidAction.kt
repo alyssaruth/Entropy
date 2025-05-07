@@ -2,7 +2,6 @@ package game
 
 data class EntropyBidAction(
     override val playerName: String,
-    override val cardToReveal: String?,
     override val blind: Boolean,
     val amount: Int,
     val suit: Suit,
@@ -31,5 +30,5 @@ data class EntropyBidAction(
     override fun plainString() = "$amount ${suit.getDescription(amount > 1)}"
 
     override fun htmlString() =
-        "<font color=\"${suit.getColour()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"
+        "<font color=\"${suit.getColourHex()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"
 }

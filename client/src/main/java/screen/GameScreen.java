@@ -1,6 +1,7 @@
 package screen;
 
 import achievement.AchievementSetting;
+import game.BidAction;
 import game.GameMode;
 import object.Bid;
 import object.ChallengeBid;
@@ -16,7 +17,7 @@ import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
-public abstract class GameScreen extends TransparentPanel
+public abstract class GameScreen<B extends BidAction<B>> extends TransparentPanel
 								 implements BidListener,
 								 			RevealListener,
 								 			Registry
@@ -31,7 +32,7 @@ public abstract class GameScreen extends TransparentPanel
 	private int handicapAmount;
 	
 	
-	public Bid lastBid = null;
+	public BidAction<B> lastBid = null;
 	
 	private boolean includeJokers = false;
 	private boolean playBlind;
