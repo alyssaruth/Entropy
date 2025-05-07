@@ -1,5 +1,6 @@
 package online.screen;
 
+import game.BidAction;
 import game.GameMode;
 import game.GameSettings;
 import http.dto.RoomSummary;
@@ -778,7 +779,7 @@ public abstract class GameRoom extends JFrame
 		hmHandByAdjustedPlayerNumber.clear();
 	}
 	
-	public void handleBid(int playerNumber, Bid bid)
+	public void handleBid(int playerNumber, BidAction bid)
 	{	
 		int playerNumberAdjusted = adjustForMe(playerNumber);
 		Player player = hmPlayerByAdjustedPlayerNumber.get(playerNumberAdjusted);
@@ -1372,7 +1373,7 @@ public abstract class GameRoom extends JFrame
 	 * BidListener
 	 */
 	@Override
-	public void bidMade(Bid bid)
+	public void bidMade(BidAction bid)
 	{
 		//1. Set the player on the bid
 		Player player = hmPlayerByAdjustedPlayerNumber.get(0);

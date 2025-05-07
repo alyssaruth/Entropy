@@ -19,7 +19,7 @@ public class EntropyScreen extends GameScreen
 	public EntropyScreen()
 	{
 		setFocusable(true);
-		bidPanel = new EntropyBidPanel();
+		bidPanel = new EntropyBidPanel(player.getName(), handPanel);
 		bidPanel.showBidPanel(false);
 		
 		setLayout(new BorderLayout(0, 0));
@@ -30,8 +30,6 @@ public class EntropyScreen extends GameScreen
 		bidPanel.setLogging(true);
 		bidPanel.addBidListener(this);
 	}
-
-//David added this comment!
 	
 	@Override
 	public void showResult()

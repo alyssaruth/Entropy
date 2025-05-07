@@ -44,8 +44,10 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	private boolean includeStars = false;
 	private boolean online = false;
 	
-	public EntropyBidPanel() 
+	public EntropyBidPanel(String playerName, HandPanelMk2 handPanel)
 	{
+		super(playerName, handPanel);
+
 		setPreferredSize(new Dimension(550, 150));
 		bidGroup.add(btnClubs);
 		bidGroup.add(btnDiamonds);
@@ -356,7 +358,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		{
 			if (listener != null)
 			{
-				EntropyBid bid = new EntropyBid(bidSuit, bidSlider.getValue());
+				var bid = new EntropyBidAction(playerName, handPanel.isPlayingBlind(), bidSlider.getValue(), bidSuit);
 				listener.bidMade(bid);
 			}
 		}
@@ -411,7 +413,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		{
 			bidSlider.setMinimum(lastBidAmount + 1);
 		}
-		
+
 		updateBidAmountDisplay();
 	}
 

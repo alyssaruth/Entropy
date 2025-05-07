@@ -1,10 +1,10 @@
 package util;
 
-import object.Bid;
+import game.BidAction;
 
 public interface BidListener 
 {
-	public void bidMade(Bid bid);
+	public void bidMade(BidAction bid);
 	public void challengeMade();
 	public void illegalCalled();
 }

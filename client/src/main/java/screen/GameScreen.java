@@ -1116,7 +1116,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	 * BidListener
 	 */
 	@Override
-	public void bidMade(Bid bid) 
+	public void bidMade(BidAction bid)
 	{
 		bidPanel.enableBidPanel(false);
 		bid.setPlayer(player);

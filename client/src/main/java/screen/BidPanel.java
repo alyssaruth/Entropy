@@ -8,6 +8,14 @@ import util.BidListener;
 
 public abstract class BidPanel<B extends BidAction<B>> extends TransparentPanel
 {
+	protected final String playerName;
+	protected final HandPanelMk2 handPanel;
+
+	BidPanel(String playerName, HandPanelMk2 handPanel) {
+		this.playerName = playerName;
+		this.handPanel = handPanel;
+	}
+
 	public BidListener listener = null;
 	public int maxBid = -1;
 	

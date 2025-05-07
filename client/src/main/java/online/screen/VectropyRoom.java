@@ -16,7 +16,7 @@ public class VectropyRoom extends GameRoom
 	{
 		super(id, roomName, settings, players);
 		
-		bidPanel = new VectropyBidPanel();
+		bidPanel = new VectropyBidPanel(ClientUtil.getUsername(), handPanel);
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
 		bidPanel.addBidListener(this);
 	}

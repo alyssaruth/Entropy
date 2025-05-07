@@ -9,6 +9,7 @@ import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import screen.EntropyBidPanel;
 import util.CardsUtil;
+import util.ClientUtil;
 import util.Registry;
 import util.ReplayConstants;
 
@@ -20,7 +21,7 @@ public class EntropyRoom extends GameRoom
 	{
 		super(id, roomName, settings, players);
 		
-		bidPanel = new EntropyBidPanel();
+		bidPanel = new EntropyBidPanel(ClientUtil.getUsername(), handPanel);
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
 		bidPanel.addBidListener(this);
 	}
