@@ -20,6 +20,14 @@ public interface Registry
 	// instance
 	public static final String INSTANCE_INT_REPLAY_CONVERSION = "replayConversion";
 	public static final String INSTANCE_STRING_DEVICE_ID = "deviceId";
+
+	// shared
+	public static final String SHARED_BOOLEAN_INCLUDE_MOONS = "includeMoons";
+	public static final String SHARED_BOOLEAN_INCLUDE_STARS = "includeStars";
+	public static final String SHARED_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
+	public static final String SHARED_BOOLEAN_CARD_REVEAL = "cardReveal";
+	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
+	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
@@ -44,7 +52,6 @@ public interface Registry
 	public static final String PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED = "opponentTwoEnabled";
 	public static final String PREFERENCES_BOOLEAN_PLAY_BLIND = "playBlind";
 	public static final String PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP = "playWithHandicap";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_JOKERS = "includeJokers";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN = "includeMode";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN = "includeRounds";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN = "includePlayers";
@@ -161,7 +168,6 @@ public interface Registry
 	
 	public static final String SAVED_GAME_BOOLEAN_EXITED_ON_CHALLENGE = "exitedOnChallenge";
 	public static final String SAVED_GAME_BOOLEAN_FIRST_ROUND = "firstRound";
-	public static final String SAVED_GAME_BOOLEAN_INCLUDE_JOKERS = "includeJokers";
 	public static final String SAVED_GAME_BOOLEAN_CHALLENGE_ENABLED = "challengeEnabled";
 	public static final String SAVED_GAME_BOOLEAN_ILLEGAL_ENABLED = "illegalEnabled";
 	public static final String SAVED_GAME_BOOLEAN_INCLUDE_STARS = "includeStars";
@@ -191,7 +197,7 @@ public interface Registry
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT = "revealedDifferentSuit";
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT = "revealedSameSuit";
 	public static final String SAVED_GAME_INT_CARDS_REVEALED = "cardsRevealed";
-	public static final String SAVED_GAME_INT_FIRST_SUIT_BID = "firstSuitBid";
+	public static final String SAVED_GAME_STRING_FIRST_SUIT_BID = "firstSuitBid";
 	public static final String SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT = "deviatedFromFirstSuit";
 	
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_CARDS_TO_SUBTRACT = "opponentThreeCardsToSubtract";
@@ -203,8 +209,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_JOKER_VALUE = "jokerValue";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
-	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
-	public static final String SAVED_GAME_INT_LAST_BID_SUIT_CODE = "lastBidSuitCode";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "opponentThreeNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";
@@ -212,7 +216,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
 	public static final String SAVED_GAME_INT_HISTORY_SIZE = "historySize";
 	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
-	public static final String SAVED_GAME_STRING_BID_SUIT = "bidSuit";
 
 	//statics for default values etc
 	public static final String TWO_COLOURS = "twocolour";

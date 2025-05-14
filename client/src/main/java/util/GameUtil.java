@@ -52,7 +52,7 @@ public class GameUtil
 		}
 	}
 	
-	public static int getMaxBid(boolean includeJokers, int jokerQuantity, int jokerValue, 
+	public static int getMaxBid(int jokerQuantity, int jokerValue,
 	  int totalNumberOfCards, boolean negativeJacks)
 	{
 		int theoreticalMaxBid = 0;
@@ -63,7 +63,7 @@ public class GameUtil
 			maxWithoutJokers = 16; //When J not present - (11*1) + (1*2) + (3*1)
 		}
 		
-		if (includeJokers)
+		if (jokerQuantity > 0)
 		{
 			int maxJokerQuantity = Math.min(jokerQuantity, totalNumberOfCards);
 			if (totalNumberOfCards > jokerQuantity)

@@ -92,12 +92,12 @@ public class CardsUtil
 	 * Overloading to allow the seed to be passed through from the Server, allowing this to be secure.
 	 * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
 	 */
-	public static List<String> createAndShuffleDeck(boolean includeJokers, int jokerQuantity, 
+	public static List<String> createAndShuffleDeck(int jokerQuantity,
 	  boolean includeMoons, boolean includeStars, boolean negativeJacks)
 	{
-		return createAndShuffleDeck(includeJokers, jokerQuantity, includeMoons, includeStars, negativeJacks, -1);
+		return createAndShuffleDeck(jokerQuantity, includeMoons, includeStars, negativeJacks, -1);
 	}
-	public static List<String> createAndShuffleDeck(boolean includeJokers, int jokerQuantity, 
+	public static List<String> createAndShuffleDeck(int jokerQuantity,
 	 boolean includeMoons, boolean includeStars, boolean negativeJacks, long seed)
 	{
 		// Creating the pack of cards
@@ -135,13 +135,10 @@ public class CardsUtil
 				list.add(card);
 			}
 		}
-		
-		if (includeJokers)
+
+		for (int i=0; i<jokerQuantity; i++)
 		{
-			for (int i=0; i<jokerQuantity; i++)
-			{
-				list.add("Jo" + i); //i.e. Joc, Jod, Joh, Jos, but more generic
-			}
+			list.add("Jo" + i); //i.e. Joc, Jod, Joh, Jos, but more generic
 		}
 
 		//Shuffle the pack using Fisher-Yates.
@@ -186,10 +183,9 @@ public class CardsUtil
 		int jokerValue = parms.getJokerValue();
 		boolean includeMoons = parms.getIncludeMoons();
 		boolean includeStars = parms.getIncludeStars();
-		boolean includeJokers = jokerQuantity > 0;
 		boolean negativeJacks = parms.getNegativeJacks();
 		
-		List<String> deck = createAndShuffleDeck(includeJokers, jokerQuantity, includeMoons, includeStars, negativeJacks);
+		List<String> deck = createAndShuffleDeck(jokerQuantity, includeMoons, includeStars, negativeJacks);
 		
 		int handSize = hand.size();
 		int totalCardsNotIncludingMine = parms.getTotalNumberOfCards() - handSize;

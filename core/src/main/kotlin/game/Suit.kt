@@ -18,13 +18,14 @@ enum class Suit(
     val fourColour: Color,
     val unicodeStr: String,
     val letter: Char,
+    @Deprecated("this should die") val legacyCode: Int,
 ) {
-    Clubs(Color.black, COLOUR_SUIT_GREEN, CLUBS_SYMBOL, 'c'),
-    Diamonds(Color.red, Color.blue, DIAMONDS_SYMBOL, 'd'),
-    Hearts(Color.red, Color.red, HEARTS_SYMBOL, 'h'),
-    Moons(COLOUR_SUIT_GOLD, COLOUR_SUIT_PURPLE, MOONS_SYMBOL, 'm'),
-    Spades(Color.black, Color.black, SPADES_SYMBOL, 's'),
-    Stars(COLOUR_SUIT_GOLD, COLOUR_SUIT_GOLD, STARS_SYMBOL, 'x');
+    Clubs(Color.black, COLOUR_SUIT_GREEN, CLUBS_SYMBOL, 'c', 0),
+    Diamonds(Color.red, Color.blue, DIAMONDS_SYMBOL, 'd', 1),
+    Hearts(Color.red, Color.red, HEARTS_SYMBOL, 'h', 2),
+    Moons(COLOUR_SUIT_GOLD, COLOUR_SUIT_PURPLE, MOONS_SYMBOL, 'm', 3),
+    Spades(Color.black, Color.black, SPADES_SYMBOL, 's', 4),
+    Stars(COLOUR_SUIT_GOLD, COLOUR_SUIT_GOLD, STARS_SYMBOL, 'x', 5);
 
     fun getDescription(singular: Boolean): String {
         val lower = name.lowercase()

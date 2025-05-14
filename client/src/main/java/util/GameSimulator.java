@@ -331,8 +331,7 @@ public final class GameSimulator
 		opponentTwo.resetHand();
 		opponentThree.resetHand();
 		
-		List<String> deck = CardsUtil.createAndShuffleDeck(parms.getIncludeJokers(), 
-		  parms.getJokerQuantity(), parms.getIncludeMoons(), parms.getIncludeStars(), parms.getNegativeJacks());
+		List<String> deck = CardsUtil.createAndShuffleDeck(parms.getJokerQuantity(), parms.getIncludeMoons(), parms.getIncludeStars(), parms.getNegativeJacks());
 				
 		populateHands(deck);
 	}

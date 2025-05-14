@@ -561,7 +561,7 @@ public class SimulationDialog extends JDialog
 		
 		int numberOfCards = slider.getValue();
 		boolean includeJokers = cbIncludeJokers.isSelected();
-		int jokerValue = (int) spinnerJokerValue.getValue();
+		int jokerValue = includeJokers ? (int) spinnerJokerValue.getValue() : 0;
 		int jokerQuantity = (int) spinnerJokerQuantity.getValue();
 		boolean includeMoons = chckbxIncludeMoons.isSelected();
 		boolean includeStars = chckbxIncludeStars.isSelected();
@@ -580,7 +580,6 @@ public class SimulationDialog extends JDialog
 		SimulationParms parms = new SimulationParms();
 		parms.setForceStart(forceStart);
 		parms.setGameMode(gameMode);
-		parms.setIncludeJokers(includeJokers);
 		parms.setIncludeMoons(includeMoons);
 		parms.setIncludeStars(includeStars);
 		parms.setNegativeJacks(negativeJacks);

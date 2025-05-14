@@ -344,7 +344,6 @@ data class Room(
         val seed: Long = ServerGlobals.server.generateSeed()
         val deck =
             CardsUtil.createAndShuffleDeck(
-                true,
                 settings.jokerQuantity,
                 settings.includeMoons,
                 settings.includeStars,

@@ -318,7 +318,6 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	@Override
 	public void saveState(Preferences savedGame)
 	{
-		savedGame.put(SAVED_GAME_STRING_BID_SUIT, bidSuit.name());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_CHALLENGE_ENABLED, btnChallenge.isEnabled());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_ILLEGAL_ENABLED, btnIllegal.isEnabled());
 		savedGame.put(SAVED_GAME_STRING_TOTAL_CARDS_LABEL, totalCardsLabel.getText());

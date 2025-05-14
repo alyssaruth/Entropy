@@ -8,3 +8,5 @@ fun countContribution(suit: Suit, card: String, jokerValue: Int) =
     else if (card.contains("A")) 1
     else if (card.startsWith("Jo")) jokerValue
     else if (card == "-J${suit.letter}") -1 else if (card.contains(suit.letter)) 1 else 0
+
+fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) > 0

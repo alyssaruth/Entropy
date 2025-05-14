@@ -1,8 +1,10 @@
 package screen;
 
 import achievement.AchievementSetting;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import game.BidAction;
 import game.GameMode;
+import game.GameSettings;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
@@ -23,6 +25,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 								 			Registry
 {
 	//Common variables
+	private GameSettings settings = null;
 	private int numberOfCards = 5;
 	private int totalNumberOfCards;
 	private int personToStart = -1;
@@ -30,11 +33,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	private int jokerQuantity = -1;
 	public int jokerValue = -1;
 	private int handicapAmount;
-	
-	
-	public BidAction<B> lastBid = null;
-	
-	private boolean includeJokers = false;
+
+	protected B lastBid = null;
+
 	private boolean playBlind;
 	private boolean playWithHandicap;
 	public boolean gameOver = true;
@@ -42,13 +43,12 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	private boolean logging = true;	
 	public boolean hasOverbid;
 	public boolean hasActedBlindThisGame = false;
-	
+
 	private boolean earnedSpectator = false;
 	public boolean earnedPsychic = false;
 	public boolean includeStars = false;
 	public boolean includeMoons = false;
 	private boolean negativeJacks = false;
-	private boolean cardReveal = false;
 	private boolean currentlyOnChallenge = false;
 	public boolean cheatUsed = false;
 	
@@ -64,7 +64,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	public HandPanelMk2 handPanel = new HandPanelMk2(this);
 	
 	//Abstract methods
-	public abstract void loadLastBid();
+	public abstract void loadLastBid() throws JsonProcessingException;
 	public abstract void loadSpecificVariables();
 	public abstract void showResult();
 	
@@ -113,7 +113,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void startRound()
 	{
-		List<String> deck = CardsUtil.createAndShuffleDeck(includeJokers, jokerQuantity, includeMoons, 
+		List<String> deck = CardsUtil.createAndShuffleDeck(jokerQuantity, includeMoons,
 														   includeStars, negativeJacks);
 		populateHands(deck);
 		displayHands();
@@ -211,7 +211,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		totalNumberOfCards = player.getNumberOfCards() + opponentOne.getNumberOfCards() 
 						   + opponentTwo.getNumberOfCards() + opponentThree.getNumberOfCards();
 		
-		int maxBid = GameUtil.getMaxBid(includeJokers, jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
+		int maxBid = GameUtil.getMaxBid(jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
 		bidPanel.init(maxBid, totalNumberOfCards, false, includeMoons, includeStars, false);
 		
 		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
@@ -318,7 +318,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	private void getNewGameVariablesFromRegistry()
 	{
 		numberOfCards = prefs.getInt(PREFERENCES_INT_NUMBER_OF_CARDS, 5);
-		includeJokers = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_JOKERS, false);
 		jokerQuantity = prefs.getInt(PREFERENCES_INT_JOKER_QUANTITY, 2);
 		jokerValue = prefs.getInt(PREFERENCES_INT_JOKER_VALUE, 2);
 		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
@@ -332,7 +331,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		includeStars = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_STARS, false);
 		includeMoons = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, false);
 		negativeJacks = prefs.getBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, false);
-		cardReveal = prefs.getBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, false);
+
+		settings = GameSettings.fromRegistry(prefs, getGameMode());
 
 		handPanel.fireAppearancePreferencesChange();
 		handPanel.initPlayerNames();
@@ -404,8 +404,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			int myCards = inGameReplay.getInt(1 + REPLAY_INT_PLAYER_NUMBER_OF_CARDS, 0);
 
 			AchievementsUtil.checkForPerfectGame(numberOfRounds, startNumberOfCards);
-			AchievementsUtil.checkForFullBlindGame(startNumberOfCards, playBlind, handPanel.getHasViewedHandThisGame(), cardReveal);
-			AchievementsUtil.unlockNuclearStrike(myCards, startNumberOfCards, playBlind, handPanel.getHasViewedHandThisGame(), cardReveal);
+			AchievementsUtil.checkForFullBlindGame(startNumberOfCards, playBlind, handPanel.getHasViewedHandThisGame(), settings.getCardReveal());
+			AchievementsUtil.unlockNuclearStrike(myCards, startNumberOfCards, playBlind, handPanel.getHasViewedHandThisGame(), settings.getCardReveal());
 			AchievementsUtil.unlockHandicapAchievements(myCards, startNumberOfCards);
 			AchievementsUtil.unlockPrecision(hasOverbid, numberOfRounds);
 			
@@ -521,7 +521,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		ScreenCache.getReplayDialog(IN_GAME_REPLAY).roundAdded();
 	}
 	
-	protected void saveGame()
+	protected void saveGame() throws JsonProcessingException
 	{
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, true);
 		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
@@ -585,7 +585,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		savedGame.putInt(SAVED_GAME_INT_OPPONENT_THREE_CARDS_TO_SUBTRACT, opponentThree.getCardsToSubtract());
 
 		//other booleans
-		savedGame.putBoolean(SAVED_GAME_BOOLEAN_INCLUDE_JOKERS, includeJokers);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_FIRST_ROUND, firstRound);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_PLAY_BLIND, playBlind);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);
@@ -596,7 +595,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_INCLUDE_STARS, includeStars);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_INCLUDE_MOONS, includeMoons);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
-		savedGame.putBoolean(SAVED_GAME_BOOLEAN_CARD_REVEAL, cardReveal);
+		savedGame.putBoolean(SHARED_BOOLEAN_CARD_REVEAL, settings.getCardReveal());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_CHEAT_USED, cheatUsed);
 		
 		//other stuff
@@ -615,14 +614,13 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		try
 		{
 			//set up deck stuff
-			includeJokers = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_JOKERS, true);
 			jokerValue = savedGame.getInt(SAVED_GAME_INT_JOKER_VALUE, 2);
 			jokerQuantity = savedGame.getInt(SAVED_GAME_INT_JOKER_QUANTITY, 2);
 			includeStars = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_STARS, false);
 			includeMoons = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_MOONS, false);
 			negativeJacks = savedGame.getBoolean(SAVED_GAME_BOOLEAN_NEGATIVE_JACKS, false);
-			cardReveal = savedGame.getBoolean(SAVED_GAME_BOOLEAN_CARD_REVEAL, false);
 			cheatUsed = savedGame.getBoolean(SAVED_GAME_BOOLEAN_CHEAT_USED, false);
+			settings = GameSettings.fromRegistry(savedGame, getGameMode());
 			
 			resetPlayers();
 			loadLastBid();
@@ -877,11 +875,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		lastBid.setBlind(actedBlind);
 		addToListmodel(lastBid);
 		
 		updateAchievementVariables();
-		if (isPerfect(lastBid))
+		if (lastBid.isPerfect(allCards(), settings))
 		{
 			handlePerfectBid(lastBid);
 		}
@@ -1058,11 +1055,14 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			handPanel.revealCard(card);
 		}
 	}
-	
-	public boolean isPerfect(Bid bid)
-	{
-		return bid.isPerfect(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-				   opponentThree.getHand(), jokerValue, includeMoons, includeStars);
+
+	protected List<String> allCards() {
+		ArrayList<String> cards = new ArrayList<>();
+		cards.addAll(player.getHand());
+		cards.addAll(opponentOne.getHand());
+		cards.addAll(opponentTwo.getHand());
+		cards.addAll(opponentThree.getHand());
+		return cards;
 	}
 	
 	public boolean isOverbid(Bid bid)
@@ -1084,7 +1084,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		parms.setIncludeMoons(includeMoons);
 		parms.setIncludeStars(includeStars);
 		parms.setNegativeJacks(negativeJacks);
-		parms.setCardReveal(cardReveal);
+		parms.setCardReveal(settings.getCardReveal());
 		
 		if (includeJokers)
 		{
@@ -1122,7 +1122,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		bid.setPlayer(player);
 		lastBid = bid;
 		
-		if (cardReveal
+		if (settings.getCardReveal()
 		  && player.hasMoreCardsToReveal())
 		{
 			handPanel.activateRevealListener();
@@ -1254,7 +1254,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			{
 				lastBid = bid;
 				
-				if (cardReveal)
+				if (settings.getCardReveal())
 				{
 					String card = bid.getCardToReveal();
 					handPanel.revealCard(card);

@@ -20,7 +20,6 @@ public class SimulationParms
 	
 	//Gameplay
 	private int numberOfCards = -1;
-	private boolean includeJokers = false;
 	private int jokerValue = -1;
 	private int jokerQuantity = -1;
 	private boolean includeMoons = false;
@@ -44,12 +43,8 @@ public class SimulationParms
 		parms.setIncludeStars(includeStars);
 		parms.setNegativeJacks(negativeJacks);
 		parms.setCardReveal(cardReveal);
-		
-		if (includeJokers)
-		{
-			parms.setJokerQuantity(jokerQuantity);
-			parms.setJokerValue(jokerValue);
-		}
+		parms.setJokerQuantity(jokerQuantity);
+		parms.setJokerValue(jokerValue);
 		
 		parms.setLogging(logging);
 		
@@ -122,14 +117,6 @@ public class SimulationParms
 	public void setNumberOfCards(int numberOfCards)
 	{
 		this.numberOfCards = numberOfCards;
-	}
-	public boolean getIncludeJokers()
-	{
-		return includeJokers;
-	}
-	public void setIncludeJokers(boolean includeJokers)
-	{
-		this.includeJokers = includeJokers;
 	}
 	public int getJokerValue()
 	{

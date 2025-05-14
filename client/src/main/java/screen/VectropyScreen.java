@@ -2,7 +2,9 @@ package screen;
 
 import java.awt.BorderLayout;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import game.GameMode;
+import game.VectropyBidAction;
 import object.Bid;
 import object.VectropyBid;
 import util.AchievementsUtil;
@@ -10,7 +12,10 @@ import util.Debug;
 import util.Registry;
 import util.VectropyUtil;
 
-public class VectropyScreen extends GameScreen
+import static utils.CoreGlobals.jsonMapper;
+import static utils.CoreGlobals.logger;
+
+public class VectropyScreen extends GameScreen<VectropyBidAction>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -54,14 +59,14 @@ public class VectropyScreen extends GameScreen
 	}
 
 	@Override
-	public void saveGame()
+	public void saveGame() throws JsonProcessingException
 	{
 		super.saveGame();
 
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, lastBid.toXmlString());
+			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, jsonMapper.writeValueAsString(lastBid));
 		}
 
 		//other booleans
@@ -72,12 +77,12 @@ public class VectropyScreen extends GameScreen
 	}
 	
 	@Override
-	public void loadLastBid()
+	public void loadLastBid() throws JsonProcessingException
 	{
 		String lastBidStr = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID, "");
 		if (!lastBidStr.isEmpty())
 		{
-			lastBid = Bid.factoryFromXmlString(lastBidStr, includeMoons, includeStars);
+			lastBid = jsonMapper.readValue(lastBidStr, VectropyBidAction.class);
 		}
 	}
 	
@@ -117,11 +122,6 @@ public class VectropyScreen extends GameScreen
 	/*
 	 *  Get/sets
 	 */
-	public void setLastBid(VectropyBid lastBid)
-	{
-		this.lastBid = lastBid;
-	}
-
 	@Override
 	public GameMode getGameMode()
 	{

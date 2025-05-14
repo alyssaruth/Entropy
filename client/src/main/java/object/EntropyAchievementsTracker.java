@@ -1,10 +1,13 @@
 package object;
 
 import achievement.AchievementUtilKt;
+import game.EntropyBidAction;
+import game.Suit;
 import util.AchievementsUtil;
-import util.CardsUtil;
 import util.Registry;
 import utils.Achievement;
+
+import static game.CardsUtilKt.isCardRelevant;
 
 public class EntropyAchievementsTracker implements Registry
 {
@@ -19,7 +22,7 @@ public class EntropyAchievementsTracker implements Registry
 	private boolean revealedDifferentSuit = false;
 	private int cardsRevealed = 0;
 	
-	private int firstSuitBid = -1;
+	private Suit firstSuitBid = null;
 	private boolean deviatedFromFirstSuit = false;
 	
 	public void reset()
@@ -35,7 +38,7 @@ public class EntropyAchievementsTracker implements Registry
 		revealedDifferentSuit = false;
 		cardsRevealed = 0;
 		
-		firstSuitBid = -1;
+		firstSuitBid = null;
 		deviatedFromFirstSuit = false;
 	}
 	
@@ -51,8 +54,12 @@ public class EntropyAchievementsTracker implements Registry
 		revealedDifferentSuit = savedGame.getBoolean(SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT, false);
 		revealedSameSuit = savedGame.getBoolean(SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT, false);
 		cardsRevealed = savedGame.getInt(SAVED_GAME_INT_CARDS_REVEALED, 0);
-		
-		firstSuitBid = savedGame.getInt(SAVED_GAME_INT_FIRST_SUIT_BID, -1);
+
+		var firstBidSuitStr = savedGame.get(SAVED_GAME_STRING_FIRST_SUIT_BID, null);
+		if (firstBidSuitStr != null) {
+			firstSuitBid = Suit.valueOf(firstBidSuitStr);
+		}
+
 		deviatedFromFirstSuit = savedGame.getBoolean(SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT, false);
 	}
 	
@@ -68,8 +75,11 @@ public class EntropyAchievementsTracker implements Registry
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT, revealedDifferentSuit);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT, revealedSameSuit);
 		savedGame.putInt(SAVED_GAME_INT_CARDS_REVEALED, cardsRevealed);
-		
-		savedGame.putInt(SAVED_GAME_INT_FIRST_SUIT_BID, firstSuitBid);
+
+		if (firstSuitBid != null) {
+			savedGame.put(SAVED_GAME_STRING_FIRST_SUIT_BID, firstSuitBid.name());
+		}
+
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT, deviatedFromFirstSuit);
 	}
 	
@@ -79,57 +89,53 @@ public class EntropyAchievementsTracker implements Registry
 				 earnedGardener, earnedSpaceman, earnedPsychic);
 	}
 	
-	public void updatePerfectBidVariables(Bid lastBid)
+	public void updatePerfectBidVariables(EntropyBidAction lastBid)
 	{
-		EntropyBid entropyBid = (EntropyBid)lastBid;
-		int bidSuitCode = entropyBid.getBidSuitCode();
+		var bidSuit = lastBid.getSuit();
 		
-		if (bidSuitCode == CardsUtil.SUIT_SPADES)
+		if (bidSuit == Suit.Spades)
 		{
 			earnedGardener = true;
 		}
-		else if (bidSuitCode == CardsUtil.SUIT_HEARTS)
+		else if (bidSuit == Suit.Hearts)
 		{
 			earnedLion = true;
 		}
-		else if (bidSuitCode == CardsUtil.SUIT_DIAMONDS)
+		else if (bidSuit == Suit.Diamonds)
 		{
 			earnedBurglar = true;
 		}
-		else if (bidSuitCode == CardsUtil.SUIT_CLUBS)
+		else if (bidSuit == Suit.Clubs)
 		{
 			earnedCaveman = true;
 		}
-		else if (bidSuitCode == CardsUtil.SUIT_MOONS)
+		else if (bidSuit == Suit.Moons)
 		{
 			earnedWerewolf = true;
 		}
-		else if (bidSuitCode == CardsUtil.SUIT_STARS)
+		else if (bidSuit == Suit.Stars)
 		{
 			earnedSpaceman = true;
 		}
 	}
 	
-	public void update(Bid bid)
+	public void update(EntropyBidAction bid)
 	{
-		EntropyBid entropyBid = (EntropyBid)bid;
-		
-		updateCardReveal(entropyBid);
-		updateMonotone(entropyBid);
+		updateCardReveal(bid);
+		updateMonotone(bid);
 	}
 	
-	private void updateCardReveal(EntropyBid bidMade)
+	private void updateCardReveal(EntropyBidAction bidMade)
 	{
 		String card = bidMade.getCardToReveal();
-		if (card.isEmpty())
+		if (card == null)
 		{
 			return;
 		}
 		
 		cardsRevealed++;
-		
-		int bidSuitCode = bidMade.getBidSuitCode();
-		if (CardsUtil.isRelevant(card, bidSuitCode))
+
+		if (isCardRelevant(card, bidMade.getSuit()))
 		{
 			revealedSameSuit = true;
 		}
@@ -139,16 +145,16 @@ public class EntropyAchievementsTracker implements Registry
 		}
 	}
 	
-	private void updateMonotone(EntropyBid bid)
+	private void updateMonotone(EntropyBidAction bid)
 	{
-		int suitCode = bid.getBidSuitCode();
-		if (firstSuitBid == -1)
+		var suit = bid.getSuit();
+		if (firstSuitBid == null)
 		{
-			firstSuitBid = suitCode;
+			firstSuitBid = suit;
 			return;
 		}
 		
-		if (suitCode != firstSuitBid)
+		if (suit != firstSuitBid)
 		{
 			deviatedFromFirstSuit = true;
 		}
