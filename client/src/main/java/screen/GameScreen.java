@@ -2,9 +2,7 @@ package screen;
 
 import achievement.AchievementSetting;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import game.BidAction;
-import game.GameMode;
-import game.GameSettings;
+import game.*;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
@@ -1085,12 +1083,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		parms.setIncludeStars(includeStars);
 		parms.setNegativeJacks(negativeJacks);
 		parms.setCardReveal(settings.getCardReveal());
-		
-		if (includeJokers)
-		{
-			parms.setJokerQuantity(jokerQuantity);
-			parms.setJokerValue(jokerValue);
-		}
+		parms.setJokerQuantity(jokerQuantity);
+		parms.setJokerValue(jokerValue);
 		
 		parms.setLastBid(lastBid);
 		parms.setPlayerCards(player.getNumberOfCards());
@@ -1119,7 +1113,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	public void bidMade(BidAction bid)
 	{
 		bidPanel.enableBidPanel(false);
-		bid.setPlayer(player);
 		lastBid = bid;
 		
 		if (settings.getCardReveal()
@@ -1220,7 +1213,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			Debug.appendBanner("Opponent " + opponent, logging);
 			
 			StrategyParms parms = factoryStrategyParms(opponent);
-			Bid bid = CpuStrategies.processOpponentTurn(parms, opponent);
+			PlayerAction bid = CpuStrategies.processOpponentTurn(parms, opponent);
 			if (bid == null)
 			{
 				//Something's gone wrong - probably an API strategy that timed out or did something invalid. 
@@ -1238,15 +1231,14 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 				ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 				return;
 			}
-			
-			bid.setPlayer(opponent);
+
 			addToListmodel(bid);
 			
-			if (bid.isChallenge())
+			if (bid instanceof ChallengeAction)
 			{
 				processChallenge(opponent);
 			}
-			else if (bid.isIllegal())
+			else if (bid instanceof IllegalAction)
 			{
 				processIllegal(opponent);
 			}

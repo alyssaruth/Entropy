@@ -5,33 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import game.EntropyBidAction;
+import game.Suit;
 import object.EntropyBid;
 
 public class MarkStrategySuitWrapper 
 {
 	private HashMap<Integer, Integer> hmSuitCountBySuitCode = new HashMap<>();
-	private ArrayList<Integer> applicableSuits = new ArrayList<>();
+	private List<Suit> applicableSuits;
 	private ArrayList<Integer> suitsPossibleToMinBid = new ArrayList<>();
 	private int bestSuit = -1;
 	private int worstSuit = -1;
 	
-	public MarkStrategySuitWrapper(List<String> hand, int jokerValue, boolean includeMoons, boolean includeStars, EntropyBid bid)
+	public MarkStrategySuitWrapper(List<String> hand, int jokerValue, boolean includeMoons, boolean includeStars, EntropyBidAction bid)
 	{
-		applicableSuits.add(CardsUtil.SUIT_CLUBS);
-		applicableSuits.add(CardsUtil.SUIT_DIAMONDS);
-		applicableSuits.add(CardsUtil.SUIT_HEARTS);
-		
-		if (includeMoons)
-		{
-			applicableSuits.add(CardsUtil.SUIT_MOONS);
-		}
-		
-		applicableSuits.add(CardsUtil.SUIT_SPADES);
-		
-		if (includeStars)
-		{
-			applicableSuits.add(CardsUtil.SUIT_STARS);
-		}
+		applicableSuits = Suit.filter(includeMoons, includeStars);
 		
 		int bestSuitCount = 0;
 		for (int i=0; i<applicableSuits.size(); i++)

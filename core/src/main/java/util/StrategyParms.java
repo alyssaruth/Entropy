@@ -1,5 +1,6 @@
 package util;
 
+import game.BidAction;
 import game.GameMode;
 import object.Bid;
 import object.Player;
@@ -19,7 +20,7 @@ public class StrategyParms
 	private boolean includeStars = false;
 	private boolean negativeJacks = false;
 	private boolean cardReveal = false;
-	private Bid lastBid = null;
+	private BidAction lastBid = null;
 	private boolean logging = true;
 	private ArrayList<String> cardsOnShowFromOpponents = new ArrayList<>();
 	
@@ -114,11 +115,11 @@ public class StrategyParms
 	{
 		this.cardReveal = cardReveal;
 	}
-	public Bid getLastBid()
+	public BidAction getLastBid()
 	{
 		return lastBid;
 	}
-	public void setLastBid(Bid lastBid)
+	public void setLastBid(BidAction lastBid)
 	{
 		this.lastBid = lastBid;
 	}

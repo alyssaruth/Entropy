@@ -193,7 +193,7 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		numberOfCards = numberOfCardsSlider.getValue();
 		negativeJacks = cbNegativeJacks.isSelected();
 		cardReveal = cbPlayersRevealCards.isSelected();
-		jokerQuantity = (int) jokerQuantitySpinner.getValue();
+		jokerQuantity = includeJokers ? (int) jokerQuantitySpinner.getValue() : 0;
 		jokerValue = (int) jokerValueSpinner.getValue();
 		handicapAmount = (int) handicapAmountSpinner.getValue();
 		playBlind = cbPlayBlind.isSelected();
@@ -202,7 +202,6 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 
 		prefs.putInt(PREFERENCES_INT_NUMBER_OF_CARDS, numberOfCards);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_JOKERS, includeJokers);
 		prefs.putInt(PREFERENCES_INT_JOKER_QUANTITY, jokerQuantity);
 		prefs.putInt(PREFERENCES_INT_JOKER_VALUE, jokerValue);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);
@@ -217,8 +216,8 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 	private void getVariablesFromPreferences()
 	{
 		numberOfCards = prefs.getInt(PREFERENCES_INT_NUMBER_OF_CARDS, 5);
-		includeJokers = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_JOKERS, false);
 		jokerQuantity = prefs.getInt(PREFERENCES_INT_JOKER_QUANTITY, 2);
+		includeJokers = jokerQuantity > 0;
 		jokerValue = prefs.getInt(PREFERENCES_INT_JOKER_VALUE, 2);
 		playWithHandicap = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, false);
 		handicapAmount = Math.max(prefs.getInt(PREFERENCES_INT_HANDICAP_AMOUNT, 1), 1);

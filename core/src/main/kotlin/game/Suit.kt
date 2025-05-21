@@ -43,13 +43,20 @@ enum class Suit(
     fun lessThan(other: Suit) = this < other
 
     fun next(includeMoons: Boolean, includeStars: Boolean): Suit {
-        val nextIx = (Suit.entries.indexOf(this) + 1) % Suit.entries.size
-        val next = Suit.entries[nextIx]
+        val filtered = Suit.filter(includeMoons, includeStars)
+        val nextIx = (filtered.indexOf(this) + 1) % filtered.size
+        return filtered[nextIx]
+    }
 
-        return if ((next == Moons && !includeMoons) || next == Stars && !includeStars) {
-            next.next(includeMoons, includeStars)
-        } else {
-            next
-        }
+    companion object {
+        @JvmStatic
+        fun filter(includeMoons: Boolean, includeStars: Boolean) =
+            Suit.entries.filter {
+                (it != Suit.Moons || includeMoons) && (it != Suit.Stars || includeStars)
+            }
+
+        @JvmStatic
+        fun random(includeMoons: Boolean, includeStars: Boolean) =
+            filter(includeMoons, includeStars).random()
     }
 }

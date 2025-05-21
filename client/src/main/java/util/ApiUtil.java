@@ -1,6 +1,6 @@
 package util;
 
-import game.GameMode;
+import game.*;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,7 +43,7 @@ public class ApiUtil implements Registry
 		sendWithCatch(messageString, port, true, true);
 	}
 	
-	public static Bid processApiTurn(StrategyParms parms, Player player)
+	public static PlayerAction processApiTurn(StrategyParms parms, Player player)
 	{
 		apiStrategy = getApiStrategy(player.getStrategy());
 		int port = apiStrategy.getPortNumber();
@@ -58,7 +58,7 @@ public class ApiUtil implements Registry
 			return null;
 		}
 		
-		return handleResponse(parms, responseString);
+		return handleResponse(parms, responseString, player);
 	}
 	
 	private static String sendWithCatch(String messageString, int port, boolean logging, boolean testMode)
@@ -221,7 +221,7 @@ public class ApiUtil implements Registry
 		return null;
 	}
 	
-	private static Bid handleResponse(StrategyParms parms, String responseString)
+	private static PlayerAction handleResponse(StrategyParms parms, String responseString, Player player)
 	{
 		Document xmlResponse = XmlUtil.getDocumentFromXmlString(responseString);
 		if (xmlResponse == null)
@@ -236,18 +236,18 @@ public class ApiUtil implements Registry
 		
 		if (responseName.equals("Bid"))
 		{
-			Bid bid = factoryBid(parms, root, responseString);
+			BidAction bid = factoryBid(parms, root, responseString, player);
 			String cardToShow = root.getAttribute("CardToShow");
 			bid.setCardToReveal(cardToShow);
 			return bid;
 		}
 		else if (responseName.equals("Challenge"))
 		{
-			return new ChallengeBid();
+			return new ChallengeAction(player.getName());
 		}
 		else if (responseName.equals("Illegal"))
 		{
-			return new IllegalBid();
+			return new IllegalAction(player.getName());
 		}
 		else
 		{
@@ -256,18 +256,18 @@ public class ApiUtil implements Registry
 		}
 	}
 	
-	private static Bid factoryBid(StrategyParms parms, Element root, String responseString)
+	private static BidAction factoryBid(StrategyParms parms, Element root, String responseString, Player player)
 	{
 		try
 		{
 			GameMode gameMode = parms.getGameMode();
 			if (gameMode == GameMode.Entropy)
 			{
-				return EntropyBid.factoryFromXmlTag(root);
+				return factoryEntropyBid(root, player);
 			}
 			else
 			{
-				return VectropyBid.factoryFromXmlTag(root, parms.getIncludeMoons(), parms.getIncludeStars());
+				return factoryVectropyBid(root, player, parms);
 			}
 		}
 		catch (IOException ioe)
@@ -281,6 +281,26 @@ public class ApiUtil implements Registry
 			DialogUtilNew.showError(message);
 			return null;
 		}
+	}
+
+	private static EntropyBidAction factoryEntropyBid(Element root, Player player) throws IOException
+	{
+		String bidSuit = XmlUtil.getCompulsoryAttribute(root, "BidSuit");
+		int bidAmount = XmlUtil.getAttributeIntCompulsory(root, "BidAmount");
+		return new EntropyBidAction(player.getName(), false, bidAmount, Suit.valueOf(bidSuit));
+	}
+
+	private static VectropyBidAction factoryVectropyBid(Element root, Player player, StrategyParms parms) throws IOException
+	{
+		int clubs = XmlUtil.getAttributeIntCompulsory(root, "Clubs");
+		int diamonds = XmlUtil.getAttributeIntCompulsory(root, "Diamonds");
+		int hearts = XmlUtil.getAttributeIntCompulsory(root, "Hearts");
+		int spades = XmlUtil.getAttributeIntCompulsory(root, "Spades");
+
+		Integer moons = parms.getIncludeMoons() ? XmlUtil.getAttributeIntCompulsory(root, "Moons") : null;
+		Integer stars = parms.getIncludeStars() ? XmlUtil.getAttributeIntCompulsory(root, "Stars") : null;
+
+		return new VectropyBidAction(player.getName(), false, clubs, diamonds, hearts, moons, spades, stars);
 	}
 	
 	private static void showMalformedResponseError(String response)

@@ -385,7 +385,7 @@ public abstract class GameRoom extends JFrame
 	
 	private void initBidPanel()
 	{
-		int maxBid = GameUtil.getMaxBid(true, settings.getJokerQuantity(), settings.getJokerValue(), totalNumberOfCards, settings.getNegativeJacks());
+		int maxBid = GameUtil.getMaxBid(settings.getJokerQuantity(), settings.getJokerValue(), totalNumberOfCards, settings.getNegativeJacks());
 		bidPanel.init(maxBid, totalNumberOfCards, true, settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed());
 	}
 	

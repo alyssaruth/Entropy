@@ -1,6 +1,8 @@
 package util;
 
+import game.BidAction;
 import game.GameMode;
+import game.PlayerAction;
 import object.*;
 
 import java.util.ArrayList;
@@ -60,10 +62,10 @@ public class CpuStrategies
 	/**
 	 * Entry-point for strategy code
 	 */
-	public static Bid processOpponentTurn(StrategyParms parms, Player opponent)
+	public static PlayerAction processOpponentTurn(StrategyParms parms, Player opponent)
 	{
 		boolean entropy = parms.getGameMode() == GameMode.Entropy;
-		Bid bid = getOpponentBid(parms, opponent, entropy);
+		PlayerAction bid = getOpponentBid(parms, opponent, entropy);
 		if (bid == null)
 		{
 			return bid;
@@ -106,7 +108,7 @@ public class CpuStrategies
 		return bid;
 	}
 	
-	private static Bid getOpponentBid(StrategyParms parms, Player opponent, boolean entropy)
+	private static PlayerAction getOpponentBid(StrategyParms parms, Player opponent, boolean entropy)
 	{
 		if (opponent.isApiStrategy())
 		{
