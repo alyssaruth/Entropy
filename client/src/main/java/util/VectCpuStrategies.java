@@ -1,14 +1,14 @@
 package util;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
+import java.util.*;
 
+import game.Suit;
 import object.Bid;
 import object.ChallengeBid;
 import object.Player;
 import object.VectropyBid;
+
+import static game.CardsUtilKt.getEvMap;
 
 public class VectCpuStrategies 
 {
@@ -192,7 +192,7 @@ public class VectCpuStrategies
 		if (lastBid == null)
 		{
 			Debug.append("Starting this round", logging);
-			HashMap<Integer, Double> hmEvBySuit = CardsUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
+			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms);
 			Debug.append("EV HashMap = " + hmEvBySuit, logging);
 			
 			int clubsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_CLUBS, hmEvBySuit);
@@ -227,7 +227,7 @@ public class VectCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			HashMap<Integer, Double> hmEvBySuit = CardsUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
+			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms);
 			Debug.append("EV HashMap = " + hmEvBySuit, logging);
 			
 			double[] diffVector = VectropyUtil.getEvDifferenceVector(lastBid, hmEvBySuit, includeMoons, includeStars);
