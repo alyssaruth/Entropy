@@ -16,7 +16,7 @@ public abstract class BidPanel<B extends BidAction<B>> extends TransparentPanel
 		this.handPanel = handPanel;
 	}
 
-	public BidListener listener = null;
+	public BidListener<B> listener = null;
 	public int maxBid = -1;
 	
 	private boolean logging = false;

@@ -27,7 +27,7 @@ data class EntropyBidAction(
         return amount == other.amount && suit > other.suit
     }
 
-    override fun plainString() = "$amount ${suit.getDescription(amount > 1)}"
+    override fun plainString() = "$amount ${suit.getDescription(amount == 1)}"
 
     override fun htmlString() =
         "<font color=\"${suit.getColourHex()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"

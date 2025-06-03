@@ -25,7 +25,8 @@ fun getEvMap(visibleCards: List<String>, strategyParams: StrategyParms): Map<Sui
             )
             .filterNot { visibleCards.contains(it) }
 
-    return Suit.entries.associateWith { suit ->
+    return Suit.filter(strategyParams.includeMoons, strategyParams.includeStars).associateWith {
+        suit ->
         val known = countSuit(suit, visibleCards, strategyParams.jokerValue)
         val possibleOthers =
             remainingDeck

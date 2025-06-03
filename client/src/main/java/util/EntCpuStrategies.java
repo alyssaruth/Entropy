@@ -204,12 +204,12 @@ public class EntCpuStrategies
 				if (bidAmountFacedWith > threshold)
 				{
 					Debug.append("Auto-challenging because " + bidAmountFacedWith + " > " + threshold, logging);
-					return new ChallengeAction(opponent.getName());
+					return new ChallengeAction(opponent.getName(), false);
 				}
 				else if (bidAmountFacedWith > bestSuitCount + bidSuitCount + quarterThreshold)
 				{
 					Debug.append("Auto-challenging because bestSuitCount + bidSuitCount + quarterThreshold = " + (bestSuitCount + bidSuitCount + quarterThreshold), logging);
-					return new ChallengeAction(opponent.getName());
+					return new ChallengeAction(opponent.getName(), false);
 				}
 				else if (bidAmountFacedWith > 1 + quarterThreshold)
 				{
@@ -222,7 +222,7 @@ public class EntCpuStrategies
 					else
 					{
 						Debug.append("Challenging (25%)", logging);
-						return new ChallengeAction(opponent.getName());
+						return new ChallengeAction(opponent.getName(), false);
 					}
 				}
 				else
@@ -362,12 +362,12 @@ public class EntCpuStrategies
 			else if (bidAmountFacedWith > halfThreshold)
 			{
 				Debug.append("Opponent " + opponent + " auto-challenged", logging);
-				return new ChallengeAction(opponent.getName());
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (decision == 0)
 			{
 				Debug.append("Opponent " + opponent + " flip-challenged", logging);
-				return new ChallengeAction(opponent.getName());
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
@@ -460,7 +460,7 @@ public class EntCpuStrategies
 			
 			if (bidAmountFacedWith > expectedValueForBid + 1)
 			{
-				return new ChallengeAction(opponent.getName());
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
@@ -487,13 +487,13 @@ public class EntCpuStrategies
 					else
 					{
 						Debug.append("Bidding would've needed >1 in one card, so challenged", logging);
-						return new ChallengeAction(opponent.getName());
+						return new ChallengeAction(opponent.getName(), false);
 					}
 				}
 				else
 				{
 					Debug.append("Couldn't bid anything 'safely', so challenged.", logging);
-					return new ChallengeAction(opponent.getName());
+					return new ChallengeAction(opponent.getName(), false);
 				}
 			}
 		}

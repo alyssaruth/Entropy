@@ -3,6 +3,8 @@ package online.screen;
 import java.awt.BorderLayout;
 import java.util.UUID;
 
+import game.CardsUtilKt;
+import game.EntropyBidAction;
 import game.GameSettings;
 import object.Bid;
 import object.EntropyAchievementsTracker;
@@ -13,7 +15,7 @@ import util.ClientUtil;
 import util.Registry;
 import util.ReplayConstants;
 
-public class EntropyRoom extends GameRoom
+public class EntropyRoom extends GameRoom<EntropyBidAction>
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
@@ -35,7 +37,7 @@ public class EntropyRoom extends GameRoom
 	@Override
 	public void resetBids()
 	{
-		lastBid = new EntropyBid(0, 0);
+		lastBid = null;
 		hmBidByPlayerNumber.clear();
 	}
 	
@@ -44,13 +46,13 @@ public class EntropyRoom extends GameRoom
 	{
 		if (isVisible())
 		{
-			int lastBidSuitCode = ((EntropyBid)lastBid).getBidSuitCode();
-			handPanel.displayAndHighlightHands(lastBidSuitCode);
+			var lastBidSuit = lastBid.getSuit();
+			handPanel.displayAndHighlightHands(lastBidSuit);
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
 
-			int total = CardsUtil.countSuit(lastBidSuitCode, hmHandByAdjustedPlayerNumber, getJokerValue());
-			String suitsStr = CardsUtil.getSuitDesc(total, lastBidSuitCode);
+			int total = CardsUtilKt.countSuit(lastBidSuit, allCards(), getJokerValue());
+			String suitsStr = lastBidSuit.getDescription(total == 1);
 			if (total == 1)
 			{
 				showResult("There was " + total + " " + suitsStr);
@@ -67,18 +69,18 @@ public class EntropyRoom extends GameRoom
 	{
 		int roundsSoFar = replay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0);
 		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_ENTROPY_ONLINE);
-		replay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, ((EntropyBid)lastBid).getBidSuitCode());
+		replay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, lastBid.getSuit().getLegacyCode());
 		replayDialog.roundAdded();
 	}
 
 	@Override
-	public void updatePerfectBidVariables(Bid bid) 
+	public void updatePerfectBidVariables(EntropyBidAction bid)
 	{
 		achievementTracker.updatePerfectBidVariables(bid);
 	}
 	
 	@Override
-	public void updateAchievementVariables(Bid bid)
+	public void updateAchievementVariables(EntropyBidAction bid)
 	{
 		achievementTracker.update(bid);
 	}

@@ -1,6 +1,7 @@
 package online.screen;
 
 import game.BidAction;
+import game.ChallengeAction;
 import game.GameMode;
 import game.GameSettings;
 import http.dto.RoomSummary;
@@ -24,16 +25,17 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 import static utils.CoreGlobals.logger;
 
 /**
  * This is an actual room as seen by the player
  */
-public abstract class GameRoom extends JFrame
+public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 					  		   implements WindowListener,
 					  			          ActionListener,
-					  			          BidListener,
+					  			          BidListener<B>,
 					  			          RevealListener,
 					  			          Registry
 {
@@ -60,7 +62,7 @@ public abstract class GameRoom extends JFrame
 	public boolean hasOverbid = false;
 	private boolean seenRoundStart = false;
 	
-	public Bid lastBid = null;
+	public B lastBid = null;
 	
 	private ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber = new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Integer, List<String>> hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
@@ -205,8 +207,8 @@ public abstract class GameRoom extends JFrame
 	public abstract void resetBids();
 	public abstract void doSpecificResetGameVariables();
 	public abstract void saveModeSpecificVariablesForReplay();
-	public abstract void updatePerfectBidVariables(Bid bid);
-	public abstract void updateAchievementVariables(Bid bid);
+	public abstract void updatePerfectBidVariables(B bid);
+	public abstract void updateAchievementVariables(B bid);
 	public abstract void unlockEndOfGameAchievements();
 	
 	private void setIcon()
@@ -791,7 +793,7 @@ public abstract class GameRoom extends JFrame
 		addBidToBidBox(playerNumberAdjusted, bid);
 		handPanel.selectPlayerInAwtThread(playerNumberAdjusted, false);
 		
-		if (bid.isChallenge()
+		if (bid instanceof ChallengeAction
 		  || bid.isIllegal())
 		{
 			processChallengeOrIllegal();
@@ -994,21 +996,25 @@ public abstract class GameRoom extends JFrame
 			}
 		}
 	}
-	
-	private int getTotalFromHands()
-	{
-		int total = 0;
-		
+
+	protected List<String> allCards() {
+		ArrayList<String> cards = new ArrayList<>();
+
 		for (int i=0; i<MAX_NUMBER_OF_PLAYERS; i++)
 		{
 			List<String> hand = hmHandByAdjustedPlayerNumber.get(i);
 			if (hand != null)
 			{
-				total += hand.size();
+				cards.addAll(hand);
 			}
 		}
-		
-		return total;
+
+		return cards;
+	}
+	
+	private int getTotalFromHands()
+	{
+		return allCards().size();
 	}
 	
 	public void setObserver(boolean observer)
@@ -1373,12 +1379,10 @@ public abstract class GameRoom extends JFrame
 	 * BidListener
 	 */
 	@Override
-	public void bidMade(BidAction bid)
+	public void bidMade(B bid)
 	{
-		//1. Set the player on the bid
-		Player player = hmPlayerByAdjustedPlayerNumber.get(0);
-		bid.setPlayer(player);
 		lastBid = bid;
+		Player player = hmPlayerByAdjustedPlayerNumber.get(0);
 		
 		//2. Disable the bid panel
 		enableBidPanel(false);
@@ -1405,9 +1409,8 @@ public abstract class GameRoom extends JFrame
 		
 		//5. Unlock achievements, including specific perfect bid ones
 		updateAchievementVariables(lastBid);
-		if (lastBid.isPerfect(hmHandByAdjustedPlayerNumber,
-				settings.getJokerValue(), settings.getIncludeMoons(), settings.getIncludeStars())
-		  && lastBid.isOverAchievementThreshold())
+		if (lastBid.isPerfect(allCards(), settings)
+		  && lastBid.overAchievementThreshold())
 		{
 			updatePerfectBidVariables(lastBid);
 			
@@ -1417,7 +1420,7 @@ public abstract class GameRoom extends JFrame
 			}
 		}
 		
-		boolean overBid = lastBid.isOverbid(hmHandByAdjustedPlayerNumber, settings.getJokerValue());
+		boolean overBid = lastBid.isOverbid(allCards(), settings);
 		if (overBid)
 		{
 			hasOverbid = true;

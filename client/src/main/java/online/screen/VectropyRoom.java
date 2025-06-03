@@ -4,11 +4,12 @@ import java.awt.BorderLayout;
 import java.util.UUID;
 
 import game.GameSettings;
+import game.VectropyBidAction;
 import object.Bid;
 import screen.VectropyBidPanel;
 import util.*;
 
-public class VectropyRoom extends GameRoom
+public class VectropyRoom extends GameRoom<VectropyBidAction>
 {
 	private boolean earnedMathematician = false;
 	
@@ -30,12 +31,12 @@ public class VectropyRoom extends GameRoom
 	@Override
 	public void resetBids()
 	{
-		lastBid = VectropyUtil.getEmptyBid(getIncludeMoons(), getIncludeStars());
+		lastBid = null;
 		hmBidByPlayerNumber.clear();
 	}
 
 	@Override
-	public void updatePerfectBidVariables(Bid bid) 
+	public void updatePerfectBidVariables(VectropyBidAction bid)
 	{
 		earnedMathematician = true;
 	}
@@ -67,7 +68,7 @@ public class VectropyRoom extends GameRoom
 	}
 
 	@Override
-	public void updateAchievementVariables(Bid bid)
+	public void updateAchievementVariables(VectropyBidAction bid)
 	{
 		//do nothing
 	}

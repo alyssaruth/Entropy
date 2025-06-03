@@ -881,7 +881,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			handlePerfectBid(lastBid);
 		}
 		
-		if (isOverbid(lastBid))
+		if (lastBid.isOverbid(allCards(), settings))
 		{
 			hasOverbid = true;
 		}
@@ -889,10 +889,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		processNextTurn(0);
 	}
 	
-	private void handlePerfectBid(Bid bid)
+	private void handlePerfectBid(B bid)
 	{
 		Debug.append("Player made a perfect bid.", logging);
-		if (bid.isOverAchievementThreshold())
+		if (bid.overAchievementThreshold())
 		{
 			if (handPanel.isPlayingBlind())
 			{
@@ -911,8 +911,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		unlockPerfectBidAchievements();
 		
 		Player playerChallenged = lastBid.getPlayer();
-		if (!lastBid.isOverbid(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-		  opponentThree.getHand(), jokerValue))
+		if (!lastBid.isOverbid(allCards(), settings))
 		{
 			Debug.append("not an overbid", logging);
 			setCardsToSubtract(challenger);
@@ -1063,12 +1062,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		return cards;
 	}
 	
-	public boolean isOverbid(Bid bid)
-	{
-		return bid.isOverbid(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-								   opponentThree.getHand(), jokerValue);
-	}
-	
 	public int countSuit(int suitCode)
 	{
 		return CardsUtil.countSuit(suitCode, player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
@@ -1132,10 +1125,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Debug.append("Player challenged.", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new ChallengeBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
+
+		ChallengeAction bid = new ChallengeAction(player.getName(), actedBlind);
 		addToListmodel(bid);
 		
 		processChallenge(player);
@@ -1147,10 +1138,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Debug.append("Player called Illegal!", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new IllegalBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
+
+		var bid = new IllegalAction(player.getName(), actedBlind);
 		addToListmodel(bid);
 		
 		processIllegal(player);
@@ -1168,9 +1157,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		processPlayerBid();
 	}
 	
-	private void addToListmodel(Bid bid)
+	private void addToListmodel(PlayerAction bid)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.add(0, bid);
 	}
 	
@@ -1213,18 +1202,18 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			Debug.appendBanner("Opponent " + opponent, logging);
 			
 			StrategyParms parms = factoryStrategyParms(opponent);
-			PlayerAction bid = CpuStrategies.processOpponentTurn(parms, opponent);
-			if (bid == null)
+			PlayerAction action = CpuStrategies.processOpponentTurn(parms, opponent);
+			if (action == null)
 			{
 				//Something's gone wrong - probably an API strategy that timed out or did something invalid. 
 				String info = opponent.getName() + " has had their strategy reset to "
 							+ CpuStrategies.STRATEGY_BASIC;
 				DialogUtil.showInfo(info);
 				opponent.setStrategy(CpuStrategies.STRATEGY_BASIC);
-				bid = CpuStrategies.processOpponentTurn(parms, opponent);
+				action = CpuStrategies.processOpponentTurn(parms, opponent);
 			}
 			
-			if (bid == null)
+			if (action == null)
 			{
 				//Something's gone very wrong...
 				handPanel.selectPlayerInAwtThread(opponent.getPlayerNumber(), false);
@@ -1232,18 +1221,19 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 				return;
 			}
 
-			addToListmodel(bid);
+			addToListmodel(action);
 			
-			if (bid instanceof ChallengeAction)
+			if (action instanceof ChallengeAction)
 			{
 				processChallenge(opponent);
 			}
-			else if (bid instanceof IllegalAction)
+			else if (action instanceof IllegalAction)
 			{
 				processIllegal(opponent);
 			}
 			else
 			{
+				var bid = (B)action;
 				lastBid = bid;
 				
 				if (settings.getCardReveal())

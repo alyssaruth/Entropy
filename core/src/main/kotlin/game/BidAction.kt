@@ -1,7 +1,6 @@
 package game
 
 abstract class BidAction<B : BidAction<B>> : PlayerAction() {
-    abstract val blind: Boolean
 
     var cardToReveal: String? = null
 

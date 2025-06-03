@@ -1,8 +1,6 @@
 package util;
 
-import game.BidAction;
-import game.GameMode;
-import game.PlayerAction;
+import game.*;
 import object.*;
 
 import java.util.ArrayList;
@@ -129,11 +127,16 @@ public class CpuStrategies
 	 * then just pick one at random. This is what most built-in strategies will do, and implementing for API too
 	 * so that worrying about revealing cards is optional.
 	 */
-	private static void setRandomCardToRevealIfNecessary(Player opponent, Bid bid, StrategyParms parms)
+	private static void setRandomCardToRevealIfNecessary(Player opponent, PlayerAction action, StrategyParms parms)
 	{
+		if (!(action instanceof BidAction)) {
+			return;
+		}
+
+		var bid = (BidAction)action;
 		if (parms.getCardReveal()
 		  && opponent.hasMoreCardsToReveal()
-		  && bid.getCardToReveal().isEmpty())
+		  && bid.getCardToReveal() == null)
 		{
 			//Pick a card at random to reveal. 
 			ArrayList<String> cardsNotOnShow = opponent.getCardsNotOnShow();
@@ -146,33 +149,34 @@ public class CpuStrategies
 		}
 	}
 	
-	private static String validateBid(Player opponent, Bid bid, StrategyParms parms)
+	private static String validateBid(Player opponent, PlayerAction action, StrategyParms parms)
 	{
-		if (bid.isChallenge()
-		  || bid.isIllegal())
+		if (action instanceof ChallengeAction
+		  || action instanceof IllegalAction)
 		{
-			return validateChallengeOrIllegal(bid, parms);
+			return validateChallengeOrIllegal(action, parms);
 		}
-		
-		if (bid instanceof EntropyBid)
+
+		var bid = (BidAction)action;
+		if (action instanceof EntropyBidAction)
 		{
-			String error = validateEntropyBid((EntropyBid)bid, parms);
+			String error = validateEntropyBid((EntropyBidAction)action, parms);
 			if (error != null)
 			{
 				return error;
 			}
 		}
 		
-		if (bid instanceof VectropyBid)
+		if (action instanceof VectropyBidAction)
 		{
-			String error = validateVectropyBid((VectropyBid)bid);
+			String error = validateVectropyBid((VectropyBidAction)action);
 			if (error != null)
 			{
 				return error;
 			}
 		}
 		
-		Bid lastBid = parms.getLastBid();
+		BidAction lastBid = parms.getLastBid();
 		if (lastBid != null
 		  && !bid.higherThan(lastBid))
 		{
@@ -204,12 +208,12 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateChallengeOrIllegal(Bid bid, StrategyParms parms)
+	private static String validateChallengeOrIllegal(PlayerAction bid, StrategyParms parms)
 	{
-		Bid lastBid = parms.getLastBid();
+		var lastBid = parms.getLastBid();
 		if (lastBid == null)
 		{
-			if (bid.isChallenge())
+			if (bid instanceof ChallengeAction)
 			{
 				return "Challenged as an opening bid.";
 			}
@@ -220,28 +224,23 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateEntropyBid(EntropyBid bid, StrategyParms parms)
+	private static String validateEntropyBid(EntropyBidAction bid, StrategyParms parms)
 	{
-		int bidSuitCode = bid.getBidSuitCode();
-		if (bidSuitCode < CardsUtil.SUIT_CLUBS
-		  || bidSuitCode > CardsUtil.SUIT_STARS)
-		{
-			return "Invalid suitCode: " + bidSuitCode;
-		}
+		var bidSuit = bid.getSuit();
 		
-		int bidAmount = bid.getBidAmount();
+		int bidAmount = bid.getAmount();
 		if (bidAmount < 1)
 		{
 			return "Invalid bidAmount: " + bidAmount;
 		}
 		
-		if (bidSuitCode == CardsUtil.SUIT_MOONS
+		if (bidSuit == Suit.Moons
 		  && !parms.getIncludeMoons())
 		{
 			return "Tried to bid Moons when these haven't been included.";
 		}
 		
-		if (bidSuitCode == CardsUtil.SUIT_STARS
+		if (bidSuit == Suit.Stars
 		  && !parms.getIncludeStars())
 		{
 			return "Tried to bid Stars when these haven't been included.";
@@ -250,19 +249,22 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateVectropyBid(VectropyBid bid)
+	private static String validateVectropyBid(VectropyBidAction bid)
 	{
 		if (bid.getTotal() < 1)
 		{
 			return "Elements sum to less than 1.";
 		}
+
+		var moons = bid.getMoons();
+		var stars = bid.getStars();
 		
 		if (bid.getClubs() < 0
 		  || bid.getDiamonds() < 0
 		  || bid.getHearts() < 0
-		  || bid.getMoons() < 0
+		  || (moons != null && moons < 0)
 		  || bid.getSpades() < 0
-		  || bid.getStars() < 0)
+		  || (stars != null && stars < 0))
 		{
 			return "Negative amount specified for a suit.";
 		}

@@ -11,7 +11,7 @@ import screen.ScreenCache
 import util.DialogUtilNew
 
 class RoomApi(private val httpClient: HttpClient) {
-    fun joinRoom(room: GameRoom) {
+    fun joinRoom(room: GameRoom<*>) {
         val response =
             httpClient.doCall<JoinRoomResponse>(
                 HttpMethod.POST,
@@ -25,7 +25,7 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    private fun handleJoinRoom(room: GameRoom, response: JoinRoomResponse) {
+    private fun handleJoinRoom(room: GameRoom<*>, response: JoinRoomResponse) {
         room.username = ScreenCache.get<EntropyLobby>().username
         room.observer = true
         room.isVisible = true
@@ -34,7 +34,7 @@ class RoomApi(private val httpClient: HttpClient) {
         room.chatPanel.updateChatBox(response.chatHistory)
     }
 
-    fun sitDown(room: GameRoom, seat: Int) {
+    fun sitDown(room: GameRoom<*>, seat: Int) {
         val response =
             httpClient.doCall<RoomStateResponse>(
                 HttpMethod.POST,
@@ -52,7 +52,7 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    private fun handleSitDown(room: GameRoom, seat: Int, response: RoomStateResponse) {
+    private fun handleSitDown(room: GameRoom<*>, seat: Int, response: RoomStateResponse) {
         room.setObserver(false)
         room.setPlayerNumber(seat)
         room.init(true)
@@ -66,7 +66,7 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    fun standUp(room: GameRoom) {
+    fun standUp(room: GameRoom<*>) {
         val response =
             httpClient.doCall<RoomStateResponse>(
                 HttpMethod.POST,
@@ -80,13 +80,9 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    fun leaveRoom(room: GameRoom) {
+    fun leaveRoom(room: GameRoom<*>) {
         val response =
-            httpClient.doCall<Unit>(
-                HttpMethod.POST,
-                Routes.LEAVE_ROOM,
-                SimpleRoomRequest(room.id),
-            )
+            httpClient.doCall<Unit>(HttpMethod.POST, Routes.LEAVE_ROOM, SimpleRoomRequest(room.id))
 
         when (response) {
             is SuccessResponse<Unit> -> room.closeWindow()
@@ -94,7 +90,7 @@ class RoomApi(private val httpClient: HttpClient) {
         }
     }
 
-    private fun handleStandUp(room: GameRoom, response: RoomStateResponse) {
+    private fun handleStandUp(room: GameRoom<*>, response: RoomStateResponse) {
         room.setObserver(true)
         room.init(true)
         room.synchronisePlayers(response.players, response.formerPlayers)
