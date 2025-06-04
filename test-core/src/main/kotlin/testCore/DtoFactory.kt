@@ -16,6 +16,7 @@ fun makeOnlineMessage(
 
 fun makeGameSettings(
     mode: GameMode = GameMode.Entropy,
+    numberOfCards: Int = 5,
     jokerQuantity: Int = 0,
     jokerValue: Int = 0,
     includeMoons: Boolean = false,
@@ -26,6 +27,7 @@ fun makeGameSettings(
 ) =
     GameSettings(
         mode,
+        numberOfCards,
         jokerQuantity,
         jokerValue,
         includeMoons,

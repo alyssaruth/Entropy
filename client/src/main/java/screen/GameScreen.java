@@ -2,6 +2,7 @@ package screen;
 
 import achievement.AchievementSetting;
 import game.GameMode;
+import game.GameSettings;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
@@ -22,6 +23,7 @@ public abstract class GameScreen extends TransparentPanel
 								 			Registry
 {
 	//Common variables
+	private GameSettings settings = null;
 	private int numberOfCards = 5;
 	private int totalNumberOfCards;
 	private int personToStart = -1;
@@ -332,6 +334,8 @@ public abstract class GameScreen extends TransparentPanel
 		includeMoons = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, false);
 		negativeJacks = prefs.getBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, false);
 		cardReveal = prefs.getBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, false);
+
+		settings = GameSettings.fromRegistry(prefs, getGameMode());
 
 		handPanel.fireAppearancePreferencesChange();
 		handPanel.initPlayerNames();

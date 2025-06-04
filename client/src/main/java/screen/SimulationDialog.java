@@ -2,6 +2,7 @@ package screen;
 
 import bean.NumberField;
 import game.GameMode;
+import game.GameSettings;
 import util.*;
 
 import javax.swing.*;
@@ -28,154 +29,147 @@ public class SimulationDialog extends JDialog
 
 	public SimulationDialog() 
 	{
-		try
-		{
-			getContentPane().setLayout(null);
-			scrollPane.setBounds(0, 323, 434, 87);
-			getContentPane().add(scrollPane);
-			JSeparator separator_2 = new JSeparator();
-			separator_2.setBounds(0, 323, 434, 2);
-			getContentPane().add(separator_2);
-			btnRunSimulation.setBounds(159, 257, 126, 23);
-			getContentPane().add(btnRunSimulation);
-			gamesToSimulate.setBounds(231, 207, 86, 20);
-			getContentPane().add(gamesToSimulate);
-			gamesToSimulate.setValue(10000);
-			JLabel lblSimulate = new JLabel("Games to simulate");
-			lblSimulate.setBounds(119, 210, 126, 14);
-			getContentPane().add(lblSimulate);
-			tabbedPane.setBounds(0, 0, 434, 184);
-			getContentPane().add(tabbedPane);
-			tabbedPane.addTab("CPU Settings", null, cpuPanel, null);
-			cpuPanel.setLayout(null);
-			cbOpponentThree.setBounds(368, 54, 29, 23);
-			cpuPanel.add(cbOpponentThree);
-			opponentOneStrat.setBounds(149, 26, 135, 20);
-			cpuPanel.add(opponentOneStrat);
-			opponentTwoStrat.setBounds(10, 78, 135, 20);
-			opponentTwoStrat.setEnabled(false);
-			cpuPanel.add(opponentTwoStrat);
-			opponentThreeStrat.setBounds(284, 78, 135, 20);
-			opponentThreeStrat.setEnabled(false);
-			cpuPanel.add(opponentThreeStrat);
-			opponentZeroStrat.setBounds(149, 125, 135, 20);
-			cpuPanel.add(opponentZeroStrat);
-			cbOpponentTwo.setSelected(false);
-			cbOpponentTwo.setEnabled(true);
-			cbOpponentTwo.setBounds(83, 54, 29, 23);
-			cpuPanel.add(cbOpponentTwo);
-			JLabel lblCpu_1 = new JLabel("CPU 0");
-			lblCpu_1.setForeground(Color.RED);
-			lblCpu_1.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCpu_1.setBounds(193, 109, 46, 14);
-			cpuPanel.add(lblCpu_1);
-			JLabel lblCpu_2 = new JLabel("CPU 1");
-			lblCpu_2.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCpu_2.setForeground(Color.BLUE);
-			lblCpu_2.setBounds(193, 11, 46, 14);
-			cpuPanel.add(lblCpu_2);
-			lblCpu_3.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCpu_3.setForeground(new Color(128, 0, 128));
-			lblCpu_3.setBounds(317, 58, 46, 14);
-			cpuPanel.add(lblCpu_3);
-			lblCpu_4.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCpu_4.setForeground(new Color(0, 128, 0));
-			lblCpu_4.setBounds(31, 58, 46, 14);
-			cpuPanel.add(lblCpu_4);
-			JPanel gameModePanel = new JPanel();
-			tabbedPane.addTab("Game Mode", null, gameModePanel, null);
-			gameModePanel.setLayout(null);
-			rdbtnEntropy.setBounds(18, 17, 109, 23);
-			gameModePanel.add(rdbtnEntropy);
-			rdbtnVectropy.setBounds(18, 43, 109, 23);
-			gameModePanel.add(rdbtnVectropy);
-			JPanel gameplayPanel = new JPanel();
-			tabbedPane.addTab("Gameplay", null, gameplayPanel, null);
-			gameplayPanel.setLayout(null);
-			JLabel label = new JLabel("Cards dealt to each player");
-			label.setHorizontalAlignment(SwingConstants.CENTER);
-			label.setBounds(23, 22, 158, 14);
-			gameplayPanel.add(label);
-			slider.setValue(5);
-			slider.setToolTipText("");
-			slider.setPaintTicks(true);
-			slider.setPaintLabels(true);
-			slider.setMinorTickSpacing(1);
-			slider.setMinimum(1);
-			slider.setMaximum(5);
-			slider.setMajorTickSpacing(4);
-			slider.setBounds(10, 47, 184, 45);
-			gameplayPanel.add(slider);
-			cbIncludeJokers.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			cbIncludeJokers.setSelected(false);
-			cbIncludeJokers.setBounds(6, 108, 115, 22);
-			gameplayPanel.add(cbIncludeJokers);
-			spinnerJokerQuantity.setEnabled(false);
-			spinnerJokerQuantity.setBounds(127, 104, 38, 22);
-			spinnerJokerQuantity.setModel(new SpinnerNumberModel(2, 1, 4, 1));
-			gameplayPanel.add(spinnerJokerQuantity);
-			spinnerJokerValue.setEnabled(false);
-			spinnerJokerValue.setBounds(179, 104, 38, 22);
-			spinnerJokerValue.setModel(new SpinnerNumberModel(2, 2, 4, 1));
-			gameplayPanel.add(spinnerJokerValue);
-			lblValue.setHorizontalAlignment(SwingConstants.CENTER);
-			lblValue.setEnabled(false);
-			lblValue.setBounds(171, 131, 55, 14);
-			gameplayPanel.add(lblValue);
-			lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
-			lblQuantity.setEnabled(false);
-			lblQuantity.setBounds(118, 131, 57, 14);
-			gameplayPanel.add(lblQuantity);
-			chckbxIncludeMoons.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			chckbxIncludeMoons.setBounds(232, 18, 115, 23);
-			gameplayPanel.add(chckbxIncludeMoons);
-			chckbxIncludeStars.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			chckbxIncludeStars.setBounds(232, 47, 115, 23);
-			gameplayPanel.add(chckbxIncludeStars);
-			chckbxNegativeJacks.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			chckbxNegativeJacks.setBounds(232, 73, 115, 23);
-			
-			gameplayPanel.add(chckbxNegativeJacks);
-			chckbxCardReveal.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			chckbxCardReveal.setBounds(232, 99, 115, 23);
-			gameplayPanel.add(chckbxCardReveal);
-			tabbedPane.addTab("Advanced Settings", null, advancedSettingsPanel, null);
-			advancedSettingsPanel.setLayout(null);
-			cbLogging.setBounds(15, 10, 141, 22);
-			advancedSettingsPanel.add(cbLogging);
-			cbLogging.setState(false);
-			cbLogging.setEnabled(true);
-			cbForceStart.setState(false);
-			cbForceStart.setEnabled(true);
-			cbForceStart.setBounds(15, 39, 141, 22);
-			advancedSettingsPanel.add(cbForceStart);
-			cbRandomiseOrder.setState(false);
-			cbRandomiseOrder.setEnabled(true);
-			cbRandomiseOrder.setBounds(15, 67, 141, 22);
-			advancedSettingsPanel.add(cbRandomiseOrder);
-			lblCpu.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCpu.setFont(new Font("Tahoma", Font.BOLD, 15));
-			JLabel lblResults = new JLabel("Results");
-			lblResults.setHorizontalAlignment(SwingConstants.CENTER);
-			lblResults.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			lblResults.setBounds(150, 294, 135, 31);
-			getContentPane().add(lblResults);
-			lblTimeTaken.setHorizontalAlignment(SwingConstants.CENTER);
-			lblTimeTaken.setFont(new Font("Tahoma", Font.ITALIC, 11));
-			lblTimeTaken.setBounds(33, 438, 379, 14);
-			getContentPane().add(lblTimeTaken);
-			ButtonGroup modeGroup = new ButtonGroup();
-			rdbtnEntropy.setSelected(true);
-			modeGroup.add(rdbtnEntropy);
-			modeGroup.add(rdbtnVectropy);
-			
-			
-			setUpListeners();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		getContentPane().setLayout(null);
+		scrollPane.setBounds(0, 323, 434, 87);
+		getContentPane().add(scrollPane);
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBounds(0, 323, 434, 2);
+		getContentPane().add(separator_2);
+		btnRunSimulation.setBounds(159, 257, 126, 23);
+		getContentPane().add(btnRunSimulation);
+		gamesToSimulate.setBounds(231, 207, 86, 20);
+		getContentPane().add(gamesToSimulate);
+		gamesToSimulate.setValue(10000);
+		JLabel lblSimulate = new JLabel("Games to simulate");
+		lblSimulate.setBounds(119, 210, 126, 14);
+		getContentPane().add(lblSimulate);
+		tabbedPane.setBounds(0, 0, 434, 184);
+		getContentPane().add(tabbedPane);
+		tabbedPane.addTab("CPU Settings", null, cpuPanel, null);
+		cpuPanel.setLayout(null);
+		cbOpponentThree.setBounds(368, 54, 29, 23);
+		cpuPanel.add(cbOpponentThree);
+		opponentOneStrat.setBounds(149, 26, 135, 20);
+		cpuPanel.add(opponentOneStrat);
+		opponentTwoStrat.setBounds(10, 78, 135, 20);
+		opponentTwoStrat.setEnabled(false);
+		cpuPanel.add(opponentTwoStrat);
+		opponentThreeStrat.setBounds(284, 78, 135, 20);
+		opponentThreeStrat.setEnabled(false);
+		cpuPanel.add(opponentThreeStrat);
+		opponentZeroStrat.setBounds(149, 125, 135, 20);
+		cpuPanel.add(opponentZeroStrat);
+		cbOpponentTwo.setSelected(false);
+		cbOpponentTwo.setEnabled(true);
+		cbOpponentTwo.setBounds(83, 54, 29, 23);
+		cpuPanel.add(cbOpponentTwo);
+		JLabel lblCpu_1 = new JLabel("CPU 0");
+		lblCpu_1.setForeground(Color.RED);
+		lblCpu_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCpu_1.setBounds(193, 109, 46, 14);
+		cpuPanel.add(lblCpu_1);
+		JLabel lblCpu_2 = new JLabel("CPU 1");
+		lblCpu_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCpu_2.setForeground(Color.BLUE);
+		lblCpu_2.setBounds(193, 11, 46, 14);
+		cpuPanel.add(lblCpu_2);
+		lblCpu_3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCpu_3.setForeground(new Color(128, 0, 128));
+		lblCpu_3.setBounds(317, 58, 46, 14);
+		cpuPanel.add(lblCpu_3);
+		lblCpu_4.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCpu_4.setForeground(new Color(0, 128, 0));
+		lblCpu_4.setBounds(31, 58, 46, 14);
+		cpuPanel.add(lblCpu_4);
+		JPanel gameModePanel = new JPanel();
+		tabbedPane.addTab("Game Mode", null, gameModePanel, null);
+		gameModePanel.setLayout(null);
+		rdbtnEntropy.setBounds(18, 17, 109, 23);
+		gameModePanel.add(rdbtnEntropy);
+		rdbtnVectropy.setBounds(18, 43, 109, 23);
+		gameModePanel.add(rdbtnVectropy);
+		JPanel gameplayPanel = new JPanel();
+		tabbedPane.addTab("Gameplay", null, gameplayPanel, null);
+		gameplayPanel.setLayout(null);
+		JLabel label = new JLabel("Cards dealt to each player");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(23, 22, 158, 14);
+		gameplayPanel.add(label);
+		slider.setValue(5);
+		slider.setToolTipText("");
+		slider.setPaintTicks(true);
+		slider.setPaintLabels(true);
+		slider.setMinorTickSpacing(1);
+		slider.setMinimum(1);
+		slider.setMaximum(5);
+		slider.setMajorTickSpacing(4);
+		slider.setBounds(10, 47, 184, 45);
+		gameplayPanel.add(slider);
+		cbIncludeJokers.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		cbIncludeJokers.setSelected(false);
+		cbIncludeJokers.setBounds(6, 108, 115, 22);
+		gameplayPanel.add(cbIncludeJokers);
+		spinnerJokerQuantity.setEnabled(false);
+		spinnerJokerQuantity.setBounds(127, 104, 38, 22);
+		spinnerJokerQuantity.setModel(new SpinnerNumberModel(2, 1, 4, 1));
+		gameplayPanel.add(spinnerJokerQuantity);
+		spinnerJokerValue.setEnabled(false);
+		spinnerJokerValue.setBounds(179, 104, 38, 22);
+		spinnerJokerValue.setModel(new SpinnerNumberModel(2, 2, 4, 1));
+		gameplayPanel.add(spinnerJokerValue);
+		lblValue.setHorizontalAlignment(SwingConstants.CENTER);
+		lblValue.setEnabled(false);
+		lblValue.setBounds(171, 131, 55, 14);
+		gameplayPanel.add(lblValue);
+		lblQuantity.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQuantity.setEnabled(false);
+		lblQuantity.setBounds(118, 131, 57, 14);
+		gameplayPanel.add(lblQuantity);
+		chckbxIncludeMoons.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		chckbxIncludeMoons.setBounds(232, 18, 115, 23);
+		gameplayPanel.add(chckbxIncludeMoons);
+		chckbxIncludeStars.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		chckbxIncludeStars.setBounds(232, 47, 115, 23);
+		gameplayPanel.add(chckbxIncludeStars);
+		chckbxNegativeJacks.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		chckbxNegativeJacks.setBounds(232, 73, 115, 23);
+
+		gameplayPanel.add(chckbxNegativeJacks);
+		chckbxCardReveal.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		chckbxCardReveal.setBounds(232, 99, 115, 23);
+		gameplayPanel.add(chckbxCardReveal);
+		tabbedPane.addTab("Advanced Settings", null, advancedSettingsPanel, null);
+		advancedSettingsPanel.setLayout(null);
+		cbLogging.setBounds(15, 10, 141, 22);
+		advancedSettingsPanel.add(cbLogging);
+		cbLogging.setState(false);
+		cbLogging.setEnabled(true);
+		cbForceStart.setState(false);
+		cbForceStart.setEnabled(true);
+		cbForceStart.setBounds(15, 39, 141, 22);
+		advancedSettingsPanel.add(cbForceStart);
+		cbRandomiseOrder.setState(false);
+		cbRandomiseOrder.setEnabled(true);
+		cbRandomiseOrder.setBounds(15, 67, 141, 22);
+		advancedSettingsPanel.add(cbRandomiseOrder);
+		lblCpu.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCpu.setFont(new Font("Tahoma", Font.BOLD, 15));
+		JLabel lblResults = new JLabel("Results");
+		lblResults.setHorizontalAlignment(SwingConstants.CENTER);
+		lblResults.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblResults.setBounds(150, 294, 135, 31);
+		getContentPane().add(lblResults);
+		lblTimeTaken.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTimeTaken.setFont(new Font("Tahoma", Font.ITALIC, 11));
+		lblTimeTaken.setBounds(33, 438, 379, 14);
+		getContentPane().add(lblTimeTaken);
+		ButtonGroup modeGroup = new ButtonGroup();
+		rdbtnEntropy.setSelected(true);
+		modeGroup.add(rdbtnEntropy);
+		modeGroup.add(rdbtnVectropy);
+
+
+		setUpListeners();
 	}
 
 	private final JPanel cpuPanel = new JPanel();
@@ -213,20 +207,12 @@ public class SimulationDialog extends JDialog
 
 	private void showLoggingWarningMessage()
 	{
-		try
-		{
-			int dialogButton = DialogUtil.showQuestion("To avoid intensive memory use, "
-					+ "logging should only be turned on for a small number of games. \n\nProceed?", false);
+		int dialogButton = DialogUtilNew.showQuestion("To avoid intensive memory use, "
+				+ "logging should only be turned on for a small number of games. \n\nProceed?", false);
 
-			if (dialogButton == JOptionPane.NO_OPTION)
-			{
-				cbLogging.setState(false);
-				return;
-			}
-		}
-		catch (Throwable t)
+		if (dialogButton == JOptionPane.NO_OPTION)
 		{
-			Debug.stackTrace(t);
+			cbLogging.setState(false);
 		}
 	}
 
@@ -245,22 +231,15 @@ public class SimulationDialog extends JDialog
 
 	private void runSimulation()
 	{
-		try
-		{
-			numberOfGames = (int) gamesToSimulate.getValue();
-			
-			SimulationParms parms = factorySimulationParms();
-			
-			btnRunSimulation.setEnabled(false);
-			runSimulationInSeparateThread(parms);
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		numberOfGames = (int) gamesToSimulate.getValue();
+
+		SimulationParams parms = factorySimulationParms();
+
+		btnRunSimulation.setEnabled(false);
+		runSimulationInSeparateThread(parms);
 	}
 	
-	private void runSimulationInSeparateThread(final SimulationParms parms)
+	private void runSimulationInSeparateThread(final SimulationParams parms)
 	{
 		Runnable simulationRunnable = new Runnable()
 		{
@@ -272,11 +251,8 @@ public class SimulationDialog extends JDialog
 				dialog.showCancel(true);
 				dialog.setVisibleLater();
 				
-				double tenPercentOfTotal = Math.floor((double)numberOfGames / 10);
-				
 				Debug.appendBanner("Starting simulation for " + numberOfGames + " games");
-				GameSimulator simulator = new GameSimulator();
-				simulator.setSimulationParms(parms);
+				GameSimulator simulator = new GameSimulator(parms);
 				
 				for (int i = 1; i <= numberOfGames; i++)
 				{
@@ -306,8 +282,8 @@ public class SimulationDialog extends JDialog
 						dialog.disposeLater();
 						btnRunSimulation.setEnabled(true);
 						dumpSimulationDetails(i, numberOfGames, parms);
-						Debug.stackTrace(t);
-						DialogUtil.showErrorLater("A serious problem has occurred with the simulation.");
+						logger.error("simulation.error", "error running simulation", t);
+						DialogUtilNew.showErrorLater("A serious problem has occurred with the simulation.");
 						resetVariables();
 						return;
 					}
@@ -322,7 +298,7 @@ public class SimulationDialog extends JDialog
 		t.start();
 	}
 	
-	private void simulationCancelled(double startTime, int gamesSimulated, SimulationParms parms)
+	private void simulationCancelled(double startTime, int gamesSimulated, SimulationParams parms)
 	{
 		numberOfGames = gamesSimulated;
 		generateAndShowTable(parms);
@@ -336,7 +312,7 @@ public class SimulationDialog extends JDialog
 		btnRunSimulation.setEnabled(true);
 	}
 	
-	private void simulationCompleted(double startTime, SimulationParms parms)
+	private void simulationCompleted(double startTime, SimulationParams parms)
 	{
 		btnRunSimulation.setEnabled(true);
 		generateAndShowTable(parms);
@@ -351,7 +327,7 @@ public class SimulationDialog extends JDialog
 		hmSimulationResultsByOpponentNumber = new HashMap<>();
 	}
 
-	private void generateAndShowTable(SimulationParms parms)
+	private void generateAndShowTable(SimulationParams parms)
 	{	
 		scrollPane.setVisible(true);
 
@@ -551,7 +527,7 @@ public class SimulationDialog extends JDialog
 		opponentThreeStrat.setModel(comboModel);
 	}
 	
-	private SimulationParms factorySimulationParms()
+	private SimulationParams factorySimulationParms()
 	{
 		GameMode gameMode = GameMode.Entropy;
 		if (rdbtnVectropy.isSelected())
@@ -561,7 +537,7 @@ public class SimulationDialog extends JDialog
 		
 		int numberOfCards = slider.getValue();
 		boolean includeJokers = cbIncludeJokers.isSelected();
-		int jokerValue = (int) spinnerJokerValue.getValue();
+		int jokerValue = includeJokers ? (int) spinnerJokerValue.getValue() : 0;
 		int jokerQuantity = (int) spinnerJokerQuantity.getValue();
 		boolean includeMoons = chckbxIncludeMoons.isSelected();
 		boolean includeStars = chckbxIncludeStars.isSelected();
@@ -576,31 +552,14 @@ public class SimulationDialog extends JDialog
 		boolean forceStart = cbForceStart.getState();
 		boolean randomiseOrder = cbRandomiseOrder.getState();
 		boolean enableLogging = cbLogging.getState();
-		
-		SimulationParms parms = new SimulationParms();
-		parms.setForceStart(forceStart);
-		parms.setGameMode(gameMode);
-		parms.setIncludeJokers(includeJokers);
-		parms.setIncludeMoons(includeMoons);
-		parms.setIncludeStars(includeStars);
-		parms.setNegativeJacks(negativeJacks);
-		parms.setCardReveal(cardReveal);
-		parms.setJokerQuantity(jokerQuantity);
-		parms.setJokerValue(jokerValue);
-		parms.setLogging(enableLogging);
-		parms.setNumberOfCards(numberOfCards);
-		parms.setOpponentThreeEnabled(opponentThreeEnabled);
-		parms.setOpponentTwoEnabled(opponentTwoEnabled);
-		parms.setOpponentZeroStrategy(opponentZeroStrategy);
-		parms.setOpponentOneStrategy(opponentOneStrategy);
-		parms.setOpponentTwoStrategy(opponentTwoStrategy);
-		parms.setOpponentThreeStrategy(opponentThreeStrategy);
-		parms.setRandomiseOrder(randomiseOrder);
-		
-		return parms;
+
+		var settings = new GameSettings(gameMode, numberOfCards, jokerQuantity, jokerValue, includeMoons, includeStars, negativeJacks, cardReveal, false);
+
+		return new SimulationParams(settings, opponentTwoEnabled, opponentThreeEnabled, opponentZeroStrategy, opponentOneStrategy,
+				opponentTwoStrategy, opponentThreeStrategy, enableLogging, randomiseOrder, forceStart);
 	}
 	
-	private void dumpSimulationDetails(int i, int numberOfGames, SimulationParms parms)
+	private void dumpSimulationDetails(int i, int numberOfGames, SimulationParams parms)
 	{
 		logger.info("simulationDump", "Dumping simulation details");
 		logger.info("simulationDump", "Opponent 0: " + parms.getOpponentZeroStrategy());

@@ -20,6 +20,15 @@ public interface Registry
 	// instance
 	public static final String INSTANCE_INT_REPLAY_CONVERSION = "replayConversion";
 	public static final String INSTANCE_STRING_DEVICE_ID = "deviceId";
+
+	// shared
+	public static final String SHARED_BOOLEAN_INCLUDE_MOONS = "includeMoons";
+	public static final String SHARED_BOOLEAN_INCLUDE_STARS = "includeStars";
+	public static final String SHARED_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
+	public static final String SHARED_BOOLEAN_CARD_REVEAL = "cardReveal";
+	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
+	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
+	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
 	
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
@@ -44,7 +53,6 @@ public interface Registry
 	public static final String PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED = "opponentTwoEnabled";
 	public static final String PREFERENCES_BOOLEAN_PLAY_BLIND = "playBlind";
 	public static final String PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP = "playWithHandicap";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_JOKERS = "includeJokers";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN = "includeMode";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN = "includeRounds";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN = "includePlayers";

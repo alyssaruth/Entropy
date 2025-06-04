@@ -179,7 +179,6 @@ public class ClearDataDialog extends JDialog
 	
 	private void resetPreferences()
 	{
-		prefs.remove(PREFERENCES_BOOLEAN_INCLUDE_JOKERS);
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_BLIND);
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP);
 		prefs.remove(PREFERENCES_XML_API_SETTINGS);
