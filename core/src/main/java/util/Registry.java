@@ -28,6 +28,7 @@ public interface Registry
 	public static final String SHARED_BOOLEAN_CARD_REVEAL = "cardReveal";
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
+	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
 	
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
@@ -69,7 +70,6 @@ public interface Registry
 	public static final String PREFERENCES_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String PREFERENCES_INT_JOKER_VALUE = "jokerValue";
 	public static final String PREFERENCES_INT_JOKER_QUANTITY = "jokerQuantity";
-	public static final String PREFERENCES_INT_NUMBER_OF_CARDS = "numberOfCards";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_HEIGHT = "rvheight";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_WIDTH = "rvwidth";
 	public static final String PREFERENCES_STRING_GAME_MODE = "gameMode";

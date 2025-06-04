@@ -8,6 +8,7 @@ import object.ChallengeBid;
 import object.IllegalBid;
 import object.Player;
 import util.*;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.util.Timer;
@@ -212,7 +213,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		int maxBid = GameUtil.getMaxBid(jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
 		bidPanel.init(maxBid, totalNumberOfCards, false, includeMoons, includeStars, false);
 		
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.removeAllElements();
 		
 		player.resetHand();
@@ -315,7 +316,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void getNewGameVariablesFromRegistry()
 	{
-		numberOfCards = prefs.getInt(PREFERENCES_INT_NUMBER_OF_CARDS, 5);
+		numberOfCards = prefs.getInt(SHARED_INT_NUMBER_OF_CARDS, 5);
 		jokerQuantity = prefs.getInt(PREFERENCES_INT_JOKER_QUANTITY, 2);
 		jokerValue = prefs.getInt(PREFERENCES_INT_JOKER_VALUE, 2);
 		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
@@ -428,7 +429,12 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	protected void roundEnded(int playerLastToAct)
 	{
 		ScreenCache.get(MainScreen.class).enableNewGameOption(true);
-		saveRoundForReplay();
+
+		try {
+			saveRoundForReplay();
+		} catch (Exception e) {
+			logger.error("replay.error", "Failed to save round for replay", e);
+		}
 
 		firstRound = false;
 		
@@ -460,7 +466,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		}
 	}
 	
-	protected void saveRoundForReplay()
+	protected void saveRoundForReplay() throws JsonProcessingException
 	{
 		inGameReplay.putInt(REPLAY_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
 		inGameReplay.put(REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOne.getStrategy());
@@ -471,13 +477,13 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		inGameReplay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		inGameReplay.putInt(roundsSoFar + REPLAY_INT_HISTORY_SIZE, historySize);
 		for (int i = 0; i < historySize; i++)
 		{
-			Bid bid = listmodel.get(i);
-			inGameReplay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, bid.toXmlString());
+			PlayerAction bid = listmodel.get(i);
+			inGameReplay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, CoreGlobals.jsonMapper.writeValueAsString(bid));
 		}
 		
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_PLAY_BLIND, playBlind);
@@ -525,13 +531,13 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		savedGame.putInt(SAVED_GAME_INT_HISTORY_SIZE, historySize);
 		for (int i=0; i<historySize; i++)
 		{
-			Bid bid = listmodel.get(i);
-			savedGame.put(SAVED_GAME_STRING_LISTMODEL + i, bid.toXmlString());
+			PlayerAction bid = listmodel.get(i);
+			savedGame.put(SAVED_GAME_STRING_LISTMODEL + i, CoreGlobals.jsonMapper.writeValueAsString(bid));
 		}
 
 		savedGame.putInt(SAVED_GAME_INT_PERSON_TO_START, personToStart);
@@ -625,12 +631,12 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			initialiseBidPanel();
 
 			//set up the listmodel
-			DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+			DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 			int historySize = savedGame.getInt(SAVED_GAME_INT_HISTORY_SIZE, 0);
 			for (int i = 0; i < historySize; i++)
 			{
 				String modelItem = savedGame.get(SAVED_GAME_STRING_LISTMODEL + i, "");
-				Bid bid = Bid.factoryFromXmlString(modelItem, includeMoons, includeStars);
+				PlayerAction bid = CoreGlobals.jsonMapper.readValue(modelItem, PlayerAction.class);
 				listmodel.addElement(bid);
 			}
 
@@ -935,8 +941,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Player bidder = lastBid.getPlayer();
 		Debug.append("Bidder: " + bidder, logging);
 		
-		if (lastBid.isPerfect(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), opponentThree.getHand(), 
-							  jokerValue, includeMoons, includeStars))
+		if (lastBid.isPerfect(allCards(), settings))
 		{
 			Debug.append("bid was perfect", logging);
 			

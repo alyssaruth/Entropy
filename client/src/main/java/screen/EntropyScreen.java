@@ -80,7 +80,7 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 	}
 
 	@Override
-	protected void saveRoundForReplay()
+	protected void saveRoundForReplay() throws JsonProcessingException
 	{
 		int roundsSoFar = inGameReplay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0) + 1;
 		inGameReplay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, lastBid.getSuit().getLegacyCode());
