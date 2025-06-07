@@ -185,7 +185,7 @@ public abstract class GameScreen extends TransparentPanel
 		bidPanel.showBidPanel(true);
 		setRandomPersonToStart();
 		
-		Debug.append("numberOfCards = " + settings.getNumberOfCards(), logging);
+		Debug.append("numberOfCards = " + settings.getStartingCards(), logging);
 	}
 	
 	private void resetPlayers()
@@ -337,11 +337,11 @@ public abstract class GameScreen extends TransparentPanel
 	
 	private void initNumberOfCards() 
 	{
-		opponentOne.setNumberOfCards(settings.getNumberOfCards());
-		opponentTwo.setNumberOfCards(opponentTwo.isEnabled()? settings.getNumberOfCards():0);
-		opponentThree.setNumberOfCards(opponentThree.isEnabled()? settings.getNumberOfCards():0);
+		opponentOne.setNumberOfCards(settings.getStartingCards());
+		opponentTwo.setNumberOfCards(opponentTwo.isEnabled()? settings.getStartingCards():0);
+		opponentThree.setNumberOfCards(opponentThree.isEnabled()? settings.getStartingCards():0);
 		int handicapCoeff = playWithHandicap? 1:0;
-		player.setNumberOfCards(settings.getNumberOfCards() - (handicapCoeff * handicapAmount));
+		player.setNumberOfCards(settings.getStartingCards() - (handicapCoeff * handicapAmount));
 		
 		totalNumberOfCards = player.getNumberOfCards() + opponentOne.getNumberOfCards() 
 						   + opponentTwo.getNumberOfCards() + opponentThree.getNumberOfCards();

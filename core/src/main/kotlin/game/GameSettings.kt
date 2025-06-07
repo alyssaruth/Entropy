@@ -11,7 +11,7 @@ import util.Registry.SHARED_INT_NUMBER_OF_CARDS
 
 data class GameSettings(
     val mode: GameMode,
-    val numberOfCards: Int = 5,
+    val startingCards: Int = 5,
     val jokerQuantity: Int = 0,
     val jokerValue: Int = 0,
     val includeMoons: Boolean = false,
@@ -34,7 +34,7 @@ data class GameSettings(
         fun fromRegistry(node: Preferences, mode: GameMode) =
             GameSettings(
                 mode,
-                numberOfCards = node.getInt(SHARED_INT_NUMBER_OF_CARDS, 5),
+                startingCards = node.getInt(SHARED_INT_NUMBER_OF_CARDS, 5),
                 jokerQuantity = node.getInt(SHARED_INT_JOKER_QUANTITY, 2),
                 jokerValue = node.getInt(SHARED_INT_JOKER_VALUE, 2),
                 includeMoons = node.getBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, false),

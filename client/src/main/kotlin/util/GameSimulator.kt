@@ -91,7 +91,7 @@ class GameSimulator(private val params: SimulationParams) {
         val stillAlive = allPlayers().filter { it.numberOfCards > 0 }
         if (stillAlive.size == 1) {
             val winner = stillAlive.first()
-            val perfectGame = winner.numberOfCards == params.settings.numberOfCards
+            val perfectGame = winner.numberOfCards == params.settings.startingCards
             get(SimulationDialog::class.java).recordWin(winner.playerNumber, perfectGame)
             return true
         }
@@ -170,7 +170,7 @@ class GameSimulator(private val params: SimulationParams) {
         val opponentTwoCoeff = if (opponentTwoEnabled) 1 else 0
         val opponentThreeCoeff = if (opponentThreeEnabled) 1 else 0
 
-        val numberOfCards = params.settings.numberOfCards
+        val numberOfCards = params.settings.startingCards
         opponentZero.numberOfCards = numberOfCards
         opponentOne.numberOfCards = numberOfCards
         opponentTwo.numberOfCards = opponentTwoCoeff * numberOfCards
