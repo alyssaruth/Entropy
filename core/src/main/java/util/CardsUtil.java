@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import object.SuitWrapper;
 
 public class CardsUtil
@@ -92,13 +93,11 @@ public class CardsUtil
 	 * Overloading to allow the seed to be passed through from the Server, allowing this to be secure.
 	 * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
 	 */
-	public static List<String> createAndShuffleDeck(int jokerQuantity,
-	  boolean includeMoons, boolean includeStars, boolean negativeJacks)
+	public static List<String> createAndShuffleDeck(GameSettings settings)
 	{
-		return createAndShuffleDeck(jokerQuantity, includeMoons, includeStars, negativeJacks, -1);
+		return createAndShuffleDeck(settings, -1);
 	}
-	public static List<String> createAndShuffleDeck(int jokerQuantity,
-	 boolean includeMoons, boolean includeStars, boolean negativeJacks, long seed)
+	public static List<String> createAndShuffleDeck(GameSettings settings, long seed)
 	{
 		// Creating the pack of cards
 		List<String> list = new ArrayList<>();
@@ -108,18 +107,18 @@ public class CardsUtil
 		suits.add("h");
 		suits.add("s");
 		
-		if (includeMoons)
+		if (settings.getIncludeMoons())
 		{
 			suits.add("m");
 		}
 		
-		if (includeStars)
+		if (settings.getIncludeStars())
 		{
 			suits.add("x");
 		}
 		
 		String jackStr = "J";
-		if (negativeJacks)
+		if (settings.getNegativeJacks())
 		{
 			jackStr = "-J";
 		}
@@ -136,7 +135,7 @@ public class CardsUtil
 			}
 		}
 
-		for (int i=0; i<jokerQuantity; i++)
+		for (int i=0; i<settings.getJokerQuantity(); i++)
 		{
 			list.add("Jo" + i); //i.e. Joc, Jod, Joh, Jos, but more generic
 		}
@@ -153,71 +152,6 @@ public class CardsUtil
 		}
 	
 		return list;
-	}
-	
-	public static HashMap<Integer, Double> getEvBySuitHashMapIncludingMyHand(List<String> hand, StrategyParms parms)
-	{
-		double evClubs = getExpectedValueForSuitIncludingMyHand(hand, SUIT_CLUBS, parms);
-		double evDiamonds = getExpectedValueForSuitIncludingMyHand(hand, SUIT_DIAMONDS, parms);
-		double evHearts = getExpectedValueForSuitIncludingMyHand(hand, SUIT_HEARTS, parms);
-		double evMoons = getExpectedValueForSuitIncludingMyHand(hand, SUIT_MOONS, parms);
-		double evSpades = getExpectedValueForSuitIncludingMyHand(hand, SUIT_SPADES, parms);
-		double evStars = getExpectedValueForSuitIncludingMyHand(hand, SUIT_STARS, parms);
-		
-		HashMap<Integer, Double> hmEvBySuit = new HashMap<>();
-		hmEvBySuit.put(0, evClubs);
-		hmEvBySuit.put(1, evDiamonds);
-		hmEvBySuit.put(2, evHearts);
-		hmEvBySuit.put(3, evMoons);
-		hmEvBySuit.put(4, evSpades);
-		hmEvBySuit.put(5, evStars);
-		
-		return hmEvBySuit;
-	}
-
-	private static double getExpectedValueForSuitIncludingMyHand(List<String> hand, int suitCode, StrategyParms parms)
-	{
-		double ev = 0;
-		
-		int jokerQuantity = parms.getJokerQuantity();
-		int jokerValue = parms.getJokerValue();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
-		boolean negativeJacks = parms.getNegativeJacks();
-		
-		List<String> deck = createAndShuffleDeck(jokerQuantity, includeMoons, includeStars, negativeJacks);
-		
-		int handSize = hand.size();
-		int totalCardsNotIncludingMine = parms.getTotalNumberOfCards() - handSize;
-		
-		//go through the deck and take out the cards that we can see
-		for (int i=0; i<handSize; i++)
-		{
-			String handCard = hand.get(i);
-			int deckSize = deck.size();
-			
-			for (int j=0; j<deckSize; j++)
-			{
-				String deckCard = deck.get(j);
-				
-				if (deckCard.equals(handCard))
-				{
-					deck.remove(deckCard);
-					break; //break to avoid indexOutOfBounds, and to only remove one (e.g. jokers).
-				}
-			}
-		}
-		
-		int remainingCards = deck.size();
-		
-		for (int i=0; i<remainingCards; i++)
-		{
-			ArrayList<String> cardToCheck = new ArrayList<>();
-			cardToCheck.add(deck.get(i));
-			ev += countSuit(cardToCheck, suitCode, jokerValue);
-		}
-		
-		return countSuit(hand, suitCode, jokerValue) + (ev * totalCardsNotIncludingMine)/remainingCards;
 	}
 
 	public static int countClubs(List<String> hand, int jokerValue)

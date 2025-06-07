@@ -20,6 +20,15 @@ data class GameSettings(
     val cardReveal: Boolean = false,
     val illegalAllowed: Boolean = false,
 ) {
+    fun exportToRegistry(node: Preferences) {
+        node.putInt(SHARED_INT_JOKER_VALUE, jokerValue)
+        node.putInt(SHARED_INT_JOKER_QUANTITY, jokerQuantity)
+        node.putBoolean(SHARED_BOOLEAN_INCLUDE_STARS, includeStars)
+        node.putBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, includeMoons)
+        node.putBoolean(SHARED_BOOLEAN_NEGATIVE_JACKS, negativeJacks)
+        node.putBoolean(SHARED_BOOLEAN_CARD_REVEAL, cardReveal)
+    }
+
     companion object {
         @JvmStatic
         fun fromRegistry(node: Preferences, mode: GameMode) =

@@ -13,18 +13,4 @@ data class SimulationParams(
     val enableLogging: Boolean,
     val randomiseOrder: Boolean,
     val forceStart: Boolean,
-) {
-    fun toStrategyParams(): StrategyParms {
-        val parms = StrategyParms()
-        parms.gameMode = settings.mode
-        parms.includeMoons = settings.includeMoons
-        parms.includeStars = settings.includeStars
-        parms.negativeJacks = settings.negativeJacks
-        parms.cardReveal = settings.cardReveal
-        parms.jokerQuantity = settings.jokerQuantity
-        parms.jokerValue = settings.jokerValue
-        parms.logging = enableLogging
-
-        return parms
-    }
-}
+)

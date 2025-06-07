@@ -201,13 +201,7 @@ class GameSimulator(private val params: SimulationParams) {
         opponentTwo.resetHand()
         opponentThree.resetHand()
 
-        val deck =
-            CardsUtil.createAndShuffleDeck(
-                params.settings.jokerQuantity,
-                params.settings.includeMoons,
-                params.settings.includeStars,
-                params.settings.negativeJacks,
-            )
+        val deck = CardsUtil.createAndShuffleDeck(params.settings)
 
         populateHands(deck)
     }
@@ -218,21 +212,18 @@ class GameSimulator(private val params: SimulationParams) {
         }
     }
 
-    private fun getStrategyParms(opponent: Player): StrategyParms {
-        val stratParms: StrategyParms = params.toStrategyParams()
-        stratParms.lastBid = lastBid
-        stratParms.opponentOneCards = opponentOne.numberOfCards
-        stratParms.opponentTwoCards = opponentTwo.numberOfCards
-        stratParms.opponentThreeCards = opponentThree.numberOfCards
-        stratParms.playerCards = opponentZero.numberOfCards
+    private fun getStrategyParms(opponent: Player): StrategyParams {
+        val totalCards = allPlayers().sumOf(Player::getNumberOfCards)
+        val otherPlayers = allPlayers().filterNot { it == opponent }
+        val cardsOnShow = otherPlayers.flatMap { it.revealedCards }
 
-        // Set the cards revealed
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentZero)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentOne)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentTwo)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentThree)
-
-        return stratParms
+        return StrategyParams(
+            params.settings,
+            totalCards,
+            cardsOnShow,
+            lastBid,
+            params.enableLogging,
+        )
     }
 
     private fun getPlayer(playerNumber: Int) =
