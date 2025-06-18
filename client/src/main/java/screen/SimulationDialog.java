@@ -537,8 +537,8 @@ public class SimulationDialog extends JDialog
 		
 		int numberOfCards = slider.getValue();
 		boolean includeJokers = cbIncludeJokers.isSelected();
-		int jokerValue = includeJokers ? (int) spinnerJokerValue.getValue() : 0;
-		int jokerQuantity = (int) spinnerJokerQuantity.getValue();
+		int jokerValue =  (int) spinnerJokerValue.getValue();
+		int jokerQuantity = includeJokers ? (int) spinnerJokerQuantity.getValue() : 0;
 		boolean includeMoons = chckbxIncludeMoons.isSelected();
 		boolean includeStars = chckbxIncludeStars.isSelected();
 		boolean negativeJacks = chckbxNegativeJacks.isSelected();
