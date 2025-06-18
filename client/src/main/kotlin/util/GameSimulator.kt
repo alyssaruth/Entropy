@@ -17,7 +17,7 @@ class GameSimulator(private val params: SimulationParams) {
     private val opponentTwo: Player = Player(2, "").also { it.name = "2" }
     private val opponentThree: Player = Player(3, "").also { it.name = "3" }
 
-    private var playOrder = listOf(2, 3, 1, 0) // standard play order
+    private var playOrder = listOf(0, 2, 3, 1) // standard play order
 
     /** Simulation methods */
     fun startNewGame(number: Int) {
@@ -123,9 +123,20 @@ class GameSimulator(private val params: SimulationParams) {
             processChallenge(opponent)
         } else {
             lastBid = action
-            val nextPlayerNumber = playOrder[opponent.playerNumber]
-            processOpponentTurn(getPlayer(nextPlayerNumber))
+            processOpponentTurn(nextPlayer(opponent))
         }
+    }
+
+    private fun nextPlayer(opponent: Player): Player {
+        val currentPlayerIndex = playOrder.indexOf(opponent.playerNumber)
+        val nextPlayerIndex = (currentPlayerIndex + 1) % playOrder.size
+        val nextPlayerNumber = playOrder[nextPlayerIndex]
+        val nextPlayer = getPlayer(nextPlayerNumber)
+
+        log(
+            "$playOrder: ${opponent.playerNumber} -> ${nextPlayer.playerNumber}, enabled = ${nextPlayer.isEnabled}"
+        )
+        return if (nextPlayer.isEnabled) nextPlayer else nextPlayer(nextPlayer)
     }
 
     private fun processChallenge(challenger: Player) {
@@ -191,6 +202,8 @@ class GameSimulator(private val params: SimulationParams) {
             } else {
                 listOf(2, 3, 1, 0)
             }
+
+        log("Player order: $playOrder")
     }
 
     private fun initVariablesForSimulationNewRound() {

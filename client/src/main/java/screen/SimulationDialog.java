@@ -425,7 +425,7 @@ public class SimulationDialog extends JDialog
 		results.incrementTotalChallenges();
 	}
 	
-	private SimulationResults getResults(int playerNumber)
+	public SimulationResults getResults(int playerNumber)
 	{
 		SimulationResults results = hmSimulationResultsByOpponentNumber.get(playerNumber);
 		if (results == null)
