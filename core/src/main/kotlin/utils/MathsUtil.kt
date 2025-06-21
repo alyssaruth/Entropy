@@ -29,6 +29,6 @@ fun Long.formatAsFileSize(): String {
 
     return String.format(
         "%.${precision}f ${units[magnitudeIndex]}",
-        toDouble() / 1024.0.pow(magnitudeIndex)
+        toDouble() / 1024.0.pow(magnitudeIndex),
     )
 }

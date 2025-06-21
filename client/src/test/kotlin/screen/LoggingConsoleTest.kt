@@ -58,7 +58,7 @@ class LoggingConsoleTest : AbstractTest() {
             makeLoggingEvent(
                 severity = Level.ERROR,
                 message = "Failed to load screen",
-                errorObject = t
+                errorObject = t,
             )
         console.log(errorLog)
 
@@ -77,7 +77,7 @@ class LoggingConsoleTest : AbstractTest() {
             makeLoggingEvent(
                 severity = Level.INFO,
                 message = "AWT Thread",
-                keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)")
+                keyValuePairs = mapOf(KEY_STACK to "at Foo.bar(58)"),
             )
         console.log(threadStackLock)
 

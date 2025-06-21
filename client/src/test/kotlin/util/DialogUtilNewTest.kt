@@ -8,17 +8,16 @@ import com.github.alyssaburlton.swingtest.clickYes
 import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.purgeWindows
+import getErrorDialog
+import getInfoDialog
+import getQuestionDialog
 import io.kotest.matchers.shouldBe
 import javax.swing.JDialog
 import javax.swing.SwingUtilities
 import org.junit.jupiter.api.Test
-import testCore.AbstractTest
-import testCore.getErrorDialog
-import testCore.getInfoDialog
-import testCore.getQuestionDialog
-import testCore.runAsync
+import runAsync
 
-class DialogUtilNewTest : AbstractTest() {
+class DialogUtilNewTest : AbstractClientTest() {
     @Test
     fun `Should log for INFO dialogs`() {
         runAsync { DialogUtilNew.showInfo("Something useful") }

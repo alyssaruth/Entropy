@@ -40,7 +40,7 @@ class ChatControllerTest : ApplicationTest() {
     private fun buildNewChatRequest(
         builder: HttpRequestBuilder,
         roomName: String? = null,
-        sessionId: UUID? = null
+        sessionId: UUID? = null,
     ) {
         sessionId?.let { builder.header(CustomHeader.SESSION_ID, sessionId) }
         builder.contentType(ContentType.Application.Json)

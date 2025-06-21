@@ -48,7 +48,7 @@ fun dumpServerThreads() {
 private fun dumpServerThreadDetails(
     sb: StringBuilder,
     serverThreads: List<ServerThread>,
-    dumpTimeMillis: Long
+    dumpTimeMillis: Long,
 ) {
     serverThreads.forEach { it.dumpDetails(sb, dumpTimeMillis) }
 }

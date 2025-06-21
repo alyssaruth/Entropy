@@ -166,7 +166,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
         populateTools("")
         populateMisc("")
 
-        for (i in 0 ..< tree.rowCount) {
+        for (i in 0..<tree.rowCount) {
             tree.expandRow(i)
         }
 
@@ -190,7 +190,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
             treePane.setViewportView(noSearchResults)
             helpPane.setViewportView(JPanel())
         } else {
-            for (i in 0 ..< 50) {
+            for (i in 0..<50) {
                 tree.expandRow(i)
             }
 

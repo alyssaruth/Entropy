@@ -22,7 +22,7 @@ class LoggerUncaughtExceptionHandlerTest : AbstractTest() {
         log.message shouldBe "Suppressing uncaught exception: $ex"
         log.shouldContainKeyValues(
             KEY_THREAD to Thread.currentThread().toString(),
-            KEY_EXCEPTION_MESSAGE to message
+            KEY_EXCEPTION_MESSAGE to message,
         )
     }
 

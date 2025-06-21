@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":core"))
     testImplementation(project(":test-core"))
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    implementation("com.github.alexburlton:swing-test:4.0.0")
 }
 
 application {
@@ -35,4 +36,6 @@ tasks.withType<Test> {
         events = mutableSetOf(TestLogEvent.STARTED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL
     }
+
+    jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
 }

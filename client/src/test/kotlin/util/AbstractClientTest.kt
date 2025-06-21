@@ -1,6 +1,8 @@
 package util
 
+import com.github.alyssaburlton.swingtest.purgeWindows
 import java.awt.Container
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import screen.ScreenCache
 import settings.InMemorySettingStore
@@ -11,6 +13,11 @@ abstract class AbstractClientTest : AbstractTest() {
     fun beforeEach() {
         ClientGlobals.achievementStore = InMemorySettingStore()
         ScreenCache.emptyCache()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        purgeWindows()
     }
 }
 

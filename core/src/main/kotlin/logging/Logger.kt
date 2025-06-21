@@ -62,14 +62,14 @@ class Logger(private val slf4jLogger: org.slf4j.Logger) {
         code: String,
         message: String,
         errorObject: Throwable = Throwable(message),
-        vararg keyValuePairs: Pair<String, Any?>
+        vararg keyValuePairs: Pair<String, Any?>,
     ) {
         log(
             Level.ERROR,
             code,
             message,
             errorObject,
-            mapOf(*keyValuePairs, KEY_EXCEPTION_MESSAGE to errorObject.message)
+            mapOf(*keyValuePairs, KEY_EXCEPTION_MESSAGE to errorObject.message),
         )
     }
 
@@ -78,7 +78,7 @@ class Logger(private val slf4jLogger: org.slf4j.Logger) {
         code: String,
         message: String,
         errorObject: Throwable?,
-        keyValuePairs: Map<String, Any?>
+        keyValuePairs: Map<String, Any?>,
     ) {
         val combinedKeys = globalContext + keyValuePairs + (KEY_LOGGING_CODE to code)
         val marker = combinedKeys.filterValues { it != null }.let(Markers::appendEntries)

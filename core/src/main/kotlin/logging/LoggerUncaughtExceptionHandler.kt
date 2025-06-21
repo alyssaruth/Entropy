@@ -11,14 +11,14 @@ class LoggerUncaughtExceptionHandler : UncaughtExceptionHandler {
                 "uncaughtException",
                 "Suppressing uncaught exception: $arg1",
                 KEY_THREAD to arg0.toString(),
-                KEY_EXCEPTION_MESSAGE to arg1.message
+                KEY_EXCEPTION_MESSAGE to arg1.message,
             )
         } else {
             logger.error(
                 "uncaughtException",
                 "Uncaught exception: $arg1 in thread $arg0",
                 arg1,
-                KEY_THREAD to arg0.toString()
+                KEY_THREAD to arg0.toString(),
             )
         }
     }

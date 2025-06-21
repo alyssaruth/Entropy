@@ -13,7 +13,7 @@ private val ALL_SOCKETS =
     listOf(
         XmlConstants.SOCKET_NAME_CHAT,
         XmlConstants.SOCKET_NAME_GAME,
-        XmlConstants.SOCKET_NAME_LOBBY
+        XmlConstants.SOCKET_NAME_LOBBY,
     )
 
 data class UserConnection(val name: String) : IHasId<String> {
