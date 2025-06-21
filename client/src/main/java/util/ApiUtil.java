@@ -1,6 +1,7 @@
 package util;
 
 import game.GameMode;
+import game.GameSettings;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,7 +44,7 @@ public class ApiUtil implements Registry
 		sendWithCatch(messageString, port, true, true);
 	}
 	
-	public static Bid processApiTurn(StrategyParms parms, Player player)
+	public static Bid processApiTurn(StrategyParams parms, Player player)
 	{
 		apiStrategy = getApiStrategy(player.getStrategy());
 		int port = apiStrategy.getPortNumber();
@@ -121,7 +122,7 @@ public class ApiUtil implements Registry
 		return responseString;
 	}
 	
-	private static String factoryApiMessage(StrategyParms parms, Player player, String messageType)
+	private static String factoryApiMessage(StrategyParams parms, Player player, String messageType)
 	{
 		if (messageType.equals(MESSAGE_TYPE_XML))
 		{
@@ -131,19 +132,20 @@ public class ApiUtil implements Registry
 		return factoryJsonApiMessage(parms, player);
 	}
 	
-	private static String factoryXmlApiMessage(StrategyParms parms, Player player)
+	private static String factoryXmlApiMessage(StrategyParams parms, Player player)
 	{
 		Document document = XmlUtil.factoryNewDocument();
 		Element rootElement = document.createElement(ROOT_TAG_API_MESSAGE);
-		
-		GameMode gameMode = parms.getGameMode();
-		int totalCards = parms.getTotalNumberOfCards();
-		int jokerQuantity = parms.getJokerQuantity();
-		int jokerValue = parms.getJokerValue();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
-		boolean negativeJacks = parms.getNegativeJacks();
-		boolean cardReveal = parms.getCardReveal();
+
+		var settings = parms.getSettings();
+		GameMode gameMode = settings.getMode();
+		int totalCards = parms.getCardsInPlay();
+		int jokerQuantity = settings.getJokerQuantity();
+		int jokerValue = settings.getJokerValue();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
+		boolean negativeJacks = settings.getNegativeJacks();
+		boolean cardReveal = settings.getCardReveal();
 		Bid lastBid = parms.getLastBid();
 
 		rootElement.setAttribute("GameMode", gameMode.name());
@@ -175,7 +177,7 @@ public class ApiUtil implements Registry
 		if (cardReveal)
 		{
 			Element opponentCardsOnShow = document.createElement("OpponentCardsOnShow");
-			ArrayList<String> cards = parms.getCardsOnShowFromOpponents();
+			List<String> cards = parms.getOpponentCardsOnShow();
 			for (int i=0; i<cards.size(); i++)
 			{
 				opponentCardsOnShow.setAttribute("Card-" + i, cards.get(i));
@@ -210,7 +212,7 @@ public class ApiUtil implements Registry
 		return XmlUtil.getStringFromDocument(document);
 	}
 	
-	private static String factoryJsonApiMessage(StrategyParms parms, Player player)
+	private static String factoryJsonApiMessage(StrategyParams parms, Player player)
 	{
 		if (parms == null
 		  || player == null)
@@ -221,7 +223,7 @@ public class ApiUtil implements Registry
 		return null;
 	}
 	
-	private static Bid handleResponse(StrategyParms parms, String responseString)
+	private static Bid handleResponse(StrategyParams parms, String responseString)
 	{
 		Document xmlResponse = XmlUtil.getDocumentFromXmlString(responseString);
 		if (xmlResponse == null)
@@ -236,7 +238,7 @@ public class ApiUtil implements Registry
 		
 		if (responseName.equals("Bid"))
 		{
-			Bid bid = factoryBid(parms, root, responseString);
+			Bid bid = factoryBid(parms.getSettings(), root, responseString);
 			String cardToShow = root.getAttribute("CardToShow");
 			bid.setCardToReveal(cardToShow);
 			return bid;
@@ -256,18 +258,18 @@ public class ApiUtil implements Registry
 		}
 	}
 	
-	private static Bid factoryBid(StrategyParms parms, Element root, String responseString)
+	private static Bid factoryBid(GameSettings settings, Element root, String responseString)
 	{
 		try
 		{
-			GameMode gameMode = parms.getGameMode();
+			GameMode gameMode = settings.getMode();
 			if (gameMode == GameMode.Entropy)
 			{
 				return EntropyBid.factoryFromXmlTag(root);
 			}
 			else
 			{
-				return VectropyBid.factoryFromXmlTag(root, parms.getIncludeMoons(), parms.getIncludeStars());
+				return VectropyBid.factoryFromXmlTag(root, settings.getIncludeMoons(), settings.getIncludeStars());
 			}
 		}
 		catch (IOException ioe)

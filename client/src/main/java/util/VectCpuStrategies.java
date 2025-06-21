@@ -26,12 +26,12 @@ public class VectCpuStrategies
 		return allStrategies;
 	}
 	
-	public static Bid processOpponentTurn(Player opponent, StrategyParms parms)
+	public static Bid processOpponentTurn(Player opponent, StrategyParams parms)
 	{
 		String strategy = opponent.getStrategy();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
-	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParms parms)
+	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
 	{
 		if (strategy.equals(CpuStrategies.STRATEGY_BASIC))
 		{
@@ -51,19 +51,20 @@ public class VectCpuStrategies
 		}
 	}
 
-	private static Bid processBasicTurn(Player opponent, StrategyParms parms)
+	private static Bid processBasicTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		Debug.append("Basic strategy for this turn", logging);
 		Random coin = new Random();
 		
 		//Get the variables we're interested in
+		var settings = parms.getSettings();
 		List<String> hand = opponent.getHand();
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
-		double totalCards = parms.getTotalNumberOfCards();
-		int jokerValue = parms.getJokerValue();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
+		double totalCards = parms.getCardsInPlay();
+		int jokerValue = settings.getJokerValue();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
 		
 		int clubsCount = CardsUtil.countClubs(hand, jokerValue);
 		int diamondsCount = CardsUtil.countDiamonds(hand, jokerValue);
@@ -117,7 +118,7 @@ public class VectCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			double unseenCards = parms.getTotalNumberOfCards() - hand.size();
+			double unseenCards = parms.getCardsInPlay() - hand.size();
 			
 			double thirdThreshold = Math.floor(totalCards/3);
 			
@@ -170,14 +171,14 @@ public class VectCpuStrategies
 		}
 	}
 	
-	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParms parms)
+	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
 	{
 		Bid bid = processEvTurn(opponent, parms);
-		CpuStrategies.setCardToReveal(bid, parms, opponent);
+		CpuStrategies.setCardToReveal(bid, parms.getSettings(), opponent);
 		return bid;
 	}
 	
-	private static Bid processEvTurn(Player opponent, StrategyParms parms)
+	private static Bid processEvTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		Debug.append("EV strategy for this turn", logging);
@@ -186,13 +187,13 @@ public class VectCpuStrategies
 		
 		//Parms
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
+		boolean includeMoons = parms.getSettings().getIncludeMoons();
+		boolean includeStars = parms.getSettings().getIncludeStars();
 		
 		if (lastBid == null)
 		{
 			Debug.append("Starting this round", logging);
-			HashMap<Integer, Double> hmEvBySuit = CardsUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
+			HashMap<Integer, Double> hmEvBySuit = StrategyUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
 			Debug.append("EV HashMap = " + hmEvBySuit, logging);
 			
 			int clubsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_CLUBS, hmEvBySuit);
@@ -227,7 +228,7 @@ public class VectCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			HashMap<Integer, Double> hmEvBySuit = CardsUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
+			HashMap<Integer, Double> hmEvBySuit = StrategyUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
 			Debug.append("EV HashMap = " + hmEvBySuit, logging);
 			
 			double[] diffVector = VectropyUtil.getEvDifferenceVector(lastBid, hmEvBySuit, includeMoons, includeStars);

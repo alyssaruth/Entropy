@@ -179,14 +179,13 @@ public class ClearDataDialog extends JDialog
 	
 	private void resetPreferences()
 	{
-		prefs.remove(PREFERENCES_BOOLEAN_INCLUDE_JOKERS);
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_BLIND);
 		prefs.remove(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP);
 		prefs.remove(PREFERENCES_XML_API_SETTINGS);
 		prefs.remove(PREFERENCES_STRING_GAME_MODE);
 		prefs.remove(PREFERENCES_INT_HANDICAP_AMOUNT);
-		prefs.remove(PREFERENCES_INT_JOKER_QUANTITY);
-		prefs.remove(PREFERENCES_INT_JOKER_VALUE);
+		prefs.remove(SHARED_INT_JOKER_QUANTITY);
+		prefs.remove(SHARED_INT_JOKER_VALUE);
 		prefs.remove(PREFERENCES_STRING_CARD_BACKS);
 		prefs.remove(PREFERENCES_STRING_LOOK_AND_FEEL);
 		prefs.remove(PREFERENCES_STRING_DECK_DIRECTORY);

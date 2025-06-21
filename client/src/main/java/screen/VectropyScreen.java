@@ -41,7 +41,7 @@ public class VectropyScreen extends GameScreen
 	{
 		handPanel.displayAndHighlightHands(-1);
 		String result = VectropyUtil.getResult(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-						opponentThree.getHand(), jokerValue, -1, includeMoons, includeStars);
+						opponentThree.getHand(), settings.getJokerValue(), -1, settings.getIncludeMoons(), settings.getIncludeStars());
 		ScreenCache.get(MainScreen.class).setResultText("Result: " + result);
 	}
 
@@ -77,7 +77,7 @@ public class VectropyScreen extends GameScreen
 		String lastBidStr = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID, "");
 		if (!lastBidStr.isEmpty())
 		{
-			lastBid = Bid.factoryFromXmlString(lastBidStr, includeMoons, includeStars);
+			lastBid = Bid.factoryFromXmlString(lastBidStr, settings.getIncludeMoons(), settings.getIncludeStars());
 		}
 	}
 	

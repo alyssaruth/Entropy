@@ -3,6 +3,7 @@ package object;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import org.w3c.dom.Element;
 
 import util.Debug;
@@ -18,8 +19,7 @@ public abstract class FakeBid extends Bid
 	
 	@Override
 	public boolean isPerfect(List<String> handOne, List<String> handTwo,
-			List<String> handThree, List<String> handFour, int jokerValue,
-			boolean includeMoons, boolean includeStars) 
+			List<String> handThree, List<String> handFour, GameSettings settings)
 	{
 		Debug.stackTrace("Calling unimplemented method: isPerfect");
 		return false;

@@ -384,7 +384,7 @@ public abstract class GameRoom extends JFrame
 	
 	private void initBidPanel()
 	{
-		int maxBid = GameUtil.getMaxBid(true, settings.getJokerQuantity(), settings.getJokerValue(), totalNumberOfCards, settings.getNegativeJacks());
+		int maxBid = GameUtil.getMaxBid(settings, totalNumberOfCards);
 		bidPanel.init(maxBid, totalNumberOfCards, true, settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed());
 	}
 	
@@ -1404,8 +1404,7 @@ public abstract class GameRoom extends JFrame
 		
 		//5. Unlock achievements, including specific perfect bid ones
 		updateAchievementVariables(lastBid);
-		if (lastBid.isPerfect(hmHandByAdjustedPlayerNumber,
-				settings.getJokerValue(), settings.getIncludeMoons(), settings.getIncludeStars())
+		if (lastBid.isPerfect(hmHandByAdjustedPlayerNumber, settings)
 		  && lastBid.isOverAchievementThreshold())
 		{
 			updatePerfectBidVariables(lastBid);

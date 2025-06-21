@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import org.w3c.dom.Element;
 
 import util.CardsUtil;
@@ -265,8 +266,9 @@ public class VectropyBid extends Bid
 	
 	@Override
 	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-							 int jokerValue, boolean includeMoons, boolean includeStars) 
+							 GameSettings settings)
 	{
+		var jokerValue = settings.getJokerValue();
 		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, handOne, handTwo, handThree, handFour, jokerValue);
 		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, handOne, handTwo, handThree, handFour, jokerValue);
 		int maxHearts = CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, handOne, handTwo, handThree, handFour, jokerValue);
