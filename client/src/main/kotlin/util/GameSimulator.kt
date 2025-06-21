@@ -1,6 +1,5 @@
 package util
 
-import java.util.Random
 import `object`.Bid
 import `object`.Player
 import screen.ScreenCache.get
@@ -12,12 +11,12 @@ class GameSimulator(private val params: SimulationParams) {
 
     private var lastBid: Bid? = null
 
-    private val opponentZero: Player = Player(0, "").also { it.name = "0" }
-    private val opponentOne: Player = Player(1, "").also { it.name = "1" }
-    private val opponentTwo: Player = Player(2, "").also { it.name = "2" }
-    private val opponentThree: Player = Player(3, "").also { it.name = "3" }
+    val opponentZero: Player = Player(0, "").also { it.name = "0" }
+    val opponentOne: Player = Player(1, "").also { it.name = "1" }
+    val opponentTwo: Player = Player(2, "").also { it.name = "2" }
+    val opponentThree: Player = Player(3, "").also { it.name = "3" }
 
-    private var playOrder = listOf(0, 2, 3, 1) // standard play order
+    var playOrder = listOf(0, 2, 3, 1) // standard play order
 
     /** Simulation methods */
     fun startNewGame(number: Int) {
@@ -45,39 +44,32 @@ class GameSimulator(private val params: SimulationParams) {
             initVariablesForSimulationNewRound()
 
             val playerToStart: Player = getPlayer(personToStart)
-            processOpponentTurn(playerToStart)
+            if (playerToStart.isEnabled) {
+                processOpponentTurn(playerToStart)
+            } else {
+                processOpponentTurn(nextPlayer(playerToStart))
+            }
         }
     }
 
     private fun populateHands(deck: List<String>) {
         log("Dealing hands...")
 
-        GameUtil.populateHand(opponentZero, deck, params.enableLogging)
-        GameUtil.populateHand(opponentOne, deck, params.enableLogging)
-        GameUtil.populateHand(opponentTwo, deck, params.enableLogging)
-        GameUtil.populateHand(opponentThree, deck, params.enableLogging)
+        allPlayers().forEach { GameUtil.populateHand(it, deck, params.enableLogging) }
     }
 
-    private tailrec fun computeRandomPersonToStart(): Int {
+    private fun computeRandomPersonToStart(): Int {
         if (params.forceStart) {
             return 0
         }
 
-        val result = Random().nextInt(4)
-        return if (getPlayer(result).isEnabled) {
-            result
-        } else {
-            computeRandomPersonToStart()
-        }
+        return allPlayers().filter(Player::isEnabled).random().playerNumber
     }
 
     private fun knockOutPlayers() {
         log("Knocking out players...")
 
-        knockOut(opponentZero)
-        knockOut(opponentOne)
-        knockOut(opponentTwo)
-        knockOut(opponentThree)
+        allPlayers().forEach(::knockOut)
     }
 
     private fun knockOut(player: Player) {
@@ -103,9 +95,7 @@ class GameSimulator(private val params: SimulationParams) {
 
     private fun processOpponentTurn(opponent: Player) {
         if (!opponent.isEnabled) {
-            val nextPlayerNumber = playOrder[opponent.playerNumber]
-            processOpponentTurn(getPlayer(nextPlayerNumber))
-            return
+            throw Exception("Trying to take turn for $opponent, but they're disabled")
         }
 
         log("*** Opponent $opponent ***")
@@ -127,24 +117,28 @@ class GameSimulator(private val params: SimulationParams) {
         }
     }
 
-    private fun nextPlayer(opponent: Player): Player {
+    fun nextPlayer(opponent: Player): Player {
         val currentPlayerIndex = playOrder.indexOf(opponent.playerNumber)
-        val nextPlayerIndex = (currentPlayerIndex + 1) % playOrder.size
-        val nextPlayerNumber = playOrder[nextPlayerIndex]
-        val nextPlayer = getPlayer(nextPlayerNumber)
+        val nextIndices = (1..3).map { (currentPlayerIndex + it) % playOrder.size }
+        val nextPlayers = nextIndices.map { getPlayer(playOrder[it]) }.filter { it.isEnabled }
 
-        log(
-            "$playOrder: ${opponent.playerNumber} -> ${nextPlayer.playerNumber}, enabled = ${nextPlayer.isEnabled}"
-        )
-        return if (nextPlayer.isEnabled) nextPlayer else nextPlayer(nextPlayer)
+        if (nextPlayers.isEmpty()) {
+            throw Exception(
+                "No valid next player found. Play order is $playOrder, currentPlayer is ${opponent.playerNumber}, nextIndices: $nextIndices"
+            )
+        }
+
+        return nextPlayers.first()
     }
 
     private fun processChallenge(challenger: Player) {
         log("Challenged")
 
+        val lastBid = lastBid ?: throw Exception("Processing challenge with no lastBid")
+
         val dialog = get(SimulationDialog::class.java)
         if (
-            !lastBid!!.isOverbid(
+            !lastBid.isOverbid(
                 opponentZero.hand,
                 opponentOne.hand,
                 opponentTwo.hand,
@@ -162,7 +156,7 @@ class GameSimulator(private val params: SimulationParams) {
             log("overbid")
             dialog.recordChallenge(challenger.playerNumber, true)
 
-            val bidder = lastBid!!.player
+            val bidder = lastBid.player
             bidder.cardsToSubtract = 1
             bidder.doSubtraction()
             personToStart = bidder.playerNumber
