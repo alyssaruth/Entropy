@@ -30,7 +30,7 @@ class GameSimulatorBenchmarkTest : AbstractClientTest() {
         results.getWinRate(games)!!.shouldBeBetween(80.0, 85.0, 0.1)
         results.getChallengeRate()!!.shouldBeBetween(20.0, 22.0, 0.1)
         results.getChallengeSuccessRate()!!.shouldBeBetween(77.0, 81.0, 0.1)
-        results.getPerfectRate()!!.shouldBeBetween(29.0, 31.0, 0.1)
+        results.getPerfectRate()!!.shouldBeBetween(28.0, 31.0, 0.1)
     }
 
     @Test

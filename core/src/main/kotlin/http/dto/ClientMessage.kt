@@ -10,6 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = LobbyMessage::class, name = "LOBBY"),
-    JsonSubTypes.Type(value = NewChatMessage::class, name = "CHAT")
+    JsonSubTypes.Type(value = NewChatMessage::class, name = "CHAT"),
 )
 abstract class ClientMessage

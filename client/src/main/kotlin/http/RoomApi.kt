@@ -82,11 +82,7 @@ class RoomApi(private val httpClient: HttpClient) {
 
     fun leaveRoom(room: GameRoom) {
         val response =
-            httpClient.doCall<Unit>(
-                HttpMethod.POST,
-                Routes.LEAVE_ROOM,
-                SimpleRoomRequest(room.id),
-            )
+            httpClient.doCall<Unit>(HttpMethod.POST, Routes.LEAVE_ROOM, SimpleRoomRequest(room.id))
 
         when (response) {
             is SuccessResponse<Unit> -> room.closeWindow()

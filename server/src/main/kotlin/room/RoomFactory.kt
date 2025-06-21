@@ -43,7 +43,7 @@ object RoomFactory {
                 jokerQuantity = 2,
                 jokerValue = 2,
                 negativeJacks = true,
-                cardReveal = true
+                cardReveal = true,
             ),
             GameSettings(mode, includeMoons = true, includeStars = true, negativeJacks = true),
             GameSettings(
@@ -52,7 +52,7 @@ object RoomFactory {
                 jokerValue = 2,
                 includeMoons = true,
                 includeStars = true,
-                illegalAllowed = true
-            )
+                illegalAllowed = true,
+            ),
         )
 }

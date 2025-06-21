@@ -97,7 +97,7 @@ class LoggerTest : AbstractTest() {
         record.shouldContainKeyValues(
             "appVersion" to "4.1.1",
             "threadContext" to "test thread",
-            "otherKey" to "otherValue"
+            "otherKey" to "otherValue",
         )
     }
 

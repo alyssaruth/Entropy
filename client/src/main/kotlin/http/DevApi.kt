@@ -8,7 +8,7 @@ class DevApi(private val httpClient: HttpClient) {
         httpClient.doCall<Unit>(
             HttpMethod.POST,
             Routes.DEV_COMMAND,
-            DevCommandRequest(commandString)
+            DevCommandRequest(commandString),
         )
     }
 }

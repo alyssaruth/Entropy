@@ -45,7 +45,7 @@ class UpdateManager {
                     logger.error(
                         "updateError",
                         "Caught ${result.unirestException} checking for updates",
-                        result.unirestException
+                        result.unirestException,
                     )
                     DialogUtilNew.showError("Failed to check for updates (unable to connect).")
                     null
@@ -54,7 +54,7 @@ class UpdateManager {
                     logger.error(
                         "updateError",
                         "Received non-success HTTP status: ${result.statusCode} - ${result.body}",
-                        "responseBody" to result.body
+                        "responseBody" to result.body,
                     )
                     DialogUtilNew.showError("Failed to check for updates (unexpected error).")
                     null

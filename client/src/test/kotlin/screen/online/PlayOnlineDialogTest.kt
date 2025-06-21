@@ -5,6 +5,8 @@ import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
+import getDialogMessage
+import getErrorDialog
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,8 +14,6 @@ import javax.swing.JTextField
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
 import testCore.AbstractTest
-import testCore.getDialogMessage
-import testCore.getErrorDialog
 import util.ClientGlobals
 
 class PlayOnlineDialogTest : AbstractTest() {
