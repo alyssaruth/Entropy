@@ -387,7 +387,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	
 	private void initBidPanel()
 	{
-		int maxBid = GameUtil.getMaxBid(settings.getJokerQuantity(), settings.getJokerValue(), totalNumberOfCards, settings.getNegativeJacks());
+		int maxBid = GameUtil.getMaxBid(settings, totalNumberOfCards);
 		bidPanel.init(maxBid, totalNumberOfCards, true, settings.getIncludeMoons(), settings.getIncludeStars(), settings.getIllegalAllowed());
 	}
 	
@@ -1011,7 +1011,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 
 		return cards;
 	}
-	
+
 	private int getTotalFromHands()
 	{
 		return allCards().size();

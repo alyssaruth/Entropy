@@ -60,17 +60,19 @@ public class CpuStrategies
 	/**
 	 * Entry-point for strategy code
 	 */
-	public static PlayerAction processOpponentTurn(StrategyParms parms, Player opponent)
+	public static PlayerAction processOpponentTurn(StrategyParams parms, Player opponent)
 	{
-		boolean entropy = parms.getGameMode() == GameMode.Entropy;
-		PlayerAction bid = getOpponentBid(parms, opponent, entropy);
+		var settings = parms.getSettings();
+		boolean entropy = settings.getMode() == GameMode.Entropy;
+        PlayerAction bid = getOpponentBid(parms, opponent, entropy);
 		if (bid == null)
 		{
 			return bid;
 		}
 		
 		//Set a card to reveal if we need to - specifying this is optional for the API
-		setRandomCardToRevealIfNecessary(opponent, bid, parms);
+		bid.setPlayer(opponent);
+		setRandomCardToRevealIfNecessary(opponent, bid, settings);
 		
 		//validate the bid...
 		String error = validateBid(opponent, bid, parms);
@@ -96,7 +98,7 @@ public class CpuStrategies
 		
 		//Add the revealed card on the opponent object. Do this here so we don't have to duplicate the logic
 		//in the simulator & actual game
-		if (parms.getCardReveal()
+		if (parms.getSettings().getCardReveal()
 		  && opponent.hasMoreCardsToReveal())
 		{
 			String cardToReveal = bid.getCardToReveal();
@@ -106,7 +108,7 @@ public class CpuStrategies
 		return bid;
 	}
 	
-	private static PlayerAction getOpponentBid(StrategyParms parms, Player opponent, boolean entropy)
+	private static PlayerAction getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
 	{
 		if (opponent.isApiStrategy())
 		{
@@ -127,14 +129,14 @@ public class CpuStrategies
 	 * then just pick one at random. This is what most built-in strategies will do, and implementing for API too
 	 * so that worrying about revealing cards is optional.
 	 */
-	private static void setRandomCardToRevealIfNecessary(Player opponent, PlayerAction action, StrategyParms parms)
+	private static void setRandomCardToRevealIfNecessary(Player opponent, PlayerAction action, GameSettings settings)
 	{
 		if (!(action instanceof BidAction)) {
 			return;
 		}
 
 		var bid = (BidAction)action;
-		if (parms.getCardReveal()
+		if (settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal()
 		  && bid.getCardToReveal() == null)
 		{
@@ -149,18 +151,19 @@ public class CpuStrategies
 		}
 	}
 	
-	private static String validateBid(Player opponent, PlayerAction action, StrategyParms parms)
+	private static String validateBid(Player opponent, PlayerAction action, StrategyParams params)
 	{
-		if (action instanceof ChallengeAction
-		  || action instanceof IllegalAction)
-		{
-			return validateChallengeOrIllegal(action, parms);
-		}
+        var settings = params.getSettings();
+        if (action instanceof ChallengeAction
+                || action instanceof IllegalAction)
+        {
+            return validateChallengeOrIllegal(action, params);
+        }
 
 		var bid = (BidAction)action;
 		if (action instanceof EntropyBidAction)
 		{
-			String error = validateEntropyBid((EntropyBidAction)action, parms);
+			String error = validateEntropyBid((EntropyBidAction)action, settings);
 			if (error != null)
 			{
 				return error;
@@ -175,8 +178,8 @@ public class CpuStrategies
 				return error;
 			}
 		}
-		
-		BidAction lastBid = parms.getLastBid();
+
+        BidAction lastBid = params.getLastBid();
 		if (lastBid != null
 		  && !bid.higherThan(lastBid))
 		{
@@ -184,7 +187,7 @@ public class CpuStrategies
 		}
 		
 		//Validate card reveal
-		if (parms.getCardReveal()
+		if (settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal())
 		{
 			String cardToReveal = bid.getCardToReveal();
@@ -208,7 +211,7 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateChallengeOrIllegal(PlayerAction bid, StrategyParms parms)
+	private static String validateChallengeOrIllegal(PlayerAction bid, StrategyParams parms)
 	{
 		var lastBid = parms.getLastBid();
 		if (lastBid == null)
@@ -224,7 +227,7 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateEntropyBid(EntropyBidAction bid, StrategyParms parms)
+	private static String validateEntropyBid(EntropyBidAction bid, GameSettings settings)
 	{
 		var bidSuit = bid.getSuit();
 		
@@ -235,13 +238,13 @@ public class CpuStrategies
 		}
 		
 		if (bidSuit == Suit.Moons
-		  && !parms.getIncludeMoons())
+		  && !settings.getIncludeMoons())
 		{
 			return "Tried to bid Moons when these haven't been included.";
 		}
 		
 		if (bidSuit == Suit.Stars
-		  && !parms.getIncludeStars())
+		  && !settings.getIncludeStars())
 		{
 			return "Tried to bid Stars when these haven't been included.";
 		}
@@ -258,7 +261,7 @@ public class CpuStrategies
 
 		var moons = bid.getMoons();
 		var stars = bid.getStars();
-		
+
 		if (bid.getClubs() < 0
 		  || bid.getDiamonds() < 0
 		  || bid.getHearts() < 0
@@ -275,9 +278,9 @@ public class CpuStrategies
 	/**
 	 * Card reveal helpers
 	 */
-	public static List<String> getCombinedArrayOfCardsICanSee(List<String> hand, StrategyParms parms)
+	public static List<String> getCombinedArrayOfCardsICanSee(List<String> hand, StrategyParams parms)
 	{
-		ArrayList<String> revealedCards = parms.getCardsOnShowFromOpponents();
+		List<String> revealedCards = parms.getOpponentCardsOnShow();
 		var result = new ArrayList<String>();
 		result.addAll(hand);
 		result.addAll(revealedCards);
@@ -288,11 +291,11 @@ public class CpuStrategies
 	 * Used by EV strategies. Slightly more refined version of card reveal - this tries to show a card
 	 * which isn't an Ace or a Joker (as these reveal more information than average)
 	 */
-	public static void setCardToReveal(Bid bid, StrategyParms parms, Player opponent)
+	public static void setCardToReveal(Bid bid, GameSettings settings, Player opponent)
 	{
 		if (!bid.isIllegal()
 		  && !bid.isChallenge()
-		  && parms.getCardReveal()
+		  && settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal())
 		{
 			ArrayList<String> cardsToChooseFrom = opponent.getCardsNotOnShow();

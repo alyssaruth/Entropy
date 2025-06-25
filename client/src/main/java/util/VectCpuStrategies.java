@@ -10,7 +10,7 @@ import object.VectropyBid;
 
 import static game.CardsUtilKt.getEvMap;
 
-public class VectCpuStrategies 
+public class VectCpuStrategies
 {
 	public static final String STRATEGY_RANDOMISE_PER_MOVE = "Randomise (per move)";
 	private static final String[] STRATEGIES_TO_CHOOSE_AT_RANDOM = {CpuStrategies.STRATEGY_BASIC, CpuStrategies.STRATEGY_EV};
@@ -26,12 +26,12 @@ public class VectCpuStrategies
 		return allStrategies;
 	}
 	
-	public static Bid processOpponentTurn(Player opponent, StrategyParms parms)
+	public static Bid processOpponentTurn(Player opponent, StrategyParams parms)
 	{
 		String strategy = opponent.getStrategy();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
-	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParms parms)
+	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
 	{
 		if (strategy.equals(CpuStrategies.STRATEGY_BASIC))
 		{
@@ -51,19 +51,20 @@ public class VectCpuStrategies
 		}
 	}
 
-	private static Bid processBasicTurn(Player opponent, StrategyParms parms)
+	private static Bid processBasicTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		Debug.append("Basic strategy for this turn", logging);
 		Random coin = new Random();
 		
 		//Get the variables we're interested in
+		var settings = parms.getSettings();
 		List<String> hand = opponent.getHand();
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
-		double totalCards = parms.getTotalNumberOfCards();
-		int jokerValue = parms.getJokerValue();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
+		double totalCards = parms.getCardsInPlay();
+		int jokerValue = settings.getJokerValue();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
 		
 		int clubsCount = CardsUtil.countClubs(hand, jokerValue);
 		int diamondsCount = CardsUtil.countDiamonds(hand, jokerValue);
@@ -117,7 +118,7 @@ public class VectCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			double unseenCards = parms.getTotalNumberOfCards() - hand.size();
+			double unseenCards = parms.getCardsInPlay() - hand.size();
 			
 			double thirdThreshold = Math.floor(totalCards/3);
 			
@@ -129,7 +130,7 @@ public class VectCpuStrategies
 			if (VectropyUtil.canSeeBid(diffVector))
 			{
 				Debug.append("Auto-minbid as I could see everything.", logging);
-				return opponentMinBidSuit(lastBid, StrategyUtil.getRandomSuit(includeMoons, includeStars));
+				return opponentMinBidSuit(lastBid, Suit.random(includeMoons, includeStars));
 			}
 			else if (VectropyUtil.shouldAutoChallengeForIndividualSuit(diffVector, thirdThreshold))
 			{
@@ -151,7 +152,7 @@ public class VectCpuStrategies
 				}
 				else //5,6,7,8,9
 				{
-					return opponentMinBidSuit(lastBid, StrategyUtil.getRandomSuit(includeMoons, includeStars));
+					return opponentMinBidSuit(lastBid, Suit.random(includeMoons, includeStars));
 				}
 			}
 			else
@@ -170,14 +171,14 @@ public class VectCpuStrategies
 		}
 	}
 	
-	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParms parms)
+	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
 	{
 		Bid bid = processEvTurn(opponent, parms);
-		CpuStrategies.setCardToReveal(bid, parms, opponent);
+		CpuStrategies.setCardToReveal(bid, parms.getSettings(), opponent);
 		return bid;
 	}
 	
-	private static Bid processEvTurn(Player opponent, StrategyParms parms)
+	private static Bid processEvTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		Debug.append("EV strategy for this turn", logging);
@@ -186,8 +187,8 @@ public class VectCpuStrategies
 		
 		//Parms
 		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
+		boolean includeMoons = parms.getSettings().getIncludeMoons();
+		boolean includeStars = parms.getSettings().getIncludeStars();
 		
 		if (lastBid == null)
 		{

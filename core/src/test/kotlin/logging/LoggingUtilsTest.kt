@@ -38,7 +38,7 @@ class LoggingUtilsTest : AbstractTest() {
         val stackTrace =
             arrayOf(
                 StackTraceElement("SomeClass", "doStuff", "SomeClass.kt", 58),
-                StackTraceElement("SomeClass", "maybeDoStuff", "SomeClass.kt", 40)
+                StackTraceElement("SomeClass", "maybeDoStuff", "SomeClass.kt", 40),
             )
 
         val result = extractThreadStack(stackTrace)

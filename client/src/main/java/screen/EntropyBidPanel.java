@@ -326,8 +326,8 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	@Override
 	public void loadState(Preferences savedGame)
 	{
-		includeMoons = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_MOONS, false);
-		includeStars = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_STARS, false);
+		includeMoons = savedGame.getBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, false);
+		includeStars = savedGame.getBoolean(SHARED_BOOLEAN_INCLUDE_STARS, false);
 		maxBid = savedGame.getInt(SAVED_GAME_INT_MAX_BID, 0);
 		init(maxBid, -1, false, includeMoons, includeStars, false);
 		

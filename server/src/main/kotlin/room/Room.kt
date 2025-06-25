@@ -277,14 +277,7 @@ data class Room(
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
-        if (
-            bid.isPerfect(
-                hmHandByPlayerNumber,
-                settings.jokerValue,
-                settings.includeMoons,
-                settings.includeStars,
-            )
-        ) {
+        if (bid.isPerfect(hmHandByPlayerNumber, settings)) {
             setUpNextRound(bidderNumber)
         } else {
             setUpNextRound(playerNumber)
@@ -342,14 +335,7 @@ data class Room(
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = ConcurrentHashMap()
 
         val seed: Long = ServerGlobals.server.generateSeed()
-        val deck =
-            CardsUtil.createAndShuffleDeck(
-                settings.jokerQuantity,
-                settings.includeMoons,
-                settings.includeStars,
-                settings.negativeJacks,
-                seed,
-            )
+        val deck = CardsUtil.createAndShuffleDeck(settings, seed)
 
         for (i in 0..<capacity) {
             val size: Int = hmHandSizeByPlayerNumber.getValue(i)

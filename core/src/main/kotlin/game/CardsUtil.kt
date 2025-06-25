@@ -1,7 +1,6 @@
 package game
 
 import util.CardsUtil
-import util.StrategyParms
 
 fun countSuit(suit: Suit, cards: List<String>, jokerValue: Int) =
     cards.sumOf { countContribution(suit, it, jokerValue) }
@@ -14,24 +13,19 @@ fun countContribution(suit: Suit, card: String, jokerValue: Int) =
 
 fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) > 0
 
-fun getEvMap(visibleCards: List<String>, strategyParams: StrategyParms): Map<Suit, Double> {
-    val unknownCardsInPlay = strategyParams.totalNumberOfCards - visibleCards.size
+fun getEvMap(
+    visibleCards: List<String>,
+    settings: GameSettings,
+    cardsInPlay: Int,
+): Map<Suit, Double> {
+    val unknownCardsInPlay = cardsInPlay - visibleCards.size
     val remainingDeck =
-        CardsUtil.createAndShuffleDeck(
-                strategyParams.jokerQuantity,
-                strategyParams.includeMoons,
-                strategyParams.includeStars,
-                strategyParams.negativeJacks,
-            )
-            .filterNot { visibleCards.contains(it) }
+        CardsUtil.createAndShuffleDeck(settings).filterNot { visibleCards.contains(it) }
 
-    return Suit.filter(strategyParams.includeMoons, strategyParams.includeStars).associateWith {
-        suit ->
-        val known = countSuit(suit, visibleCards, strategyParams.jokerValue)
+    return Suit.filter(settings.includeMoons, settings.includeStars).associateWith { suit ->
+        val known = countSuit(suit, visibleCards, settings.jokerValue)
         val possibleOthers =
-            remainingDeck
-                .sumOf { countContribution(suit, it, strategyParams.jokerValue) }
-                .toDouble()
+            remainingDeck.sumOf { countContribution(suit, it, settings.jokerValue) }.toDouble()
         val extraEv =
             possibleOthers * (unknownCardsInPlay.toDouble() / remainingDeck.size.toDouble())
 

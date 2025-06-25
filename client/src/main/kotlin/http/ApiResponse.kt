@@ -10,7 +10,7 @@ data class FailureResponse<T>(
     val statusCode: Int,
     val body: String,
     val errorCode: ClientErrorCode?,
-    val errorMessage: String?
+    val errorMessage: String?,
 ) : ApiResponse<T>
 
 data class CommunicationError<T>(val unirestException: UnirestException) : ApiResponse<T>

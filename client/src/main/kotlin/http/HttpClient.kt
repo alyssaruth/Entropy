@@ -97,7 +97,7 @@ class HttpClient(private val baseUrl: String) {
                 response.status,
                 response.body,
                 errorResponse?.errorCode,
-                errorResponse?.errorMessage
+                errorResponse?.errorMessage,
             )
         }
 

@@ -29,7 +29,7 @@ public interface Registry
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
-	
+
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
 	public static final String PREFERENCES_STRING_DECK_DIRECTORY = "deckDirectory";
@@ -58,18 +58,12 @@ public interface Registry
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN = "includePlayers";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_CARDS_COLUMN = "includeCards";
 	public static final String PREFERENCES_BOOLEAN_INCLUDE_ROOM_NAME_COLUMN = "includeRoomName";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_STARS = "includeStars";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_MOONS = "includeMoons";
-	public static final String PREFERENCES_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
-	public static final String PREFERENCES_BOOLEAN_CARD_REVEAL = "cardReveal";
 	public static final String PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES = "checkForUpdates";
 	
 	public static final String PREFERENCES_INT_REPLAY_DEFAULT = "replayDefault";
 	public static final String PREFERENCES_INT_GAME_SPEED = "gameSpeed";
 	public static final String PREFERENCES_INT_AUTO_START_SECONDS = "autoStartMillis";
 	public static final String PREFERENCES_INT_HANDICAP_AMOUNT = "handicapAmount";
-	public static final String PREFERENCES_INT_JOKER_VALUE = "jokerValue";
-	public static final String PREFERENCES_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_HEIGHT = "rvheight";
 	public static final String PREFERENCES_INT_REPLAY_VIEWER_WIDTH = "rvwidth";
 	public static final String PREFERENCES_STRING_GAME_MODE = "gameMode";
@@ -170,8 +164,6 @@ public interface Registry
 	public static final String SAVED_GAME_BOOLEAN_FIRST_ROUND = "firstRound";
 	public static final String SAVED_GAME_BOOLEAN_CHALLENGE_ENABLED = "challengeEnabled";
 	public static final String SAVED_GAME_BOOLEAN_ILLEGAL_ENABLED = "illegalEnabled";
-	public static final String SAVED_GAME_BOOLEAN_INCLUDE_STARS = "includeStars";
-	public static final String SAVED_GAME_BOOLEAN_INCLUDE_MOONS = "includeMoons";
 	public static final String SAVED_GAME_BOOLEAN_CHEAT_USED = "cheatUsed";
 	public static final String SAVED_GAME_BOOLEAN_VIEW_CARDS_VISIBLE = "viewCardsVisible";
 	public static final String SAVED_GAME_BOOLEAN_HAS_ACTED_BLIND_THIS_GAME = "hasActedBlindThisGame";
@@ -191,8 +183,6 @@ public interface Registry
 	public static final String SAVED_GAME_BOOLEAN_WEREWOLF = "werewolf";
 	public static final String SAVED_GAME_BOOLEAN_SPACEMAN = "spaceman";
 	public static final String SAVED_GAME_BOOLEAN_MATHEMATICIAN = "mathematician";
-	public static final String SAVED_GAME_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
-	public static final String SAVED_GAME_BOOLEAN_CARD_REVEAL = "cardReveal";
 	public static final String SAVED_GAME_BOOLEAN_REVEAL_LISTENER = "revealListener";
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT = "revealedDifferentSuit";
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT = "revealedSameSuit";
@@ -205,8 +195,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_OPPONENT_ONE_CARDS_TO_SUBTRACT = "opponentOneCardsToSubtract";
 	public static final String SAVED_GAME_INT_PLAYER_CARDS_TO_SUBTRACT = "playerCardsToSubtract";
 	public static final String SAVED_GAME_INT_CURRENT_PLAYER = "currentPlayer";
-	public static final String SAVED_GAME_INT_JOKER_QUANTITY = "jokerQuantity";
-	public static final String SAVED_GAME_INT_JOKER_VALUE = "jokerValue";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";

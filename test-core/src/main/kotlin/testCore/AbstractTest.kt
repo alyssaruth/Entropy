@@ -3,7 +3,6 @@ package testCore
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import com.github.alyssaburlton.swingtest.purgeWindows
 import io.kotest.assertions.fail
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -51,7 +50,6 @@ open class AbstractTest {
         }
 
         checkedForExceptions = false
-        purgeWindows()
     }
 
     fun getLastLog() = getLogRecords().last()

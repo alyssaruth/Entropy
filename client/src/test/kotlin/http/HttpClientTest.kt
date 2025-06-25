@@ -120,7 +120,7 @@ class HttpClientTest : AbstractTest() {
                 HttpStatus.CONFLICT,
                 """{"errorCode":"oh.dear","errorMessage":"a bid already exists"}""",
                 ClientErrorCode("oh.dear"),
-                "a bid already exists"
+                "a bid already exists",
             )
 
         val responseLog = verifyLog("http.response", Level.ERROR)
@@ -188,7 +188,8 @@ class HttpClientTest : AbstractTest() {
     @Test
     fun `Should handle JSON parse errors`() {
         val (client, server) = setUpWebServer()
-        val responseBody = """{
+        val responseBody =
+            """{
             "fieldOne": "foo",
         }"""
 

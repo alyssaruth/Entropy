@@ -46,7 +46,7 @@ public class VectropyScreen extends GameScreen<VectropyBidAction>
 	{
 		handPanel.displayAndHighlightHands(-1);
 		String result = VectropyUtil.getResult(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-						opponentThree.getHand(), jokerValue, -1, includeMoons, includeStars);
+						opponentThree.getHand(), settings.getJokerValue(), -1, settings.getIncludeMoons(), settings.getIncludeStars());
 		ScreenCache.get(MainScreen.class).setResultText("Result: " + result);
 	}
 

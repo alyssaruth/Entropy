@@ -18,7 +18,7 @@ class DevService {
                 ?: throw ClientException(
                     HttpStatusCode.BadRequest,
                     ClientErrorCode("invalidCommand"),
-                    "Command must be one of [${DevCommand.entries.map { it.value }}]"
+                    "Command must be one of [${DevCommand.entries.map { it.value }}]",
                 )
 
         when (command) {
@@ -43,22 +43,22 @@ class DevService {
 
         logger.info(
             "pool.config",
-            "Max [${workerPool.maximumPoolSize}], Core [${workerPool.corePoolSize}], KeepAlive [${workerPool.getKeepAliveTime(TimeUnit.SECONDS)}s]"
+            "Max [${workerPool.maximumPoolSize}], Core [${workerPool.corePoolSize}], KeepAlive [${workerPool.getKeepAliveTime(TimeUnit.SECONDS)}s]",
         )
 
         logger.info(
             "pool.state",
-            "Size [${workerPool.poolSize}], Active [${workerPool.activeCount}, Largest [${workerPool.largestPoolSize}]"
+            "Size [${workerPool.poolSize}], Active [${workerPool.activeCount}, Largest [${workerPool.largestPoolSize}]",
         )
 
         logger.info(
             "pool.completionStatus",
-            "Completed ${workerPool.completedTaskCount} / ${workerPool.taskCount}"
+            "Completed ${workerPool.completedTaskCount} / ${workerPool.taskCount}",
         )
 
         logger.info(
             "queue.state",
-            "Size [${blockQueue.size}], remaining capacity [${blockQueue.remainingCapacity()}]"
+            "Size [${blockQueue.size}], remaining capacity [${blockQueue.remainingCapacity()}]",
         )
     }
 

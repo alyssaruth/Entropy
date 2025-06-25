@@ -124,8 +124,8 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 			List<String> opponentOneHand = opponentOne.getHand();
 			List<String> opponentTwoHand = opponentTwo.getHand();
 			List<String> opponentThreeHand = opponentThree.getHand();
-			int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue, includeStars);
-			int perfectBidAmount = EntropyUtil.getPerfectBidAmount(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
+			int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, settings.getJokerValue(), settings.getIncludeStars());
+			int perfectBidAmount = EntropyUtil.getPerfectBidAmount(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, settings.getJokerValue());
 			String suit = CardsUtil.getSuitDesc(perfectBidAmount, perfectBidSuitCode);
 			return perfectBidAmount + " " + suit;
 		}

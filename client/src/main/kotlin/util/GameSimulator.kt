@@ -2,7 +2,6 @@ package util
 
 import game.BidAction
 import game.ChallengeAction
-import java.util.Random
 import `object`.Player
 import screen.ScreenCache.get
 import screen.SimulationDialog
@@ -13,12 +12,12 @@ class GameSimulator(private val params: SimulationParams) {
 
     private var lastBid: BidAction<*>? = null
 
-    private val opponentZero: Player = Player(0, "").also { it.name = "0" }
-    private val opponentOne: Player = Player(1, "").also { it.name = "1" }
-    private val opponentTwo: Player = Player(2, "").also { it.name = "2" }
-    private val opponentThree: Player = Player(3, "").also { it.name = "3" }
+    val opponentZero: Player = Player(0, "").also { it.name = "0" }
+    val opponentOne: Player = Player(1, "").also { it.name = "1" }
+    val opponentTwo: Player = Player(2, "").also { it.name = "2" }
+    val opponentThree: Player = Player(3, "").also { it.name = "3" }
 
-    private var playOrder = listOf(2, 3, 1, 0) // standard play order
+    var playOrder = listOf(0, 2, 3, 1) // standard play order
 
     /** Simulation methods */
     fun startNewGame(number: Int) {
@@ -46,39 +45,32 @@ class GameSimulator(private val params: SimulationParams) {
             initVariablesForSimulationNewRound()
 
             val playerToStart: Player = getPlayer(personToStart)
-            processOpponentTurn(playerToStart)
+            if (playerToStart.isEnabled) {
+                processOpponentTurn(playerToStart)
+            } else {
+                processOpponentTurn(nextPlayer(playerToStart))
+            }
         }
     }
 
     private fun populateHands(deck: List<String>) {
         log("Dealing hands...")
 
-        GameUtil.populateHand(opponentZero, deck, params.enableLogging)
-        GameUtil.populateHand(opponentOne, deck, params.enableLogging)
-        GameUtil.populateHand(opponentTwo, deck, params.enableLogging)
-        GameUtil.populateHand(opponentThree, deck, params.enableLogging)
+        allPlayers().forEach { GameUtil.populateHand(it, deck, params.enableLogging) }
     }
 
-    private tailrec fun computeRandomPersonToStart(): Int {
+    private fun computeRandomPersonToStart(): Int {
         if (params.forceStart) {
             return 0
         }
 
-        val result = Random().nextInt(4)
-        return if (getPlayer(result).isEnabled) {
-            result
-        } else {
-            computeRandomPersonToStart()
-        }
+        return allPlayers().filter(Player::isEnabled).random().playerNumber
     }
 
     private fun knockOutPlayers() {
         log("Knocking out players...")
 
-        knockOut(opponentZero)
-        knockOut(opponentOne)
-        knockOut(opponentTwo)
-        knockOut(opponentThree)
+        allPlayers().forEach(::knockOut)
     }
 
     private fun knockOut(player: Player) {
@@ -92,7 +84,7 @@ class GameSimulator(private val params: SimulationParams) {
         val stillAlive = allPlayers().filter { it.numberOfCards > 0 }
         if (stillAlive.size == 1) {
             val winner = stillAlive.first()
-            val perfectGame = winner.numberOfCards == params.settings.numberOfCards
+            val perfectGame = winner.numberOfCards == params.settings.startingCards
             get(SimulationDialog::class.java).recordWin(winner.playerNumber, perfectGame)
             return true
         }
@@ -102,11 +94,11 @@ class GameSimulator(private val params: SimulationParams) {
 
     private fun allPlayers() = playOrder.map(::getPlayer)
 
+    private fun allCards() = allPlayers().flatMap { it.hand }
+
     private fun processOpponentTurn(opponent: Player) {
         if (!opponent.isEnabled) {
-            val nextPlayerNumber = playOrder[opponent.playerNumber]
-            processOpponentTurn(getPlayer(nextPlayerNumber))
-            return
+            throw Exception("Trying to take turn for $opponent, but they're disabled")
         }
 
         log("*** Opponent $opponent ***")
@@ -124,19 +116,31 @@ class GameSimulator(private val params: SimulationParams) {
             processChallenge(opponent)
         } else {
             lastBid = action as BidAction<*>
-            val nextPlayerNumber = playOrder[opponent.playerNumber]
-            processOpponentTurn(getPlayer(nextPlayerNumber))
+            processOpponentTurn(nextPlayer(opponent))
         }
     }
 
-    private fun allCards() =
-        listOf(opponentZero.hand, opponentOne.hand, opponentTwo.hand, opponentThree.hand).flatten()
+    fun nextPlayer(opponent: Player): Player {
+        val currentPlayerIndex = playOrder.indexOf(opponent.playerNumber)
+        val nextIndices = (1..3).map { (currentPlayerIndex + it) % playOrder.size }
+        val nextPlayers = nextIndices.map { getPlayer(playOrder[it]) }.filter { it.isEnabled }
+
+        if (nextPlayers.isEmpty()) {
+            throw Exception(
+                "No valid next player found. Play order is $playOrder, currentPlayer is ${opponent.playerNumber}, nextIndices: $nextIndices"
+            )
+        }
+
+        return nextPlayers.first()
+    }
 
     private fun processChallenge(challenger: Player) {
         log("Challenged")
 
+        val lastBid = lastBid ?: throw Exception("Processing challenge with no lastBid")
+
         val dialog = get(SimulationDialog::class.java)
-        if (!lastBid!!.isOverbid(allCards(), params.settings)) {
+        if (!lastBid.isOverbid(allCards(), params.settings)) {
             log("not overbid")
             dialog.recordChallenge(challenger.playerNumber, false)
 
@@ -147,7 +151,8 @@ class GameSimulator(private val params: SimulationParams) {
             log("overbid")
             dialog.recordChallenge(challenger.playerNumber, true)
 
-            val bidder = allPlayers().first { it.name == lastBid?.playerName }
+            val name = lastBid.playerName
+            val bidder = getPlayer(name.toInt())
             bidder.cardsToSubtract = 1
             bidder.doSubtraction()
             personToStart = bidder.playerNumber
@@ -166,7 +171,7 @@ class GameSimulator(private val params: SimulationParams) {
         val opponentTwoCoeff = if (opponentTwoEnabled) 1 else 0
         val opponentThreeCoeff = if (opponentThreeEnabled) 1 else 0
 
-        val numberOfCards = params.settings.numberOfCards
+        val numberOfCards = params.settings.startingCards
         opponentZero.numberOfCards = numberOfCards
         opponentOne.numberOfCards = numberOfCards
         opponentTwo.numberOfCards = opponentTwoCoeff * numberOfCards
@@ -187,6 +192,8 @@ class GameSimulator(private val params: SimulationParams) {
             } else {
                 listOf(2, 3, 1, 0)
             }
+
+        log("Player order: $playOrder")
     }
 
     private fun initVariablesForSimulationNewRound() {
@@ -197,13 +204,7 @@ class GameSimulator(private val params: SimulationParams) {
         opponentTwo.resetHand()
         opponentThree.resetHand()
 
-        val deck =
-            CardsUtil.createAndShuffleDeck(
-                params.settings.jokerQuantity,
-                params.settings.includeMoons,
-                params.settings.includeStars,
-                params.settings.negativeJacks,
-            )
+        val deck = CardsUtil.createAndShuffleDeck(params.settings)
 
         populateHands(deck)
     }
@@ -214,21 +215,18 @@ class GameSimulator(private val params: SimulationParams) {
         }
     }
 
-    private fun getStrategyParms(opponent: Player): StrategyParms {
-        val stratParms: StrategyParms = params.toStrategyParams()
-        stratParms.lastBid = lastBid
-        stratParms.opponentOneCards = opponentOne.numberOfCards
-        stratParms.opponentTwoCards = opponentTwo.numberOfCards
-        stratParms.opponentThreeCards = opponentThree.numberOfCards
-        stratParms.playerCards = opponentZero.numberOfCards
+    private fun getStrategyParms(opponent: Player): StrategyParams {
+        val totalCards = allPlayers().sumOf(Player::getNumberOfCards)
+        val otherPlayers = allPlayers().filterNot { it == opponent }
+        val cardsOnShow = otherPlayers.flatMap { it.revealedCards }
 
-        // Set the cards revealed
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentZero)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentOne)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentTwo)
-        stratParms.appendCardsOnShowFromOpponent(opponent, opponentThree)
-
-        return stratParms
+        return StrategyParams(
+            params.settings,
+            totalCards,
+            cardsOnShow,
+            lastBid,
+            params.enableLogging,
+        )
     }
 
     private fun getPlayer(playerNumber: Int) =

@@ -13,6 +13,8 @@ import utils.CoreGlobals;
 import javax.swing.*;
 import java.util.Timer;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
@@ -24,13 +26,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 								 			Registry
 {
 	//Common variables
-	private GameSettings settings = null;
-	private int numberOfCards = 5;
+	protected GameSettings settings = null;
 	private int totalNumberOfCards;
 	private int personToStart = -1;
 	private Player currentPlayer = null;
-	private int jokerQuantity = -1;
-	public int jokerValue = -1;
 	private int handicapAmount;
 
 	protected B lastBid = null;
@@ -45,9 +44,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 
 	private boolean earnedSpectator = false;
 	public boolean earnedPsychic = false;
-	public boolean includeStars = false;
-	public boolean includeMoons = false;
-	private boolean negativeJacks = false;
 	private boolean currentlyOnChallenge = false;
 	public boolean cheatUsed = false;
 	
@@ -112,8 +108,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void startRound()
 	{
-		List<String> deck = CardsUtil.createAndShuffleDeck(jokerQuantity, includeMoons,
-														   includeStars, negativeJacks);
+		List<String> deck = CardsUtil.createAndShuffleDeck(settings);
 		populateHands(deck);
 		displayHands();
 		
@@ -191,7 +186,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		bidPanel.showBidPanel(true);
 		setRandomPersonToStart();
 		
-		Debug.append("numberOfCards = " + numberOfCards, logging);
+		Debug.append("numberOfCards = " + settings.getStartingCards(), logging);
 	}
 	
 	private void resetPlayers()
@@ -209,9 +204,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		lastBid = null;
 		totalNumberOfCards = player.getNumberOfCards() + opponentOne.getNumberOfCards() 
 						   + opponentTwo.getNumberOfCards() + opponentThree.getNumberOfCards();
-		
-		int maxBid = GameUtil.getMaxBid(jokerQuantity, jokerValue, totalNumberOfCards, negativeJacks);
-		bidPanel.init(maxBid, totalNumberOfCards, false, includeMoons, includeStars, false);
+
+		int maxBid = GameUtil.getMaxBid(settings, totalNumberOfCards);
+		bidPanel.init(maxBid, totalNumberOfCards, false, settings.getIncludeMoons(), settings.getIncludeStars(), false);
 		
 		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.removeAllElements();
@@ -316,9 +311,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void getNewGameVariablesFromRegistry()
 	{
-		numberOfCards = prefs.getInt(SHARED_INT_NUMBER_OF_CARDS, 5);
-		jokerQuantity = prefs.getInt(PREFERENCES_INT_JOKER_QUANTITY, 2);
-		jokerValue = prefs.getInt(PREFERENCES_INT_JOKER_VALUE, 2);
 		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
 		playWithHandicap = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, false);
 		handicapAmount = prefs.getInt(PREFERENCES_INT_HANDICAP_AMOUNT, 1);
@@ -327,9 +319,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		opponentOne.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, "Basic"));
 		opponentTwo.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, "Basic"));
 		opponentThree.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, "Basic"));
-		includeStars = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_STARS, false);
-		includeMoons = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, false);
-		negativeJacks = prefs.getBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, false);
 
 		settings = GameSettings.fromRegistry(prefs, getGameMode());
 
@@ -349,11 +338,11 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void initNumberOfCards() 
 	{
-		opponentOne.setNumberOfCards(numberOfCards);
-		opponentTwo.setNumberOfCards(opponentTwo.isEnabled()? numberOfCards:0);
-		opponentThree.setNumberOfCards(opponentThree.isEnabled()? numberOfCards:0);
+		opponentOne.setNumberOfCards(settings.getStartingCards());
+		opponentTwo.setNumberOfCards(opponentTwo.isEnabled()? settings.getStartingCards():0);
+		opponentThree.setNumberOfCards(opponentThree.isEnabled()? settings.getStartingCards():0);
 		int handicapCoeff = playWithHandicap? 1:0;
-		player.setNumberOfCards(numberOfCards - (handicapCoeff * handicapAmount));
+		player.setNumberOfCards(settings.getStartingCards() - (handicapCoeff * handicapAmount));
 		
 		totalNumberOfCards = player.getNumberOfCards() + opponentOne.getNumberOfCards() 
 						   + opponentTwo.getNumberOfCards() + opponentThree.getNumberOfCards();
@@ -491,8 +480,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		inGameReplay.putInt(REPLAY_INT_HANDICAP_AMOUNT, handicapAmount);
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_HAS_ACTED_BLIND_THIS_GAME, hasActedBlindThisGame);
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_HAS_VIEWED_HAND_THIS_GAME, handPanel.getHasViewedHandThisGame());
-		inGameReplay.putBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, includeMoons);
-		inGameReplay.putBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, includeStars);
+		inGameReplay.putBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, settings.getIncludeMoons());
+		inGameReplay.putBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, settings.getIncludeStars());
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_CHEAT_USED, cheatUsed);
 		
 		//save the player hands
@@ -511,7 +500,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		inGameReplay.put(REPLAY_STRING_OPPONENT_ONE_NAME, handPanel.getOpponentOneName());
 		inGameReplay.put(REPLAY_STRING_OPPONENT_TWO_NAME, handPanel.getOpponentTwoName());
 		inGameReplay.put(REPLAY_STRING_OPPONENT_THREE_NAME, handPanel.getOpponentThreeName());
-		inGameReplay.putInt(REPLAY_INT_JOKER_VALUE, jokerValue);
+		inGameReplay.putInt(REPLAY_INT_JOKER_VALUE, settings.getJokerValue());
 		
 		//save who is enabled
 		inGameReplay.putBoolean(roundsSoFar + REPLAY_BOOLEAN_PLAYER_ENABLED, player.isEnabled());
@@ -529,7 +518,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	{
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, true);
 		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
-		
+
+		//settings
+		settings.exportToRegistry(savedGame);
+
 		//save the listmodel
 		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
@@ -596,16 +588,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_HAS_VIEWED_HAND_THIS_GAME, handPanel.getHasViewedHandThisGame());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_VIEW_CARDS_VISIBLE, handPanel.isPlayingBlind());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_HAS_OVERBID, hasOverbid);
-		savedGame.putBoolean(SAVED_GAME_BOOLEAN_INCLUDE_STARS, includeStars);
-		savedGame.putBoolean(SAVED_GAME_BOOLEAN_INCLUDE_MOONS, includeMoons);
-		savedGame.putBoolean(SAVED_GAME_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
-		savedGame.putBoolean(SHARED_BOOLEAN_CARD_REVEAL, settings.getCardReveal());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_CHEAT_USED, cheatUsed);
 		
 		//other stuff
 		savedGame.putInt(SAVED_GAME_INT_MAX_BID, bidPanel.getMaxBid());
-		savedGame.putInt(SAVED_GAME_INT_JOKER_VALUE, jokerValue);
-		savedGame.putInt(SAVED_GAME_INT_JOKER_QUANTITY, jokerQuantity);
 		savedGame.putInt(SAVED_GAME_INT_HANDICAP_AMOUNT, handicapAmount);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_REVEAL_LISTENER, handPanel.isRevealListenerActive());
 	}
@@ -618,14 +604,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		try
 		{
 			//set up deck stuff
-			jokerValue = savedGame.getInt(SAVED_GAME_INT_JOKER_VALUE, 2);
-			jokerQuantity = savedGame.getInt(SAVED_GAME_INT_JOKER_QUANTITY, 2);
-			includeStars = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_STARS, false);
-			includeMoons = savedGame.getBoolean(SAVED_GAME_BOOLEAN_INCLUDE_MOONS, false);
-			negativeJacks = savedGame.getBoolean(SAVED_GAME_BOOLEAN_NEGATIVE_JACKS, false);
+			settings = GameSettings.fromRegistry(savedGame, getGameMode());
 			cheatUsed = savedGame.getBoolean(SAVED_GAME_BOOLEAN_CHEAT_USED, false);
 			settings = GameSettings.fromRegistry(savedGame, getGameMode());
-			
+
 			resetPlayers();
 			loadLastBid();
 			initialiseBidPanel();
@@ -773,6 +755,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	protected String getMaxBidsStr()
 	{
+		var jokerValue = settings.getJokerValue();
 		List<String> playerHand = player.getHand();
 		List<String> opponentOneHand = opponentOne.getHand();
 		List<String> opponentTwoHand = opponentTwo.getHand();
@@ -787,14 +770,14 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		
 		String maxStr = maxClubs + "c, " + maxDiamonds + "d, " + maxHearts + "h, ";
 		
-		if (includeMoons)
+		if (settings.getIncludeMoons())
 		{
 			maxStr += maxMoons + "m, ";
 		}
 		
 		maxStr += maxSpades + "s";
 		
-		if (includeStars)
+		if (settings.getIncludeStars())
 		{
 			maxStr += ", " + maxStars + "x";
 		}
@@ -1070,32 +1053,17 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	public int countSuit(int suitCode)
 	{
 		return CardsUtil.countSuit(suitCode, player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-								   opponentThree.getHand(), jokerValue);
+								   opponentThree.getHand(), settings.getJokerValue());
 	}
 	
-	public StrategyParms factoryStrategyParms(Player opponent)
+	public StrategyParams factoryStrategyParms(Player opponent)
 	{
-		StrategyParms parms = new StrategyParms();
-		parms.setGameMode(getGameMode());
-		parms.setIncludeMoons(includeMoons);
-		parms.setIncludeStars(includeStars);
-		parms.setNegativeJacks(negativeJacks);
-		parms.setCardReveal(settings.getCardReveal());
-		parms.setJokerQuantity(jokerQuantity);
-		parms.setJokerValue(jokerValue);
-		
-		parms.setLastBid(lastBid);
-		parms.setPlayerCards(player.getNumberOfCards());
-		parms.setOpponentOneCards(opponentOne.getNumberOfCards());
-		parms.setOpponentTwoCards(opponentTwo.getNumberOfCards());
-		parms.setOpponentThreeCards(opponentThree.getNumberOfCards());
-		
-		parms.appendCardsOnShowFromOpponent(opponent, player);
-		parms.appendCardsOnShowFromOpponent(opponent, opponentOne);
-		parms.appendCardsOnShowFromOpponent(opponent, opponentTwo);
-		parms.appendCardsOnShowFromOpponent(opponent, opponentThree);
-		
-		return parms;
+		var cardsOnShow = Stream.of(player, opponentOne, opponentTwo, opponentThree)
+				.filter(p -> p != opponent)
+				.flatMap(p -> p.getRevealedCards().stream())
+				.collect(Collectors.toList());
+
+		return new StrategyParams(settings, totalNumberOfCards, cardsOnShow, lastBid, true);
 	}
 	
 	public void fireAppearancePreferencesChange()
@@ -1206,9 +1174,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		{
 			Debug.appendBanner("Opponent " + opponent, logging);
 			
-			StrategyParms parms = factoryStrategyParms(opponent);
-			PlayerAction action = CpuStrategies.processOpponentTurn(parms, opponent);
-			if (action == null)
+			StrategyParams parms = factoryStrategyParms(opponent);
+            PlayerAction action = CpuStrategies.processOpponentTurn(parms, opponent);
+            if (action == null)
 			{
 				//Something's gone wrong - probably an API strategy that timed out or did something invalid. 
 				String info = opponent.getName() + " has had their strategy reset to "

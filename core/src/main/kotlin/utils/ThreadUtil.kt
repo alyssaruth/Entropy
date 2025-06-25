@@ -18,7 +18,7 @@ fun dumpThreadStacks() {
             logger.info(
                 "threadStack",
                 "${thread.name} ($state)",
-                KEY_STACK to extractThreadStack(stack)
+                KEY_STACK to extractThreadStack(stack),
             )
         }
     }

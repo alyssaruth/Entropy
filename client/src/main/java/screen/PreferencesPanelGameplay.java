@@ -200,32 +200,32 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		includeStars = cbIncludeStars.isSelected();
 		includeMoons = cbIncludeMoons.isSelected();
 
-		prefs.putInt(PREFERENCES_INT_NUMBER_OF_CARDS, numberOfCards);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
-		prefs.putInt(PREFERENCES_INT_JOKER_QUANTITY, jokerQuantity);
-		prefs.putInt(PREFERENCES_INT_JOKER_VALUE, jokerValue);
+		prefs.putInt(SHARED_INT_NUMBER_OF_CARDS, numberOfCards);
+		prefs.putBoolean(SHARED_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
+		prefs.putInt(SHARED_INT_JOKER_QUANTITY, jokerQuantity);
+		prefs.putInt(SHARED_INT_JOKER_VALUE, jokerValue);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);
 		prefs.putInt(PREFERENCES_INT_HANDICAP_AMOUNT, handicapAmount);
 		prefs.putBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, playBlind);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_STARS, includeStars);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, includeMoons);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, cardReveal);
+		prefs.putBoolean(SHARED_BOOLEAN_INCLUDE_STARS, includeStars);
+		prefs.putBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, includeMoons);
+		prefs.putBoolean(SHARED_BOOLEAN_CARD_REVEAL, cardReveal);
 		prefs.put(PREFERENCES_STRING_GAME_MODE, gameMode.name());
 	}
 	
 	private void getVariablesFromPreferences()
 	{
-		numberOfCards = prefs.getInt(PREFERENCES_INT_NUMBER_OF_CARDS, 5);
-		jokerQuantity = prefs.getInt(PREFERENCES_INT_JOKER_QUANTITY, 2);
+		numberOfCards = prefs.getInt(SHARED_INT_NUMBER_OF_CARDS, 5);
+		jokerQuantity = prefs.getInt(SHARED_INT_JOKER_QUANTITY, 2);
 		includeJokers = jokerQuantity > 0;
-		jokerValue = prefs.getInt(PREFERENCES_INT_JOKER_VALUE, 2);
+		jokerValue = prefs.getInt(SHARED_INT_JOKER_VALUE, 2);
 		playWithHandicap = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, false);
 		handicapAmount = Math.max(prefs.getInt(PREFERENCES_INT_HANDICAP_AMOUNT, 1), 1);
 		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
-		includeStars = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_STARS, false);
-		includeMoons = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_MOONS, false);
-		negativeJacks = prefs.getBoolean(PREFERENCES_BOOLEAN_NEGATIVE_JACKS, false);
-		cardReveal = prefs.getBoolean(PREFERENCES_BOOLEAN_CARD_REVEAL, false);
+		includeStars = prefs.getBoolean(SHARED_BOOLEAN_INCLUDE_STARS, false);
+		includeMoons = prefs.getBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, false);
+		negativeJacks = prefs.getBoolean(SHARED_BOOLEAN_NEGATIVE_JACKS, false);
+		cardReveal = prefs.getBoolean(SHARED_BOOLEAN_CARD_REVEAL, false);
 		gameMode = GameMode.valueOf(prefs.get(PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
 	}
 	

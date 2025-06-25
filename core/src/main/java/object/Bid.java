@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import org.w3c.dom.Element;
 
 import util.CardsUtil;
@@ -23,7 +24,7 @@ public abstract class Bid
 	public abstract boolean higherThan(Bid bid);
 	public abstract boolean isOverAchievementThreshold();
 	public abstract boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-									  int jokerValue, boolean includeMoons, boolean includeStars);
+									  GameSettings settings);
 	public abstract boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue);
 	public abstract boolean isOverbid(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour, int jokerValue);
 	
@@ -80,15 +81,14 @@ public abstract class Bid
 		return xmlStr;
 	}
 	
-	public boolean isPerfect(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue,
-							 boolean includeMoons, boolean includeStars)
+	public boolean isPerfect(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, GameSettings settings)
 	{
 		List<String> handOne = hmHandByPlayerNumber.get(0);
 		List<String> handTwo = hmHandByPlayerNumber.get(1);
 		List<String> handThree = hmHandByPlayerNumber.get(2);
 		List<String> handFour = hmHandByPlayerNumber.get(3);
 		
-		return isPerfect(handOne, handTwo, handThree, handFour, jokerValue, includeMoons, includeStars);
+		return isPerfect(handOne, handTwo, handThree, handFour, settings);
 	}
 	
 	public boolean isChallenge()

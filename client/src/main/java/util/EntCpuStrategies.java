@@ -31,12 +31,12 @@ public class EntCpuStrategies
 		return allStrategies;
 	}
 	
-	public static PlayerAction processOpponentTurn(Player opponent, StrategyParms parms)
+	public static PlayerAction processOpponentTurn(Player opponent, StrategyParams parms)
 	{
 		String strategy = opponent.getStrategy();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
-	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParms parms)
+	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
 	{
 		if (strategy.equals(CpuStrategies.STRATEGY_BASIC))
 		{
@@ -60,19 +60,20 @@ public class EntCpuStrategies
 		}
 	}
 	
-	private static PlayerAction processMarkTurn(Player opponent, StrategyParms parms)
+	private static PlayerAction processMarkTurn(Player opponent, StrategyParams parms)
 	{
+        var settings = parms.getSettings();
 		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
 		
 		Random rand = new Random();
 		List<String> hand = opponent.getHand();
 		
 		//Parms
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
-		int jokerValue = parms.getJokerValue();
-		int jokerQuantity = parms.getJokerQuantity();
-		double totalCards = parms.getTotalNumberOfCards();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
+		int jokerValue = settings.getJokerValue();
+		int jokerQuantity = settings.getJokerQuantity();
+		double totalCards = parms.getCardsInPlay();
 		boolean logging = parms.getLogging();
 		
 		Debug.append("Mark strategy for this turn", logging);
@@ -293,13 +294,14 @@ public class EntCpuStrategies
 		}
 	}
 	
-	private static PlayerAction processBasicTurn(Player opponent, StrategyParms parms)
+	private static PlayerAction processBasicTurn(Player opponent, StrategyParams parms)
 	{
 		//Parms
+        var settings = parms.getSettings();
 		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
-		int jokerValue = parms.getJokerValue();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
+		int jokerValue = settings.getJokerValue();
 		boolean logging = parms.getLogging();
 		
 		Debug.append("Basic strategy for this turn", logging);
@@ -326,7 +328,7 @@ public class EntCpuStrategies
 			Suit bidSuitFacedWith = bid.getSuit();
 			
 			int bidSuitCount = countSuit(bidSuitFacedWith, hand, jokerValue);
-			double totalCards = parms.getTotalNumberOfCards();
+			double totalCards = parms.getCardsInPlay();
 
 			int thirdThreshold = (int) Math.floor(totalCards/3.5);
 			int halfThreshold = (int) Math.ceil(totalCards/2);
@@ -385,21 +387,22 @@ public class EntCpuStrategies
 		}
 	}
 	
-	private static PlayerAction processEvTurnAndRevealCard(Player opponent, StrategyParms parms)
+	private static PlayerAction processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
 	{
 		PlayerAction bid = processEvTurn(opponent, parms);
-		CpuStrategies.setCardToReveal(bid, parms, opponent);
+		CpuStrategies.setCardToReveal(bid, parms.getSettings(), opponent);
 		return bid;
 	}
 	
-	private static PlayerAction processEvTurn(Player opponent, StrategyParms parms)
+	private static PlayerAction processEvTurn(Player opponent, StrategyParams parms)
 	{
 		//Parms
+        var settings = parms.getSettings();
 		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
-		int totalCards = parms.getTotalNumberOfCards();
-		boolean includeMoons = parms.getIncludeMoons();
-		boolean includeStars = parms.getIncludeStars();
-		int jokerValue = parms.getJokerValue();
+		int totalCards = settings.getCardsInPlay();
+		boolean includeMoons = settings.getIncludeMoons();
+		boolean includeStars = settings.getIncludeStars();
+		int jokerValue = settings.getJokerValue();
 		boolean logging = parms.getLogging();
 		
 		Debug.append("EV strategy for this turn", logging);
@@ -410,7 +413,7 @@ public class EntCpuStrategies
 		if (bid == null)
 		{
 			Debug.append("Starting this round", logging);
-			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms);
+			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
 			
 			var suit = Suit.random(includeMoons, includeStars);
 			double suitEv = hmEvBySuit.get(suit);
@@ -424,7 +427,7 @@ public class EntCpuStrategies
 		else
 		{
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
-			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms);
+			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
 			
 			int bidAmountFacedWith = bid.getAmount();
 			var bidSuitFacedWith = bid.getSuit();
@@ -477,7 +480,7 @@ public class EntCpuStrategies
 				{
 					//bit friggy - special case for being up against one card. Don't bid higher if it means you need them to have the ace/joker.
 					suit = Integer.parseInt(suitsWithMax.substring(suitsToChooseFrom-1, suitsToChooseFrom));
-					int bidAmount = EntropyUtil.amountRequiredToBidInSuit(suit, bidSuitCodeFacedWith, bidAmountFacedWith);
+					int bidAmount = EntropyUtil.amountRequiredToBidInSuit(suit, bidSuitFacedWith, bidAmountFacedWith);
 					int amountRequiredInOneCard = bidAmount - CardsUtil.countSuit(hand, suit, jokerValue);
 					
 					if (amountRequiredInOneCard < 2)

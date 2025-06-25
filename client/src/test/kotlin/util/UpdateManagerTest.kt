@@ -9,6 +9,10 @@ import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
+import getDialogMessage
+import getErrorDialog
+import getInfoDialog
+import getQuestionDialog
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -29,19 +33,14 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import runAsync
 import screen.LoadingDialog
-import testCore.AbstractTest
 import testCore.assertDoesNotExit
 import testCore.assertExits
-import testCore.getDialogMessage
-import testCore.getErrorDialog
-import testCore.getInfoDialog
-import testCore.getQuestionDialog
-import testCore.runAsync
 
-class UpdateManagerTest : AbstractTest() {
+class UpdateManagerTest : AbstractClientTest() {
     @BeforeEach
-    fun beforeEach() {
+    fun resetUnirest() {
         Unirest.config().reset()
         Unirest.config().socketTimeout(2000)
     }

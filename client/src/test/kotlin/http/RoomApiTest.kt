@@ -4,6 +4,8 @@ import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
 import com.github.alyssaburlton.swingtest.shouldBeVisible
 import com.github.alyssaburlton.swingtest.shouldNotBeVisible
+import getDialogMessage
+import getErrorDialog
 import getMessages
 import http.Routes.JOIN_ROOM
 import http.Routes.LEAVE_ROOM
@@ -24,17 +26,15 @@ import online.screen.EntropyLobby
 import online.screen.GameRoom
 import org.apache.http.HttpStatus
 import org.junit.jupiter.api.Test
+import runAsync
 import screen.HandPanelMk2
 import screen.ScreenCache
-import testCore.AbstractTest
-import testCore.getDialogMessage
-import testCore.getErrorDialog
 import testCore.makeJoinRoomResponse
 import testCore.makeRoomStateResponse
 import testCore.makeRoomSummary
-import testCore.runAsync
+import util.AbstractClientTest
 
-class RoomApiTest : AbstractTest() {
+class RoomApiTest : AbstractClientTest() {
     @Test
     fun `Should POST to join a room and launch if successful`() {
         ScreenCache.get<EntropyLobby>().username = "Leah"
@@ -160,7 +160,7 @@ class RoomApiTest : AbstractTest() {
             httpClient.doCall<RoomStateResponse>(
                 HttpMethod.POST,
                 STAND_UP,
-                SimpleRoomRequest(room.id)
+                SimpleRoomRequest(room.id),
             )
         }
 

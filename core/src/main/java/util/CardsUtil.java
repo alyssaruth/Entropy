@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import object.SuitWrapper;
 
 public class CardsUtil
@@ -92,13 +93,11 @@ public class CardsUtil
 	 * Overloading to allow the seed to be passed through from the Server, allowing this to be secure.
 	 * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
 	 */
-	public static List<String> createAndShuffleDeck(int jokerQuantity,
-	  boolean includeMoons, boolean includeStars, boolean negativeJacks)
+	public static List<String> createAndShuffleDeck(GameSettings settings)
 	{
-		return createAndShuffleDeck(jokerQuantity, includeMoons, includeStars, negativeJacks, -1);
+		return createAndShuffleDeck(settings, -1);
 	}
-	public static List<String> createAndShuffleDeck(int jokerQuantity,
-	 boolean includeMoons, boolean includeStars, boolean negativeJacks, long seed)
+	public static List<String> createAndShuffleDeck(GameSettings settings, long seed)
 	{
 		// Creating the pack of cards
 		List<String> list = new ArrayList<>();
@@ -108,18 +107,18 @@ public class CardsUtil
 		suits.add("h");
 		suits.add("s");
 		
-		if (includeMoons)
+		if (settings.getIncludeMoons())
 		{
 			suits.add("m");
 		}
 		
-		if (includeStars)
+		if (settings.getIncludeStars())
 		{
 			suits.add("x");
 		}
 		
 		String jackStr = "J";
-		if (negativeJacks)
+		if (settings.getNegativeJacks())
 		{
 			jackStr = "-J";
 		}
@@ -136,7 +135,7 @@ public class CardsUtil
 			}
 		}
 
-		for (int i=0; i<jokerQuantity; i++)
+		for (int i=0; i<settings.getJokerQuantity(); i++)
 		{
 			list.add("Jo" + i); //i.e. Joc, Jod, Joh, Jos, but more generic
 		}

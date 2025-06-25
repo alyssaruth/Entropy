@@ -1,5 +1,6 @@
 package util;
 
+import game.GameSettings;
 import object.Player;
 import screen.HandPanelMk2;
 
@@ -52,17 +53,18 @@ public class GameUtil
 		}
 	}
 	
-	public static int getMaxBid(int jokerQuantity, int jokerValue,
-	  int totalNumberOfCards, boolean negativeJacks)
+	public static int getMaxBid(GameSettings settings, int totalNumberOfCards)
 	{
 		int theoreticalMaxBid = 0;
 
 		int maxWithoutJokers = 17; //(12*1) + (1*2) + (3*1)
-		if (negativeJacks)
+		if (settings.getNegativeJacks())
 		{
 			maxWithoutJokers = 16; //When J not present - (11*1) + (1*2) + (3*1)
 		}
-		
+
+		var jokerQuantity = settings.getJokerQuantity();
+		var jokerValue = settings.getJokerValue();
 		if (jokerQuantity > 0)
 		{
 			int maxJokerQuantity = Math.min(jokerQuantity, totalNumberOfCards);

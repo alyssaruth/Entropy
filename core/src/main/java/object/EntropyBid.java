@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import game.GameSettings;
 import org.w3c.dom.Element;
 
 import util.CardsUtil;
@@ -117,10 +118,10 @@ public class EntropyBid extends Bid
 	
 	@Override
 	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-							 int jokerValue, boolean includeMoons, boolean includeStars) 
+							 GameSettings settings)
 	{
-		int perfectBidAmount = EntropyUtil.getPerfectBidAmount(handOne, handTwo, handThree, handFour, jokerValue);
-		int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(handOne, handTwo, handThree, handFour, jokerValue, includeStars);
+		int perfectBidAmount = EntropyUtil.getPerfectBidAmount(handOne, handTwo, handThree, handFour, settings.getJokerValue());
+		int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(handOne, handTwo, handThree, handFour, settings.getJokerValue(), settings.getIncludeStars());
 		
 		return bidSuitCode == perfectBidSuitCode && bidAmount == perfectBidAmount;
 	}

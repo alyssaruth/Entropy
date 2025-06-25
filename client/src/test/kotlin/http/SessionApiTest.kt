@@ -3,6 +3,9 @@ package http
 import com.github.alyssaburlton.swingtest.clickNo
 import com.github.alyssaburlton.swingtest.clickYes
 import com.github.alyssaburlton.swingtest.flushEdt
+import getDialogMessage
+import getErrorDialog
+import getQuestionDialog
 import http.Routes.BEGIN_SESSION
 import http.dto.BeginSessionRequest
 import http.dto.BeginSessionResponse
@@ -18,9 +21,6 @@ import mockHttpClient
 import online.screen.EntropyLobby
 import org.junit.jupiter.api.Test
 import screen.ScreenCache
-import testCore.getDialogMessage
-import testCore.getErrorDialog
-import testCore.getQuestionDialog
 import testCore.verifyNotCalled
 import util.AbstractClientTest
 import util.ClientGlobals
