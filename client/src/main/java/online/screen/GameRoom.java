@@ -1,9 +1,6 @@
 package online.screen;
 
-import game.BidAction;
-import game.ChallengeAction;
-import game.GameMode;
-import game.GameSettings;
+import game.*;
 import http.dto.RoomSummary;
 import object.*;
 import online.util.XmlBuilderClient;
@@ -66,14 +63,14 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	
 	private ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber = new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Integer, List<String>> hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
-	public ConcurrentHashMap<Integer, Bid> hmBidByPlayerNumber = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<Integer, B> hmBidByPlayerNumber = new ConcurrentHashMap<>();
 	private int personToStartLocal = -1;
 	private int personToStart = -1;
 	public int lastPlayerToAct = 0;
 	private OnlineChatPanel chatPanel = null;
 	public Preferences replay = null;
 	public ReplayDialog replayDialog = new ReplayDialog();
-	public BidPanel bidPanel = null;
+	public BidPanel<B> bidPanel = null;
 	
 	public GameRoom(UUID id, String roomName, GameSettings settings, int players)
 	{
@@ -769,7 +766,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		handPanel.displayHandsOnline(hmHandByAdjustedPlayerNumber);
 		handPanel.setInitted(true);
 		
-		Bid lastBid = hmBidByPlayerNumber.get(lastPlayerToAct);
+		PlayerAction lastBid = hmBidByPlayerNumber.get(lastPlayerToAct);
 		if (lastBid != null)
 		{
 			handleBid(lastPlayerToAct, lastBid);
@@ -781,39 +778,39 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		hmHandByAdjustedPlayerNumber.clear();
 	}
 	
-	public void handleBid(int playerNumber, BidAction bid)
+	public void handleBid(int playerNumber, PlayerAction action)
 	{	
 		int playerNumberAdjusted = adjustForMe(playerNumber);
 		Player player = hmPlayerByAdjustedPlayerNumber.get(playerNumberAdjusted);
-		if (player != null)
-		{
-			bid.setPlayer(player);
-		}
 		
-		addBidToBidBox(playerNumberAdjusted, bid);
+		addBidToBidBox(playerNumberAdjusted, action);
 		handPanel.selectPlayerInAwtThread(playerNumberAdjusted, false);
 		
-		if (bid instanceof ChallengeAction
-		  || bid.isIllegal())
+		if (action instanceof ChallengeAction
+		  || action instanceof IllegalAction)
 		{
 			processChallengeOrIllegal();
 			return;
 		}
+
+		if (!(action instanceof BidAction)) {
+			throw new RuntimeException("Wtf");
+		}
 		
 		lastPlayerToAct = playerNumber;
-		lastBid = bid;
-		hmBidByPlayerNumber.put(playerNumber, bid);
+		lastBid = (B)action;
+		hmBidByPlayerNumber.put(playerNumber, lastBid);
 		
 		if (playerNumber != this.playerNumber
 		  && !observer)
 		{
-			bidPanel.adjust(bid);
+			bidPanel.adjust(lastBid);
 		}
 		
 		if (settings.getCardReveal())
 		{
-			String card = bid.getCardToReveal();
-			if (!card.isEmpty())
+			String card = lastBid.getCardToReveal();
+			if (card != null)
 			{
 				handPanel.revealCard(card);
 				player.addRevealedCard(card);
