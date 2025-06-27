@@ -1,14 +1,11 @@
 package util;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.prefs.Preferences;
 
 import game.Suit;
 import object.VectropyBid;
 
 import static game.CardsUtilKt.countSuit;
-import static game.CardsUtilKt.extractCards;
 
 public class VectropyUtil 
 {
@@ -27,13 +24,6 @@ public class VectropyUtil
 			|| bid.getMoons() > maxMoons
 			|| bid.getSpades() > maxSpades
 			|| bid.getStars() > maxStars;
-	}
-	
-	public static String getResult(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue, Suit suit,
-								   boolean includeMoons, boolean includeStars)
-	{
-		
-		return getResult(extractCards(hmHandByPlayerNumber), jokerValue, suit, includeMoons, includeStars);
 	}
 	
 	public static String getResult(List<String> cards, int jokerValue, Suit suit, boolean includeMoons, boolean includeStars)
@@ -114,60 +104,34 @@ public class VectropyUtil
 		return ret;
 	}
 	
-	public static double[] getDifferenceVector(VectropyBid bid, List<String> hand, int jokerValue,
-											   boolean includeMoons, boolean includeStars)
+	public static HashMap<Suit, Integer> getDifferenceMap(VectropyBid bid, List<String> hand, int jokerValue,
+											boolean includeMoons, boolean includeStars)
 	{
-		int clubsCount = CardsUtil.countClubs(hand, jokerValue) - bid.getClubs();
-		int diamondsCount = CardsUtil.countDiamonds(hand, jokerValue) - bid.getDiamonds();
-		int heartsCount = CardsUtil.countHearts(hand, jokerValue) - bid.getHearts();
-		int moonsCount = CardsUtil.countMoons(hand, jokerValue) - bid.getMoons();
-		int spadesCount = CardsUtil.countSpades(hand, jokerValue) - bid.getSpades();
-		int starsCount = CardsUtil.countStars(hand, jokerValue) - bid.getStars();
-		
-		if (includeMoons && includeStars)
-		{
-			double[] diffVector = {clubsCount, diamondsCount, heartsCount, moonsCount, spadesCount, starsCount};
-			return diffVector;
-		}
-		else if (includeMoons)
-		{
-			double[] diffVector = {clubsCount, diamondsCount, heartsCount, moonsCount, spadesCount};
-			return diffVector;
-		}
-		else if (includeStars)
-		{
-			double[] diffVector = {clubsCount, diamondsCount, heartsCount, spadesCount, starsCount};
-			return diffVector;
-		}
-		else
-		{
-			double[] diffVector = {clubsCount, diamondsCount, heartsCount, spadesCount};
-			return diffVector;
-		}
+		var suits = Suit.filter(includeMoons, includeStars);
+		var map = new HashMap<Suit, Integer>();
+		suits.forEach((Suit suit) -> {
+			var count = countSuit(suit, hand, jokerValue) - bid.getAmount(suit);
+			map.put(suit, count);
+		});
+
+		return map;
 	}
 	
-	public static int getSuitWithMostPositiveDifference(double[] diffVector, boolean includeMoons)
+	public static Suit getSuitWithMostPositiveDifference(HashMap<Suit, Integer> diffMap)
 	{
-		int index = 0;
+		Suit suit = null;
 		double difference = -1000;
 		
-		for (int i=0; i<diffVector.length; i++)
+		for (Map.Entry<Suit, Integer> entry : diffMap.entrySet())
 		{
-			if (diffVector[i] >= difference)
+			if (entry.getValue() >= difference)
 			{
-				difference = diffVector[i];
-				index = i;
+				difference = entry.getValue();
+				suit = entry.getKey();
 			}
 		}
-		
-		if (!includeMoons && index >= Suit.Moons)
-		{
-			return index + 1;
-		}
-		else
-		{
-			return index;
-		}
+
+		return suit;
 	}
 	
 	public static boolean canSeeBid(double[] diffVector)

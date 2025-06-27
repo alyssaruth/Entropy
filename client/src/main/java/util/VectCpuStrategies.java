@@ -122,8 +122,8 @@ public class VectCpuStrategies
 			
 			double thirdThreshold = Math.floor(totalCards/3);
 			
-			double[] diffVector = VectropyUtil.getDifferenceVector(lastBid, hand, jokerValue, includeMoons, includeStars);
-			int suitWithHighestDiff = VectropyUtil.getSuitWithMostPositiveDifference(diffVector, includeMoons);
+			var diffMap = VectropyUtil.getDifferenceMap(lastBid, hand, jokerValue, includeMoons, includeStars);
+			int suitWithHighestDiff = VectropyUtil.getSuitWithMostPositiveDifference(diffMap, includeMoons);
 			Debug.append("Diff vector: " + VectropyUtil.getReadableString(diffVector), logging);
 			Debug.append("Biggest difference is for suit " + suitWithHighestDiff, logging);
 
