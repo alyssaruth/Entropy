@@ -4,6 +4,7 @@ import achievement.AchievementSetting;
 import achievement.AchievementUtilKt;
 import bean.AbstractDevScreen;
 import game.GameMode;
+import game.PlayerAction;
 import object.Bid;
 import object.BidListCellRenderer;
 import object.Player;
@@ -199,9 +200,9 @@ public final class MainScreen extends AbstractDevScreen
 	private final JMenuItem mntmViewLogs = new JMenuItem("View logs...");
 	
 	//Screen
-	private final  DefaultListModel<Bid> listmodel = new DefaultListModel<>();
+	private final  DefaultListModel<PlayerAction> listmodel = new DefaultListModel<>();
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JList<Bid> history = new JList<>(listmodel);
+	private final JList<PlayerAction> history = new JList<>(listmodel);
 	private final JLabel lblBidHistory = new JLabel("Bid History");
 	private final JButton btnNextRound = new JButton("Next");
 	private final JTextPane lblResult = new JTextPane();
@@ -798,7 +799,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 	}
 	
-	public DefaultListModel<Bid> getListmodel()
+	public DefaultListModel<PlayerAction> getListmodel()
 	{
 		return listmodel;
 	}

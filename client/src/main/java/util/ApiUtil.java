@@ -1,7 +1,6 @@
 package util;
 
-import game.GameMode;
-import game.GameSettings;
+import game.*;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,7 +43,7 @@ public class ApiUtil implements Registry
 		sendWithCatch(messageString, port, true, true);
 	}
 	
-	public static Bid processApiTurn(StrategyParams parms, Player player)
+	public static PlayerAction processApiTurn(StrategyParams parms, Player player)
 	{
 		apiStrategy = getApiStrategy(player.getStrategy());
 		int port = apiStrategy.getPortNumber();
@@ -59,7 +58,7 @@ public class ApiUtil implements Registry
 			return null;
 		}
 		
-		return handleResponse(parms, responseString);
+		return handleResponse(parms, responseString, player);
 	}
 	
 	private static String sendWithCatch(String messageString, int port, boolean logging, boolean testMode)
@@ -146,7 +145,7 @@ public class ApiUtil implements Registry
 		boolean includeStars = settings.getIncludeStars();
 		boolean negativeJacks = settings.getNegativeJacks();
 		boolean cardReveal = settings.getCardReveal();
-		Bid lastBid = parms.getLastBid();
+		PlayerAction lastBid = parms.getLastBid();
 
 		rootElement.setAttribute("GameMode", gameMode.name());
 		
@@ -223,7 +222,7 @@ public class ApiUtil implements Registry
 		return null;
 	}
 	
-	private static Bid handleResponse(StrategyParams parms, String responseString)
+	private static PlayerAction handleResponse(StrategyParams parms, String responseString, Player player)
 	{
 		Document xmlResponse = XmlUtil.getDocumentFromXmlString(responseString);
 		if (xmlResponse == null)
@@ -238,18 +237,18 @@ public class ApiUtil implements Registry
 		
 		if (responseName.equals("Bid"))
 		{
-			Bid bid = factoryBid(parms.getSettings(), root, responseString);
+			BidAction bid = factoryBid(parms.getSettings(), root, responseString, player);
 			String cardToShow = root.getAttribute("CardToShow");
 			bid.setCardToReveal(cardToShow);
 			return bid;
 		}
 		else if (responseName.equals("Challenge"))
 		{
-			return new ChallengeBid();
+			return new ChallengeAction(player.getName(), false);
 		}
 		else if (responseName.equals("Illegal"))
 		{
-			return new IllegalBid();
+			return new IllegalAction(player.getName(), false);
 		}
 		else
 		{
@@ -258,18 +257,18 @@ public class ApiUtil implements Registry
 		}
 	}
 	
-	private static Bid factoryBid(GameSettings settings, Element root, String responseString)
+	private static BidAction factoryBid(GameSettings settings, Element root, String responseString)
 	{
 		try
 		{
 			GameMode gameMode = settings.getMode();
 			if (gameMode == GameMode.Entropy)
 			{
-				return EntropyBid.factoryFromXmlTag(root);
+				return factoryEntropyBid(root, player);
 			}
 			else
 			{
-				return VectropyBid.factoryFromXmlTag(root, settings.getIncludeMoons(), settings.getIncludeStars());
+				return factoryVectropyBid(root, player, settings);
 			}
 		}
 		catch (IOException ioe)
@@ -284,7 +283,27 @@ public class ApiUtil implements Registry
 			return null;
 		}
 	}
-	
+
+	private static EntropyBidAction factoryEntropyBid(Element root, Player player) throws IOException
+	{
+		String bidSuit = XmlUtil.getCompulsoryAttribute(root, "BidSuit");
+		int bidAmount = XmlUtil.getAttributeIntCompulsory(root, "BidAmount");
+		return new EntropyBidAction(player.getName(), false, bidAmount, Suit.valueOf(bidSuit));
+	}
+
+	private static VectropyBidAction factoryVectropyBid(Element root, Player player, GameSettings settings) throws IOException
+	{
+		int clubs = XmlUtil.getAttributeIntCompulsory(root, "Clubs");
+		int diamonds = XmlUtil.getAttributeIntCompulsory(root, "Diamonds");
+		int hearts = XmlUtil.getAttributeIntCompulsory(root, "Hearts");
+		int spades = XmlUtil.getAttributeIntCompulsory(root, "Spades");
+
+		Integer moons = settings.getIncludeMoons() ? XmlUtil.getAttributeIntCompulsory(root, "Moons") : null;
+		Integer stars = settings.getIncludeStars() ? XmlUtil.getAttributeIntCompulsory(root, "Stars") : null;
+
+		return new VectropyBidAction(player.getName(), false, clubs, diamonds, hearts, moons, spades, stars);
+	}
+
 	private static void showMalformedResponseError(String response)
 	{
 		String message = "The third-party software returned an unexpected message type:"

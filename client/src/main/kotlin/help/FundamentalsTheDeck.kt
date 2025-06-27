@@ -8,6 +8,8 @@ import javax.swing.SwingConstants
 import util.CardsUtil
 import util.EntropyColour
 import util.Registry
+import utils.COLOUR_SUIT_GOLD
+import utils.COLOUR_SUIT_PURPLE
 
 class FundamentalsTheDeck : HelpPanel(), Registry {
     override val nodeName = "The Deck"
@@ -66,7 +68,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         heartLabel.setBounds(240, 360, 65, 60)
         add(heartLabel)
         moonLabel.horizontalAlignment = SwingConstants.CENTER
-        moonLabel.foreground = EntropyColour.COLOUR_SUIT_PURPLE
+        moonLabel.foreground = COLOUR_SUIT_PURPLE
         moonLabel.font = Font("Segoe UI Symbol", Font.PLAIN, 32)
         moonLabel.setBounds(240, 360, 65, 60)
         add(moonLabel)
@@ -89,7 +91,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         starLabel.horizontalAlignment = SwingConstants.CENTER
         starLabel.font = Font("Segoe UI Symbol", Font.PLAIN, 40)
         starLabel.setBounds(400, 360, 65, 60)
-        starLabel.foreground = EntropyColour.COLOUR_SUIT_GOLD
+        starLabel.foreground = COLOUR_SUIT_GOLD
         add(starLabel)
 
         finaliseComponents()
@@ -149,11 +151,11 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         if (fourColours) {
             clubLabel.foreground = Color(0, 128, 0)
             diamondLabel.foreground = Color.BLUE
-            moonLabel.foreground = EntropyColour.COLOUR_SUIT_PURPLE
+            moonLabel.foreground = COLOUR_SUIT_PURPLE
         } else {
             clubLabel.foreground = Color.black
             diamondLabel.foreground = Color(255, 0, 0)
-            moonLabel.foreground = EntropyColour.COLOUR_SUIT_GOLD
+            moonLabel.foreground = COLOUR_SUIT_GOLD
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
+import game.Suit;
 import object.VectropyBid;
 
 public class VectropyUtil 
@@ -263,15 +264,15 @@ public class VectropyUtil
 	/**
 	 * EV Strategy
 	 */
-	public static double[] getEvDifferenceVector(VectropyBid bid, HashMap<Integer, Double> hmEvBySuit, 
+	public static double[] getEvDifferenceVector(VectropyBid bid, Map<Suit, Double> hmEvBySuit,
 			  boolean includeMoons, boolean includeStars)
 	{
-		double clubsCount = hmEvBySuit.get(CardsUtil.SUIT_CLUBS) - bid.getClubs();
-		double diamondsCount = hmEvBySuit.get(CardsUtil.SUIT_DIAMONDS) - bid.getDiamonds();
-		double heartsCount = hmEvBySuit.get(CardsUtil.SUIT_HEARTS) - bid.getHearts();
-		double moonsCount = hmEvBySuit.get(CardsUtil.SUIT_MOONS) - bid.getMoons();
-		double spadesCount = hmEvBySuit.get(CardsUtil.SUIT_SPADES) - bid.getSpades();
-		double starsCount = hmEvBySuit.get(CardsUtil.SUIT_STARS) - bid.getStars();
+		double clubsCount = hmEvBySuit.get(Suit.Clubs) - bid.getClubs();
+		double diamondsCount = hmEvBySuit.get(Suit.Diamonds) - bid.getDiamonds();
+		double heartsCount = hmEvBySuit.get(Suit.Hearts) - bid.getHearts();
+		double moonsCount = hmEvBySuit.get(Suit.Moons) - bid.getMoons();
+		double spadesCount = hmEvBySuit.get(Suit.Spades) - bid.getSpades();
+		double starsCount = hmEvBySuit.get(Suit.Stars) - bid.getStars();
 
 		if (includeMoons && includeStars)
 		{
@@ -344,20 +345,20 @@ public class VectropyUtil
 		return numberOfSuitsOverEv >= 2;
 	}
 	
-	public static int getSuitWithHighestValue(HashMap<Integer, Double> hmEvBySuit)
+	public static Suit getSuitWithHighestValue(Map<Suit, Double> hmEvBySuit)
 	{
-		int highestSuit = -1;
+		Suit highestSuit = null;
 		double highestValue = -1;
 		
-		Iterator<Map.Entry<Integer, Double>> it = hmEvBySuit.entrySet().iterator();
+		Iterator<Map.Entry<Suit, Double>> it = hmEvBySuit.entrySet().iterator();
 		for (; it.hasNext();)
 		{
-			Map.Entry<Integer, Double> entry = it.next();
+			Map.Entry<Suit, Double> entry = it.next();
 			double ev = entry.getValue();
 			if (ev > highestValue)
 			{
 				highestValue = ev;
-				highestSuit = entry.getKey().intValue();
+				highestSuit = entry.getKey();
 			}
 		}
 		

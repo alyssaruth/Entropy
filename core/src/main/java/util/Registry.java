@@ -29,7 +29,7 @@ public interface Registry
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
-	
+
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
 	public static final String PREFERENCES_STRING_DECK_DIRECTORY = "deckDirectory";
@@ -187,7 +187,7 @@ public interface Registry
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT = "revealedDifferentSuit";
 	public static final String SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT = "revealedSameSuit";
 	public static final String SAVED_GAME_INT_CARDS_REVEALED = "cardsRevealed";
-	public static final String SAVED_GAME_INT_FIRST_SUIT_BID = "firstSuitBid";
+	public static final String SAVED_GAME_STRING_FIRST_SUIT_BID = "firstSuitBid";
 	public static final String SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT = "deviatedFromFirstSuit";
 	
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_CARDS_TO_SUBTRACT = "opponentThreeCardsToSubtract";
@@ -197,9 +197,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_CURRENT_PLAYER = "currentPlayer";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
-	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
-	public static final String SAVED_GAME_INT_LAST_BID_SUIT_CODE = "lastBidSuitCode";
-	public static final String SAVED_GAME_INT_BID_SUIT_CODE = "bidSuitCode";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "opponentThreeNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";

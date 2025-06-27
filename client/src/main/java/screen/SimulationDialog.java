@@ -250,7 +250,7 @@ public class SimulationDialog extends JDialog
 				final ProgressDialog dialog = ProgressDialog.factory("Simulating games...", "games remaining", numberOfGames);
 				dialog.showCancel(true);
 				dialog.setVisibleLater();
-				
+
 				Debug.appendBanner("Starting simulation for " + numberOfGames + " games");
 				GameSimulator simulator = new GameSimulator(parms);
 				
@@ -549,9 +549,9 @@ public class SimulationDialog extends JDialog
 		String opponentOneStrategy = (String) opponentOneStrat.getSelectedItem();
 		String opponentTwoStrategy = (String) opponentTwoStrat.getSelectedItem();
 		String opponentThreeStrategy = (String) opponentThreeStrat.getSelectedItem();
+		boolean enableLogging = cbLogging.getState();
 		boolean forceStart = cbForceStart.getState();
 		boolean randomiseOrder = cbRandomiseOrder.getState();
-		boolean enableLogging = cbLogging.getState();
 
 		var settings = new GameSettings(gameMode, numberOfCards, jokerQuantity, jokerValue, includeMoons, includeStars, negativeJacks, cardReveal, false);
 
