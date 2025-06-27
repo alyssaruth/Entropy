@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import game.GameSettings;
+import game.Suit;
 import org.w3c.dom.Element;
 
-import util.CardsUtil;
 import util.Debug;
 import util.VectropyUtil;
 import util.XmlUtil;
+
+import static game.CardsUtilKt.countSuit;
 
 public class VectropyBid extends Bid
 {
@@ -127,7 +129,7 @@ public class VectropyBid extends Bid
 		return total;
 	}
 	
-	public VectropyBid incrementSuitAndGet(int suit)
+	public VectropyBid incrementSuitAndGet(Suit suit)
 	{
 		int clubs = this.clubs;
 		int diamonds = this.diamonds;
@@ -136,27 +138,27 @@ public class VectropyBid extends Bid
 		int spades = this.spades;
 		int stars = this.stars;
 		
-		if (suit == CardsUtil.SUIT_CLUBS)
+		if (suit == Suit.Clubs)
 		{
 			clubs++;
 		}
-		else if (suit == CardsUtil.SUIT_DIAMONDS)
+		else if (suit == Suit.Diamonds)
 		{
 			diamonds++;
 		}
-		else if (suit == CardsUtil.SUIT_HEARTS)
+		else if (suit == Suit.Hearts)
 		{
 			hearts++;
 		}
-		else if (suit == CardsUtil.SUIT_MOONS)
+		else if (suit == Suit.Moons)
 		{
 			moons++;
 		}
-		else if (suit == CardsUtil.SUIT_SPADES)
+		else if (suit == Suit.Spades)
 		{
 			spades++;
 		}
-		else if (suit == CardsUtil.SUIT_STARS)
+		else if (suit == Suit.Stars)
 		{
 			stars++;
 		}
@@ -265,16 +267,15 @@ public class VectropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-							 GameSettings settings)
+	public boolean isPerfect(List<String> cards, GameSettings settings)
 	{
 		var jokerValue = settings.getJokerValue();
-		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxHearts = CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxMoons = CardsUtil.countSuit(CardsUtil.SUIT_MOONS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxSpades = CardsUtil.countSuit(CardsUtil.SUIT_SPADES, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxStars = CardsUtil.countSuit(CardsUtil.SUIT_STARS, handOne, handTwo, handThree, handFour, jokerValue);
+		int maxClubs = countSuit(Suit.Clubs, cards, jokerValue);
+		int maxDiamonds = countSuit(Suit.Diamonds, cards, jokerValue);
+		int maxHearts = countSuit(Suit.Hearts, cards, jokerValue);
+		int maxMoons = countSuit(Suit.Moons, cards, jokerValue);
+		int maxSpades = countSuit(Suit.Spades, cards, jokerValue);
+		int maxStars = countSuit(Suit.Stars, cards, jokerValue);
 		
 		return clubs == maxClubs 
 			&& diamonds == maxDiamonds 
@@ -285,16 +286,9 @@ public class VectropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
+	public boolean isOverbid(List<String> cards, int jokerValue)
 	{
-		return VectropyUtil.isOverbid(this, hmHandByPlayerNumber, jokerValue);
-	}
-	
-	@Override
-	public boolean isOverbid(List<String> handOne, List<String> handTwo,
-							 List<String> handThree, List<String> handFour, int jokerValue)
-	{
-		return VectropyUtil.isOverbid(this, handOne, handTwo, handThree, handFour, jokerValue);
+		return VectropyUtil.isOverbid(this, cards, jokerValue);
 	}
 	
 	@Override

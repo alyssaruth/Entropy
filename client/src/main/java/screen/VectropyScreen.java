@@ -3,6 +3,7 @@ package screen;
 import java.awt.BorderLayout;
 
 import game.GameMode;
+import game.Suit;
 import object.Bid;
 import object.VectropyBid;
 import util.AchievementsUtil;
@@ -129,9 +130,9 @@ public class VectropyScreen extends GameScreen
 	}
 	
 	@Override
-	public int getLastBidSuitCode()
+	public Suit getLastBidSuit()
 	{
-		return -1;
+		return null;
 	}
 	
 	@Override

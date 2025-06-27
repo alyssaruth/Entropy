@@ -1,34 +1,25 @@
 package util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
+import game.Suit;
 import object.VectropyBid;
 
+import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.extractCards;
+
 public class VectropyUtil 
-{	
-	public static boolean isOverbid(VectropyBid bid, ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
+{
+	public static boolean isOverbid(VectropyBid bid, List<String> allCards, int jokerValue)
 	{
-		List<String> playerHand = hmHandByPlayerNumber.get(0);
-		List<String> opponentOneHand = hmHandByPlayerNumber.get(1);
-		List<String> opponentTwoHand = hmHandByPlayerNumber.get(2);
-		List<String> opponentThreeHand = hmHandByPlayerNumber.get(3);
-		
-		return isOverbid(bid, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-	}
-	
-	public static boolean isOverbid(VectropyBid bid, List<String> playerHand, List<String> opponentOneHand, List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue)
-	{
-		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxHearts = CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxMoons = CardsUtil.countSuit(CardsUtil.SUIT_MOONS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxSpades = CardsUtil.countSuit(CardsUtil.SUIT_SPADES, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxStars = CardsUtil.countSuit(CardsUtil.SUIT_STARS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
+		int maxClubs = countSuit(Suit.Clubs, allCards, jokerValue);
+		int maxDiamonds = countSuit(Suit.Diamonds, allCards, jokerValue);
+		int maxHearts = countSuit(Suit.Hearts, allCards, jokerValue);
+		int maxMoons = countSuit(Suit.Moons, allCards, jokerValue);
+		int maxSpades = countSuit(Suit.Spades, allCards, jokerValue);
+		int maxStars = countSuit(Suit.Stars, allCards, jokerValue);
 		
 		return bid.getClubs() > maxClubs 
 			|| bid.getDiamonds() > maxDiamonds 
@@ -38,64 +29,49 @@ public class VectropyUtil
 			|| bid.getStars() > maxStars;
 	}
 	
-	public static String getResult(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue, int suitCode,
+	public static String getResult(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue, Suit suit,
 								   boolean includeMoons, boolean includeStars)
 	{
-		List<String> playerHand = hmHandByPlayerNumber.get(0);
-		List<String> opponentOneHand = hmHandByPlayerNumber.get(1);
-		List<String> opponentTwoHand = hmHandByPlayerNumber.get(2);
-		List<String> opponentThreeHand = hmHandByPlayerNumber.get(3);
 		
-		return getResult(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue, suitCode, includeMoons, includeStars);
+		return getResult(extractCards(hmHandByPlayerNumber), jokerValue, suit, includeMoons, includeStars);
 	}
 	
-	public static String getResult(List<String> playerHand, List<String> opponentOneHand, List<String> opponentTwoHand, List<String> opponentThreeHand,
-								   int jokerValue, int suitCode, boolean includeMoons, boolean includeStars)
+	public static String getResult(List<String> cards, int jokerValue, Suit suit, boolean includeMoons, boolean includeStars)
 	{
-		Preferences prefs = Registry.prefs;
-		String numberOfColoursStr = prefs.get(Registry.PREFERENCES_STRING_NUMBER_OF_COLOURS, "twocolour");
-		boolean fourColours = (numberOfColoursStr.equals("fourcolour"));
+		String clubs = "" + countSuit(Suit.Clubs, cards, jokerValue);
+		String diamonds = "" + countSuit(Suit.Diamonds, cards, jokerValue);
+		String hearts = "" + countSuit(Suit.Hearts, cards, jokerValue);
+		String moons = "" + countSuit(Suit.Moons, cards, jokerValue);
+		String spades = "" + countSuit(Suit.Spades, cards, jokerValue);
+		String stars = "" + countSuit(Suit.Stars, cards, jokerValue);
 		
-		String clubs = "" + CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		String diamonds = "" + CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		String hearts = "" + CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		String moons = "" + CardsUtil.countSuit(CardsUtil.SUIT_MOONS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		String spades = "" + CardsUtil.countSuit(CardsUtil.SUIT_SPADES, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		String stars = "" + CardsUtil.countSuit(CardsUtil.SUIT_STARS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		
-		switch (suitCode)
+		switch (suit)
 		{
-			case CardsUtil.SUIT_CLUBS:
+			case Clubs:
 				clubs = "<b>" + clubs + "</b>";
 				break;
-			case CardsUtil.SUIT_DIAMONDS:
+			case Diamonds:
 				diamonds = "<b>" + diamonds + "</b>";
 				break;
-			case CardsUtil.SUIT_HEARTS:
+			case Hearts:
 				hearts = "<b>" + hearts + "</b>";
 				break;
-			case CardsUtil.SUIT_MOONS:
+			case Moons:
 				moons = "<b>" + moons + "</b>";
 				break;
-			case CardsUtil.SUIT_SPADES:
+			case Spades:
 				spades = "<b>" + spades + "</b>";
 				break;
-			case CardsUtil.SUIT_STARS:
+			case Stars:
 				stars = "<b>" + stars + "</b>";
 				break;
 			default:
 				break;
-		} 
-		
-		String clubsColour = "black";
-		String diamondsColour = "red";
-		String moonsColour = "E6B800";
-		if (fourColours)
-		{
-			clubsColour = "green";
-			diamondsColour = "blue";
-			moonsColour = "purple";
 		}
+		
+		String clubsColour = Suit.Clubs.getColourHex();
+		String diamondsColour = Suit.Diamonds.getColourHex();
+		String moonsColour = Suit.Moons.getColourHex();
 		
 		String resultStr = "(<font color=\"" + clubsColour + "\">" + clubs + "</font>, <font color=\"" + diamondsColour + "\">" + diamonds + "</font>, <font color=\"red\">" + hearts + "</font>, ";
 		if (includeMoons)
@@ -106,7 +82,7 @@ public class VectropyUtil
 		resultStr += spades;
 		if (includeStars)
 		{
-			resultStr += ", <font color=\"E6B800\">" + stars + "</font>";
+			resultStr += ", <font color=\"" + Suit.Stars.getColourHex() + "\">" + stars + "</font>";
 		}
 		
 		resultStr += ")";
@@ -184,7 +160,7 @@ public class VectropyUtil
 			}
 		}
 		
-		if (!includeMoons && index >= CardsUtil.SUIT_MOONS)
+		if (!includeMoons && index >= Suit.Moons)
 		{
 			return index + 1;
 		}
@@ -266,12 +242,12 @@ public class VectropyUtil
 	public static double[] getEvDifferenceVector(VectropyBid bid, HashMap<Integer, Double> hmEvBySuit, 
 			  boolean includeMoons, boolean includeStars)
 	{
-		double clubsCount = hmEvBySuit.get(CardsUtil.SUIT_CLUBS) - bid.getClubs();
-		double diamondsCount = hmEvBySuit.get(CardsUtil.SUIT_DIAMONDS) - bid.getDiamonds();
-		double heartsCount = hmEvBySuit.get(CardsUtil.SUIT_HEARTS) - bid.getHearts();
-		double moonsCount = hmEvBySuit.get(CardsUtil.SUIT_MOONS) - bid.getMoons();
-		double spadesCount = hmEvBySuit.get(CardsUtil.SUIT_SPADES) - bid.getSpades();
-		double starsCount = hmEvBySuit.get(CardsUtil.SUIT_STARS) - bid.getStars();
+		double clubsCount = hmEvBySuit.get(Suit.Clubs) - bid.getClubs();
+		double diamondsCount = hmEvBySuit.get(Suit.Diamonds) - bid.getDiamonds();
+		double heartsCount = hmEvBySuit.get(Suit.Hearts) - bid.getHearts();
+		double moonsCount = hmEvBySuit.get(Suit.Moons) - bid.getMoons();
+		double spadesCount = hmEvBySuit.get(Suit.Spades) - bid.getSpades();
+		double starsCount = hmEvBySuit.get(Suit.Stars) - bid.getStars();
 
 		if (includeMoons && includeStars)
 		{

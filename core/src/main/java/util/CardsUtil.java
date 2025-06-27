@@ -29,30 +29,6 @@ public class CardsUtil
 	public static final String STARS_SYMBOL = "\u2605";
 	
 	private static HashMap<Integer, SuitWrapper> hmSuitCodeToWrapper = null;
-	
-	public static boolean isRelevant(String card, int suit)
-	{
-		switch(suit)
-		{
-		case -1:
-			return true;
-		case SUIT_CLUBS: 
-			return isClub(card);
-		case SUIT_DIAMONDS:
-			return isDiamond(card);
-		case SUIT_HEARTS:
-			return isHeart(card);
-		case SUIT_MOONS:
-			return isMoon(card);
-		case SUIT_SPADES:
-			return isSpade(card);
-		case SUIT_STARS:
-			return isStar(card);
-		default:
-			Debug.stackTrace("Unexpected relevant suit: " + suit);
-			return true;
-		}
-	}
 
 	public static int countSuit(List<String> hand, int suit, int jokerValue)
 	{
@@ -236,98 +212,6 @@ public class CardsUtil
 		
 		return total;
 	}
-
-	private static boolean isClub(String card)
-	{
-		if (card.contains("c"))
-		{
-			return true;
-		}
-		
-		return isCardAceOrJoker(card);
-	}
-
-	private static boolean isHeart(String card)
-	{
-		if (card.contains("h"))
-		{
-			return true;
-		}
-		
-		return isCardAceOrJoker(card);
-	}
-
-	private static boolean isDiamond(String card)
-	{
-		if (card.contains("d"))
-		{
-			return true;
-		}
-		return isCardAceOrJoker(card);
-	}
-
-	private static boolean isSpade(String card)
-	{
-		if (card.contains("s"))
-		{
-			return true;
-		}
-		return isCardAceOrJoker(card);
-	}
-	
-	private static boolean isMoon(String card)
-	{
-		if (card.contains("m"))
-		{
-			return true;
-		}
-		return isCardAceOrJoker(card);
-	}
-	
-	private static boolean isStar(String card)
-	{
-		if (card.contains("x"))
-		{
-			return true;
-		}
-		return isCardAceOrJoker(card);
-	}
-	
-	private static boolean isCardAceOrJoker(String card)
-	{
-		if (card.contains("A"))
-		{
-			return true;
-		}
-
-		if (card.startsWith("Jo"))
-		{
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public static double getUnseenCards(int opponentNumber, int zeroCards, int oneCards, int twoCards, int threeCards)
-	{
-		int total = zeroCards + oneCards + twoCards + threeCards;
-		
-		switch (opponentNumber)
-		{
-			case 0:
-				return total - zeroCards;
-			case 1:
-				return total - oneCards;
-			case 2:
-				return total - twoCards;
-			case 3:
-				return total - threeCards;
-			default:
-				Debug.stackTrace("Unexpected opponentNumber [" + opponentNumber + "]");
-		}
-		
-		return 0;
-	}
 	
 	public static ArrayList<Integer> getSuitCodesVector(boolean includeMoons, boolean includeStars)
 	{
@@ -367,24 +251,6 @@ public class CardsUtil
 		return false;
 	}
 	
-	public static String getHandStr(List<String> hand)
-	{
-		int length = hand.size();
-		String handStr = "[";
-		for (int i=0; i<length; i++)
-		{
-			if (i > 0)
-			{
-				handStr += ", ";
-			}
-			
-			handStr += hand.get(i);
-		}
-		
-		handStr += "]";
-		return handStr;
-	}
-	
 	private static HashMap<Integer, SuitWrapper> getSuitWrapperHashMap()
 	{
 		if (hmSuitCodeToWrapper != null)
@@ -405,35 +271,10 @@ public class CardsUtil
 		return hmSuitCodeToWrapper;
 	}
 
-	public static String getSuitDesc(int bidNumber, int suitCode)
-	{
-		if (suitCode < SUIT_CLUBS
-		  || suitCode > SUIT_STARS)
-		{
-			return "Invalid";
-		}
-		
-		SuitWrapper wrapper = getSuitWrapperHashMap().get(suitCode);
-		String suit = wrapper.getName();
-		
-		if (bidNumber != 1)
-		{
-			suit += "s";
-		}
-	
-		return suit;
-	}
-
 	public static String getSuitSymbolForCode(int suitCode)
 	{
 		SuitWrapper wrapper = getSuitWrapperHashMap().get(suitCode);
 		return wrapper.getUnicodeSymbol();
-	}
-	
-	public static String getColourForSuitCode(int suitCode)
-	{
-		SuitWrapper wrapper = getSuitWrapperHashMap().get(suitCode);
-		return wrapper.getColour();
 	}
 	
 	public static String getCardHtml(String card)

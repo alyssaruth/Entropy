@@ -196,12 +196,12 @@ public class VectCpuStrategies
 			HashMap<Integer, Double> hmEvBySuit = StrategyUtil.getEvBySuitHashMapIncludingMyHand(hand, parms);
 			Debug.append("EV HashMap = " + hmEvBySuit, logging);
 			
-			int clubsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_CLUBS, hmEvBySuit);
-			int diamondsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_DIAMONDS, hmEvBySuit);
-			int heartsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_HEARTS, hmEvBySuit);
-			int moonsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_MOONS, hmEvBySuit);
-			int spadesBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_SPADES, hmEvBySuit);
-			int starsBid = getOpeningBidForSuitBasedOnEv(CardsUtil.SUIT_STARS, hmEvBySuit);
+			int clubsBid = getOpeningBidForSuitBasedOnEv(Suit.Clubs, hmEvBySuit);
+			int diamondsBid = getOpeningBidForSuitBasedOnEv(Suit.Diamonds, hmEvBySuit);
+			int heartsBid = getOpeningBidForSuitBasedOnEv(Suit.Hearts, hmEvBySuit);
+			int moonsBid = getOpeningBidForSuitBasedOnEv(Suit.Moons, hmEvBySuit);
+			int spadesBid = getOpeningBidForSuitBasedOnEv(Suit.Spades, hmEvBySuit);
+			int starsBid = getOpeningBidForSuitBasedOnEv(Suit.Stars, hmEvBySuit);
 			
 			VectropyBid bid = new VectropyBid(clubsBid, diamondsBid, heartsBid, moonsBid, spadesBid,
 											  starsBid, includeMoons, includeStars);
