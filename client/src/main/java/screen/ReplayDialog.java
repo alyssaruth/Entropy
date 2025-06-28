@@ -1052,7 +1052,7 @@ public class ReplayDialog extends JFrame
 			else if (source == noFilter)
 			{
 				highlightHands(null);
-				showResult(null);
+				showResult(lastBidSuit);
 			}
 		}
 		catch (Throwable t)

@@ -16,7 +16,7 @@ fun countContribution(suit: Suit, card: String, jokerValue: Int) =
     else if (card.startsWith("Jo")) jokerValue
     else if (card == "-J${suit.letter}") -1 else if (card.contains(suit.letter)) 1 else 0
 
-fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) > 0
+fun isCardRelevant(card: String, suit: Suit?) = suit == null || countContribution(suit, card, 1) > 0
 
 /**
  * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
