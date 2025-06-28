@@ -29,41 +29,6 @@ public class CardsUtil
 	public static final String STARS_SYMBOL = "\u2605";
 	
 	private static HashMap<Integer, SuitWrapper> hmSuitCodeToWrapper = null;
-
-	public static int countSuit(List<String> hand, int suit, int jokerValue)
-	{
-		int count = 0;
-		if (suit == SUIT_CLUBS)
-		{
-			count = countClubs(hand, jokerValue);
-		}
-		else if (suit == SUIT_DIAMONDS)
-		{
-			count = countDiamonds(hand, jokerValue);
-		}
-		else if (suit == SUIT_HEARTS)
-		{
-			count = countHearts(hand, jokerValue);
-		}
-		else if (suit == SUIT_MOONS)
-		{
-			count = countMoons(hand, jokerValue);
-		}
-		else if (suit == SUIT_SPADES)
-		{
-			count = countSpades(hand, jokerValue);
-		}
-		else if (suit == SUIT_STARS)
-		{
-			count = countStars(hand, jokerValue);
-		}
-		else
-		{
-			Debug.stackTrace("Trying to count unexpected suit: " + suit);
-		}
-	
-		return count;
-	}
 	
 	/**
 	 * Overloading to allow the seed to be passed through from the Server, allowing this to be secure.
@@ -128,112 +93,6 @@ public class CardsUtil
 		}
 	
 		return list;
-	}
-
-	public static int countClubs(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("c", hand, jokerValue);
-	}
-	public static int countDiamonds(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("d", hand, jokerValue);
-	}
-	public static int countHearts(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("h", hand, jokerValue);
-	}
-	public static int countSpades(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("s", hand, jokerValue);
-	}
-	public static int countMoons(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("m", hand, jokerValue);
-	}
-	public static int countStars(List<String> hand, int jokerValue)
-	{
-		return actuallyCountSuit("x", hand, jokerValue);
-	}
-	
-	private static int actuallyCountSuit(String suit, List<String> hand, int jokerValue)
-	{
-		if (hand == null)
-		{
-			return 0;
-		}
-		
-		int count = 0;
-		for (int i=0; i<hand.size(); i++)
-		{
-			if (hand.get(i).equals("A" + suit))
-			{
-				count += 2;
-			}
-			else if (hand.get(i).contains("A"))
-			{
-				count++;
-			}
-			else if (hand.get(i).startsWith("Jo"))
-			{
-				count += jokerValue;
-			}
-			else if (hand.get(i).equals("-J" + suit))
-			{
-				count--;
-			}
-			else if (hand.get(i).contains(suit))
-			{
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public static int countSuit(int suitCode, List<String> playerHand, List<String> opponentOneHand,
-			List<String> opponentTwoHand, List<String> opponentThreeHand, int jokerValue)
-	{
-		return countSuit(playerHand, suitCode, jokerValue) 
-			+ countSuit(opponentOneHand, suitCode, jokerValue)
-			+ countSuit(opponentTwoHand, suitCode, jokerValue)
-			+ countSuit(opponentThreeHand, suitCode, jokerValue);
-	}
-	
-	public static int countSuit(int suitCode, ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
-	{
-		int total = 0;
-		for (int i=0; i<4; i++)
-		{
-			List<String> hand = hmHandByPlayerNumber.get(i);
-			if (hand != null)
-			{
-				total += countSuit(hand, suitCode, jokerValue);
-			}
-		}
-		
-		return total;
-	}
-	
-	public static ArrayList<Integer> getSuitCodesVector(boolean includeMoons, boolean includeStars)
-	{
-		ArrayList<Integer> suits = new ArrayList<>();
-		
-		suits.add(Integer.valueOf(SUIT_CLUBS));
-		suits.add(Integer.valueOf(SUIT_DIAMONDS));
-		suits.add(Integer.valueOf(SUIT_HEARTS));
-		
-		if (includeMoons)
-		{
-			suits.add(Integer.valueOf(SUIT_MOONS));
-		}
-		
-		suits.add(Integer.valueOf(SUIT_SPADES));
-		
-		if (includeStars)
-		{
-			suits.add(Integer.valueOf(SUIT_STARS));
-		}
-		
-		return suits;
 	}
 	
 	public static boolean containsNonJoker(List<String> cards)
@@ -305,26 +164,5 @@ public class CardsUtil
 		
 		Debug.stackTrace("Couldn't match " + card + " to suit hashmap");
 		return null;
-	}
-	
-	public static int getSuitCodeForSuitDesc(String suitDesc)
-	{
-		suitDesc = suitDesc.toLowerCase();
-		HashMap<Integer, SuitWrapper> hm = getSuitWrapperHashMap();
-		Iterator<Map.Entry<Integer, SuitWrapper>> it = hm.entrySet().iterator();
-		
-		for (; it.hasNext(); )
-		{
-			Map.Entry<Integer, SuitWrapper> entry = it.next();
-			SuitWrapper wrapper = entry.getValue();
-			String suitShort = wrapper.getName();
-			if (suitDesc.contains(suitShort))
-			{
-				return entry.getKey();
-			}
-		}
-		
-		Debug.append("Failed to get suit code for desc " + suitDesc);
-		return -1;
 	}
 }

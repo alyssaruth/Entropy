@@ -8,6 +8,8 @@ import object.Bid;
 import screen.VectropyBidPanel;
 import util.*;
 
+import static game.CardsUtilKt.extractCards;
+
 public class VectropyRoom extends GameRoom
 {
 	private boolean earnedMathematician = false;
@@ -45,10 +47,10 @@ public class VectropyRoom extends GameRoom
 	{
 		if (isVisible())
 		{
-			handPanel.displayAndHighlightHands(-1);
+			handPanel.displayAndHighlightHands(null);
 			AchievementsUtil.unlockVectropyPerfectBidAchievements(earnedMathematician, earnedPsychic);
 
-			String resultStr = VectropyUtil.getResult(hmHandByAdjustedPlayerNumber, getJokerValue(), -1, getIncludeMoons(), getIncludeStars());
+			String resultStr = VectropyUtil.getResult(extractCards(hmHandByAdjustedPlayerNumber), getJokerValue(), null, getIncludeMoons(), getIncludeStars());
 			showResult("Result: " + resultStr);
 		}
 	}

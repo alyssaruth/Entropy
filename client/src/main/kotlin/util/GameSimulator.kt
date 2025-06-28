@@ -135,17 +135,10 @@ class GameSimulator(private val params: SimulationParams) {
         log("Challenged")
 
         val lastBid = lastBid ?: throw Exception("Processing challenge with no lastBid")
+        val allCards = allPlayers().flatMap { it.hand }
 
         val dialog = get(SimulationDialog::class.java)
-        if (
-            !lastBid.isOverbid(
-                opponentZero.hand,
-                opponentOne.hand,
-                opponentTwo.hand,
-                opponentThree.hand,
-                params.settings.jokerValue,
-            )
-        ) {
+        if (!lastBid.isOverbid(allCards, params.settings.jokerValue)) {
             log("not overbid")
             dialog.recordChallenge(challenger.playerNumber, false)
 

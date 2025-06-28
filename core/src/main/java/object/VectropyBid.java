@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import game.GameSettings;
 import game.Suit;
+import game.VectropyUtilKt;
 import org.w3c.dom.Element;
 
 import util.Debug;
@@ -19,8 +20,8 @@ import static game.CardsUtilKt.countSuit;
 public class VectropyBid extends Bid
 {
 	private HashMap<Suit, Integer> amounts = new HashMap<>();
-	private boolean includeMoons = false;
-	private boolean includeStars = false;
+	public boolean includeMoons = false;
+	public boolean includeStars = false;
 	
 	/**
 	 * Empty constructor, used for factorying from XML
@@ -268,7 +269,7 @@ public class VectropyBid extends Bid
 	@Override
 	public boolean isOverbid(List<String> cards, int jokerValue)
 	{
-		return VectropyUtil.isOverbid(this, cards, jokerValue);
+		return VectropyUtilKt.isOverbid(this, cards, jokerValue);
 	}
 	
 	@Override

@@ -199,7 +199,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
 	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
 	public static final String SAVED_GAME_STRING_LAST_BID_SUIT_NAME = "lastBidSuitName";
-	public static final String SAVED_GAME_INT_BID_SUIT_CODE = "bidSuitCode";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "opponentThreeNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";

@@ -10,7 +10,8 @@ import object.Player;
 import strategy.MarkStrategySuitWrapper;
 
 import static game.CardsUtilKt.countSuit;
-import static game.StrategyUtilKt.getEvMap;
+import static game.EntropyUtilKt.amountRequiredToBid;
+import static game.StrategyUtilKt.*;
 import static strategy.MarkStrategySuitWrapperKt.factoryMarkStrategySuitWrapper;
 import static utils.CoreGlobals.logger;
 
@@ -434,31 +435,9 @@ public class EntCpuStrategies
 			double expectedValueForBid = hmEvBySuit.get(bidSuitFacedWith);
 			
 			log("EV calculation for bid of " + bidAmountFacedWith + " " + bidSuitFacedWith.getDescription(bidAmountFacedWith) + ": " + expectedValueForBid, logging);
-			
-			ArrayList<Integer> suits = CardsUtil.getSuitCodesVector(includeMoons, includeStars);
-			int suitsSize = suits.size();
-			double maxEv = 0;
-			for (int i=0; i<suitsSize; i++)
-			{
-				Integer suitObj = suits.get(i);
-				double expectedValue = hmEvBySuit.get(suitObj);
-				if (expectedValue > maxEv)
-				{
-					maxEv = expectedValue;
-				}
-			}
-			
-			String suitsWithMax = "";
-			
-			for (int i=0; i<suitsSize; i++)
-			{
-				int suit = suits.get(i);
-				double ev = hmEvBySuit.get(suit);
-				if (ev == maxEv)
-				{
-					suitsWithMax += suit;
-				}
-			}
+
+			double maxEv = getMaxValue(hmEvBySuit);
+			var suitsWithMax = getSuitsWithMostPositiveValue(hmEvBySuit);
 			
 			if (bidAmountFacedWith > expectedValueForBid + 1)
 			{
@@ -466,10 +445,10 @@ public class EntCpuStrategies
 			}
 			else
 			{
-				int suitsToChooseFrom = suitsWithMax.length();
+				int suitsToChooseFrom = suitsWithMax.size();
 				int choice = coin.nextInt(suitsToChooseFrom);
-				
-				int suit = Integer.parseInt(suitsWithMax.substring(choice, choice+1));
+
+				Suit suit = suitsWithMax.get(choice);
 
 				if (maxEv > bidAmountFacedWith - 1 && totalOpponentCards > 1)
 				{
@@ -478,9 +457,9 @@ public class EntCpuStrategies
 				else if (maxEv > bidAmountFacedWith - 1)
 				{
 					//bit friggy - special case for being up against one card. Don't bid higher if it means you need them to have the ace/joker.
-					suit = Integer.parseInt(suitsWithMax.substring(suitsToChooseFrom-1, suitsToChooseFrom));
-					int bidAmount = EntropyUtil.amountRequiredToBidInSuit(suit, bidSuitFacedWith, bidAmountFacedWith);
-					int amountRequiredInOneCard = bidAmount - CardsUtil.countSuit(hand, suit, jokerValue);
+					suit = suitsWithMax.get(suitsToChooseFrom-1);
+					int bidAmount = amountRequiredToBid(suit, bidSuitFacedWith, bidAmountFacedWith);
+					int amountRequiredInOneCard = bidAmount - countSuit(suit, hand, jokerValue);
 					
 					if (amountRequiredInOneCard < 2)
 					{
