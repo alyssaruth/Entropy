@@ -105,18 +105,18 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
     private fun setPaneOneText(moonsAndStars: Boolean) {
         var paneOneText =
             ("<html>For the standard game, a normal deck of 52 cards is used. This deck is made up of four suits: " +
-                    clubString +
-                    ", " +
-                    diamondString +
-                    ", hearts (<font color=\"red\">${HEARTS_SYMBOL}</font>) and spades (${SPADES_SYMBOL}), " +
-                    "each of 13 cards. ")
+                clubString +
+                ", " +
+                diamondString +
+                ", hearts (<font color=\"red\">${HEARTS_SYMBOL}</font>) and spades (${SPADES_SYMBOL}), " +
+                "each of 13 cards. ")
 
         if (moonsAndStars) {
             paneOneText += "Two optional suits, $moonString and stars "
             paneOneText +=
                 "(<font color=\"CC9900\">" +
-                        STARS_SYMBOL +
-                        "</font>) can also be added to the deck."
+                    STARS_SYMBOL +
+                    "</font>) can also be added to the deck."
         }
 
         paneOneText +=
@@ -143,10 +143,10 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         diamondString = "diamonds (<font color=\"$diamondsColour\">${DIAMONDS_SYMBOL}</font>)"
         moonString =
             "moons (<font face=\"Segoe UI Symbol\" color=\"" +
-                    moonsColour +
-                    "\">" +
-                    MOONS_SYMBOL +
-                    "</font>)"
+                moonsColour +
+                "\">" +
+                MOONS_SYMBOL +
+                "</font>)"
 
         val moonsAndStars = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_EXTRA_SUITS, false)
         setPaneOneText(moonsAndStars)
