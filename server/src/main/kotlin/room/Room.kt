@@ -2,6 +2,7 @@ package room
 
 import auth.UserConnection
 import game.GameSettings
+import game.createAndShuffleDeck
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
 import http.dto.RoomStateResponse
@@ -16,7 +17,6 @@ import `object`.HandDetails
 import `object`.LeftBid
 import `object`.Player
 import store.IHasId
-import util.CardsUtil
 import util.ServerGlobals
 import util.ServerGlobals.roomStore
 import util.ServerGlobals.uscStore
@@ -339,7 +339,7 @@ data class Room(
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = ConcurrentHashMap()
 
         val seed: Long = ServerGlobals.server.generateSeed()
-        val deck = CardsUtil.createAndShuffleDeck(settings, seed)
+        val deck = createAndShuffleDeck(settings, seed).toMutableList()
 
         for (i in 0..<capacity) {
             val size: Int = hmHandSizeByPlayerNumber.getValue(i)

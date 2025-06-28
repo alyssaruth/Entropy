@@ -7,26 +7,25 @@ import utils.COLOUR_SUIT_GREEN
 import utils.COLOUR_SUIT_PURPLE
 import utils.toHexCode
 
-private const val CLUBS_SYMBOL = "\u2663"
-private const val DIAMONDS_SYMBOL = "\u2666"
-private const val HEARTS_SYMBOL = "\u2665"
-private const val MOONS_SYMBOL = "\uD83C\uDF19"
-private const val SPADES_SYMBOL = "\u2660"
-private const val STARS_SYMBOL = "\u2605"
+const val CLUBS_SYMBOL = "\u2663"
+const val DIAMONDS_SYMBOL = "\u2666"
+const val HEARTS_SYMBOL = "\u2665"
+const val MOONS_SYMBOL = "\uD83C\uDF19"
+const val SPADES_SYMBOL = "\u2660"
+const val STARS_SYMBOL = "\u2605"
 
 enum class Suit(
     val twoColour: Color,
     val fourColour: Color,
     val unicodeStr: String,
     val letter: Char,
-    @Deprecated("this should die") val legacyCode: Int,
 ) {
-    Clubs(Color.black, COLOUR_SUIT_GREEN, CLUBS_SYMBOL, 'c', 0),
-    Diamonds(Color.red, Color.blue, DIAMONDS_SYMBOL, 'd', 1),
-    Hearts(Color.red, Color.red, HEARTS_SYMBOL, 'h', 2),
-    Moons(COLOUR_SUIT_GOLD, COLOUR_SUIT_PURPLE, MOONS_SYMBOL, 'm', 3),
-    Spades(Color.black, Color.black, SPADES_SYMBOL, 's', 4),
-    Stars(COLOUR_SUIT_GOLD, COLOUR_SUIT_GOLD, STARS_SYMBOL, 'x', 5);
+    Clubs(Color.black, COLOUR_SUIT_GREEN, CLUBS_SYMBOL, 'c'),
+    Diamonds(Color.red, Color.blue, DIAMONDS_SYMBOL, 'd'),
+    Hearts(Color.red, Color.red, HEARTS_SYMBOL, 'h'),
+    Moons(COLOUR_SUIT_GOLD, COLOUR_SUIT_PURPLE, MOONS_SYMBOL, 'm'),
+    Spades(Color.black, Color.black, SPADES_SYMBOL, 's'),
+    Stars(COLOUR_SUIT_GOLD, COLOUR_SUIT_GOLD, STARS_SYMBOL, 'x');
 
     fun getDescription(amount: Int): String {
         val singular = amount == 1

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import game.GameSettings;
 import game.Suit;
@@ -12,7 +11,6 @@ import game.VectropyUtilKt;
 import org.w3c.dom.Element;
 
 import util.Debug;
-import util.VectropyUtil;
 import util.XmlUtil;
 
 import static game.CardsUtilKt.countSuit;
@@ -321,5 +319,9 @@ public class VectropyBid extends Bid
 		}
 		
 		return new VectropyBid(clubs, diamonds, hearts, moons, spades, stars, includeMoons, includeStars);
+	}
+
+	public static VectropyBid factoryEmpty(boolean includeMoons, boolean includeStars) {
+		return new VectropyBid(0, 0, 0, 0, 0, 0, includeMoons, includeStars);
 	}
 }

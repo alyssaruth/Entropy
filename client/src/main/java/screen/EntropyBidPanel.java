@@ -27,9 +27,7 @@ import javax.swing.event.ChangeListener;
 import game.Suit;
 import object.Bid;
 import object.EntropyBid;
-import util.CardsUtil;
 import util.Debug;
-import util.EntropyColour;
 import util.Registry;
 
 public class EntropyBidPanel extends BidPanel

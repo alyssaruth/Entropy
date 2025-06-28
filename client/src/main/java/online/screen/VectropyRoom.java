@@ -5,10 +5,12 @@ import java.util.UUID;
 
 import game.GameSettings;
 import object.Bid;
+import object.VectropyBid;
 import screen.VectropyBidPanel;
 import util.*;
 
 import static game.CardsUtilKt.extractCards;
+import static game.RenderingUtilKt.getVectropyResult;
 
 public class VectropyRoom extends GameRoom
 {
@@ -32,7 +34,7 @@ public class VectropyRoom extends GameRoom
 	@Override
 	public void resetBids()
 	{
-		lastBid = VectropyUtil.getEmptyBid(getIncludeMoons(), getIncludeStars());
+		lastBid = VectropyBid.factoryEmpty(getIncludeMoons(), getIncludeStars());
 		hmBidByPlayerNumber.clear();
 	}
 
@@ -50,7 +52,7 @@ public class VectropyRoom extends GameRoom
 			handPanel.displayAndHighlightHands(null);
 			AchievementsUtil.unlockVectropyPerfectBidAchievements(earnedMathematician, earnedPsychic);
 
-			String resultStr = VectropyUtil.getResult(extractCards(hmHandByAdjustedPlayerNumber), getJokerValue(), null, getIncludeMoons(), getIncludeStars());
+			String resultStr = getVectropyResult(extractCards(hmHandByAdjustedPlayerNumber), getJokerValue(), null, getIncludeMoons(), getIncludeStars());
 			showResult("Result: " + resultStr);
 		}
 	}

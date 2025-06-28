@@ -44,6 +44,7 @@ import util.*;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.isCardRelevant;
+import static game.RenderingUtilKt.getVectropyResult;
 import static utils.CoreGlobals.logger;
 
 public class ReplayDialog extends JFrame
@@ -734,7 +735,7 @@ public class ReplayDialog extends JFrame
 	
 	private void showVectropyResult(Suit suitCode)
 	{
-		String result = VectropyUtil.getResult(getConcatenatedHands(), jokerValue, suitCode, includeMoons, includeStars);
+		String result = getVectropyResult(getConcatenatedHands(), jokerValue, suitCode, includeMoons, includeStars);
 		setResultText("Result: " + result);
 	}
 	

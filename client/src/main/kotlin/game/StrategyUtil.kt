@@ -2,7 +2,6 @@ package game
 
 import kotlin.math.ceil
 import `object`.VectropyBid
-import util.CardsUtil
 
 fun getEvMap(
     visibleCards: List<String>,
@@ -10,8 +9,7 @@ fun getEvMap(
     cardsInPlay: Int,
 ): Map<Suit, Double> {
     val unknownCardsInPlay = cardsInPlay - visibleCards.size
-    val remainingDeck =
-        CardsUtil.createAndShuffleDeck(settings).filterNot { visibleCards.contains(it) }
+    val remainingDeck = createAndShuffleDeck(settings).filterNot { visibleCards.contains(it) }
 
     return Suit.filter(settings.includeMoons, settings.includeStars).associateWith { suit ->
         val known = countSuit(suit, visibleCards, settings.jokerValue)

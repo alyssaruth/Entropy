@@ -1,7 +1,6 @@
 package screen;
 
 import achievement.AchievementSetting;
-import game.CardsUtilKt;
 import game.GameMode;
 import game.GameSettings;
 import game.Suit;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.createAndShuffleDeck;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
@@ -110,7 +110,7 @@ public abstract class GameScreen extends TransparentPanel
 	
 	private void startRound()
 	{
-		List<String> deck = CardsUtil.createAndShuffleDeck(settings);
+		List<String> deck = createAndShuffleDeck(settings);
 		populateHands(deck);
 		displayHands();
 		
@@ -787,7 +787,7 @@ public abstract class GameScreen extends TransparentPanel
 			
 			List<String> allCards = getConcatenatedHands();
 			
-			while (CardsUtil.containsNonJoker(allCards) && jokersToAdd > 0)
+			while (containsNonJoker(allCards) && jokersToAdd > 0)
 			{
 				replaceRandomCardWithJoker();
 				allCards = getConcatenatedHands();
@@ -822,7 +822,7 @@ public abstract class GameScreen extends TransparentPanel
 		Random rand = new Random();
 		List<String> hand = allHands[rand.nextInt(4)];
 		
-		if (!CardsUtil.containsNonJoker(hand))
+		if (!containsNonJoker(hand))
 		{
 			return pickHandWithNonJokerAtRandom();
 		}
@@ -1048,6 +1048,21 @@ public abstract class GameScreen extends TransparentPanel
 	{
 		handPanel.fireAppearancePreferencesChange();
 		bidPanel.fireAppearancePreferencesChange();
+	}
+
+	private static boolean containsNonJoker(List<String> cards)
+	{
+		int size = cards.size();
+		for (int i=0; i<size; i++)
+		{
+			String card = cards.get(i);
+			if (!card.contains("Jo"))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	/**

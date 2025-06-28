@@ -1,5 +1,6 @@
 package util
 
+import game.createAndShuffleDeck
 import `object`.Bid
 import `object`.Player
 import screen.ScreenCache.get
@@ -201,7 +202,7 @@ class GameSimulator(private val params: SimulationParams) {
         opponentTwo.resetHand()
         opponentThree.resetHand()
 
-        val deck = CardsUtil.createAndShuffleDeck(params.settings)
+        val deck = createAndShuffleDeck(params.settings)
 
         populateHands(deck)
     }

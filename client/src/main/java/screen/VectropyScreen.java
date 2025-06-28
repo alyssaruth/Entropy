@@ -9,7 +9,8 @@ import object.VectropyBid;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
-import util.VectropyUtil;
+
+import static game.RenderingUtilKt.getVectropyResult;
 
 public class VectropyScreen extends GameScreen
 {
@@ -41,7 +42,7 @@ public class VectropyScreen extends GameScreen
 	public void showResult()
 	{
 		handPanel.displayAndHighlightHands(null);
-		String result = VectropyUtil.getResult(getConcatenatedHands(), settings.getJokerValue(), null, settings.getIncludeMoons(), settings.getIncludeStars());
+		String result = getVectropyResult(getConcatenatedHands(), settings.getJokerValue(), null, settings.getIncludeMoons(), settings.getIncludeStars());
 		ScreenCache.get(MainScreen.class).setResultText("Result: " + result);
 	}
 

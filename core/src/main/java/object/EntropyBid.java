@@ -1,19 +1,16 @@
 package object;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import game.GameSettings;
 import game.Suit;
 import org.w3c.dom.Element;
-
 import util.Debug;
 import util.XmlUtil;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static game.CardsUtilKt.countSuit;
-import static game.CardsUtilKt.extractCards;
 import static game.EntropyUtilKt.perfectBidAmount;
 import static game.EntropyUtilKt.perfectBidSuit;
 
@@ -31,12 +28,6 @@ public class EntropyBid extends Bid
 	{
 		this.bidSuit = bidSuit;
 		this.bidAmount = bidAmount;
-	}
-	
-	public EntropyBid(Suit bidSuit, String bidAmount)
-	{
-		this.bidSuit = bidSuit;
-		this.bidAmount = Integer.parseInt(bidAmount);
 	}
 	
 	public Suit getBidSuit()
@@ -73,7 +64,7 @@ public class EntropyBid extends Bid
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + bidAmount;
-		result = prime * result + bidSuit.getLegacyCode();
+		result = prime * result + bidSuit.ordinal();
 		return result;
 	}
 

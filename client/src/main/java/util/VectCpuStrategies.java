@@ -81,7 +81,7 @@ public class VectCpuStrategies
 
 			if (totalCards <= 4)
 			{
-				VectropyBid bid = VectropyUtil.getEmptyBid(includeMoons, includeStars);
+				VectropyBid bid = VectropyBid.factoryEmpty(includeMoons, includeStars);
 				return bid.incrementSuitAndGet(Suit.random(includeMoons, includeStars));
 			}
 			else
@@ -212,7 +212,7 @@ public class VectCpuStrategies
 			if (newTotal == 0)
 			{
 				int choice = coin.nextInt(10);
-				Suit suit = null;
+				Suit suit;
 				if (choice < 6)
 				{
 					suit = getSuitWithMostPositiveValue(hmEvBySuit);

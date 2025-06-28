@@ -26,18 +26,16 @@ import javax.swing.event.ChangeListener;
 import game.Suit;
 import object.Bid;
 import object.VectropyBid;
-import util.CardsUtil;
 import util.Debug;
 import util.EntropyColour;
 import util.Registry;
-import util.VectropyUtil;
 
 public class VectropyBidPanel extends BidPanel
 							  implements ActionListener,
 							             ChangeListener,
 							             Registry
 {
-	private VectropyBid lastBid = VectropyUtil.getEmptyBid(false, false);
+	private VectropyBid lastBid = VectropyBid.factoryEmpty(false, false);
 	private boolean illegalAllowed = false;
 	private boolean includeMoons = false;
 	private boolean includeStars = false;
@@ -227,7 +225,7 @@ public class VectropyBidPanel extends BidPanel
 		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 		
-		lastBid = VectropyUtil.getEmptyBid(includeMoons, includeStars);
+		lastBid = VectropyBid.factoryEmpty(includeMoons, includeStars);
 		adjust(lastBid);
 	}
 	
