@@ -10,26 +10,11 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import game.GameSettings;
+import game.Suit;
 import object.SuitWrapper;
 
 public class CardsUtil
 {
-	public static final int SUIT_CLUBS = 0;
-	public static final int SUIT_DIAMONDS = 1;
-	public static final int SUIT_HEARTS = 2;
-	public static final int SUIT_MOONS = 3;
-	public static final int SUIT_SPADES = 4;
-	public static final int SUIT_STARS = 5;
-	
-	public static final String CLUBS_SYMBOL = "\u2663";
-	public static final String DIAMONDS_SYMBOL = "\u2666";
-	public static final String HEARTS_SYMBOL = "\u2665";
-	public static final String MOONS_SYMBOL = "\uD83C\uDF19";
-	public static final String SPADES_SYMBOL = "\u2660";
-	public static final String STARS_SYMBOL = "\u2605";
-	
-	private static HashMap<Integer, SuitWrapper> hmSuitCodeToWrapper = null;
-	
 	/**
 	 * Overloading to allow the seed to be passed through from the Server, allowing this to be secure.
 	 * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
@@ -110,50 +95,14 @@ public class CardsUtil
 		return false;
 	}
 	
-	private static HashMap<Integer, SuitWrapper> getSuitWrapperHashMap()
-	{
-		if (hmSuitCodeToWrapper != null)
-		{
-			return hmSuitCodeToWrapper;
-		}
-		
-		HashMap<Integer, SuitWrapper> hm = new HashMap<>();
-		
-		hm.put(SUIT_CLUBS, new SuitWrapper("black", "green", CLUBS_SYMBOL, "club", "c"));
-		hm.put(SUIT_DIAMONDS, new SuitWrapper("red", "blue", DIAMONDS_SYMBOL, "diamond", "d"));
-		hm.put(SUIT_HEARTS, new SuitWrapper("red", HEARTS_SYMBOL, "heart", "h"));
-		hm.put(SUIT_MOONS, new SuitWrapper("#E6B800", "purple", MOONS_SYMBOL, "moon", "m"));
-		hm.put(SUIT_SPADES, new SuitWrapper("black", SPADES_SYMBOL, "spade", "s"));
-		hm.put(SUIT_STARS, new SuitWrapper("#E6B800", STARS_SYMBOL, "star", "x"));
-		
-		hmSuitCodeToWrapper = hm;
-		return hmSuitCodeToWrapper;
-	}
-
-	public static String getSuitSymbolForCode(int suitCode)
-	{
-		SuitWrapper wrapper = getSuitWrapperHashMap().get(suitCode);
-		return wrapper.getUnicodeSymbol();
-	}
-	
 	public static String getCardHtml(String card)
 	{
 		card = card.replaceAll("-", "");
-		
-		HashMap<Integer, SuitWrapper> hm = getSuitWrapperHashMap();
-		Iterator<Map.Entry<Integer, SuitWrapper>> it = hm.entrySet().iterator();
-		
-		for (; it.hasNext(); )
-		{
-			Map.Entry<Integer, SuitWrapper> entry = it.next();
-			SuitWrapper wrapper = entry.getValue();
-			String suitShort = wrapper.getSuitShort();
-			if (card.contains(suitShort))
-			{
-				String unicodeSuit = wrapper.getUnicodeSymbol();
-				card = card.replaceAll(suitShort, unicodeSuit);
-				
-				return "<font color=\"" + wrapper.getColour() + "\" face=\"Segoe UI Symbol\">" + card + "</font>";
+
+		for (Suit s : Suit.getEntries()) {
+			if (card.contains("" + s.getLetter())) {
+				card =  card.replace("" + s.getLetter(), s.getUnicodeStr());
+				return "<font color=\"" + s.getColourHex() + "\" face=\"Segoe UI Symbol\">" + card + "</font>";
 			}
 		}
 		

@@ -37,7 +37,7 @@ public class EntropyBidPanel extends BidPanel
 							 			ChangeListener,
 							 			Registry
 {
-	private String suitSelected = CardsUtil.getSuitSymbolForCode(0);
+	private String suitSelected = Suit.Clubs.getUnicodeStr();
 	
 	private Suit bidSuit = Suit.Clubs;
 	private Suit lastBidSuit = Suit.Clubs;
@@ -181,7 +181,7 @@ public class EntropyBidPanel extends BidPanel
 		bidSlider.setValue(1);
 
 		btnClubs.setSelected(true);
-		suitSelected = CardsUtil.getSuitSymbolForCode(0);
+		suitSelected = Suit.Clubs.getUnicodeStr();
 		bidAmountDisplay.setText("1 " + suitSelected);
 		setBidAmountDisplayColour();
 		setBidButtonColours();

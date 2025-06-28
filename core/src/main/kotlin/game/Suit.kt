@@ -1,17 +1,18 @@
 package game
 
 import java.awt.Color
-import util.CardsUtil.CLUBS_SYMBOL
-import util.CardsUtil.DIAMONDS_SYMBOL
-import util.CardsUtil.HEARTS_SYMBOL
-import util.CardsUtil.MOONS_SYMBOL
-import util.CardsUtil.SPADES_SYMBOL
-import util.CardsUtil.STARS_SYMBOL
 import util.Registry
 import utils.COLOUR_SUIT_GOLD
 import utils.COLOUR_SUIT_GREEN
 import utils.COLOUR_SUIT_PURPLE
 import utils.toHexCode
+
+private const val CLUBS_SYMBOL = "\u2663"
+private const val DIAMONDS_SYMBOL = "\u2666"
+private const val HEARTS_SYMBOL = "\u2665"
+private const val MOONS_SYMBOL = "\uD83C\uDF19"
+private const val SPADES_SYMBOL = "\u2660"
+private const val STARS_SYMBOL = "\u2605"
 
 enum class Suit(
     val twoColour: Color,
