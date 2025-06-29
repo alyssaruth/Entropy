@@ -13,6 +13,7 @@ import util.Registry;
 import util.ReplayConstants;
 
 import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.extractCards;
 
 public class EntropyRoom extends GameRoom
 {
@@ -50,7 +51,7 @@ public class EntropyRoom extends GameRoom
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
 
-			int total = countSuit(lastBidSuit, hmHandByAdjustedPlayerNumber, getJokerValue());
+			int total = countSuit(lastBidSuit, extractCards(hmHandByAdjustedPlayerNumber), getJokerValue());
 			String suitsStr = lastBidSuit.getDescription(total);
 			if (total == 1)
 			{

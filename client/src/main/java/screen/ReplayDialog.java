@@ -674,7 +674,7 @@ public class ReplayDialog extends JFrame
 		
 		for (int i=0; i<size; i++)
 		{
-			boolean isRelevant = isCardRelevant(hand.get(i), suit);
+			boolean isRelevant = suit == null || isCardRelevant(hand.get(i), suit);
 			if (!isRelevant)
 			{
 				ImageIcon fadedIcon = GameUtil.getFadedImageForCard(hand.get(i), deckDirectory);

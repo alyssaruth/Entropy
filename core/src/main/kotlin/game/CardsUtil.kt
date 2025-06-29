@@ -4,9 +4,6 @@ import java.util.*
 
 fun extractCards(handMap: Map<Int, List<String>>) = handMap.values.flatten()
 
-fun countSuit(suit: Suit, cards: Map<Int, List<String>>, jokerValue: Int): Int =
-    countSuit(suit, cards.values.flatten(), jokerValue)
-
 fun countSuit(suit: Suit, cards: List<String>, jokerValue: Int) =
     cards.sumOf { countContribution(suit, it, jokerValue) }
 
@@ -16,7 +13,7 @@ fun countContribution(suit: Suit, card: String, jokerValue: Int) =
     else if (card.startsWith("Jo")) jokerValue
     else if (card == "-J${suit.letter}") -1 else if (card.contains(suit.letter)) 1 else 0
 
-fun isCardRelevant(card: String, suit: Suit?) = suit == null || countContribution(suit, card, 1) > 0
+fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) > 0
 
 /**
  * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
