@@ -205,7 +205,7 @@ public final class ReplayFileUtil implements Registry
 			
 			if (isEntropy)
 			{
-				int lastBidSuitCode = replay.getInt(i + REPLAY_INT_LAST_BID_SUIT_CODE, 0);
+				int lastBidSuitCode = replay.getInt(i + REPLAY_STRING_LAST_BID_SUIT_NAME, 0);
 				roundElement.setAttribute(ROUND_INT_LAST_BID_SUIT_CODE, "" + lastBidSuitCode);
 			}
 			
@@ -758,7 +758,7 @@ public final class ReplayFileUtil implements Registry
 			if (entropy)
 			{
 				int lastBidSuitCode = XmlUtil.getAttributeInt(roundElement, ROUND_INT_LAST_BID_SUIT_CODE);
-				replay.putInt(roundNumber + REPLAY_INT_LAST_BID_SUIT_CODE, lastBidSuitCode);
+				replay.putInt(roundNumber + REPLAY_STRING_LAST_BID_SUIT_NAME, lastBidSuitCode);
 			}
 
 			saveListModelToRegistry(roundElement, roundNumber, replay);

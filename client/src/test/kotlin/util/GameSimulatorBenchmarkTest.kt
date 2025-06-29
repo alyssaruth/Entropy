@@ -51,7 +51,7 @@ class GameSimulatorBenchmarkTest : AbstractClientTest() {
         repeat(games) { simulator.startNewGame(it) }
 
         val results = get(SimulationDialog::class.java).getResults(1)
-        results.getWinRate(games)!!.shouldBeBetween(57.0, 61.0, 0.1)
-        results.getChallengeRate()!!.shouldBeBetween(24.0, 26.0, 0.1)
+        results.getWinRate(games)!!.shouldBeBetween(66.0, 69.0, 0.1)
+        results.getChallengeRate()!!.shouldBeBetween(29.0, 31.0, 0.1)
     }
 }

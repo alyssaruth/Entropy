@@ -8,9 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import game.GameSettings;
 import org.w3c.dom.Element;
 
-import util.CardsUtil;
 import util.Debug;
 import util.StringUtil;
+
+import static game.CardsUtilKt.extractCards;
 
 public abstract class Bid 
 {
@@ -23,10 +24,8 @@ public abstract class Bid
 	
 	public abstract boolean higherThan(Bid bid);
 	public abstract boolean isOverAchievementThreshold();
-	public abstract boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-									  GameSettings settings);
-	public abstract boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue);
-	public abstract boolean isOverbid(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour, int jokerValue);
+	public abstract boolean isPerfect(List<String> cards, GameSettings settings);
+	public abstract boolean isOverbid(List<String> cards, int jokerValue);
 	
 	/**
 	 *  Used for:
@@ -80,15 +79,14 @@ public abstract class Bid
 		
 		return xmlStr;
 	}
+
+	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue) {
+		return isOverbid(extractCards(hmHandByPlayerNumber), jokerValue);
+	}
 	
 	public boolean isPerfect(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, GameSettings settings)
 	{
-		List<String> handOne = hmHandByPlayerNumber.get(0);
-		List<String> handTwo = hmHandByPlayerNumber.get(1);
-		List<String> handThree = hmHandByPlayerNumber.get(2);
-		List<String> handFour = hmHandByPlayerNumber.get(3);
-		
-		return isPerfect(handOne, handTwo, handThree, handFour, settings);
+		return isPerfect(extractCards(hmHandByPlayerNumber), settings);
 	}
 	
 	public boolean isChallenge()
@@ -187,36 +185,5 @@ public abstract class Bid
 		}
 		
 		return s;
-	}
-	
-	public String toHtmlString()
-	{
-		String playerName = player.getName();
-		playerName = StringUtil.escapeHtml(playerName);
-
-		String colour = player.getColour();
-		String playerNamePrefix = playerName + ":&nbsp";
-
-		if (blind)
-		{
-			playerNamePrefix = "[" + playerName + "]:&nbsp";
-		}
-
-		String text = "<html><b><font color=\"" + colour + "\">" + playerNamePrefix;
-		text += "</b></font>";
-		text += toHtmlStringSpecific();
-
-		if (!cardToReveal.isEmpty()
-		  && !isChallenge()
-		  && !isIllegal())
-		{
-			text += "<i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font>";
-			text += CardsUtil.getCardHtml(cardToReveal);
-			text += "<i><font color=\"#5C5C3D\">)</i></font>";
-		}
-
-		//The unicode for a moon doesn't work in HTML. Also shrink to match the size of the other suits.
-		text = text.replaceAll(CardsUtil.MOONS_SYMBOL, "<font size=\"2\">&#127769</font>");
-		return text;
 	}
 }

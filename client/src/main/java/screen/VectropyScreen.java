@@ -3,12 +3,14 @@ package screen;
 import java.awt.BorderLayout;
 
 import game.GameMode;
+import game.Suit;
 import object.Bid;
 import object.VectropyBid;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
-import util.VectropyUtil;
+
+import static game.RenderingUtilKt.getVectropyResult;
 
 public class VectropyScreen extends GameScreen
 {
@@ -39,9 +41,8 @@ public class VectropyScreen extends GameScreen
 	@Override
 	public void showResult()
 	{
-		handPanel.displayAndHighlightHands(-1);
-		String result = VectropyUtil.getResult(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-						opponentThree.getHand(), settings.getJokerValue(), -1, settings.getIncludeMoons(), settings.getIncludeStars());
+		handPanel.displayAndHighlightHands(null);
+		String result = getVectropyResult(getConcatenatedHands(), settings.getJokerValue(), null, settings.getIncludeMoons(), settings.getIncludeStars());
 		ScreenCache.get(MainScreen.class).setResultText("Result: " + result);
 	}
 
@@ -97,7 +98,7 @@ public class VectropyScreen extends GameScreen
 		
 		if (command.equals("showmethecards"))
 		{
-			handPanel.displayAndHighlightHands(-1);
+			handPanel.displayAndHighlightHands(null);
 			cheatUsed = true;
 		}
 		else if (command.equals("maxbids") || command.equals("perfectbid"))
@@ -129,9 +130,9 @@ public class VectropyScreen extends GameScreen
 	}
 	
 	@Override
-	public int getLastBidSuitCode()
+	public Suit getLastBidSuit()
 	{
-		return -1;
+		return null;
 	}
 	
 	@Override
