@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.createAndShuffleDeck;
+import static game.CheatUtilKt.containsNonJoker;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
@@ -748,35 +749,6 @@ public abstract class GameScreen extends TransparentPanel
 		nextRoundTimer = new Timer("Timer-NextRound");
 	}
 	
-	protected String getMaxBidsStr()
-	{
-		var jokerValue = settings.getJokerValue();
-		List<String> hands = getConcatenatedHands();
-		
-		int maxClubs = countSuit(Suit.Clubs, hands, jokerValue);
-		int maxDiamonds = countSuit(Suit.Diamonds, hands, jokerValue);
-		int maxHearts = countSuit(Suit.Hearts, hands, jokerValue);
-		int maxMoons = countSuit(Suit.Moons, hands, jokerValue);
-		int maxSpades = countSuit(Suit.Spades, hands, jokerValue);
-		int maxStars = countSuit(Suit.Stars, hands, jokerValue);
-		
-		String maxStr = maxClubs + "c, " + maxDiamonds + "d, " + maxHearts + "h, ";
-		
-		if (settings.getIncludeMoons())
-		{
-			maxStr += maxMoons + "m, ";
-		}
-		
-		maxStr += maxSpades + "s";
-		
-		if (settings.getIncludeStars())
-		{
-			maxStr += ", " + maxStars + "x";
-		}
-		
-		return maxStr;
-	}
-	
 	protected void randomlyReplaceCardsWithJokers()
 	{
 		if (!currentlyOnChallenge)
@@ -1048,21 +1020,6 @@ public abstract class GameScreen extends TransparentPanel
 	{
 		handPanel.fireAppearancePreferencesChange();
 		bidPanel.fireAppearancePreferencesChange();
-	}
-
-	private static boolean containsNonJoker(List<String> cards)
-	{
-		int size = cards.size();
-		for (int i=0; i<size; i++)
-		{
-			String card = cards.get(i);
-			if (!card.contains("Jo"))
-			{
-				return true;
-			}
-		}
-
-		return false;
 	}
 	
 	/**

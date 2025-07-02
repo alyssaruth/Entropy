@@ -10,6 +10,7 @@ import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
 
+import static game.CheatUtilKt.getMaxBidString;
 import static game.RenderingUtilKt.getVectropyResult;
 
 public class VectropyScreen extends GameScreen
@@ -104,7 +105,7 @@ public class VectropyScreen extends GameScreen
 		else if (command.equals("maxbids") || command.equals("perfectbid"))
 		{
 			cheatUsed = true;
-			return getMaxBidsStr();
+			return getMaxBidString(getConcatenatedHands(), settings);
 		}
 		else if (command.equals("rainingjokers"))
 		{

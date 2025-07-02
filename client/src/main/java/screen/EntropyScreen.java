@@ -9,6 +9,7 @@ import object.EntropyBid;
 import util.Registry;
 
 import static game.CardsUtilKt.countSuit;
+import static game.CheatUtilKt.getMaxBidString;
 import static game.EntropyUtilKt.perfectBidAmount;
 import static game.EntropyUtilKt.perfectBidSuit;
 
@@ -129,7 +130,7 @@ public class EntropyScreen extends GameScreen
 		else if (command.equals("maxbids"))
 		{
 			cheatUsed = true;
-			return getMaxBidsStr();
+			return getMaxBidString(getConcatenatedHands(), settings);
 		}
 		else if (command.equals("rainingjokers"))
 		{
