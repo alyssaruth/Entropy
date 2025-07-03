@@ -180,14 +180,7 @@ public class ReplayConverter implements Registry
 		Element root = xml.getDocumentElement();
 		
 		boolean success = false;
-		if (version == 0)
-		{
-			success = ReplayConverterVersion0.convertReplay(root);
-		}
-		else
-		{
-			logger.error("unexpectedReplayVersion", "Trying to convert from unexpected version: " + version);
-		}
+		logger.error("unexpectedReplayVersion", "Trying to convert from unexpected version: " + version);
 		
 		//Increment the version and save the replay
 		if (success)

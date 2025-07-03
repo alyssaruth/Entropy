@@ -33,6 +33,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import game.Suit;
 import object.Bid;
 import object.BidListCellRenderer;
 import http.dto.OnlineMessage;
@@ -40,6 +41,11 @@ import object.PlayerLabel;
 import online.screen.GameRoom;
 import online.screen.OnlineChatPanel;
 import util.*;
+
+import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.isCardRelevant;
+import static game.RenderingUtilKt.getVectropyResult;
+import static utils.CoreGlobals.logger;
 
 public class ReplayDialog extends JFrame
 						  implements ActionListener,
@@ -59,7 +65,7 @@ public class ReplayDialog extends JFrame
 	private int opponentTwoNumberOfCards = 5;
 	private int opponentThreeNumberOfCards = 5;
 	
-	private int lastBidSuitCode = 0;
+	private Suit lastBidSuit = null;
 	
 	private boolean playerEnabled = true;
 	private boolean opponentOneEnabled = true;
@@ -389,12 +395,15 @@ public class ReplayDialog extends JFrame
 			setPlayerNames();
 			resetHandDisplay();
 			populateHands();
-			lastBidSuitCode = replay.getInt(roundNumber + REPLAY_INT_LAST_BID_SUIT_CODE, -1);
+			var lastBidSuitName = replay.get(roundNumber + REPLAY_STRING_LAST_BID_SUIT_NAME, null);
+			if (lastBidSuitName != null) {
+				lastBidSuit = Suit.valueOf(lastBidSuitName);
+			}
 			displayHands();
 			setFilterIcons();
-			highlightHands(lastBidSuitCode);
+			highlightHands(lastBidSuit);
 			populateBidHistory();
-			showResult(lastBidSuitCode);
+			showResult(lastBidSuit);
 			selectMatchingFilter();
 			populateChat();
 		}
@@ -651,21 +660,21 @@ public class ReplayDialog extends JFrame
 		}
 	}
 	
-	private void highlightHands(int suitCode)
+	private void highlightHands(Suit suit)
 	{
-		highlightHand(suitCode, playerHand, playerCards);
-		highlightHand(suitCode, opponentOneHand, opponentOneCards);
-		highlightHand(suitCode, opponentTwoHand, opponentTwoCards);
-		highlightHand(suitCode, opponentThreeHand, opponentThreeCards);
+		highlightHand(suit, playerHand, playerCards);
+		highlightHand(suit, opponentOneHand, opponentOneCards);
+		highlightHand(suit, opponentTwoHand, opponentTwoCards);
+		highlightHand(suit, opponentThreeHand, opponentThreeCards);
 	}
 	
-	private void highlightHand(int suitCode, List<String> hand, JLabel[] cards)
+	private void highlightHand(Suit suit, List<String> hand, JLabel[] cards)
 	{
 		int size = hand.size();
 		
 		for (int i=0; i<size; i++)
 		{
-			boolean isRelevant = CardsUtil.isRelevant(hand.get(i), suitCode);
+			boolean isRelevant = suit == null || isCardRelevant(hand.get(i), suit);
 			if (!isRelevant)
 			{
 				ImageIcon fadedIcon = GameUtil.getFadedImageForCard(hand.get(i), deckDirectory);
@@ -691,17 +700,17 @@ public class ReplayDialog extends JFrame
 		}
 	}
 	
-	private void showResult(int suitCode)
+	private void showResult(Suit suit)
 	{
 		switch (mode)
 		{
 		case ReplayConstants.GAME_MODE_ENTROPY:
 		case ReplayConstants.GAME_MODE_ENTROPY_ONLINE:
-			showEntropyResult(suitCode);
+			showEntropyResult(suit);
 			break;
 		case ReplayConstants.GAME_MODE_VECTROPY:
 		case ReplayConstants.GAME_MODE_VECTROPY_ONLINE:
-			showVectropyResult(suitCode);
+			showVectropyResult(suit);
 			break;
 		default:
 			Debug.stackTrace("Invalid mode showing replay result: " + mode);
@@ -709,16 +718,11 @@ public class ReplayDialog extends JFrame
 		}
 	}
 	
-	private void showEntropyResult(int suitCode)
+	private void showEntropyResult(Suit suit)
 	{
-		int playerCount = CardsUtil.countSuit(playerHand, suitCode, jokerValue);
-		int opponentOneCount = CardsUtil.countSuit(opponentOneHand, suitCode, jokerValue);
-		int opponentTwoCount = CardsUtil.countSuit(opponentTwoHand, suitCode, jokerValue);
-		int opponentThreeCount = CardsUtil.countSuit(opponentThreeHand, suitCode, jokerValue);
-
-		int total = playerCount + opponentOneCount	+ opponentTwoCount + opponentThreeCount;
+		int total = countSuit(suit, getConcatenatedHands(), jokerValue);
 		
-		String suitStr = CardsUtil.getSuitDesc(total, suitCode);
+		String suitStr = suit.getDescription(total);
 		if (total == 1)
 		{
 			setResultText("There was " + total + " " + suitStr);
@@ -729,10 +733,9 @@ public class ReplayDialog extends JFrame
 		}
 	}
 	
-	private void showVectropyResult(int suitCode)
+	private void showVectropyResult(Suit suitCode)
 	{
-		String result = VectropyUtil.getResult(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, 
-											   jokerValue, suitCode, includeMoons, includeStars);
+		String result = getVectropyResult(getConcatenatedHands(), jokerValue, suitCode, includeMoons, includeStars);
 		setResultText("Result: " + result);
 	}
 	
@@ -747,31 +750,33 @@ public class ReplayDialog extends JFrame
 	
 	private void selectMatchingFilter()
 	{
-		switch (lastBidSuitCode)
+		if (lastBidSuit == null) {
+			noFilter.setSelected(true);
+			return;
+		}
+
+		switch (lastBidSuit)
 		{
-			case -1:
-				noFilter.setSelected(true);
-				break;
-			case CardsUtil.SUIT_CLUBS:
+			case Clubs:
 				clubFilter.setSelected(true);
 				break;
-			case CardsUtil.SUIT_DIAMONDS:
+			case Diamonds:
 				diamondFilter.setSelected(true);
 				break;
-			case CardsUtil.SUIT_HEARTS:
+			case Hearts:
 				heartFilter.setSelected(true);
 				break;
-			case CardsUtil.SUIT_MOONS:
+			case Moons:
 				moonFilter.setSelected(true);
 				break;
-			case CardsUtil.SUIT_SPADES:
+			case Spades:
 				spadeFilter.setSelected(true);
 				break;
-			case CardsUtil.SUIT_STARS:
+			case Stars:
 				starFilter.setSelected(true);
 				break;
 			default:
-				Debug.append("Invalid case for replay filter: " + lastBidSuitCode, true);
+				logger.error("replay.error", "Invalid case for replay filter: " + lastBidSuit);
 		}
 				
 	}
@@ -816,11 +821,14 @@ public class ReplayDialog extends JFrame
 			setPlayerNames();
 			resetHandDisplay();
 			populateHands();
-			lastBidSuitCode = replay.getInt(roundNumber + REPLAY_INT_LAST_BID_SUIT_CODE, -1);
+			var lastBidSuitName = replay.get(roundNumber + REPLAY_STRING_LAST_BID_SUIT_NAME, null);
+			if (lastBidSuitName != null) {
+				lastBidSuit = Suit.valueOf(lastBidSuitName);
+			}
 			displayHands();
-			highlightHands(lastBidSuitCode);
+			highlightHands(lastBidSuit);
 			populateBidHistory();
-			showResult(lastBidSuitCode);
+			showResult(lastBidSuit);
 			selectMatchingFilter();
 			populateChat();
 		}
@@ -866,15 +874,15 @@ public class ReplayDialog extends JFrame
 			{
 				history.repaint();
 				
-				int suitFiltered = getFilterSuitFromFilters();
+				Suit suitFiltered = getFilterSuitFromFilters();
 				setFilterIcons();
 				displayHands();
 				highlightHands(suitFiltered);
 				
 				//if suitFiltered = -1, then show the result for lastBidSuitCode
-				if (suitFiltered == -1)
+				if (suitFiltered == null)
 				{
-					showResult(lastBidSuitCode);
+					showResult(lastBidSuit);
 				}
 				else
 				{
@@ -888,26 +896,32 @@ public class ReplayDialog extends JFrame
 		}
 	}
 	
-	private int getFilterSuitFromFilters()
+	private Suit getFilterSuitFromFilters()
 	{
 		if (clubFilter.isSelected())
 		{
-			return CardsUtil.SUIT_CLUBS;
+			return Suit.Clubs;
 		}
 		else if (diamondFilter.isSelected())
 		{
-			return CardsUtil.SUIT_DIAMONDS;
+			return Suit.Diamonds;
 		}
 		else if (heartFilter.isSelected())
 		{
-			return CardsUtil.SUIT_HEARTS;
+			return Suit.Hearts;
 		}
 		else if (spadeFilter.isSelected())
 		{
-			return CardsUtil.SUIT_SPADES;
+			return Suit.Spades;
+		}
+		else if (moonFilter.isSelected()) {
+			return Suit.Moons;
+		}
+		else if (starFilter.isSelected()) {
+			return Suit.Stars;
 		}
 		
-		return -1;
+		return null;
 	}
 	
 	private void setFilterIcons()
@@ -958,6 +972,16 @@ public class ReplayDialog extends JFrame
 			lastRound.setEnabled(true);
 		}
 	}
+
+	private List<String> getConcatenatedHands()
+	{
+		var result = new ArrayList<String>();
+		result.addAll(playerHand);
+		result.addAll(opponentOneHand);
+		result.addAll(opponentTwoHand);
+		result.addAll(opponentThreeHand);
+		return result;
+	}
 	
 	private void initialiseListeners()
 	{
@@ -997,38 +1021,38 @@ public class ReplayDialog extends JFrame
 			}
 			else if (source == clubFilter)
 			{
-				highlightHands(CardsUtil.SUIT_CLUBS);
-				showResult(CardsUtil.SUIT_CLUBS);
+				highlightHands(Suit.Clubs);
+				showResult(Suit.Clubs);
 			}
 			else if (source == diamondFilter)
 			{
-				highlightHands(CardsUtil.SUIT_DIAMONDS);
-				showResult(CardsUtil.SUIT_DIAMONDS);
+				highlightHands(Suit.Diamonds);
+				showResult(Suit.Diamonds);
 			}
 			else if (source == heartFilter)
 			{
-				highlightHands(CardsUtil.SUIT_HEARTS);
-				showResult(CardsUtil.SUIT_HEARTS);
+				highlightHands(Suit.Hearts);
+				showResult(Suit.Hearts);
 			}
 			else if (source == moonFilter)
 			{
-				highlightHands(CardsUtil.SUIT_MOONS);
-				showResult(CardsUtil.SUIT_MOONS);
+				highlightHands(Suit.Moons);
+				showResult(Suit.Moons);
 			}
 			else if (source == spadeFilter)
 			{
-				highlightHands(CardsUtil.SUIT_SPADES);
-				showResult(CardsUtil.SUIT_SPADES);
+				highlightHands(Suit.Spades);
+				showResult(Suit.Spades);
 			}
 			else if (source == starFilter)
 			{
-				highlightHands(CardsUtil.SUIT_STARS);
-				showResult(CardsUtil.SUIT_STARS);
+				highlightHands(Suit.Stars);
+				showResult(Suit.Stars);
 			}
 			else if (source == noFilter)
 			{
-				highlightHands(-1);
-				showResult(lastBidSuitCode);
+				highlightHands(null);
+				showResult(lastBidSuit);
 			}
 		}
 		catch (Throwable t)

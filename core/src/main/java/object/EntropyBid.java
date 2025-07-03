@@ -1,21 +1,22 @@
 package object;
 
+import game.GameSettings;
+import game.Suit;
+import org.w3c.dom.Element;
+import util.Debug;
+import util.XmlUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
-import game.GameSettings;
-import org.w3c.dom.Element;
-
-import util.CardsUtil;
-import util.Debug;
-import util.EntropyUtil;
-import util.XmlUtil;
+import static game.CardsUtilKt.countSuit;
+import static game.EntropyUtilKt.perfectBidAmount;
+import static game.EntropyUtilKt.perfectBidSuit;
 
 public class EntropyBid extends Bid
 {
-	private int bidSuitCode = 0;
+	private Suit bidSuit;
 	private int bidAmount = 0;
 	
 	/**
@@ -23,21 +24,15 @@ public class EntropyBid extends Bid
 	 */
 	public EntropyBid(){}
 	
-	public EntropyBid(int bidSuitCode, int bidAmount)
+	public EntropyBid(Suit bidSuit, int bidAmount)
 	{
-		this.bidSuitCode = bidSuitCode;
+		this.bidSuit = bidSuit;
 		this.bidAmount = bidAmount;
 	}
 	
-	public EntropyBid(String bidSuitCode, String bidAmount)
+	public Suit getBidSuit()
 	{
-		this.bidSuitCode = Integer.parseInt(bidSuitCode);
-		this.bidAmount = Integer.parseInt(bidAmount);
-	}
-	
-	public int getBidSuitCode()
-	{
-		return bidSuitCode;
+		return bidSuit;
 	}
 
 	public int getBidAmount()
@@ -48,14 +43,14 @@ public class EntropyBid extends Bid
 	@Override
 	public String toStringSpecific() 
 	{
-		return bidAmount + " " + CardsUtil.getSuitDesc(bidAmount, bidSuitCode);
+		return bidAmount + " " + bidSuit.getDescription(bidAmount);
 	}
 	
 	@Override
 	public String toHtmlStringSpecific()
 	{
-		String suitSymbol = CardsUtil.getSuitSymbolForCode(bidSuitCode);
-		String colour = CardsUtil.getColourForSuitCode(bidSuitCode);
+		String suitSymbol = bidSuit.getUnicodeStr();
+		String colour = bidSuit.getColourHex();
 		
 		String htmlStr = "<font color=\"" + colour + "\" face=\"Segoe UI Symbol\">";
 		htmlStr += bidAmount + suitSymbol;
@@ -69,7 +64,7 @@ public class EntropyBid extends Bid
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + bidAmount;
-		result = prime * result + bidSuitCode;
+		result = prime * result + bidSuit.ordinal();
 		return result;
 	}
 
@@ -84,7 +79,7 @@ public class EntropyBid extends Bid
 		EntropyBid other = (EntropyBid) obj;
 		if (bidAmount != other.bidAmount)
 			return false;
-		if (bidSuitCode != other.bidSuitCode)
+		if (bidSuit != other.bidSuit)
 			return false;
 		return true;
 	}
@@ -108,7 +103,7 @@ public class EntropyBid extends Bid
 		}
 		
 		if (bidAmount == entropyBid.getBidAmount()
-		  && bidSuitCode > entropyBid.getBidSuitCode())
+		  && entropyBid.bidSuit.lessThan(bidSuit))
 		{
 			return true;
 		}
@@ -117,25 +112,18 @@ public class EntropyBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-							 GameSettings settings)
+	public boolean isPerfect(List<String> cards, GameSettings settings)
 	{
-		int perfectBidAmount = EntropyUtil.getPerfectBidAmount(handOne, handTwo, handThree, handFour, settings.getJokerValue());
-		int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(handOne, handTwo, handThree, handFour, settings.getJokerValue(), settings.getIncludeStars());
+		int perfectBidAmount = perfectBidAmount(cards, settings.getJokerValue());
+		var perfectBidSuit = perfectBidSuit(cards, settings.getJokerValue(), settings.getIncludeStars());
 		
-		return bidSuitCode == perfectBidSuitCode && bidAmount == perfectBidAmount;
-	}
-	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
-	{
-		int total = CardsUtil.countSuit(bidSuitCode, hmHandByPlayerNumber, jokerValue);
-		return bidAmount > total;
+		return bidSuit == perfectBidSuit && bidAmount == perfectBidAmount;
 	}
 	
 	@Override
-	public boolean isOverbid(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour, int jokerValue)
+	public boolean isOverbid(List<String> cards, int jokerValue)
 	{
-		int total = CardsUtil.countSuit(bidSuitCode, handOne, handTwo, handThree, handFour, jokerValue);
+		int total = countSuit(bidSuit, cards, jokerValue);
 		return bidAmount > total;
 	}
 	
@@ -148,24 +136,21 @@ public class EntropyBid extends Bid
 	@Override
 	public String toXmlStringSpecific()
 	{
-		return bidSuitCode + ";" + bidAmount;
+		return bidSuit.name() + ";" + bidAmount;
 	}
 	
 	@Override
 	public void populateFromXmlStringSpecific(ArrayList<String> toks,
 			boolean moons, boolean stars)
 	{
-		String bidSuitCodeStr = toks.get(0);
-		String bidAmountStr = toks.get(1);
-		
-		this.bidSuitCode = Integer.parseInt(bidSuitCodeStr);
-		this.bidAmount = Integer.parseInt(bidAmountStr);
+		this.bidSuit = Suit.valueOf(toks.get(0));
+		this.bidAmount = Integer.parseInt(toks.get(1));
 	}
 	
 	@Override
 	public void populateXmlTag(Element bidElement)
 	{
-		bidElement.setAttribute("BidSuitCode", "" + bidSuitCode);
+		bidElement.setAttribute("BidSuit", bidSuit.name());
 		bidElement.setAttribute("BidAmount", "" + bidAmount);
 	}
 	
@@ -180,8 +165,8 @@ public class EntropyBid extends Bid
 	 */
 	public static EntropyBid factoryFromXmlTag(Element root) throws IOException
 	{
-		int bidSuitCode = XmlUtil.getAttributeIntCompulsory(root, "BidSuitCode");
+		String bidSuitName = XmlUtil.getCompulsoryAttribute(root, "BidSuit");
 		int bidAmount = XmlUtil.getAttributeIntCompulsory(root, "BidAmount");
-		return new EntropyBid(bidSuitCode, bidAmount);
+		return new EntropyBid(Suit.valueOf(bidSuitName), bidAmount);
 	}
 }

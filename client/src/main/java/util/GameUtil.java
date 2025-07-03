@@ -135,7 +135,7 @@ public class GameUtil
 		if (card.startsWith("Jo"))
 		{
 			String path = "/joker_" + jokers + "_" + colours + "/" + card + ".png";
-			URL resourceUrl = CardsUtil.class.getResource(path);
+			URL resourceUrl = GameUtil.class.getResource(path);
 			return new ImageIcon(resourceUrl);
 		}
 		
@@ -146,7 +146,7 @@ public class GameUtil
 		}
 		
 		String path = "/deck_" + deck + "_" + colours + "/" + card + ".png";
-		URL resourceUrl = CardsUtil.class.getResource(path);
+		URL resourceUrl = GameUtil.class.getResource(path);
 		return new ImageIcon(resourceUrl);
 	}
 	
