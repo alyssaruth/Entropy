@@ -27,7 +27,6 @@ import javax.swing.event.ChangeListener;
 import game.EntropyBidAction;
 import game.Suit;
 import object.EntropyBid;
-import util.CardsUtil;
 import util.Debug;
 import util.Registry;
 
@@ -256,17 +255,13 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		this.lastBidSuit = bid.getSuit();
 		this.lastBidAmount = bid.getAmount();
 
-		bidSuit = lastBidSuit.next(includeMoons, includeStars);
-		if (bidSuit == Suit.Clubs) {
-			bidSlider.setMinimum(lastBidAmount + 1);
-		} else {
-			bidSlider.setMinimum(lastBidAmount);
-		}
+		updateSelectionForLastBidSuit();
+	}
 
-		var suitIx = Suit.getEntries().indexOf(bidSuit);
-		bidButtons[suitIx].setSelected(true);
-
-		updateBidAmountDisplay();
+	private void updateSelectionForLastBidSuit() {
+		var nextSuit = lastBidSuit.next(includeMoons, includeStars);
+		bidButtons[Suit.getEntries().indexOf(nextSuit)].setSelected(true);
+		actionPerformedBidButton(lastBidSuit.next(includeMoons, includeStars));
 	}
 	
 	@Override
@@ -330,10 +325,16 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		includeStars = savedGame.getBoolean(SHARED_BOOLEAN_INCLUDE_STARS, false);
 		maxBid = savedGame.getInt(SAVED_GAME_INT_MAX_BID, 0);
 		init(maxBid, -1, false, includeMoons, includeStars, false);
-		
-		updateBidAmountDisplay();
+
 		setBidButtonColours();
-		
+
+		lastBidAmount = savedGame.getInt(SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
+		var lastBid = savedGame.get(SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
+		if (lastBid != null) {
+			lastBidSuit = Suit.valueOf(lastBid);
+		}
+
+		updateSelectionForLastBidSuit();
 		setIllegalButtonState();
 		
 		boolean challengeEnabled = savedGame.getBoolean(SAVED_GAME_BOOLEAN_CHALLENGE_ENABLED, true);

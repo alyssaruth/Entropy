@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.createAndShuffleDeck;
+import static game.CheatUtilKt.containsNonJoker;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
@@ -65,7 +68,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	public abstract GameMode getGameMode();
 	public abstract String processCommand(String command);
-	public abstract int getLastBidSuitCode();
+	public abstract Suit getLastBidSuit();
 	public abstract void unlockPerfectBidAchievements();
 	public abstract void unlockEndOfGameAchievements(int startingCards);
 	public abstract void setPerfectBidBooleans();
@@ -108,7 +111,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void startRound()
 	{
-		List<String> deck = CardsUtil.createAndShuffleDeck(settings);
+		List<String> deck = createAndShuffleDeck(settings);
 		populateHands(deck);
 		displayHands();
 		
@@ -733,8 +736,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void updateScreenForChallenge()
 	{
-		int lastBidSuitCode = getLastBidSuitCode();
-		handPanel.displayAndHighlightHands(lastBidSuitCode);
+		handPanel.displayAndHighlightHands(getLastBidSuit());
 		bidPanel.enableBidPanel(false);
 		ScreenCache.get(MainScreen.class).showNextRoundButton();
 		String resultText = savedGame.get(SAVED_GAME_STRING_RESULT_TEXT, "");
@@ -752,39 +754,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		nextRoundTimer.cancel();
 		nextRoundTimer = new Timer("Timer-NextRound");
 	}
-	
-	protected String getMaxBidsStr()
-	{
-		var jokerValue = settings.getJokerValue();
-		List<String> playerHand = player.getHand();
-		List<String> opponentOneHand = opponentOne.getHand();
-		List<String> opponentTwoHand = opponentTwo.getHand();
-		List<String> opponentThreeHand = opponentThree.getHand();
-		
-		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxHearts = CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxMoons = CardsUtil.countSuit(CardsUtil.SUIT_MOONS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxSpades = CardsUtil.countSuit(CardsUtil.SUIT_SPADES, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		int maxStars = CardsUtil.countSuit(CardsUtil.SUIT_STARS, playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, jokerValue);
-		
-		String maxStr = maxClubs + "c, " + maxDiamonds + "d, " + maxHearts + "h, ";
-		
-		if (settings.getIncludeMoons())
-		{
-			maxStr += maxMoons + "m, ";
-		}
-		
-		maxStr += maxSpades + "s";
-		
-		if (settings.getIncludeStars())
-		{
-			maxStr += ", " + maxStars + "x";
-		}
-		
-		return maxStr;
-	}
-	
+
 	protected void randomlyReplaceCardsWithJokers()
 	{
 		if (!currentlyOnChallenge)
@@ -795,7 +765,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			
 			List<String> allCards = getConcatenatedHands();
 			
-			while (CardsUtil.containsNonJoker(allCards) && jokersToAdd > 0)
+			while (containsNonJoker(allCards) && jokersToAdd > 0)
 			{
 				replaceRandomCardWithJoker();
 				allCards = getConcatenatedHands();
@@ -830,7 +800,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Random rand = new Random();
 		List<String> hand = allHands[rand.nextInt(4)];
 		
-		if (!CardsUtil.containsNonJoker(hand))
+		if (!containsNonJoker(hand))
 		{
 			return pickHandWithNonJokerAtRandom();
 		}
@@ -865,12 +835,12 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		addToListmodel(lastBid);
 		
 		updateAchievementVariables();
-		if (lastBid.isPerfect(allCards(), settings))
+		if (lastBid.isPerfect(getConcatenatedHands(), settings))
 		{
 			handlePerfectBid(lastBid);
 		}
 		
-		if (lastBid.isOverbid(allCards(), settings))
+		if (lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			hasOverbid = true;
 		}
@@ -900,7 +870,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		unlockPerfectBidAchievements();
 		
 		Player playerChallenged = lastBid.getPlayer();
-		if (!lastBid.isOverbid(allCards(), settings))
+		if (!lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			Debug.append("not an overbid", logging);
 			setCardsToSubtract(challenger);
@@ -924,7 +894,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Player bidder = lastBid.getPlayer();
 		Debug.append("Bidder: " + bidder, logging);
 		
-		if (lastBid.isPerfect(allCards(), settings))
+		if (lastBid.isPerfect(getConcatenatedHands(), settings))
 		{
 			Debug.append("bid was perfect", logging);
 			
@@ -1041,21 +1011,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		}
 	}
 
-	protected List<String> allCards() {
-		ArrayList<String> cards = new ArrayList<>();
-		cards.addAll(player.getHand());
-		cards.addAll(opponentOne.getHand());
-		cards.addAll(opponentTwo.getHand());
-		cards.addAll(opponentThree.getHand());
-		return cards;
-	}
-	
-	public int countSuit(int suitCode)
-	{
-		return CardsUtil.countSuit(suitCode, player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-								   opponentThree.getHand(), settings.getJokerValue());
-	}
-	
 	public StrategyParams factoryStrategyParms(Player opponent)
 	{
 		var cardsOnShow = Stream.of(player, opponentOne, opponentTwo, opponentThree)

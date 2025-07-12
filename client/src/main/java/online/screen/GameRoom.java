@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
+import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
 /**
@@ -494,7 +495,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		Player currentPlayer = hmPlayerByAdjustedPlayerNumber.get(adjustedNo);
 		if (currentPlayer == null)
 		{
-			String colour = EntropyUtil.getColourForPlayerNumber(playerNumber);
+			String colour = getColourForPlayerNumber(playerNumber);
 			Player newPlayer = new Player(playerNumber, colour);
 			newPlayer.setName(username);
 			newPlayer.setEnabled(true);

@@ -1,11 +1,16 @@
 package help
 
+import game.CLUBS_SYMBOL
+import game.DIAMONDS_SYMBOL
+import game.HEARTS_SYMBOL
+import game.MOONS_SYMBOL
+import game.SPADES_SYMBOL
+import game.STARS_SYMBOL
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JLabel
 import javax.swing.JTextPane
 import javax.swing.SwingConstants
-import util.CardsUtil
 import util.EntropyColour
 import util.Registry
 import utils.COLOUR_SUIT_GOLD
@@ -14,19 +19,19 @@ import utils.COLOUR_SUIT_PURPLE
 class FundamentalsTheDeck : HelpPanel(), Registry {
     override val nodeName = "The Deck"
 
-    private var clubString = "clubs (<font color = \"black\">\u2663</font>)"
-    private var diamondString = "diamonds (<font color=\"red\">\u2666</font>)"
+    private var clubString = "clubs (<font color = \"black\">${CLUBS_SYMBOL}</font>)"
+    private var diamondString = "diamonds (<font color=\"red\">${DIAMONDS_SYMBOL}</font>)"
     private var moonString: String? = null
 
     private val title = JTextPane()
     private val paneOne = JTextPane()
 
-    private val clubLabel = JLabel("\u2663")
-    private val diamondLabel = JLabel("\u2666")
-    private val heartLabel = JLabel("\u2665")
-    private val moonLabel = JLabel(CardsUtil.MOONS_SYMBOL)
-    private val spadeLabel = JLabel("\u2660")
-    private val starLabel = JLabel(CardsUtil.STARS_SYMBOL)
+    private val clubLabel = JLabel(CLUBS_SYMBOL)
+    private val diamondLabel = JLabel(DIAMONDS_SYMBOL)
+    private val heartLabel = JLabel(HEARTS_SYMBOL)
+    private val moonLabel = JLabel(MOONS_SYMBOL)
+    private val spadeLabel = JLabel(SPADES_SYMBOL)
+    private val starLabel = JLabel(STARS_SYMBOL)
     private val label_3 = JLabel("<")
     private val label_4 = JLabel("<")
     private val label_5 = JLabel("<")
@@ -105,14 +110,14 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
                 clubString +
                 ", " +
                 diamondString +
-                ", hearts (<font color=\"red\">\u2665</font>) and spades (\u2660), " +
+                ", hearts (<font color=\"red\">${HEARTS_SYMBOL}</font>) and spades (${SPADES_SYMBOL}), " +
                 "each of 13 cards. ")
 
         if (moonsAndStars) {
             paneOneText += "Two optional suits, $moonString and stars "
             paneOneText +=
                 "(<font color=\"CC9900\">" +
-                    CardsUtil.STARS_SYMBOL +
+                    STARS_SYMBOL +
                     "</font>) can also be added to the deck."
         }
 
@@ -136,13 +141,13 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
         val diamondsColour = if (fourColours) "blue" else "red"
         val moonsColour = if (fourColours) "purple" else "CC9900"
 
-        clubString = "clubs (<font color = \"$clubsColour\">\u2663</font>)"
-        diamondString = "diamonds (<font color=\"$diamondsColour\">\u2666</font>)"
+        clubString = "clubs (<font color = \"$clubsColour\">${CLUBS_SYMBOL}</font>)"
+        diamondString = "diamonds (<font color=\"$diamondsColour\">${DIAMONDS_SYMBOL}</font>)"
         moonString =
             "moons (<font face=\"Segoe UI Symbol\" color=\"" +
                 moonsColour +
                 "\">" +
-                CardsUtil.MOONS_SYMBOL +
+                MOONS_SYMBOL +
                 "</font>)"
 
         val moonsAndStars = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_EXTRA_SUITS, false)

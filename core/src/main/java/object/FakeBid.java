@@ -18,8 +18,7 @@ public abstract class FakeBid extends Bid
 	}
 	
 	@Override
-	public boolean isPerfect(List<String> handOne, List<String> handTwo,
-			List<String> handThree, List<String> handFour, GameSettings settings)
+	public boolean isPerfect(List<String> cards, GameSettings settings)
 	{
 		Debug.stackTrace("Calling unimplemented method: isPerfect");
 		return false;
@@ -33,8 +32,7 @@ public abstract class FakeBid extends Bid
 	}
 	
 	@Override
-	public boolean isOverbid(List<String> handOne, List<String> handTwo,
-							 List<String> handThree, List<String> handFour, int jokerValue)
+	public boolean isOverbid(List<String> cards, int jokerValue)
 	{
 		Debug.stackTrace("Calling unimplemented method: isOverbid");
 		return false;

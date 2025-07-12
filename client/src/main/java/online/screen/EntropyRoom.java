@@ -3,17 +3,17 @@ package online.screen;
 import java.awt.BorderLayout;
 import java.util.UUID;
 
-import game.CardsUtilKt;
 import game.EntropyBidAction;
 import game.GameSettings;
-import object.Bid;
 import object.EntropyAchievementsTracker;
 import object.EntropyBid;
 import screen.EntropyBidPanel;
-import util.CardsUtil;
 import util.ClientUtil;
 import util.Registry;
 import util.ReplayConstants;
+
+import static game.CardsUtilKt.countSuit;
+import static game.CardsUtilKt.extractCards;
 
 public class EntropyRoom extends GameRoom<EntropyBidAction>
 {
@@ -51,8 +51,8 @@ public class EntropyRoom extends GameRoom<EntropyBidAction>
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
 
-			int total = CardsUtilKt.countSuit(lastBidSuit, allCards(), getJokerValue());
-			String suitsStr = lastBidSuit.getDescription(total == 1);
+			int total = countSuit(lastBidSuit, extractCards(hmHandByAdjustedPlayerNumber), getJokerValue());
+			String suitsStr = lastBidSuit.getDescription(total);
 			if (total == 1)
 			{
 				showResult("There was " + total + " " + suitsStr);
@@ -69,7 +69,7 @@ public class EntropyRoom extends GameRoom<EntropyBidAction>
 	{
 		int roundsSoFar = replay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0);
 		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_ENTROPY_ONLINE);
-		replay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, lastBid.getSuit().getLegacyCode());
+		replay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, lastBid.getSuit().name());
 		replayDialog.roundAdded();
 	}
 

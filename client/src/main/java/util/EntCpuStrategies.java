@@ -11,8 +11,8 @@ import strategy.MarkStrategySuitWrapper;
 import java.util.*;
 
 import static game.CardsUtilKt.countSuit;
-import static game.CardsUtilKt.getEvMap;
-import static strategy.MarkStrategySuitWrapperKt.factoryMarkStrategySuitWrapper;
+import static game.StrategyUtilKt.getEvMap;
+import static utils.CoreGlobals.logger;
 
 public class EntCpuStrategies 
 {
@@ -75,11 +75,11 @@ public class EntCpuStrategies
 		int jokerQuantity = settings.getJokerQuantity();
 		double totalCards = parms.getCardsInPlay();
 		boolean logging = parms.getLogging();
-		
-		Debug.append("Mark strategy for this turn", logging);
 
-		MarkStrategySuitWrapper suitWrapper = factoryMarkStrategySuitWrapper(hand, jokerValue, includeMoons, includeStars, bid);
-		Debug.append("SuitWrapper: " + suitWrapper, logging);
+		log("Mark strategy for this turn", logging);
+
+		var suitWrapper = factoryMarkStrategySuitWrapper(hand, jokerValue, includeMoons, includeStars, bid);
+		log("SuitWrapper: " + suitWrapper, logging);
 		
 		var bestSuit = suitWrapper.getBestSuit();
 		int bestSuitCount = countSuit(bestSuit, hand, jokerValue);
@@ -91,7 +91,7 @@ public class EntCpuStrategies
 
 		if (bid == null)
 		{
-			Debug.append("Starting this round", logging);
+			log("Starting this round", logging);
 			var suit = getSuitForMarkBid(suitWrapper, logging);
 			int bidAmount = markBid(halfThreshold, (int)totalCards, suitsInPlay);
 			
@@ -102,8 +102,8 @@ public class EntCpuStrategies
 			//Set the 'hand' variable to be everything I can see.
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			
-			int bidAmountFacedWith = bid.getAmount();
-			var bidSuitFacedWith = bid.getSuit();
+			int bidAmountFacedWith = bid.getBidAmount();
+			var bidSuitFacedWith = bid.getBidSuit();
 			
 			int bidSuitCount = countSuit(bidSuitFacedWith, hand, jokerValue);
 			int minBiddableSuitCount = suitWrapper.getSuitsPossibleToMinBid().size();
@@ -111,133 +111,133 @@ public class EntCpuStrategies
 			
 			if (minBiddableSuitCount == suitsInPlay)
 			{
-				Debug.append("I can safely minbid in all suits.", logging);
+				log("I can safely minbid in all suits.", logging);
 				if (choice <= 1)
 				{
 					//0 or 1
-					Debug.append("One-upped (50%)", logging);
-					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+					log("One-upped (50%)", logging);
+					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 				else if (choice == 2)
 				{
-					Debug.append("Minbidding best or worst (25%)", logging);
+					log("Minbidding best or worst (25%)", logging);
 					if (bestSuit == bidSuitFacedWith)
 					{
-						Debug.append("BestSuit = BidSuitCodeFacedWith = " + bestSuit + ". Bidding worstSuit: " + worstSuit, logging);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, worstSuit, logging);
+						log("BestSuit = bidSuitFacedWith = " + bestSuit + ". Bidding worstSuit: " + worstSuit, logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, worstSuit, logging);
 					}
 					else
 					{
-						Debug.append("Bidding bestSuit as it's different from what I'm faced with.", logging);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						log("Bidding bestSuit as it's different from what I'm faced with.", logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 				}
 				else
 				{
-					Debug.append("Minbid random middle suit (25%)", logging);
+					log("Minbid random middle suit (25%)", logging);
 					var suitToBid = suitWrapper.getRandomMiddleSuit();
-					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 				}
 			}
 			else if (minBiddableSuitCount >= 3)
 			{
-				Debug.append("I can safely minbid at least 3 suits", logging);
+				log("I can safely minbid at least 3 suits", logging);
 				if (bidSuitCount > bidAmountFacedWith)
 				{
-					Debug.append("This includes the suit I'm faced with", logging);
+					log("This includes the suit I'm faced with", logging);
 					if (choice <= 1)
 					{
-						Debug.append("One-upping (50%)", logging);
-						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+						log("One-upping (50%)", logging);
+						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
-						Debug.append("Bidding random other suit (50%)", logging);
+						log("Bidding random other suit (50%)", logging);
 						var suitToBid = suitWrapper.randomSuitNot(bidSuitFacedWith);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 					}
 				}
 				else
 				{
-					Debug.append("This doesn't include the suit I'm faced with", logging);
+					log("This doesn't include the suit I'm faced with", logging);
 					if (choice <= 1)
 					{
-						Debug.append("Minbidding my best suit (50%)", logging);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						log("Minbidding my best suit (50%)", logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 					else
 					{
-						Debug.append("Minbidding random other suit (50%)", logging);
+						log("Minbidding random other suit (50%)", logging);
 						var suitToBid = suitWrapper.randomSuitNot(bestSuit);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 					}
 				}
 			}
 			else if (minBiddableSuitCount == 2)
 			{
-				Debug.append("I can safely minbid 2 suits", logging);
+				log("I can safely minbid 2 suits", logging);
 				if (choice <= 1)
 				{
-					Debug.append("One-upping (50%)", logging);
-					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+					log("One-upping (50%)", logging);
+					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 				else
 				{
 					///minbid one of the two suits I can
-					Debug.append("Minbidding one of the two suits (50%)", logging);
+					log("Minbidding one of the two suits (50%)", logging);
 					var suitToBid = suitWrapper.randomSuitPossibleToMinBid();
-					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 				}
 			}
 			else if (minBiddableSuitCount == 1)
 			{
 				var suitToBid = suitWrapper.randomSuitPossibleToMinBid();
-				Debug.append("Could only minbid suit " + suitToBid + ", so minbidding that.", logging);
-				return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+				log("Could only minbid suit " + suitToBid + ", so minbidding that.", logging);
+				return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 			}
 			else
 			{
-				Debug.append("Couldn't automatically minbid any suit", logging);
+				log("Couldn't automatically minbid any suit", logging);
 				double jokerThreshold = Math.floor((jokerQuantity * jokerValue)/(double)(suitsInPlay*2));
 				double threshold = bidSuitCount + totalCards - hand.size() + jokerThreshold - 1;
 				
-				Debug.append("Bonkers threshold is " + threshold, logging);
+				log("Bonkers threshold is " + threshold, logging);
 				if (bidAmountFacedWith > threshold)
 				{
-					Debug.append("Auto-challenging because " + bidAmountFacedWith + " > " + threshold, logging);
-					return new ChallengeAction(opponent.getName(), false);
+					log("Auto-challenging because " + bidAmountFacedWith + " > " + threshold, logging);
+					return new ChallengeAction();
 				}
 				else if (bidAmountFacedWith > bestSuitCount + bidSuitCount + quarterThreshold)
 				{
-					Debug.append("Auto-challenging because bestSuitCount + bidSuitCount + quarterThreshold = " + (bestSuitCount + bidSuitCount + quarterThreshold), logging);
-					return new ChallengeAction(opponent.getName(), false);
+					log("Auto-challenging because bestSuitCount + bidSuitCount + quarterThreshold = " + (bestSuitCount + bidSuitCount + quarterThreshold), logging);
+					return new ChallengeAction();
 				}
 				else if (bidAmountFacedWith > 1 + quarterThreshold)
 				{
-					Debug.append("BidAmountFacedWith > " + (1+quarterThreshold), logging);
+					log("BidAmountFacedWith > " + (1+quarterThreshold), logging);
 					if (choice <= 2)
 					{
-						Debug.append("One-upping (75%)", logging);
-						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+						log("One-upping (75%)", logging);
+						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
-						Debug.append("Challenging (25%)", logging);
-						return new ChallengeAction(opponent.getName(), false);
+						log("Challenging (25%)", logging);
+						return new ChallengeAction();
 					}
 				}
 				else
 				{
-					Debug.append("BidAmountFacedWith is only 1, so not challenging.", logging);
+					log("BidAmountFacedWith is only 1, so not challenging.", logging);
 					if (choice <= 1)
 					{
-						Debug.append("One-upping (50%)", logging);
-						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+						log("One-upping (50%)", logging);
+						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
-						Debug.append("Minbidding my best suit (50%)", logging);
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						log("Minbidding my best suit (50%)", logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 				}
 			}
@@ -250,19 +250,19 @@ public class EntCpuStrategies
 		if (choice == 0)
 		{
 			var bestSuit = suitWrapper.getBestSuit();
-			Debug.append("Chose best suit: " + bestSuit, logging);
+			log("Chose best suit: " + bestSuit, logging);
 			return bestSuit;
 		}
 		else if (choice == 1)
 		{
 			var worstSuit = suitWrapper.getWorstSuit();
-			Debug.append("Chose worst suit: " + worstSuit, logging);
+			log("Chose worst suit: " + worstSuit, logging);
 			return worstSuit;
 		}
 		else
 		{
 			var randomSuit = suitWrapper.getRandomMiddleSuit();
-			Debug.append("Chose random middle suit: " + randomSuit, logging);
+			log("Chose random middle suit: " + randomSuit, logging);
 			return randomSuit;
 		}
 	}
@@ -304,7 +304,7 @@ public class EntCpuStrategies
 		int jokerValue = settings.getJokerValue();
 		boolean logging = parms.getLogging();
 		
-		Debug.append("Basic strategy for this turn", logging);
+		log("Basic strategy for this turn", logging);
 		Random coin = new Random();
 		int decision = coin.nextInt(2);
 		int decisionTwo = coin.nextInt(2);
@@ -312,7 +312,7 @@ public class EntCpuStrategies
 
 		if (bid == null)
 		{
-			Debug.append("Starting this round", logging);
+			log("Starting this round", logging);
 
 			var suit = Suit.random(includeMoons, includeStars);
 			int bidAmount = Math.max(1, countSuit(suit, hand, jokerValue) + coin.nextInt(2));
@@ -324,64 +324,64 @@ public class EntCpuStrategies
 			//Set the 'hand' variable to be everything I can see.
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			
-			int bidAmountFacedWith = bid.getAmount();
-			Suit bidSuitFacedWith = bid.getSuit();
+			int bidAmountFacedWith = bid.getBidAmount();
+			var bidSuitFacedWith = bid.getBidSuit();
 			
 			int bidSuitCount = countSuit(bidSuitFacedWith, hand, jokerValue);
 			double totalCards = parms.getCardsInPlay();
 
 			int thirdThreshold = (int) Math.floor(totalCards/3.5);
 			int halfThreshold = (int) Math.ceil(totalCards/2);
-			Debug.append("thirdThreshold = " + thirdThreshold, logging);
-			Debug.append("halfThreshold = " + halfThreshold, logging);
+			log("thirdThreshold = " + thirdThreshold, logging);
+			log("halfThreshold = " + halfThreshold, logging);
 
 			if (bidAmountFacedWith <= bidSuitCount)
 			{
 				if (decisionTwo == 1)
 				{
-					Debug.append("Opponent " + opponent + " auto-minbid", logging);
-					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					log("Opponent " + opponent + " auto-minbid", logging);
+					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
-					Debug.append("Opponent " + opponent + " auto-oneupped", logging);
-					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+					log("Opponent " + opponent + " auto-oneupped", logging);
+					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 			else if (bidAmountFacedWith < bidSuitCount + thirdThreshold)
 			{
 				if (decisionTwo == 1)
 				{
-					Debug.append("Opponent " + opponent + " auto-minbid", logging);
-					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					log("Opponent " + opponent + " auto-minbid", logging);
+					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
-					Debug.append("Opponent " + opponent + " auto-oneupped", logging);
-					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+					log("Opponent " + opponent + " auto-oneupped", logging);
+					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 			else if (bidAmountFacedWith > halfThreshold)
 			{
-				Debug.append("Opponent " + opponent + " auto-challenged", logging);
+				log("Opponent " + opponent + " auto-challenged", logging);
 				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (decision == 0)
 			{
-				Debug.append("Opponent " + opponent + " flip-challenged", logging);
+				log("Opponent " + opponent + " flip-challenged", logging);
 				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
 				if (decisionTwo == 0)
 				{
-					Debug.append("Opponent " + opponent + " flip-minbid", logging);
-					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					log("Opponent " + opponent + " flip-minbid", logging);
+					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
-					Debug.append("Opponent " + opponent + " flip-oneupped", logging);
-					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
+					log("Opponent " + opponent + " flip-oneupped", logging);
+					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 		}
@@ -405,14 +405,14 @@ public class EntCpuStrategies
 		int jokerValue = settings.getJokerValue();
 		boolean logging = parms.getLogging();
 		
-		Debug.append("EV strategy for this turn", logging);
+		log("EV strategy for this turn", logging);
 		Random coin = new Random();
 		List<String> hand = opponent.getHand();
 		
 		int totalOpponentCards = totalCards - hand.size();
 		if (bid == null)
 		{
-			Debug.append("Starting this round", logging);
+			log("Starting this round", logging);
 			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
 			
 			var suit = Suit.random(includeMoons, includeStars);
@@ -429,73 +429,50 @@ public class EntCpuStrategies
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
 			
-			int bidAmountFacedWith = bid.getAmount();
-			var bidSuitFacedWith = bid.getSuit();
+			int bidAmountFacedWith = bid.getBidAmount();
+			var bidSuitFacedWith = bid.getBidSuit();
 			double expectedValueForBid = hmEvBySuit.get(bidSuitFacedWith);
-			
-			Debug.append("EV calculation for bid of " + bid.plainString() + ": " + expectedValueForBid, logging);
 
-			Suit.filter(includeMoons, includeStars).stream().max((suit) -> hmEvBySuit.get(suit));
-			ArrayList<Integer> suits = CardsUtil.getSuitCodesVector(includeMoons, includeStars);
-			int suitsSize = suits.size();
-			double maxEv = 0;
-			for (int i=0; i<suitsSize; i++)
-			{
-				Integer suitObj = suits.get(i);
-				double expectedValue = hmEvBySuit.get(suitObj);
-				if (expectedValue > maxEv)
-				{
-					maxEv = expectedValue;
-				}
-			}
-			
-			String suitsWithMax = "";
-			
-			for (int i=0; i<suitsSize; i++)
-			{
-				int suit = suits.get(i);
-				double ev = hmEvBySuit.get(suit);
-				if (ev == maxEv)
-				{
-					suitsWithMax += suit;
-				}
-			}
-			
+			log("EV calculation for bid of " + bidAmountFacedWith + " " + bidSuitFacedWith.getDescription(bidAmountFacedWith) + ": " + expectedValueForBid, logging);
+
+			double maxEv = getMaxValue(hmEvBySuit);
+			var suitsWithMax = getSuitsWithMostPositiveValue(hmEvBySuit);
+
 			if (bidAmountFacedWith > expectedValueForBid + 1)
 			{
 				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
-				int suitsToChooseFrom = suitsWithMax.length();
+				int suitsToChooseFrom = suitsWithMax.size();
 				int choice = coin.nextInt(suitsToChooseFrom);
-				
-				int suit = Integer.parseInt(suitsWithMax.substring(choice, choice+1));
+
+				Suit suit = suitsWithMax.get(choice);
 
 				if (maxEv > bidAmountFacedWith - 1 && totalOpponentCards > 1)
 				{
-					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suit, logging);
+					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suit, logging);
 				}
 				else if (maxEv > bidAmountFacedWith - 1)
 				{
 					//bit friggy - special case for being up against one card. Don't bid higher if it means you need them to have the ace/joker.
-					suit = Integer.parseInt(suitsWithMax.substring(suitsToChooseFrom-1, suitsToChooseFrom));
-					int bidAmount = EntropyUtil.amountRequiredToBidInSuit(suit, bidSuitFacedWith, bidAmountFacedWith);
-					int amountRequiredInOneCard = bidAmount - CardsUtil.countSuit(hand, suit, jokerValue);
+					suit = suitsWithMax.get(suitsToChooseFrom-1);
+					int bidAmount = amountRequiredToBid(suit, bidSuitFacedWith, bidAmountFacedWith);
+					int amountRequiredInOneCard = bidAmount - countSuit(suit, hand, jokerValue);
 					
 					if (amountRequiredInOneCard < 2)
 					{
-						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suit, logging);
+						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suit, logging);
 					}
 					else
 					{
-						Debug.append("Bidding would've needed >1 in one card, so challenged", logging);
+						log("Bidding would've needed >1 in one card, so challenged", logging);
 						return new ChallengeAction(opponent.getName(), false);
 					}
 				}
 				else
 				{
-					Debug.append("Couldn't bid anything 'safely', so challenged.", logging);
+					log("Couldn't bid anything 'safely', so challenged.", logging);
 					return new ChallengeAction(opponent.getName(), false);
 				}
 			}
@@ -512,16 +489,22 @@ public class EntCpuStrategies
 
 	private static EntropyBidAction opponentOneUp(Player opponent, Suit bidSuitFacedWith, int bidAmount, boolean logging)
 	{
-		Debug.append("One Up", logging);
+		log("One Up", logging);
 		return new EntropyBidAction(opponent.getName(), false, bidAmount + 1, bidSuitFacedWith);
 	}
 
 	private static EntropyBidAction opponentMinBidSuit(Player opponent, Suit bidSuitFacedWith, int bidAmountFacedWith, Suit desiredSuit, boolean logging)
 	{
-		Debug.append("MinBidSuit " + desiredSuit, logging);
+        log("MinBidSuit " + desiredSuit, logging);
 
 		var bidAmount = desiredSuit.lessThan(bidSuitFacedWith) ? bidAmountFacedWith + 1 : bidAmountFacedWith;
 		
 		return new EntropyBidAction(opponent.getName(), false, bidAmount, desiredSuit);
 	}
+
+    private static void log(String text, boolean logging) {
+        if (logging) {
+            logger.info("strategy.debug", text);
+        }
+    }
 }

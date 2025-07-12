@@ -55,9 +55,9 @@ public class EntropyAchievementsTracker implements Registry
 		revealedSameSuit = savedGame.getBoolean(SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT, false);
 		cardsRevealed = savedGame.getInt(SAVED_GAME_INT_CARDS_REVEALED, 0);
 
-		var firstBidSuitStr = savedGame.get(SAVED_GAME_STRING_FIRST_SUIT_BID, null);
-		if (firstBidSuitStr != null) {
-			firstSuitBid = Suit.valueOf(firstBidSuitStr);
+		var firstSuitBidName = savedGame.get(SAVED_GAME_STRING_FIRST_SUIT_BID, null);
+		if (firstSuitBidName != null) {
+			firstSuitBid = Suit.valueOf(firstSuitBidName);
 		}
 
 		deviatedFromFirstSuit = savedGame.getBoolean(SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT, false);
@@ -75,11 +75,8 @@ public class EntropyAchievementsTracker implements Registry
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_REVEALED_DIFFERENT_SUIT, revealedDifferentSuit);
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_REVEALED_SAME_SUIT, revealedSameSuit);
 		savedGame.putInt(SAVED_GAME_INT_CARDS_REVEALED, cardsRevealed);
-
-		if (firstSuitBid != null) {
-			savedGame.put(SAVED_GAME_STRING_FIRST_SUIT_BID, firstSuitBid.name());
-		}
-
+		
+		savedGame.put(SAVED_GAME_STRING_FIRST_SUIT_BID, firstSuitBid.name());
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_DEVIATED_FROM_FIRST_SUIT, deviatedFromFirstSuit);
 	}
 	
@@ -92,7 +89,7 @@ public class EntropyAchievementsTracker implements Registry
 	public void updatePerfectBidVariables(EntropyBidAction lastBid)
 	{
 		var bidSuit = lastBid.getSuit();
-		
+
 		if (bidSuit == Suit.Spades)
 		{
 			earnedGardener = true;

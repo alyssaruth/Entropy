@@ -26,4 +26,9 @@ class EntropyUtilTest : AbstractTest() {
     fun `Should get the perfect bid suit`() {
         perfectBidSuit(listOf("Jo1", "Ah", "Ad", "3s", "-Jc"), 3, true) shouldBe Suit.Spades
     }
+
+    @Test
+    fun `Should get the perfect bid amount`() {
+        perfectBidAmount(listOf("Ad", "3c", "Jo1"), 2) shouldBe 4
+    }
 }

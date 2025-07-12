@@ -5,12 +5,13 @@ import java.awt.BorderLayout;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import game.GameMode;
 import game.VectropyBidAction;
-import object.Bid;
-import object.VectropyBid;
+import game.Suit;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
-import util.VectropyUtil;
+
+import static game.CheatUtilKt.getMaxBidString;
+import static game.RenderingUtilKt.getVectropyResult;
 
 import static utils.CoreGlobals.jsonMapper;
 import static utils.CoreGlobals.logger;
@@ -44,9 +45,8 @@ public class VectropyScreen extends GameScreen<VectropyBidAction>
 	@Override
 	public void showResult()
 	{
-		handPanel.displayAndHighlightHands(-1);
-		String result = VectropyUtil.getResult(player.getHand(), opponentOne.getHand(), opponentTwo.getHand(), 
-						opponentThree.getHand(), settings.getJokerValue(), -1, settings.getIncludeMoons(), settings.getIncludeStars());
+		handPanel.displayAndHighlightHands(null);
+		String result = getVectropyResult(getConcatenatedHands(), settings.getJokerValue(), null, settings.getIncludeMoons(), settings.getIncludeStars());
 		ScreenCache.get(MainScreen.class).setResultText("Result: " + result);
 	}
 
@@ -102,13 +102,13 @@ public class VectropyScreen extends GameScreen<VectropyBidAction>
 		
 		if (command.equals("showmethecards"))
 		{
-			handPanel.displayAndHighlightHands(-1);
+			handPanel.displayAndHighlightHands(null);
 			cheatUsed = true;
 		}
 		else if (command.equals("maxbids") || command.equals("perfectbid"))
 		{
 			cheatUsed = true;
-			return getMaxBidsStr();
+			return getMaxBidString(getConcatenatedHands(), settings);
 		}
 		else if (command.equals("rainingjokers"))
 		{
@@ -129,9 +129,9 @@ public class VectropyScreen extends GameScreen<VectropyBidAction>
 	}
 	
 	@Override
-	public int getLastBidSuitCode()
+	public Suit getLastBidSuit()
 	{
-		return -1;
+		return null;
 	}
 	
 	@Override

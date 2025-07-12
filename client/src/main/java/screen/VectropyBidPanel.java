@@ -24,13 +24,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import game.VectropyBidAction;
+import game.Suit;
 import object.Bid;
 import object.VectropyBid;
-import util.CardsUtil;
 import util.Debug;
 import util.EntropyColour;
 import util.Registry;
-import util.VectropyUtil;
 
 import static utils.ColourUtilKt.*;
 
@@ -199,19 +198,19 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 	private final JSpinner diamondSpinner = new JSpinner();
 	private final JSpinner heartSpinner = new JSpinner();
 	private final JSpinner spadeSpinner = new JSpinner();
-	private final JTextField clubLabel = new JTextField(CardsUtil.getSuitSymbolForCode(0));
-	private final JTextField diamondLabel = new JTextField(CardsUtil.getSuitSymbolForCode(1));
-	private final JTextField heartLabel = new JTextField(CardsUtil.getSuitSymbolForCode(2));
-	private final JTextField spadeLabel = new JTextField(CardsUtil.getSuitSymbolForCode(4));
+	private final JTextField clubLabel = new JTextField(Suit.Clubs.getUnicodeStr());
+	private final JTextField diamondLabel = new JTextField(Suit.Diamonds.getUnicodeStr());
+	private final JTextField heartLabel = new JTextField(Suit.Hearts.getUnicodeStr());
+	private final JTextField spadeLabel = new JTextField(Suit.Spades.getUnicodeStr());
 	private final JPanel heartsPanel = new JPanel();
 	private final JPanel spadesPanel = new JPanel();
 	private final JPanel topPanel = new JPanel();
 	private final JPanel leftPaddingPanel = new JPanel();
 	private final JPanel moonsPanel = new JPanel();
-	private final JTextField moonLabel = new JTextField(CardsUtil.getSuitSymbolForCode(3));
+	private final JTextField moonLabel = new JTextField(Suit.Moons.getUnicodeStr());
 	private final JSpinner moonSpinner = new JSpinner();
 	private final JPanel starsPanel = new JPanel();
-	private final JTextField starLabel = new JTextField(CardsUtil.getSuitSymbolForCode(5));
+	private final JTextField starLabel = new JTextField(Suit.Stars.getUnicodeStr());
 	private final JSpinner starSpinner = new JSpinner();
 	
 	@Override
@@ -299,7 +298,7 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 		int moons = (int)moonSpinner.getValue();
 		int spades = (int)spadeSpinner.getValue();
 		int stars = (int)starSpinner.getValue();
-		
+
 		return new VectropyBidAction(playerName, handPanel.isPlayingBlind(), clubs, diamonds, hearts, includeMoons ? moons : null, spades, includeStars ? stars : null);
 	}
 	

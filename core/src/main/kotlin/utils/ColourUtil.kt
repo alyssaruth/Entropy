@@ -7,3 +7,13 @@ import java.awt.Color
 @JvmField val COLOUR_SUIT_GREEN: Color = Color.getHSBColor(1f / 3, 1f, 0.5.toFloat())
 
 fun Color.toHexCode() = String.format("#%08X", (rgb shl 8) or alpha)
+
+fun getColourForPlayerNumber(playerNumber: Int): String {
+    return when (playerNumber) {
+        0 -> "red"
+        1 -> "blue"
+        2 -> "green"
+        3 -> "purple"
+        else -> "gray"
+    }
+}

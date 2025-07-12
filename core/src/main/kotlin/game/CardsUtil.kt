@@ -1,6 +1,8 @@
 package game
 
-import util.CardsUtil
+import java.util.*
+
+fun extractCards(handMap: Map<Int, List<String>>) = handMap.values.flatten()
 
 fun countSuit(suit: Suit, cards: List<String>, jokerValue: Int) =
     cards.sumOf { countContribution(suit, it, jokerValue) }
@@ -13,22 +15,22 @@ fun countContribution(suit: Suit, card: String, jokerValue: Int) =
 
 fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) > 0
 
-fun getEvMap(
-    visibleCards: List<String>,
-    settings: GameSettings,
-    cardsInPlay: Int,
-): Map<Suit, Double> {
-    val unknownCardsInPlay = cardsInPlay - visibleCards.size
-    val remainingDeck =
-        CardsUtil.createAndShuffleDeck(settings).filterNot { visibleCards.contains(it) }
+/**
+ * http://www.datamation.com/entdev/article.php/11070_616221_3/How-We-Learned-to-Cheat-at-Online-Poker-A-Study-in-Software-Security.htm
+ */
+@JvmOverloads
+fun createAndShuffleDeck(settings: GameSettings, seed: Long? = null): List<String> {
+    // Creating the pack of cards
+    val suits = Suit.filter(settings.includeMoons, settings.includeStars).map(Suit::letter)
 
-    return Suit.filter(settings.includeMoons, settings.includeStars).associateWith { suit ->
-        val known = countSuit(suit, visibleCards, settings.jokerValue)
-        val possibleOthers =
-            remainingDeck.sumOf { countContribution(suit, it, settings.jokerValue) }.toDouble()
-        val extraEv =
-            possibleOthers * (unknownCardsInPlay.toDouble() / remainingDeck.size.toDouble())
+    val jokers = (0..<settings.jokerQuantity).map { "Jo$it" }
 
-        extraEv + known
-    }
+    val jackStr = if (settings.negativeJacks) "-J" else "J"
+    val ranks = listOf("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", jackStr, "Q", "K")
+
+    val cards = jokers + ranks.flatMap { rank -> suits.map { suit -> "${rank}${suit}" } }
+
+    // Shuffle the pack using Fisher-Yates.
+    val r = seed?.let(::Random) ?: Random()
+    return cards.shuffled(r)
 }

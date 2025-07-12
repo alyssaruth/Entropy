@@ -1,5 +1,6 @@
 package util
 
+import game.createAndShuffleDeck
 import game.BidAction
 import game.ChallengeAction
 import `object`.Player
@@ -94,8 +95,6 @@ class GameSimulator(private val params: SimulationParams) {
 
     private fun allPlayers() = playOrder.map(::getPlayer)
 
-    private fun allCards() = allPlayers().flatMap { it.hand }
-
     private fun processOpponentTurn(opponent: Player) {
         if (!opponent.isEnabled) {
             throw Exception("Trying to take turn for $opponent, but they're disabled")
@@ -138,9 +137,10 @@ class GameSimulator(private val params: SimulationParams) {
         log("Challenged")
 
         val lastBid = lastBid ?: throw Exception("Processing challenge with no lastBid")
+        val allCards = allPlayers().flatMap { it.hand }
 
         val dialog = get(SimulationDialog::class.java)
-        if (!lastBid.isOverbid(allCards(), params.settings)) {
+        if (!lastBid.isOverbid(allCards, params.settings)) {
             log("not overbid")
             dialog.recordChallenge(challenger.playerNumber, false)
 
@@ -204,7 +204,7 @@ class GameSimulator(private val params: SimulationParams) {
         opponentTwo.resetHand()
         opponentThree.resetHand()
 
-        val deck = CardsUtil.createAndShuffleDeck(params.settings)
+        val deck = createAndShuffleDeck(params.settings)
 
         populateHands(deck)
     }
