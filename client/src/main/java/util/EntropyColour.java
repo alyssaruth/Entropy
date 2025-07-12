@@ -4,10 +4,6 @@ import java.awt.Color;
 
 public class EntropyColour 
 {
-	public static final Color COLOUR_SUIT_PURPLE = Color.getHSBColor((float)7/9, 1, 1);
-	public static final Color COLOUR_SUIT_GOLD = Color.getHSBColor((float)5/36, 1, (float)0.9);
-	public static final Color COLOUR_SUIT_GREEN = Color.getHSBColor((float)1/3, 1, (float)0.5);
-	
 	public static final Color COLOUR_REPLAY_VICTORY = new Color(10, 175, 40);
 	public static final Color COLOUR_REPLAY_UNKNOWN_OUTCOME = new Color(175, 175, 175);
 	public static final Color COLOUR_REPLAY_UNFINISHED_AND_LOST = new Color(233, 133, 133);

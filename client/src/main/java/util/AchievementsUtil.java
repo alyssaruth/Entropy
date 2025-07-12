@@ -1,7 +1,9 @@
 package util;
 
 import achievement.AchievementSetting;
+import game.BidAction;
 import game.GameMode;
+import game.PlayerAction;
 import object.Bid;
 import object.Player;
 import online.screen.EntropyLobby;
@@ -302,7 +304,7 @@ public class AchievementsUtil implements Registry
 	
 	public static void unlockSecondThoughts(String roomId)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		if (!roomId.isEmpty())
 		{
 			//We're online, so need a different listmodel...
@@ -313,8 +315,8 @@ public class AchievementsUtil implements Registry
 		int size = listmodel.size();
 		for (int i=0; i<size; i++)
 		{
-			Bid bid = listmodel.get(i);
-			if (bid.isBlind())
+			PlayerAction bid = listmodel.get(i);
+			if (bid.getBlind())
 			{
 				unlockAchievement(Achievement.SecondThoughts);
 				return;

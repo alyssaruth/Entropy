@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import `object`.Bid
 import `object`.BidHistory
-import `object`.ExtendedConcurrentHashMap
 import `object`.GameWrapper
 import `object`.HandDetails
 import `object`.LeftBid
@@ -32,7 +31,7 @@ data class Room(
     val capacity: Int,
     private val index: Int = 1,
 ) : IHasId<UUID> {
-    private val hmPlayerByPlayerNumber = ExtendedConcurrentHashMap<Int, String>()
+    private val hmPlayerByPlayerNumber = ConcurrentHashMap<Int, String>()
     private val hmFormerPlayerByPlayerNumber: ConcurrentHashMap<Int, String> = ConcurrentHashMap()
     val chatHistory: MutableList<OnlineMessage> = mutableListOf()
     private val currentPlayers: MutableList<String> = mutableListOf()
@@ -114,7 +113,7 @@ data class Room(
                 if (currentGame.gameStartMillis == -1L) {
                     // Unset the countdown if it's going, reset current capacity and get out of this
                     // madness
-                    currentGame.countdownStartMillis = -1
+                    currentGame.setCountdownStartMillis(-1)
                     resetCurrentPlayers(fireLobbyChanged)
                     return
                 }
@@ -129,16 +128,17 @@ data class Room(
                     val history: BidHistory = currentGame.currentBidHistory
                     history.addBidForPlayer(playerNumber, bid)
 
+                    // TODO - Hand size thing
                     // Moved this into here as otherwise we set it to 0 incorrectly and a person
                     // ends up with no cards!
-                    val details: HandDetails = currentGame.currentRoundDetails
-                    val hmHandSizeByPlayerNumber = details.handSizes
-                    hmHandSizeByPlayerNumber[playerNumber] = 0
+                    //                    val details: HandDetails = currentGame.currentRoundDetails
+                    //                    val hmHandSizeByPlayerNumber = details.handSizes
+                    //                    hmHandSizeByPlayerNumber[playerNumber] = 0
                 }
 
                 val playerSize: Int = hmPlayerByPlayerNumber.size
                 if (playerSize == 1) {
-                    val remainingPlayerNumber: Int = hmPlayerByPlayerNumber.onlyKey
+                    val remainingPlayerNumber: Int = hmPlayerByPlayerNumber.keys.first()
                     finishCurrentGame(remainingPlayerNumber)
                 } else if (playerSize == 0) {
                     resetCurrentPlayers(fireLobbyChanged)
@@ -232,14 +232,10 @@ data class Room(
         val newGame = GameWrapper(gameId)
 
         val details = HandDetails()
-        val hmHandSizeByPlayerNumber = ExtendedConcurrentHashMap<Int, Int>()
-        for (i in 0..<capacity) {
-            hmHandSizeByPlayerNumber[i] = 5
-        }
+        val handSizes = (0..capacity).associateWith { 5 }
 
-        val hmHandByPlayerNumber = dealHandsHashMap(hmHandSizeByPlayerNumber)
+        val hmHandByPlayerNumber = dealHandsHashMap(handSizes)
         details.hands = hmHandByPlayerNumber
-        details.handSizes = hmHandSizeByPlayerNumber
         newGame.setDetailsForRound(1, details)
 
         val personToStart = Random().nextInt(capacity)
@@ -297,22 +293,21 @@ data class Room(
         }
 
         val currentRoundDetails: HandDetails = currentGame.getDetailsForRound(currentRoundNumber)
-        val hmHandSizeByPlayerNumber = currentRoundDetails.handSizes
-        val handSize = hmHandSizeByPlayerNumber.getValue(losingPlayerNumber)
-        val newHandSize: Int = max(0, handSize - 1)
+        val hands = currentRoundDetails.hands
 
-        val hmHandSizeByPlayerNumberForNextRound = hmHandSizeByPlayerNumber.factoryCopy()
-        hmHandSizeByPlayerNumberForNextRound[losingPlayerNumber] = newHandSize
+        val handSizesForNextRound =
+            hands.mapValues { (playerNumber, hand) ->
+                if (playerNumber == losingPlayerNumber) max(0, hand.size - 1) else hand.size
+            }
 
-        val potentialWinner: Int = getWinningPlayer(hmHandSizeByPlayerNumberForNextRound)
+        val potentialWinner: Int = getWinningPlayer(handSizesForNextRound)
         if (potentialWinner > -1) {
             finishCurrentGame(potentialWinner)
         } else {
             nextRoundDetails = HandDetails()
-            nextRoundDetails.handSizes = hmHandSizeByPlayerNumberForNextRound
 
             val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> =
-                dealHandsHashMap(hmHandSizeByPlayerNumberForNextRound)
+                dealHandsHashMap(handSizesForNextRound)
 
             nextRoundDetails.hands = hmHandByPlayerNumber
             currentGame.setDetailsForRound(currentRoundNumber + 1, nextRoundDetails)
@@ -334,7 +329,7 @@ data class Room(
     }
 
     private fun dealHandsHashMap(
-        hmHandSizeByPlayerNumber: ExtendedConcurrentHashMap<Int, Int>
+        hmHandSizeByPlayerNumber: Map<Int, Int>
     ): ConcurrentHashMap<Int, List<String>> {
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = ConcurrentHashMap()
 
@@ -350,7 +345,7 @@ data class Room(
         return hmHandByPlayerNumber
     }
 
-    private fun getWinningPlayer(hmHandSizeByPlayerNumber: ConcurrentHashMap<Int, Int>): Int {
+    private fun getWinningPlayer(hmHandSizeByPlayerNumber: Map<Int, Int>): Int {
         var activePlayers = 0
         var potentialWinner = 0
 

@@ -1,18 +1,19 @@
 package util;
 
-import java.util.*;
-
 import game.Suit;
+import game.VectropyBidAction;
 import object.Bid;
 import object.ChallengeBid;
 import object.Player;
 import object.VectropyBid;
 
+import java.util.*;
+
 import static game.CardsUtilKt.countSuit;
 import static game.StrategyUtilKt.*;
 import static utils.CoreGlobals.logger;
 
-public class VectCpuStrategies 
+public class VectCpuStrategies
 {
 	public static final String STRATEGY_RANDOMISE_PER_MOVE = "Randomise (per move)";
 	private static final String[] STRATEGIES_TO_CHOOSE_AT_RANDOM = {CpuStrategies.STRATEGY_BASIC, CpuStrategies.STRATEGY_EV};
@@ -62,7 +63,7 @@ public class VectCpuStrategies
 		//Get the variables we're interested in
 		var settings = parms.getSettings();
 		List<String> hand = opponent.getHand();
-		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
+		VectropyBidAction lastBid = (VectropyBidAction)parms.getLastBid();
 		double totalCards = parms.getCardsInPlay();
 		int jokerValue = settings.getJokerValue();
 		boolean includeMoons = settings.getIncludeMoons();

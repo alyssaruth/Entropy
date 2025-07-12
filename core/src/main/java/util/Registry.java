@@ -29,7 +29,7 @@ public interface Registry
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
-	
+
 	//prefs
 	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
 	public static final String PREFERENCES_STRING_DECK_DIRECTORY = "deckDirectory";
@@ -99,7 +99,7 @@ public interface Registry
 	public static final String REPLAY_STRING_OPPONENT_THREE_STRATEGY = "opponentThreeStrategy";
 	public static final String REPLAY_STRING_ROOM_NAME = "roomName";
 	public static final String REPLAY_STRING_LAST_BID_SUIT_NAME = "LAST_BID_SUIT_NAME";
-	
+
 	public static final String REPLAY_BOOLEAN_HAS_ACTED_BLIND_THIS_GAME = "hasActedBlindThisGame";
 	public static final String REPLAY_BOOLEAN_HAS_VIEWED_HAND_THIS_GAME = "hasViewedHandThisGame";
 	public static final String REPLAY_BOOLEAN_PLAY_WITH_HANDICAP = "playWithHandicap";

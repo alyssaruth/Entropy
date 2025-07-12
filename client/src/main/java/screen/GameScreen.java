@@ -1,14 +1,14 @@
 package screen;
 
 import achievement.AchievementSetting;
-import game.GameMode;
-import game.GameSettings;
-import game.Suit;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import game.*;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
 import object.Player;
 import util.*;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.util.Timer;
@@ -23,7 +23,7 @@ import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
-public abstract class GameScreen extends TransparentPanel
+public abstract class GameScreen<B extends BidAction<B>> extends TransparentPanel
 								 implements BidListener,
 								 			RevealListener,
 								 			Registry
@@ -34,8 +34,8 @@ public abstract class GameScreen extends TransparentPanel
 	private int personToStart = -1;
 	private Player currentPlayer = null;
 	private int handicapAmount;
-	
-	public Bid lastBid = null;
+
+	protected B lastBid = null;
 
 	private boolean playBlind;
 	private boolean playWithHandicap;
@@ -44,7 +44,7 @@ public abstract class GameScreen extends TransparentPanel
 	private boolean logging = true;	
 	public boolean hasOverbid;
 	public boolean hasActedBlindThisGame = false;
-	
+
 	private boolean earnedSpectator = false;
 	public boolean earnedPsychic = false;
 	private boolean currentlyOnChallenge = false;
@@ -62,7 +62,7 @@ public abstract class GameScreen extends TransparentPanel
 	public HandPanelMk2 handPanel = new HandPanelMk2(this);
 	
 	//Abstract methods
-	public abstract void loadLastBid();
+	public abstract void loadLastBid() throws JsonProcessingException;
 	public abstract void loadSpecificVariables();
 	public abstract void showResult();
 	
@@ -211,7 +211,7 @@ public abstract class GameScreen extends TransparentPanel
 		int maxBid = GameUtil.getMaxBid(settings, totalNumberOfCards);
 		bidPanel.init(maxBid, totalNumberOfCards, false, settings.getIncludeMoons(), settings.getIncludeStars(), false);
 		
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.removeAllElements();
 		
 		player.resetHand();
@@ -421,7 +421,12 @@ public abstract class GameScreen extends TransparentPanel
 	protected void roundEnded(int playerLastToAct)
 	{
 		ScreenCache.get(MainScreen.class).enableNewGameOption(true);
-		saveRoundForReplay();
+
+		try {
+			saveRoundForReplay();
+		} catch (Exception e) {
+			logger.error("replay.error", "Failed to save round for replay", e);
+		}
 
 		firstRound = false;
 		
@@ -453,7 +458,7 @@ public abstract class GameScreen extends TransparentPanel
 		}
 	}
 	
-	protected void saveRoundForReplay()
+	protected void saveRoundForReplay() throws JsonProcessingException
 	{
 		inGameReplay.putInt(REPLAY_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
 		inGameReplay.put(REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOne.getStrategy());
@@ -464,13 +469,13 @@ public abstract class GameScreen extends TransparentPanel
 		inGameReplay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		inGameReplay.putInt(roundsSoFar + REPLAY_INT_HISTORY_SIZE, historySize);
 		for (int i = 0; i < historySize; i++)
 		{
-			Bid bid = listmodel.get(i);
-			inGameReplay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, bid.toXmlString());
+			PlayerAction bid = listmodel.get(i);
+			inGameReplay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, CoreGlobals.jsonMapper.writeValueAsString(bid));
 		}
 		
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_PLAY_BLIND, playBlind);
@@ -512,22 +517,22 @@ public abstract class GameScreen extends TransparentPanel
 		ScreenCache.getReplayDialog(IN_GAME_REPLAY).roundAdded();
 	}
 	
-	protected void saveGame()
+	protected void saveGame() throws JsonProcessingException
 	{
 		savedGame.putBoolean(SAVED_GAME_BOOLEAN_IS_GAME_TO_CONTINUE, true);
 		savedGame.put(SAVED_GAME_STRING_GAME_MODE, getGameMode().name());
 
 		//settings
 		settings.exportToRegistry(savedGame);
-		
+
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		int historySize = listmodel.size();
 		savedGame.putInt(SAVED_GAME_INT_HISTORY_SIZE, historySize);
 		for (int i=0; i<historySize; i++)
 		{
-			Bid bid = listmodel.get(i);
-			savedGame.put(SAVED_GAME_STRING_LISTMODEL + i, bid.toXmlString());
+			PlayerAction bid = listmodel.get(i);
+			savedGame.put(SAVED_GAME_STRING_LISTMODEL + i, CoreGlobals.jsonMapper.writeValueAsString(bid));
 		}
 
 		savedGame.putInt(SAVED_GAME_INT_PERSON_TO_START, personToStart);
@@ -604,18 +609,19 @@ public abstract class GameScreen extends TransparentPanel
 			//set up deck stuff
 			settings = GameSettings.fromRegistry(savedGame, getGameMode());
 			cheatUsed = savedGame.getBoolean(SAVED_GAME_BOOLEAN_CHEAT_USED, false);
-			
+			settings = GameSettings.fromRegistry(savedGame, getGameMode());
+
 			resetPlayers();
 			loadLastBid();
 			initialiseBidPanel();
 
 			//set up the listmodel
-			DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+			DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 			int historySize = savedGame.getInt(SAVED_GAME_INT_HISTORY_SIZE, 0);
 			for (int i = 0; i < historySize; i++)
 			{
 				String modelItem = savedGame.get(SAVED_GAME_STRING_LISTMODEL + i, "");
-				Bid bid = Bid.factoryFromXmlString(modelItem, settings.getIncludeMoons(), settings.getIncludeStars());
+				PlayerAction bid = CoreGlobals.jsonMapper.readValue(modelItem, PlayerAction.class);
 				listmodel.addElement(bid);
 			}
 
@@ -748,7 +754,7 @@ public abstract class GameScreen extends TransparentPanel
 		nextRoundTimer.cancel();
 		nextRoundTimer = new Timer("Timer-NextRound");
 	}
-	
+
 	protected void randomlyReplaceCardsWithJokers()
 	{
 		if (!currentlyOnChallenge)
@@ -826,7 +832,6 @@ public abstract class GameScreen extends TransparentPanel
 		
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		lastBid.setBlind(actedBlind);
 		addToListmodel(lastBid);
 		
 		updateAchievementVariables();
@@ -835,7 +840,7 @@ public abstract class GameScreen extends TransparentPanel
 			handlePerfectBid(lastBid);
 		}
 		
-		if (lastBid.isOverbid(getConcatenatedHands(), settings.getJokerValue()))
+		if (lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			hasOverbid = true;
 		}
@@ -843,10 +848,10 @@ public abstract class GameScreen extends TransparentPanel
 		processNextTurn(0);
 	}
 	
-	private void handlePerfectBid(Bid bid)
+	private void handlePerfectBid(B bid)
 	{
 		Debug.append("Player made a perfect bid.", logging);
-		if (bid.isOverAchievementThreshold())
+		if (bid.overAchievementThreshold())
 		{
 			if (handPanel.isPlayingBlind())
 			{
@@ -865,7 +870,7 @@ public abstract class GameScreen extends TransparentPanel
 		unlockPerfectBidAchievements();
 		
 		Player playerChallenged = lastBid.getPlayer();
-		if (!lastBid.isOverbid(getConcatenatedHands(), settings.getJokerValue()))
+		if (!lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			Debug.append("not an overbid", logging);
 			setCardsToSubtract(challenger);
@@ -1005,7 +1010,7 @@ public abstract class GameScreen extends TransparentPanel
 			handPanel.revealCard(card);
 		}
 	}
-	
+
 	public StrategyParams factoryStrategyParms(Player opponent)
 	{
 		var cardsOnShow = Stream.of(player, opponentOne, opponentTwo, opponentThree)
@@ -1026,10 +1031,9 @@ public abstract class GameScreen extends TransparentPanel
 	 * BidListener
 	 */
 	@Override
-	public void bidMade(Bid bid) 
+	public void bidMade(BidAction bid)
 	{
 		bidPanel.enableBidPanel(false);
-		bid.setPlayer(player);
 		lastBid = bid;
 		
 		if (settings.getCardReveal()
@@ -1049,10 +1053,8 @@ public abstract class GameScreen extends TransparentPanel
 		Debug.append("Player challenged.", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new ChallengeBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
+
+		ChallengeAction bid = new ChallengeAction(player.getName(), actedBlind);
 		addToListmodel(bid);
 		
 		processChallenge(player);
@@ -1064,10 +1066,8 @@ public abstract class GameScreen extends TransparentPanel
 		Debug.append("Player called Illegal!", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new IllegalBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
+
+		var bid = new IllegalAction(player.getName(), actedBlind);
 		addToListmodel(bid);
 		
 		processIllegal(player);
@@ -1085,9 +1085,9 @@ public abstract class GameScreen extends TransparentPanel
 		processPlayerBid();
 	}
 	
-	private void addToListmodel(Bid bid)
+	private void addToListmodel(PlayerAction bid)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.add(0, bid);
 	}
 	
@@ -1130,38 +1130,38 @@ public abstract class GameScreen extends TransparentPanel
 			Debug.appendBanner("Opponent " + opponent, logging);
 			
 			StrategyParams parms = factoryStrategyParms(opponent);
-			Bid bid = CpuStrategies.processOpponentTurn(parms, opponent);
-			if (bid == null)
+            PlayerAction action = CpuStrategies.processOpponentTurn(parms, opponent);
+            if (action == null)
 			{
 				//Something's gone wrong - probably an API strategy that timed out or did something invalid. 
 				String info = opponent.getName() + " has had their strategy reset to "
 							+ CpuStrategies.STRATEGY_BASIC;
 				DialogUtil.showInfo(info);
 				opponent.setStrategy(CpuStrategies.STRATEGY_BASIC);
-				bid = CpuStrategies.processOpponentTurn(parms, opponent);
+				action = CpuStrategies.processOpponentTurn(parms, opponent);
 			}
 			
-			if (bid == null)
+			if (action == null)
 			{
 				//Something's gone very wrong...
 				handPanel.selectPlayerInAwtThread(opponent.getPlayerNumber(), false);
 				ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 				return;
 			}
+
+			addToListmodel(action);
 			
-			bid.setPlayer(opponent);
-			addToListmodel(bid);
-			
-			if (bid.isChallenge())
+			if (action instanceof ChallengeAction)
 			{
 				processChallenge(opponent);
 			}
-			else if (bid.isIllegal())
+			else if (action instanceof IllegalAction)
 			{
 				processIllegal(opponent);
 			}
 			else
 			{
+				var bid = (B)action;
 				lastBid = bid;
 				
 				if (settings.getCardReveal())

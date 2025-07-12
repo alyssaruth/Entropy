@@ -2,10 +2,10 @@ package screen;
 
 import java.awt.BorderLayout;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import game.GameMode;
+import game.VectropyBidAction;
 import game.Suit;
-import object.Bid;
-import object.VectropyBid;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
@@ -13,7 +13,10 @@ import util.Registry;
 import static game.CheatUtilKt.getMaxBidString;
 import static game.RenderingUtilKt.getVectropyResult;
 
-public class VectropyScreen extends GameScreen
+import static utils.CoreGlobals.jsonMapper;
+import static utils.CoreGlobals.logger;
+
+public class VectropyScreen extends GameScreen<VectropyBidAction>
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -27,7 +30,7 @@ public class VectropyScreen extends GameScreen
 			setLayout(new BorderLayout(0, 0));
 			add(handPanel, BorderLayout.CENTER);
 			handPanel.setOpaque(false);
-			bidPanel = new VectropyBidPanel();
+			bidPanel = new VectropyBidPanel(player.getName(), handPanel);
 			add(bidPanel, BorderLayout.SOUTH);
 			bidPanel.showBidPanel(false);
 			
@@ -56,14 +59,14 @@ public class VectropyScreen extends GameScreen
 	}
 
 	@Override
-	public void saveGame()
+	public void saveGame() throws JsonProcessingException
 	{
 		super.saveGame();
 
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, lastBid.toXmlString());
+			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, jsonMapper.writeValueAsString(lastBid));
 		}
 
 		//other booleans
@@ -74,12 +77,12 @@ public class VectropyScreen extends GameScreen
 	}
 	
 	@Override
-	public void loadLastBid()
+	public void loadLastBid() throws JsonProcessingException
 	{
 		String lastBidStr = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID, "");
 		if (!lastBidStr.isEmpty())
 		{
-			lastBid = Bid.factoryFromXmlString(lastBidStr, settings.getIncludeMoons(), settings.getIncludeStars());
+			lastBid = jsonMapper.readValue(lastBidStr, VectropyBidAction.class);
 		}
 	}
 	
@@ -119,11 +122,6 @@ public class VectropyScreen extends GameScreen
 	/*
 	 *  Get/sets
 	 */
-	public void setLastBid(VectropyBid lastBid)
-	{
-		this.lastBid = lastBid;
-	}
-
 	@Override
 	public GameMode getGameMode()
 	{

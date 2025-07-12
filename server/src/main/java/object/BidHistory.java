@@ -36,36 +36,6 @@ public class BidHistory
 		}
 	}
 	
-	public Bid getNextBidForPlayer(int playerNumber, Bid currentBid)
-	{
-		ArrayList<Bid> bids = hmBidVectorByPlayerNumber.get(playerNumber);
-		int size = bids.size();
-		
-		if (currentBid == null)
-		{
-			return size>0? bids.get(0):null;
-		}
-		
-		for (int i=0; i<size; i++)
-		{
-			Bid bid = bids.get(i);
-			if (bid.equals(currentBid))
-			{
-				if (i == size - 1)
-				{
-					return bid;
-				}
-				else
-				{
-					return bids.get(i+1);
-				}
-			}
-		}
-		
-		logger.error("bidNotFound", "Could not find bid " + currentBid + " in bidHistory for player " + playerNumber);
-		return null;
-	}
-	
 	public Bid getLastBidForPlayer(int playerNumber)
 	{
 		ArrayList<Bid> bids = hmBidVectorByPlayerNumber.get(playerNumber);

@@ -1,7 +1,9 @@
 package testCore
 
+import game.EntropyBidAction
 import game.GameMode
 import game.GameSettings
+import game.Suit
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
 import http.dto.RoomStateResponse
@@ -56,3 +58,11 @@ fun makeRoomStateResponse(
     players: Map<Int, String> = mapOf(1 to "Alyssa"),
     formerPlayers: Map<Int, String> = emptyMap(),
 ) = RoomStateResponse(players, formerPlayers)
+
+fun makeEntropyBidAction(
+    amount: Int = 3,
+    suit: Suit = Suit.Spades,
+    player: String = "Alyssa",
+    cardToReveal: String? = null,
+    blind: Boolean = false,
+) = EntropyBidAction(player, blind, amount, suit).also { it.cardToReveal = cardToReveal }

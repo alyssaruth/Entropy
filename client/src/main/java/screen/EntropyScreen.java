@@ -2,6 +2,8 @@ package screen;
 
 import java.awt.BorderLayout;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import game.EntropyBidAction;
 import game.GameMode;
 import game.Suit;
 import object.EntropyAchievementsTracker;
@@ -12,8 +14,9 @@ import static game.CardsUtilKt.countSuit;
 import static game.CheatUtilKt.getMaxBidString;
 import static game.EntropyUtilKt.perfectBidAmount;
 import static game.EntropyUtilKt.perfectBidSuit;
+import static utils.CoreGlobals.jsonMapper;
 
-public class EntropyScreen extends GameScreen
+public class EntropyScreen extends GameScreen<EntropyBidAction>
 {
 	private static final long serialVersionUID = 1L;
 
@@ -22,7 +25,7 @@ public class EntropyScreen extends GameScreen
 	public EntropyScreen()
 	{
 		setFocusable(true);
-		bidPanel = new EntropyBidPanel();
+		bidPanel = new EntropyBidPanel(player.getName(), handPanel);
 		bidPanel.showBidPanel(false);
 		
 		setLayout(new BorderLayout(0, 0));
@@ -33,13 +36,11 @@ public class EntropyScreen extends GameScreen
 		bidPanel.setLogging(true);
 		bidPanel.addBidListener(this);
 	}
-
-//David added this comment!
 	
 	@Override
 	public void showResult()
 	{
-		var lastBidSuit = ((EntropyBid)lastBid).getBidSuit();
+		var lastBidSuit = lastBid.getSuit();
 		handPanel.displayAndHighlightHands(lastBidSuit);
 		
 		int total = countSuit(lastBidSuit, getConcatenatedHands(), settings.getJokerValue());
@@ -63,15 +64,14 @@ public class EntropyScreen extends GameScreen
 	}
 
 	@Override
-	public void saveGame()
+	public void saveGame() throws JsonProcessingException
 	{
 		super.saveGame();
 
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, ((EntropyBid)lastBid).getBidSuit().name());
-			savedGame.putInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, ((EntropyBid)lastBid).getBidAmount());
+            savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, jsonMapper.writeValueAsString(lastBid));
 		}
 			
 		//other booleans
@@ -82,23 +82,22 @@ public class EntropyScreen extends GameScreen
 	}
 
 	@Override
-	protected void saveRoundForReplay()
+	protected void saveRoundForReplay() throws JsonProcessingException
 	{
 		int roundsSoFar = inGameReplay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0) + 1;
-		inGameReplay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, ((EntropyBid)lastBid).getBidSuit().name());
+		inGameReplay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, lastBid.getSuit().name());
 		super.saveRoundForReplay();
 	}
 	
 	@Override
-	public void loadLastBid()
+	public void loadLastBid() throws JsonProcessingException
 	{
-		String lastBidSuitName = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
-		int lastBidAmount = savedGame.getInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
-		
-		if (lastBidSuitName != null)
-		{
-			lastBid = new EntropyBid(Suit.valueOf(lastBidSuitName), lastBidAmount);
-		}
+        String lastBidStr = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID, "");
+
+        if (!lastBidStr.isEmpty())
+        {
+            lastBid = jsonMapper.readValue(lastBidStr, EntropyBidAction.class);
+        }
 	}
 	
 	@Override
@@ -150,7 +149,7 @@ public class EntropyScreen extends GameScreen
 	@Override
 	public Suit getLastBidSuit()
 	{
-		return ((EntropyBid)lastBid).getBidSuit();
+        return lastBid.getSuit();
 	}
 	
 	@Override

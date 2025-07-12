@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import game.VectropyBidAction;
 import game.Suit;
 import object.Bid;
 import object.VectropyBid;
@@ -30,19 +31,23 @@ import util.Debug;
 import util.EntropyColour;
 import util.Registry;
 
-public class VectropyBidPanel extends BidPanel
+import static utils.ColourUtilKt.*;
+
+public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 							  implements ActionListener,
 							             ChangeListener,
 							             Registry
 {
-	private VectropyBid lastBid = VectropyBid.factoryEmpty(false, false);
+	private VectropyBidAction lastBid = null;
 	private boolean illegalAllowed = false;
 	private boolean includeMoons = false;
 	private boolean includeStars = false;
 	private boolean online = false;
 	
-	public VectropyBidPanel()
+	public VectropyBidPanel(String playerName, HandPanelMk2 handPanel)
 	{
+		super(playerName, handPanel);
+
 		setLayout(new BorderLayout(0, 0));
 		updateSpinnerColours();
 		
@@ -159,7 +164,7 @@ public class VectropyBidPanel extends BidPanel
 		starLabel.setOpaque(false);
 		starLabel.setBorder(BorderFactory.createEmptyBorder());
 		starLabel.setBackground(new Color(0,0,0,0));
-		starLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
+		starLabel.setForeground(COLOUR_SUIT_GOLD);
 		
 		starsPanel.add(starLabel);
 		starSpinner.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -225,14 +230,13 @@ public class VectropyBidPanel extends BidPanel
 		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 		
-		lastBid = VectropyBid.factoryEmpty(includeMoons, includeStars);
+		lastBid = null;
 		adjust(lastBid);
 	}
 	
 	@Override
-	public void adjust(Bid bid)
+	public void adjust(VectropyBidAction bid)
 	{
-		VectropyBid lastBid = (VectropyBid)bid;
 		this.lastBid = lastBid;
 		
 		int clubs = lastBid.getClubs();
@@ -267,46 +271,35 @@ public class VectropyBidPanel extends BidPanel
 		
 		if (fourColours)
 		{
-			clubLabel.setForeground(EntropyColour.COLOUR_SUIT_GREEN);
+			clubLabel.setForeground(COLOUR_SUIT_GREEN);
 			diamondLabel.setForeground(Color.BLUE);
-			moonLabel.setForeground(EntropyColour.COLOUR_SUIT_PURPLE);
+			moonLabel.setForeground(COLOUR_SUIT_PURPLE);
 		}
 		else
 		{
 			clubLabel.setForeground(Color.BLACK);
 			diamondLabel.setForeground(Color.RED);
-			moonLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
+			moonLabel.setForeground(COLOUR_SUIT_GOLD);
 		}
 	}
 	
 	private void setBidButtonState()
 	{
-		VectropyBid currentSelection = getBidFromSpinners();
+		VectropyBidAction currentSelection = getBidFromSpinners();
 		boolean enabled = currentSelection.higherThan(lastBid);
 		btnBid.setEnabled(enabled);
 	}
 	
-	private VectropyBid getBidFromSpinners()
+	private VectropyBidAction getBidFromSpinners()
 	{
 		int clubs = (int)clubSpinner.getValue();
 		int diamonds = (int)diamondSpinner.getValue();
 		int hearts = (int)heartSpinner.getValue();
-		
-		int moons = 0;
-		if (includeMoons)
-		{
-			moons = (int)moonSpinner.getValue();
-		}
-		
+		int moons = (int)moonSpinner.getValue();
 		int spades = (int)spadeSpinner.getValue();
-		
-		int stars = 0;
-		if (includeStars)
-		{
-			stars = (int)starSpinner.getValue();
-		}
-		
-		return new VectropyBid(clubs, diamonds, hearts, moons, spades, stars, includeMoons, includeStars);
+		int stars = (int)starSpinner.getValue();
+
+		return new VectropyBidAction(playerName, handPanel.isPlayingBlind(), clubs, diamonds, hearts, includeMoons ? moons : null, spades, includeStars ? stars : null);
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package object;
 
 import achievement.AchievementUtilKt;
+import game.EntropyBidAction;
 import game.Suit;
 import util.AchievementsUtil;
 import util.Registry;
@@ -85,11 +86,10 @@ public class EntropyAchievementsTracker implements Registry
 				 earnedGardener, earnedSpaceman, earnedPsychic);
 	}
 	
-	public void updatePerfectBidVariables(Bid lastBid)
+	public void updatePerfectBidVariables(EntropyBidAction lastBid)
 	{
-		EntropyBid entropyBid = (EntropyBid)lastBid;
-		var bidSuit = entropyBid.getBidSuit();
-		
+		var bidSuit = lastBid.getSuit();
+
 		if (bidSuit == Suit.Spades)
 		{
 			earnedGardener = true;
@@ -116,26 +116,23 @@ public class EntropyAchievementsTracker implements Registry
 		}
 	}
 	
-	public void update(Bid bid)
+	public void update(EntropyBidAction bid)
 	{
-		EntropyBid entropyBid = (EntropyBid)bid;
-		
-		updateCardReveal(entropyBid);
-		updateMonotone(entropyBid);
+		updateCardReveal(bid);
+		updateMonotone(bid);
 	}
 	
-	private void updateCardReveal(EntropyBid bidMade)
+	private void updateCardReveal(EntropyBidAction bidMade)
 	{
 		String card = bidMade.getCardToReveal();
-		if (card.isEmpty())
+		if (card == null)
 		{
 			return;
 		}
 		
 		cardsRevealed++;
-		
-		var bidSuit = bidMade.getBidSuit();
-		if (isCardRelevant(card, bidSuit))
+
+		if (isCardRelevant(card, bidMade.getSuit()))
 		{
 			revealedSameSuit = true;
 		}
@@ -144,17 +141,17 @@ public class EntropyAchievementsTracker implements Registry
 			revealedDifferentSuit = true;
 		}
 	}
-
-	private void updateMonotone(EntropyBid bid)
+	
+	private void updateMonotone(EntropyBidAction bid)
 	{
-		var suitCode = bid.getBidSuit();
+		var suit = bid.getSuit();
 		if (firstSuitBid == null)
 		{
-			firstSuitBid = suitCode;
+			firstSuitBid = suit;
 			return;
 		}
 		
-		if (suitCode != firstSuitBid)
+		if (suit != firstSuitBid)
 		{
 			deviatedFromFirstSuit = true;
 		}

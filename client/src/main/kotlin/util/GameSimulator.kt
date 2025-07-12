@@ -1,7 +1,8 @@
 package util
 
 import game.createAndShuffleDeck
-import `object`.Bid
+import game.BidAction
+import game.ChallengeAction
 import `object`.Player
 import screen.ScreenCache.get
 import screen.SimulationDialog
@@ -10,7 +11,7 @@ import utils.CoreGlobals.logger
 class GameSimulator(private val params: SimulationParams) {
     private var personToStart = 0
 
-    private var lastBid: Bid? = null
+    private var lastBid: BidAction<*>? = null
 
     val opponentZero: Player = Player(0, "").also { it.name = "0" }
     val opponentOne: Player = Player(1, "").also { it.name = "1" }
@@ -110,10 +111,10 @@ class GameSimulator(private val params: SimulationParams) {
                 ?: // Abort the simulation, something's gone wrong
                 throw SimulationException("Simulation error")
 
-        if (action.isChallenge) {
+        if (action is ChallengeAction) {
             processChallenge(opponent)
         } else {
-            lastBid = action
+            lastBid = action as BidAction<*>
             processOpponentTurn(nextPlayer(opponent))
         }
     }
@@ -139,7 +140,7 @@ class GameSimulator(private val params: SimulationParams) {
         val allCards = allPlayers().flatMap { it.hand }
 
         val dialog = get(SimulationDialog::class.java)
-        if (!lastBid.isOverbid(allCards, params.settings.jokerValue)) {
+        if (!lastBid.isOverbid(allCards, params.settings)) {
             log("not overbid")
             dialog.recordChallenge(challenger.playerNumber, false)
 
@@ -150,7 +151,8 @@ class GameSimulator(private val params: SimulationParams) {
             log("overbid")
             dialog.recordChallenge(challenger.playerNumber, true)
 
-            val bidder = lastBid.player
+            val name = lastBid.playerName
+            val bidder = getPlayer(name.toInt())
             bidder.cardsToSubtract = 1
             bidder.doSubtraction()
             personToStart = bidder.playerNumber

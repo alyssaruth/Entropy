@@ -1,18 +1,21 @@
 package online.screen;
 
-import java.awt.BorderLayout;
-import java.util.UUID;
-
 import game.GameSettings;
-import object.Bid;
-import object.VectropyBid;
+import game.VectropyBidAction;
 import screen.VectropyBidPanel;
-import util.*;
+import util.AchievementsUtil;
+import util.ClientUtil;
+import util.Registry;
+import util.ReplayConstants;
+
+import java.awt.*;
+import java.util.UUID;
 
 import static game.CardsUtilKt.extractCards;
 import static game.RenderingUtilKt.getVectropyResult;
 
-public class VectropyRoom extends GameRoom
+
+public class VectropyRoom extends GameRoom<VectropyBidAction>
 {
 	private boolean earnedMathematician = false;
 	
@@ -20,7 +23,7 @@ public class VectropyRoom extends GameRoom
 	{
 		super(id, roomName, settings, players);
 		
-		bidPanel = new VectropyBidPanel();
+		bidPanel = new VectropyBidPanel(ClientUtil.getUsername(), handPanel);
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
 		bidPanel.addBidListener(this);
 	}
@@ -34,12 +37,12 @@ public class VectropyRoom extends GameRoom
 	@Override
 	public void resetBids()
 	{
-		lastBid = VectropyBid.factoryEmpty(getIncludeMoons(), getIncludeStars());
+		lastBid = null;
 		hmBidByPlayerNumber.clear();
 	}
 
 	@Override
-	public void updatePerfectBidVariables(Bid bid) 
+	public void updatePerfectBidVariables(VectropyBidAction bid)
 	{
 		earnedMathematician = true;
 	}
@@ -71,7 +74,7 @@ public class VectropyRoom extends GameRoom
 	}
 
 	@Override
-	public void updateAchievementVariables(Bid bid)
+	public void updateAchievementVariables(VectropyBidAction bid)
 	{
 		//do nothing
 	}
