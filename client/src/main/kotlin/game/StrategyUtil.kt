@@ -64,8 +64,5 @@ fun computeEvDifferences(bid: VectropyBid, evMap: Map<Suit, Double>): Map<Suit, 
 fun shouldAutoChallengeForEvDiffOfIndividualSuit(evDifferenceMap: Map<Suit, Double>) =
     evDifferenceMap.any { it.value < -0.5 }
 
-fun shouldAutoChallengeForOverallEvDiff(evDifferenceMap: Map<Suit, Double>) =
-    evDifferenceMap.values.sum() < 0
-
 fun shouldAutoChallengeForMultipleSuitsOverEv(evDifferenceMap: Map<Suit, Double>) =
     evDifferenceMap.count { it.value < 0 } > 1

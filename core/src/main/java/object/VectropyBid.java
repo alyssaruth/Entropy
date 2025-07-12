@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import game.GameSettings;
 import game.Suit;
@@ -17,7 +18,7 @@ import static game.CardsUtilKt.countSuit;
 
 public class VectropyBid extends Bid
 {
-	private HashMap<Suit, Integer> amounts = new HashMap<>();
+	private Map<Suit, Integer> amounts = new HashMap<>();
 	public boolean includeMoons = false;
 	public boolean includeStars = false;
 	
@@ -34,7 +35,7 @@ public class VectropyBid extends Bid
 		this.includeStars = includeStars;
 	}
 
-	public VectropyBid(HashMap<Suit, Integer> amounts, boolean includeMoons, boolean includeStars) {
+	public VectropyBid(Map<Suit, Integer> amounts, boolean includeMoons, boolean includeStars) {
 		this.amounts = amounts;
 		this.includeMoons = includeMoons;
 		this.includeStars = includeStars;

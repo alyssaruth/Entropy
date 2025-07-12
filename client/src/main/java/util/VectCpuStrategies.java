@@ -248,10 +248,6 @@ public class VectCpuStrategies
 			{
 				return new ChallengeBid();
 			}
-			else if (shouldAutoChallengeForOverallEvDiff(hmEvDifferenceBySuit))
-			{
-				return new ChallengeBid();
-			}
 			else if (shouldAutoChallengeForMultipleSuitsOverEv(hmEvDifferenceBySuit))
 			{
 				return new ChallengeBid();
