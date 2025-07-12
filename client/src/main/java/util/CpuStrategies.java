@@ -2,6 +2,7 @@ package util;
 
 import game.GameMode;
 import game.GameSettings;
+import game.Suit;
 import object.*;
 
 import java.util.ArrayList;
@@ -224,12 +225,7 @@ public class CpuStrategies
 	
 	private static String validateEntropyBid(EntropyBid bid, GameSettings settings)
 	{
-		int bidSuitCode = bid.getBidSuitCode();
-		if (bidSuitCode < CardsUtil.SUIT_CLUBS
-		  || bidSuitCode > CardsUtil.SUIT_STARS)
-		{
-			return "Invalid suitCode: " + bidSuitCode;
-		}
+		Suit bidSuit = bid.getBidSuit();
 		
 		int bidAmount = bid.getBidAmount();
 		if (bidAmount < 1)
@@ -237,13 +233,13 @@ public class CpuStrategies
 			return "Invalid bidAmount: " + bidAmount;
 		}
 		
-		if (bidSuitCode == CardsUtil.SUIT_MOONS
+		if (bidSuit == Suit.Moons
 		  && !settings.getIncludeMoons())
 		{
 			return "Tried to bid Moons when these haven't been included.";
 		}
 		
-		if (bidSuitCode == CardsUtil.SUIT_STARS
+		if (bidSuit == Suit.Stars
 		  && !settings.getIncludeStars())
 		{
 			return "Tried to bid Stars when these haven't been included.";

@@ -2,6 +2,7 @@ package room
 
 import auth.UserConnection
 import game.GameSettings
+import game.createAndShuffleDeck
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
 import http.dto.RoomStateResponse
@@ -16,14 +17,13 @@ import `object`.HandDetails
 import `object`.LeftBid
 import `object`.Player
 import store.IHasId
-import util.CardsUtil
-import util.EntropyUtil
 import util.ServerGlobals
 import util.ServerGlobals.roomStore
 import util.ServerGlobals.uscStore
 import util.XmlBuilderServer
 import util.XmlConstants
 import utils.CoreGlobals.logger
+import utils.getColourForPlayerNumber
 
 data class Room(
     override val id: UUID,
@@ -66,7 +66,7 @@ data class Room(
             hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
 
         return if (playerNumber != null) {
-            EntropyUtil.getColourForPlayerNumber(playerNumber)
+            getColourForPlayerNumber(playerNumber)
         } else "gray"
     }
 
@@ -122,8 +122,7 @@ data class Room(
                 // There is a game in progress
                 if (currentGame.gameEndMillis == -1L) {
                     val bid = LeftBid()
-                    val player =
-                        Player(playerNumber, EntropyUtil.getColourForPlayerNumber(playerNumber))
+                    val player = Player(playerNumber, getColourForPlayerNumber(playerNumber))
                     player.name = username
                     bid.player = player
 
@@ -340,7 +339,7 @@ data class Room(
         val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = ConcurrentHashMap()
 
         val seed: Long = ServerGlobals.server.generateSeed()
-        val deck = CardsUtil.createAndShuffleDeck(settings, seed)
+        val deck = createAndShuffleDeck(settings, seed).toMutableList()
 
         for (i in 0..<capacity) {
             val size: Int = hmHandSizeByPlayerNumber.getValue(i)

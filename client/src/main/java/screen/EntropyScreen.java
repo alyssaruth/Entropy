@@ -1,14 +1,17 @@
 package screen;
 
 import java.awt.BorderLayout;
-import java.util.List;
 
 import game.GameMode;
+import game.Suit;
 import object.EntropyAchievementsTracker;
 import object.EntropyBid;
-import util.CardsUtil;
-import util.EntropyUtil;
 import util.Registry;
+
+import static game.CardsUtilKt.countSuit;
+import static game.CheatUtilKt.getMaxBidString;
+import static game.EntropyUtilKt.perfectBidAmount;
+import static game.EntropyUtilKt.perfectBidSuit;
 
 public class EntropyScreen extends GameScreen
 {
@@ -36,11 +39,11 @@ public class EntropyScreen extends GameScreen
 	@Override
 	public void showResult()
 	{
-		int lastBidSuitCode = ((EntropyBid)lastBid).getBidSuitCode();
-		handPanel.displayAndHighlightHands(lastBidSuitCode);
+		var lastBidSuit = ((EntropyBid)lastBid).getBidSuit();
+		handPanel.displayAndHighlightHands(lastBidSuit);
 		
-		int total = countSuit(lastBidSuitCode);
-		String suitsStr = CardsUtil.getSuitDesc(total, lastBidSuitCode);
+		int total = countSuit(lastBidSuit, getConcatenatedHands(), settings.getJokerValue());
+		String suitsStr = lastBidSuit.getDescription(total);
 		if (total == 1)
 		{
 			ScreenCache.get(MainScreen.class).setResultText("There was " + total + " " + suitsStr);
@@ -67,7 +70,7 @@ public class EntropyScreen extends GameScreen
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.putInt(Registry.SAVED_GAME_INT_LAST_BID_SUIT_CODE, ((EntropyBid)lastBid).getBidSuitCode());
+			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, ((EntropyBid)lastBid).getBidSuit().name());
 			savedGame.putInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, ((EntropyBid)lastBid).getBidAmount());
 		}
 			
@@ -82,19 +85,19 @@ public class EntropyScreen extends GameScreen
 	protected void saveRoundForReplay()
 	{
 		int roundsSoFar = inGameReplay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0) + 1;
-		inGameReplay.putInt(roundsSoFar + Registry.REPLAY_INT_LAST_BID_SUIT_CODE, ((EntropyBid)lastBid).getBidSuitCode());
+		inGameReplay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, ((EntropyBid)lastBid).getBidSuit().name());
 		super.saveRoundForReplay();
 	}
 	
 	@Override
 	public void loadLastBid()
 	{
-		int lastBidSuitCode = savedGame.getInt(Registry.SAVED_GAME_INT_LAST_BID_SUIT_CODE, -1);
+		String lastBidSuitName = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
 		int lastBidAmount = savedGame.getInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
 		
-		if (lastBidSuitCode > -1)
+		if (lastBidSuitName != null)
 		{
-			lastBid = new EntropyBid(lastBidSuitCode, lastBidAmount);
+			lastBid = new EntropyBid(Suit.valueOf(lastBidSuitName), lastBidAmount);
 		}
 	}
 	
@@ -114,25 +117,20 @@ public class EntropyScreen extends GameScreen
 		
 		if (command.equals("showmethecards"))
 		{
-			handPanel.displayAndHighlightHands(-1);
+			handPanel.displayAndHighlightHands(null);
 			cheatUsed = true;
 		}
 		else if (command.equals("perfectbid"))
 		{
 			cheatUsed = true;
-			List<String> playerHand = player.getHand();
-			List<String> opponentOneHand = opponentOne.getHand();
-			List<String> opponentTwoHand = opponentTwo.getHand();
-			List<String> opponentThreeHand = opponentThree.getHand();
-			int perfectBidSuitCode = EntropyUtil.getPerfectBidSuitCode(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, settings.getJokerValue(), settings.getIncludeStars());
-			int perfectBidAmount = EntropyUtil.getPerfectBidAmount(playerHand, opponentOneHand, opponentTwoHand, opponentThreeHand, settings.getJokerValue());
-			String suit = CardsUtil.getSuitDesc(perfectBidAmount, perfectBidSuitCode);
-			return perfectBidAmount + " " + suit;
+			Suit perfectBidSuit = perfectBidSuit(getConcatenatedHands(), settings.getJokerValue(), settings.getIncludeStars());
+			int perfectBidAmount = perfectBidAmount(getConcatenatedHands(), settings.getJokerValue());
+			return perfectBidAmount + " " + perfectBidSuit.getDescription(perfectBidAmount);
 		}
 		else if (command.equals("maxbids"))
 		{
 			cheatUsed = true;
-			return getMaxBidsStr();
+			return getMaxBidString(getConcatenatedHands(), settings);
 		}
 		else if (command.equals("rainingjokers"))
 		{
@@ -150,9 +148,9 @@ public class EntropyScreen extends GameScreen
 	}
 	
 	@Override
-	public int getLastBidSuitCode()
+	public Suit getLastBidSuit()
 	{
-		return ((EntropyBid)lastBid).getBidSuitCode();
+		return ((EntropyBid)lastBid).getBidSuit();
 	}
 	
 	@Override

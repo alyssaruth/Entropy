@@ -1,5 +1,6 @@
 package screen;
 
+import game.Suit;
 import object.CardLabel;
 import object.PlayerLabel;
 import online.screen.EntropyLobby;
@@ -18,6 +19,8 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
+
+import static game.CardsUtilKt.isCardRelevant;
 
 public class HandPanelMk2 extends TransparentPanel 
 						  implements ActionListener,
@@ -367,7 +370,7 @@ public class HandPanelMk2 extends TransparentPanel
 		}
 	}
 	
-	public void displayAndHighlightHands(int suitCode)
+	public void displayAndHighlightHands(Suit suitCode)
 	{
 		displayAndHighlightHand(suitCode, playerCards);
 		displayAndHighlightHand(suitCode, opponentOneCards);
@@ -377,13 +380,13 @@ public class HandPanelMk2 extends TransparentPanel
 		refreshIcons();
 	}
 	
-	private void displayAndHighlightHand(int suitCode, CardLabel[] cards)
+	private void displayAndHighlightHand(Suit suit, CardLabel[] cards)
 	{
 		for (int i=0; i<cards.length; i++)
 		{
 			CardLabel cardLabel = cards[i];
 			String cardId = cardLabel.getCard();
-			boolean isRelevant = CardsUtil.isRelevant(cardId, suitCode);
+			boolean isRelevant = suit == null || isCardRelevant(cardId, suit);
 			
 			cardLabel.setFaded(!isRelevant);
 			cardLabel.setFaceUp(true);

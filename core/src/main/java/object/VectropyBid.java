@@ -2,28 +2,25 @@ package object;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 import game.GameSettings;
+import game.Suit;
+import game.VectropyUtilKt;
 import org.w3c.dom.Element;
 
-import util.CardsUtil;
 import util.Debug;
-import util.VectropyUtil;
 import util.XmlUtil;
+
+import static game.CardsUtilKt.countSuit;
 
 public class VectropyBid extends Bid
 {
-	private int clubs = 0;
-	private int diamonds = 0;
-	private int hearts = 0;
-	private int moons = 0;
-	private int spades = 0;
-	private int stars = 0;
-	
-	private boolean includeMoons = false;
-	private boolean includeStars = false;
+	private Map<Suit, Integer> amounts = new HashMap<>();
+	public boolean includeMoons = false;
+	public boolean includeStars = false;
 	
 	/**
 	 * Empty constructor, used for factorying from XML
@@ -33,28 +30,38 @@ public class VectropyBid extends Bid
 	public VectropyBid(int clubs, int diamonds, int hearts, int moons, int spades, int stars, 
 					   boolean includeMoons, boolean includeStars)
 	{
-		this.clubs = clubs;
-		this.diamonds = diamonds;
-		this.hearts = hearts;
-		this.moons = moons;
-		this.spades = spades;
-		this.stars = stars;
+		populateMap(clubs, diamonds, hearts, moons, spades, stars);
 		this.includeMoons = includeMoons;
 		this.includeStars = includeStars;
+	}
+
+	public VectropyBid(Map<Suit, Integer> amounts, boolean includeMoons, boolean includeStars) {
+		this.amounts = amounts;
+		this.includeMoons = includeMoons;
+		this.includeStars = includeStars;
+	}
+
+	private void populateMap(int clubs, int diamonds, int hearts, int moons, int spades, int stars) {
+		this.amounts.put(Suit.Clubs, clubs);
+		this.amounts.put(Suit.Diamonds, diamonds);
+		this.amounts.put(Suit.Hearts, hearts);
+		this.amounts.put(Suit.Moons, moons);
+		this.amounts.put(Suit.Spades, spades);
+		this.amounts.put(Suit.Stars, stars);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + clubs;
-		result = prime * result + diamonds;
-		result = prime * result + hearts;
+		result = prime * result + amounts.get(Suit.Clubs);
+		result = prime * result + amounts.get(Suit.Diamonds);
+		result = prime * result + amounts.get(Suit.Hearts);
 		result = prime * result + (includeMoons ? 1231 : 1237);
 		result = prime * result + (includeStars ? 1231 : 1237);
-		result = prime * result + moons;
-		result = prime * result + spades;
-		result = prime * result + stars;
+		result = prime * result + amounts.get(Suit.Moons);
+		result = prime * result + amounts.get(Suit.Spades);
+		result = prime * result + amounts.get(Suit.Stars);
 		return result;
 	}
 
@@ -67,101 +74,72 @@ public class VectropyBid extends Bid
 		if (!(obj instanceof VectropyBid))
 			return false;
 		VectropyBid other = (VectropyBid) obj;
-		if (clubs != other.clubs)
+		if (!amounts.get(Suit.Clubs).equals(other.amounts.get(Suit.Clubs)))
 			return false;
-		if (diamonds != other.diamonds)
+		if (!amounts.get(Suit.Diamonds).equals(other.amounts.get(Suit.Diamonds)))
 			return false;
-		if (hearts != other.hearts)
+		if (!amounts.get(Suit.Hearts).equals(other.amounts.get(Suit.Hearts)))
 			return false;
 		if (includeMoons != other.includeMoons)
 			return false;
 		if (includeStars != other.includeStars)
 			return false;
-		if (moons != other.moons)
+		if (!amounts.get(Suit.Moons).equals(other.amounts.get(Suit.Moons)))
 			return false;
-		if (spades != other.spades)
+		if (!amounts.get(Suit.Spades).equals(other.amounts.get(Suit.Spades)))
 			return false;
-		if (stars != other.stars)
+		if (!amounts.get(Suit.Stars).equals(other.amounts.get(Suit.Stars)))
 			return false;
 		return true;
 	}
 
+	public int getAmount(Suit suit)
+	{
+		return amounts.get(suit);
+	}
 	public int getClubs()
 	{
-		return clubs;
+		return amounts.get(Suit.Clubs);
 	}
 	public int getDiamonds()
 	{
-		return diamonds;
+		return amounts.get(Suit.Diamonds);
 	}
 	public int getHearts()
 	{
-		return hearts;
+		return amounts.get(Suit.Hearts);
 	}
 	public int getMoons()
 	{
-		return moons;
+		return amounts.get(Suit.Moons);
 	}
 	public int getSpades()
 	{
-		return spades;
+		return amounts.get(Suit.Spades);
 	}
 	public int getStars()
 	{
-		return stars;
+		return amounts.get(Suit.Stars);
 	}
 	
 	public int getTotal()
 	{
-		int total = clubs + diamonds + hearts + moons + spades + stars;
-		if (includeMoons)
-		{
-			total += moons;
-		}
-		
-		if (includeStars)
-		{
-			total += stars;
-		}
-		
-		return total;
+		return amounts.values().stream().mapToInt(Integer::intValue).sum();
 	}
 	
-	public VectropyBid incrementSuitAndGet(int suit)
+	public VectropyBid incrementSuitAndGet(Suit suit)
 	{
-		int clubs = this.clubs;
-		int diamonds = this.diamonds;
-		int hearts = this.hearts;
-		int moons = this.moons;
-		int spades = this.spades;
-		int stars = this.stars;
-		
-		if (suit == CardsUtil.SUIT_CLUBS)
-		{
-			clubs++;
-		}
-		else if (suit == CardsUtil.SUIT_DIAMONDS)
-		{
-			diamonds++;
-		}
-		else if (suit == CardsUtil.SUIT_HEARTS)
-		{
-			hearts++;
-		}
-		else if (suit == CardsUtil.SUIT_MOONS)
-		{
-			moons++;
-		}
-		else if (suit == CardsUtil.SUIT_SPADES)
-		{
-			spades++;
-		}
-		else if (suit == CardsUtil.SUIT_STARS)
-		{
-			stars++;
-		}
+		int current = amounts.get(suit);
+		var newAmounts = new HashMap<Suit, Integer>();
+		Suit.getEntries().forEach((Suit s) -> {
+			if (s == suit) {
+				newAmounts.put(s, amounts.get(s) + 1);
+			} else {
+				newAmounts.put(s, amounts.get(s));
+			}
+		});
 
-		return new VectropyBid(clubs, diamonds, hearts, moons, spades, stars, includeMoons, includeStars);
+		return new VectropyBid(newAmounts, includeMoons, includeStars);
 	}
 	
 	@Override
@@ -173,20 +151,20 @@ public class VectropyBid extends Bid
 	@Override
 	public String toXmlStringSpecific()
 	{
-		String xmlStr = clubs + XML_DELIM_CHAR + diamonds + XML_DELIM_CHAR + hearts + XML_DELIM_CHAR;
+		String xmlStr = getClubs() + XML_DELIM_CHAR + getDiamonds() + XML_DELIM_CHAR + getHearts() + XML_DELIM_CHAR;
 		
 		if (includeMoons)
 		{
-			xmlStr += moons;
+			xmlStr += getMoons();
 			xmlStr += XML_DELIM_CHAR;
 		}
 		
-		xmlStr += spades;
+		xmlStr += getSpades();
 		
 		if (includeStars)
 		{
 			xmlStr += XML_DELIM_CHAR;
-			xmlStr += stars;
+			xmlStr += getStars();
 		}
 		
 		return xmlStr;
@@ -199,37 +177,41 @@ public class VectropyBid extends Bid
 		this.includeMoons = includeMoons;
 		this.includeStars = includeStars;
 		
-		clubs = Integer.parseInt(toks.remove(0));
-		diamonds = Integer.parseInt(toks.remove(0));
-		hearts = Integer.parseInt(toks.remove(0));
-		
+		var clubs = Integer.parseInt(toks.remove(0));
+		var diamonds = Integer.parseInt(toks.remove(0));
+		var hearts = Integer.parseInt(toks.remove(0));
+
+		var moons = 0;
 		if (includeMoons)
 		{
 			moons = Integer.parseInt(toks.remove(0));
 		}
 		
-		spades = Integer.parseInt(toks.remove(0));
-		
+		var spades = Integer.parseInt(toks.remove(0));
+
+		var stars = 0;
 		if (includeStars)
 		{
 			stars = Integer.parseInt(toks.remove(0));
 		}
+
+		populateMap(clubs, diamonds, hearts, moons, spades, stars);
 	}
 	
 	@Override
 	public String toStringSpecific() 
 	{
-		String bidStr = "(" + clubs + ", " + diamonds + ", " + hearts;
+		String bidStr = "(" + getClubs() + ", " + getDiamonds() + ", " + getHearts();
 		if (includeMoons)
 		{
-			bidStr += ", " + moons;
+			bidStr += ", " + getMoons();
 		}
 		
-		bidStr += ", " + spades;
+		bidStr += ", " + getSpades();
 		
 		if (includeStars)
 		{
-			bidStr += ", " + stars;
+			bidStr += ", " + getStars();
 		}
 		
 		bidStr += ")";
@@ -255,65 +237,57 @@ public class VectropyBid extends Bid
 		}
 		
 		VectropyBid bid2 = (VectropyBid)bid;
-		return clubs >= bid2.getClubs()
-		  && diamonds >= bid2.getDiamonds()
-		  && hearts >= bid2.getHearts()
-		  && moons >= bid2.getMoons()
-		  && spades >= bid2.getSpades()
-		  && stars >= bid2.getStars()
+		return getClubs() >= bid2.getClubs()
+		  && getDiamonds() >= bid2.getDiamonds()
+		  && getHearts() >= bid2.getHearts()
+		  && getMoons() >= bid2.getMoons()
+		  && getSpades() >= bid2.getSpades()
+		  && getStars() >= bid2.getStars()
 		  && getTotal() > bid2.getTotal();
 	}
 	
 	@Override
-	public boolean isPerfect(List<String> handOne, List<String> handTwo, List<String> handThree, List<String> handFour,
-							 GameSettings settings)
+	public boolean isPerfect(List<String> cards, GameSettings settings)
 	{
 		var jokerValue = settings.getJokerValue();
-		int maxClubs = CardsUtil.countSuit(CardsUtil.SUIT_CLUBS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxDiamonds = CardsUtil.countSuit(CardsUtil.SUIT_DIAMONDS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxHearts = CardsUtil.countSuit(CardsUtil.SUIT_HEARTS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxMoons = CardsUtil.countSuit(CardsUtil.SUIT_MOONS, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxSpades = CardsUtil.countSuit(CardsUtil.SUIT_SPADES, handOne, handTwo, handThree, handFour, jokerValue);
-		int maxStars = CardsUtil.countSuit(CardsUtil.SUIT_STARS, handOne, handTwo, handThree, handFour, jokerValue);
+		int maxClubs = countSuit(Suit.Clubs, cards, jokerValue);
+		int maxDiamonds = countSuit(Suit.Diamonds, cards, jokerValue);
+		int maxHearts = countSuit(Suit.Hearts, cards, jokerValue);
+		int maxMoons = countSuit(Suit.Moons, cards, jokerValue);
+		int maxSpades = countSuit(Suit.Spades, cards, jokerValue);
+		int maxStars = countSuit(Suit.Stars, cards, jokerValue);
 		
-		return clubs == maxClubs 
-			&& diamonds == maxDiamonds 
-			&& hearts == maxHearts 
-			&& (moons == maxMoons || !includeMoons)
-			&& spades == maxSpades
-			&& (stars == maxStars || !includeStars);
+		return getClubs() == maxClubs
+			&& getDiamonds() == maxDiamonds
+			&& getHearts() == maxHearts
+			&& (getMoons() == maxMoons || !includeMoons)
+			&& getSpades() == maxSpades
+			&& (getStars() == maxStars || !includeStars);
 	}
 	
 	@Override
-	public boolean isOverbid(ConcurrentHashMap<Integer, List<String>> hmHandByPlayerNumber, int jokerValue)
+	public boolean isOverbid(List<String> cards, int jokerValue)
 	{
-		return VectropyUtil.isOverbid(this, hmHandByPlayerNumber, jokerValue);
-	}
-	
-	@Override
-	public boolean isOverbid(List<String> handOne, List<String> handTwo,
-							 List<String> handThree, List<String> handFour, int jokerValue)
-	{
-		return VectropyUtil.isOverbid(this, handOne, handTwo, handThree, handFour, jokerValue);
+		return VectropyUtilKt.isOverbid(this, cards, jokerValue);
 	}
 	
 	@Override
 	public void populateXmlTag(Element bidElement)
 	{
-		bidElement.setAttribute("Clubs", "" + clubs);
-		bidElement.setAttribute("Diamonds", "" + diamonds);
-		bidElement.setAttribute("Hearts", "" + hearts);
+		bidElement.setAttribute("Clubs", "" + getClubs());
+		bidElement.setAttribute("Diamonds", "" + getDiamonds());
+		bidElement.setAttribute("Hearts", "" + getHearts());
 		
 		if (includeMoons)
 		{
-			bidElement.setAttribute("Moons", "" + moons);
+			bidElement.setAttribute("Moons", "" + getMoons());
 		}
 		
-		bidElement.setAttribute("Spades", "" + spades);
+		bidElement.setAttribute("Spades", "" + getSpades());
 		
 		if (includeStars)
 		{
-			bidElement.setAttribute("Stars", "" + stars);
+			bidElement.setAttribute("Stars", "" + getStars());
 		}
 	}
 	
@@ -346,5 +320,9 @@ public class VectropyBid extends Bid
 		}
 		
 		return new VectropyBid(clubs, diamonds, hearts, moons, spades, stars, includeMoons, includeStars);
+	}
+
+	public static VectropyBid factoryEmpty(boolean includeMoons, boolean includeStars) {
+		return new VectropyBid(0, 0, 0, 0, 0, 0, includeMoons, includeStars);
 	}
 }

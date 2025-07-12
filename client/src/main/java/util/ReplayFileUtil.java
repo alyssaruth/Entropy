@@ -85,7 +85,7 @@ public final class ReplayFileUtil implements Registry
 	public static final String ROUND_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "OpponentOneNumberOfCards";
 	public static final String ROUND_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "OpponentTwoNumberOfCards";
 	public static final String ROUND_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "OpponentThreeNumberOfCards";
-	public static final String ROUND_INT_LAST_BID_SUIT_CODE = "LastBidSuitCode";
+	public static final String ROUND_STRING_LAST_BID_SUIT_CODE = "LastBidSuit";
 	
 	public static final String ROUND_ELEMENT_HAND = "Hand";
 	public static final String HAND_INT_PLAYER_NUMBER = "PlayerNumber";
@@ -205,8 +205,10 @@ public final class ReplayFileUtil implements Registry
 			
 			if (isEntropy)
 			{
-				int lastBidSuitCode = replay.getInt(i + REPLAY_INT_LAST_BID_SUIT_CODE, 0);
-				roundElement.setAttribute(ROUND_INT_LAST_BID_SUIT_CODE, "" + lastBidSuitCode);
+				String lastBidSuit = replay.get(i + REPLAY_STRING_LAST_BID_SUIT_NAME, null);
+				if (lastBidSuit != null) {
+					roundElement.setAttribute(ROUND_STRING_LAST_BID_SUIT_CODE, lastBidSuit);
+				}
 			}
 			
 			addListmodelElement(replay, document, roundElement, i);
@@ -757,8 +759,8 @@ public final class ReplayFileUtil implements Registry
 
 			if (entropy)
 			{
-				int lastBidSuitCode = XmlUtil.getAttributeInt(roundElement, ROUND_INT_LAST_BID_SUIT_CODE);
-				replay.putInt(roundNumber + REPLAY_INT_LAST_BID_SUIT_CODE, lastBidSuitCode);
+				String lastBidSuit = roundElement.getAttribute(ROUND_STRING_LAST_BID_SUIT_CODE);
+				replay.put(roundNumber + REPLAY_STRING_LAST_BID_SUIT_NAME, lastBidSuit);
 			}
 
 			saveListModelToRegistry(roundElement, roundNumber, replay);
