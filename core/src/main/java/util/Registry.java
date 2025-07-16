@@ -22,10 +22,12 @@ public interface Registry
 	public static final String INSTANCE_STRING_DEVICE_ID = "deviceId";
 
 	// shared
+	public static final String SHARED_STRING_LISTMODEL = "listmodel";
 	public static final String SHARED_BOOLEAN_INCLUDE_MOONS = "includeMoons";
 	public static final String SHARED_BOOLEAN_INCLUDE_STARS = "includeStars";
 	public static final String SHARED_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
 	public static final String SHARED_BOOLEAN_CARD_REVEAL = "cardReveal";
+	public static final String SHARED_INT_HISTORY_SIZE = "historySize";
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
@@ -86,7 +88,6 @@ public interface Registry
 	public static final String REPLAY_STRING_OPPONENT_TWO_NAME = "opponentTwoName";
 	public static final String REPLAY_STRING_OPPONENT_ONE_NAME = "opponentOneName";
 	public static final String REPLAY_STRING_PLAYER_NAME = "playerName";
-	public static final String REPLAY_STRING_LISTMODEL = "listmodel";
 	public static final String REPLAY_STRING_PLAYER_COLOUR = "playerColour";
 	public static final String REPLAY_STRING_OPPONENT_ONE_COLOUR = "opponentOneColour";
 	public static final String REPLAY_STRING_OPPONENT_TWO_COLOUR = "opponentTwoColour";
@@ -119,7 +120,6 @@ public interface Registry
 	public static final String REPLAY_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";
 	public static final String REPLAY_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "opponentOneNumberOfCards";
 	public static final String REPLAY_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
-	public static final String REPLAY_INT_HISTORY_SIZE = "historySize";
 	public static final String REPLAY_INT_ROUNDS_SO_FAR = "roundsSoFar";
 	public static final String REPLAY_INT_GAME_COMPLETE = "gameComplete";
 	public static final String REPLAY_INT_PLAYER_WON = "playerWon";
@@ -204,7 +204,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "opponentOneNumberOfCards";
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
-	public static final String SAVED_GAME_INT_HISTORY_SIZE = "historySize";
 	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
 
 	//statics for default values etc

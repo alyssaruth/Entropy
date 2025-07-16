@@ -312,14 +312,14 @@ public final class ReplayFileUtil implements Registry
 	private static void addListmodelElement(Preferences replay, Document document, Element roundElement, 
 	  int roundNumber)
 	{
-		int historySize = replay.getInt(roundNumber + REPLAY_INT_HISTORY_SIZE, 0);
+		int historySize = replay.getInt(roundNumber + SHARED_INT_HISTORY_SIZE, 0);
 		
 		Element listmodelElement = document.createElement(ROUND_ELEMENT_BID_HISTORY);
 		listmodelElement.setAttribute(BID_HISTORY_INT_HISTORY_SIZE, "" + historySize);
 		
 		for (int i=0; i<historySize; i++)
 		{
-			String history = replay.get(roundNumber + REPLAY_STRING_LISTMODEL + i, "");
+			String history = replay.get(roundNumber + SHARED_STRING_LISTMODEL + i, "");
 			listmodelElement.setAttribute(BID_HISTORY_STRING_HISTORY + i, history);
 		}
 		
@@ -818,12 +818,12 @@ public final class ReplayFileUtil implements Registry
 		Element bidHistoryElement = (Element)children.item(0);
 		
 		int historySize = XmlUtil.getAttributeInt(bidHistoryElement, BID_HISTORY_INT_HISTORY_SIZE);
-		replay.putInt(roundNumber + REPLAY_INT_HISTORY_SIZE, historySize);
+		replay.putInt(roundNumber + SHARED_INT_HISTORY_SIZE, historySize);
 		
 		for (int i=0; i<historySize; i++)
 		{
 			String historyItem = bidHistoryElement.getAttribute(BID_HISTORY_STRING_HISTORY + i);
-			replay.put(roundNumber + REPLAY_STRING_LISTMODEL + i, historyItem);
+			replay.put(roundNumber + SHARED_STRING_LISTMODEL + i, historyItem);
 		}
 	}
 	private static void saveChatHistoryToRegistry(Element roundElement, int roundNumber, Preferences replay)

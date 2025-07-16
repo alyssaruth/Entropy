@@ -1,14 +1,13 @@
 package screen;
 
 import achievement.AchievementSetting;
-import game.GameMode;
-import game.GameSettings;
-import game.Suit;
+import game.*;
 import object.Bid;
 import object.ChallengeBid;
 import object.IllegalBid;
 import object.Player;
 import util.*;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.util.Timer;
@@ -19,12 +18,14 @@ import java.util.stream.Stream;
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.createAndShuffleDeck;
 import static game.CheatUtilKt.containsNonJoker;
+import static game.RegistryUtilKt.populateActions;
+import static game.RegistryUtilKt.writeActions;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
-public abstract class GameScreen extends TransparentPanel
-								 implements BidListener,
+public abstract class GameScreen<B extends BidAction<B>> extends TransparentPanel
+								 implements BidListener<B>,
 								 			RevealListener,
 								 			Registry
 {
@@ -35,7 +36,7 @@ public abstract class GameScreen extends TransparentPanel
 	private Player currentPlayer = null;
 	private int handicapAmount;
 	
-	public Bid lastBid = null;
+	public B lastBid = null;
 
 	private boolean playBlind;
 	private boolean playWithHandicap;
@@ -58,7 +59,7 @@ public abstract class GameScreen extends TransparentPanel
 	public Player opponentTwo = null;
 	public Player opponentThree = null;
 	
-	public BidPanel bidPanel = null;
+	public BidPanel<B> bidPanel = null;
 	public HandPanelMk2 handPanel = new HandPanelMk2(this);
 	
 	//Abstract methods
@@ -75,25 +76,18 @@ public abstract class GameScreen extends TransparentPanel
 	public abstract void updateAchievementVariables();
 	
 	public void startNewGame()
-	{	
-		try
-		{	
-			Debug.appendBanner("New Game", logging);
-			cancelNewRound();
-			
-			boolean playerEnabled = player != null && player.isEnabled();
-			AchievementsUtil.unlockCoward(gameOver, playerEnabled, firstRound);
-			ScreenCache.get(MainScreen.class).dismissCurrentReplay();
+	{
+		Debug.appendBanner("New Game", logging);
+		cancelNewRound();
 
-			initVariablesForNewGame();
-			initVariables();
-			
-			startRound();
-		}
-		catch (Throwable e)
-		{
-			Debug.stackTrace(e);
-		}
+		boolean playerEnabled = player != null && player.isEnabled();
+		AchievementsUtil.unlockCoward(gameOver, playerEnabled, firstRound);
+		ScreenCache.get(MainScreen.class).dismissCurrentReplay();
+
+		initVariablesForNewGame();
+		initVariables();
+
+		startRound();
 	}
 	
 	public void startNewRound() 
@@ -211,7 +205,7 @@ public abstract class GameScreen extends TransparentPanel
 		int maxBid = GameUtil.getMaxBid(settings, totalNumberOfCards);
 		bidPanel.init(maxBid, totalNumberOfCards, false, settings.getIncludeMoons(), settings.getIncludeStars(), false);
 		
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		var listmodel = ScreenCache.get(MainScreen.class).getListmodel();
 		listmodel.removeAllElements();
 		
 		player.resetHand();
@@ -464,14 +458,7 @@ public abstract class GameScreen extends TransparentPanel
 		inGameReplay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
-		int historySize = listmodel.size();
-		inGameReplay.putInt(roundsSoFar + REPLAY_INT_HISTORY_SIZE, historySize);
-		for (int i = 0; i < historySize; i++)
-		{
-			Bid bid = listmodel.get(i);
-			inGameReplay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, bid.toXmlString());
-		}
+		writeActions(inGameReplay, ScreenCache.get(MainScreen.class).getListmodel(), roundsSoFar);
 		
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_PLAY_BLIND, playBlind);
 		inGameReplay.putBoolean(REPLAY_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);
@@ -521,14 +508,7 @@ public abstract class GameScreen extends TransparentPanel
 		settings.exportToRegistry(savedGame);
 		
 		//save the listmodel
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
-		int historySize = listmodel.size();
-		savedGame.putInt(SAVED_GAME_INT_HISTORY_SIZE, historySize);
-		for (int i=0; i<historySize; i++)
-		{
-			Bid bid = listmodel.get(i);
-			savedGame.put(SAVED_GAME_STRING_LISTMODEL + i, bid.toXmlString());
-		}
+		writeActions(savedGame, ScreenCache.get(MainScreen.class).getListmodel(), null);
 
 		savedGame.putInt(SAVED_GAME_INT_PERSON_TO_START, personToStart);
 
@@ -610,14 +590,7 @@ public abstract class GameScreen extends TransparentPanel
 			initialiseBidPanel();
 
 			//set up the listmodel
-			DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
-			int historySize = savedGame.getInt(SAVED_GAME_INT_HISTORY_SIZE, 0);
-			for (int i = 0; i < historySize; i++)
-			{
-				String modelItem = savedGame.get(SAVED_GAME_STRING_LISTMODEL + i, "");
-				Bid bid = Bid.factoryFromXmlString(modelItem, settings.getIncludeMoons(), settings.getIncludeStars());
-				listmodel.addElement(bid);
-			}
+			populateActions(savedGame, ScreenCache.get(MainScreen.class).getListmodel(), null);
 
 			//get who is enabled
 			player.setEnabled(savedGame.getBoolean(SAVED_GAME_BOOLEAN_PLAYER_ENABLED, false));
@@ -826,7 +799,6 @@ public abstract class GameScreen extends TransparentPanel
 		
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		lastBid.setBlind(actedBlind);
 		addToListmodel(lastBid);
 		
 		updateAchievementVariables();
@@ -835,7 +807,7 @@ public abstract class GameScreen extends TransparentPanel
 			handlePerfectBid(lastBid);
 		}
 		
-		if (lastBid.isOverbid(getConcatenatedHands(), settings.getJokerValue()))
+		if (lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			hasOverbid = true;
 		}
@@ -843,10 +815,10 @@ public abstract class GameScreen extends TransparentPanel
 		processNextTurn(0);
 	}
 	
-	private void handlePerfectBid(Bid bid)
+	private void handlePerfectBid(B bid)
 	{
 		Debug.append("Player made a perfect bid.", logging);
-		if (bid.isOverAchievementThreshold())
+		if (bid.overAchievementThreshold())
 		{
 			if (handPanel.isPlayingBlind())
 			{
@@ -865,7 +837,7 @@ public abstract class GameScreen extends TransparentPanel
 		unlockPerfectBidAchievements();
 		
 		Player playerChallenged = lastBid.getPlayer();
-		if (!lastBid.isOverbid(getConcatenatedHands(), settings.getJokerValue()))
+		if (!lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			Debug.append("not an overbid", logging);
 			setCardsToSubtract(challenger);
@@ -1026,10 +998,9 @@ public abstract class GameScreen extends TransparentPanel
 	 * BidListener
 	 */
 	@Override
-	public void bidMade(Bid bid) 
+	public void bidMade(B bid)
 	{
 		bidPanel.enableBidPanel(false);
-		bid.setPlayer(player);
 		lastBid = bid;
 		
 		if (settings.getCardReveal()
@@ -1049,11 +1020,9 @@ public abstract class GameScreen extends TransparentPanel
 		Debug.append("Player challenged.", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new ChallengeBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
-		addToListmodel(bid);
+
+		var challenge = new ChallengeAction(player.getName(), actedBlind);
+		addToListmodel(challenge);
 		
 		processChallenge(player);
 	}
@@ -1064,11 +1033,9 @@ public abstract class GameScreen extends TransparentPanel
 		Debug.append("Player called Illegal!", logging);
 		boolean actedBlind = handPanel.isPlayingBlind();
 		hasActedBlindThisGame &= actedBlind;
-		
-		Bid bid = new IllegalBid();
-		bid.setPlayer(player);
-		bid.setBlind(actedBlind);
-		addToListmodel(bid);
+
+		var illegal = new IllegalAction(player.getName(), actedBlind);
+		addToListmodel(illegal);
 		
 		processIllegal(player);
 	}
@@ -1085,10 +1052,10 @@ public abstract class GameScreen extends TransparentPanel
 		processPlayerBid();
 	}
 	
-	private void addToListmodel(Bid bid)
+	private void addToListmodel(PlayerAction action)
 	{
-		DefaultListModel<Bid> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
-		listmodel.add(0, bid);
+		DefaultListModel<PlayerAction> listmodel = ScreenCache.get(MainScreen.class).getListmodel();
+		listmodel.add(0, action);
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package game
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import utils.CoreGlobals
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -22,4 +23,6 @@ abstract class PlayerAction {
     abstract fun plainString(): String
 
     open fun htmlString() = plainString()
+
+    fun toJsonString(): String = CoreGlobals.jsonMapper.writeValueAsString(this)
 }

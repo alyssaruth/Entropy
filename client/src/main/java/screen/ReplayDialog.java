@@ -33,6 +33,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import game.PlayerAction;
 import game.Suit;
 import object.Bid;
 import object.BidListCellRenderer;
@@ -44,6 +45,7 @@ import util.*;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.isCardRelevant;
+import static game.RegistryUtilKt.populateActions;
 import static game.RenderingUtilKt.getVectropyResult;
 import static utils.CoreGlobals.logger;
 
@@ -301,9 +303,9 @@ public class ReplayDialog extends JFrame
 	private final JLabel[] opponentTwoCards = {opponentTwoCard1, opponentTwoCard2, opponentTwoCard3, opponentTwoCard4, opponentTwoCard5};
 	private final JLabel[] opponentOneCards = {opponentCard1, opponentCard2, opponentCard3, opponentCard4, opponentCard5};
 	private final JLabel[] playerCards = {playerCard5, playerCard4, playerCard3, playerCard2, playerCard1};
-	private final  DefaultListModel<Bid> listmodel = new DefaultListModel<>();
+	private final  DefaultListModel<PlayerAction> listmodel = new DefaultListModel<>();
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JList<Bid> history = new JList<>(listmodel);
+	private final JList<PlayerAction> history = new JList<>(listmodel);
 	private final JLabel lblBidHistory = new JLabel("Bid History");
 	private final PlayerLabel lblOpponentOne = new PlayerLabel("Mark");
 	private final PlayerLabel lblPlayer = new PlayerLabel("Player");
@@ -575,10 +577,10 @@ public class ReplayDialog extends JFrame
 	
 	private boolean playerLeftThisRound(String name)
 	{
-		int historySize = replay.getInt(roundNumber + REPLAY_INT_HISTORY_SIZE, 0);
+		int historySize = replay.getInt(roundNumber + SHARED_INT_HISTORY_SIZE, 0);
 		for (int i = 0; i < historySize; i++)
 		{
-			String modelItem = replay.get(roundNumber + REPLAY_STRING_LISTMODEL + i, "");
+			String modelItem = replay.get(roundNumber + SHARED_STRING_LISTMODEL + i, "");
 			if (modelItem.contains(name + " left"))
 			{
 				return true;
@@ -690,14 +692,7 @@ public class ReplayDialog extends JFrame
 	
 	private void populateBidHistory()
 	{
-		listmodel.clear();
-		int historySize = replay.getInt(roundNumber + REPLAY_INT_HISTORY_SIZE, 0);
-		for (int i = 0; i < historySize; i++)
-		{
-			String modelItem = replay.get(roundNumber + REPLAY_STRING_LISTMODEL + i, "");
-			Bid bid = Bid.factoryFromXmlString(modelItem, includeMoons, includeStars);
-			listmodel.addElement(bid);
-		}
+		populateActions(replay, listmodel, roundNumber);
 	}
 	
 	private void showResult(Suit suit)

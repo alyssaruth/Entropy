@@ -7,6 +7,7 @@ import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
 import screen.*;
 import util.*;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
+import static game.RegistryUtilKt.writeActions;
 import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
@@ -159,8 +161,8 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	private final TransparentPanel rightPane = new TransparentPanel();
 	public final HandPanelMk2 handPanel = new HandPanelMk2(this);
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final DefaultListModel<Bid> listmodel = new DefaultListModel<>();
-	private final JList<Bid> bidBox = new JList<>(listmodel);
+	private final DefaultListModel<PlayerAction> listmodel = new DefaultListModel<>();
+	private final JList<PlayerAction> bidBox = new JList<>(listmodel);
 	private final TransparentPanel rightCenter = new TransparentPanel();
 	private final JTextPane lblResult = new JTextPane();
 	private final JPanel panelInformation = new JPanel();
@@ -1044,7 +1046,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	{
 		this.gameId = gameId;
 	}
-	public DefaultListModel<Bid> getListmodel()
+	public DefaultListModel<PlayerAction> getListmodel()
 	{
 		return listmodel;
 	}
@@ -1063,13 +1065,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 			replay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
 			
 			//save the listmodel
-			int historySize = listmodel.size();
-			replay.putInt(roundsSoFar + REPLAY_INT_HISTORY_SIZE, historySize);
-			for (int i=0; i<historySize; i++)
-			{
-				Bid bid = listmodel.get(i);
-				replay.put(roundsSoFar + REPLAY_STRING_LISTMODEL + i, bid.toXmlString());
-			}
+			writeActions(replay, listmodel, roundsSoFar);
 			
 			saveHands(roundsSoFar);
 			replay.putBoolean(REPLAY_BOOLEAN_PLAY_BLIND, playBlind);
@@ -1333,8 +1329,8 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		int size = listmodel.size();
 		for (int i=0; i<size; i++)
 		{
-			Bid bid = listmodel.get(i);
-			if (bid instanceof LeftBid)
+			PlayerAction action = listmodel.get(i);
+			if (action instanceof LeaveAction)
 			{
 				continue;
 			}
