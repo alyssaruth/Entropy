@@ -24,13 +24,14 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import game.EntropyBidAction;
 import game.Suit;
 import object.Bid;
 import object.EntropyBid;
 import util.Debug;
 import util.Registry;
 
-public class EntropyBidPanel extends BidPanel
+public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 							 implements ActionListener,
 							 			ChangeListener,
 							 			Registry
@@ -44,9 +45,10 @@ public class EntropyBidPanel extends BidPanel
 	private boolean includeMoons = false;
 	private boolean includeStars = false;
 	private boolean online = false;
-	
-	public EntropyBidPanel() 
+
+	public EntropyBidPanel(String playerName, HandPanelMk2 handPanel)
 	{
+		super(playerName, handPanel);
 		setPreferredSize(new Dimension(550, 150));
 		bidGroup.add(btnClubs);
 		bidGroup.add(btnDiamonds);

@@ -1,6 +1,8 @@
 
 package online.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import game.PlayerAction;
 import object.Bid;
 import online.screen.EntropyLobby;
 import online.screen.GameRoom;
@@ -11,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import screen.ScreenCache;
 import util.*;
+import utils.CoreGlobals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,12 +192,13 @@ public class ResponseHandler implements XmlConstants
 		GameRoom gameRoom = lobby.getGameRoomForName(id);
 		int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");
 		String bidStr = root.getAttribute("Bid");
-		
-		boolean includeMoons = gameRoom.getIncludeMoons();
-		boolean includeStars = gameRoom.getIncludeStars();
-		Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
-		
-		gameRoom.handleBid(playerNumber, bid);
+
+		try {
+			PlayerAction action = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
+			gameRoom.handleBid(playerNumber, action);
+		} catch (JsonProcessingException jpe) {
+			throw new RuntimeException("Failed to deserialise bid " + bidStr, jpe);
+		}
 	}
 	
 	private static void handleGameOverResponse(Element root, EntropyLobby lobby)
