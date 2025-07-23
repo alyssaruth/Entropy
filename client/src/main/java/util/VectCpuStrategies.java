@@ -3,6 +3,7 @@ package util;
 import java.util.*;
 
 import game.Suit;
+import game.VectropyBidAction;
 import object.Bid;
 import object.ChallengeBid;
 import object.Player;
@@ -62,7 +63,7 @@ public class VectCpuStrategies
 		//Get the variables we're interested in
 		var settings = parms.getSettings();
 		List<String> hand = opponent.getHand();
-		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
+		VectropyBidAction lastBid = (VectropyBidAction)parms.getLastBid();
 		double totalCards = parms.getCardsInPlay();
 		int jokerValue = settings.getJokerValue();
 		boolean includeMoons = settings.getIncludeMoons();
@@ -188,7 +189,7 @@ public class VectCpuStrategies
 		List<String> hand = opponent.getHand();
 		
 		//Parms
-		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
+		VectropyBidAction lastBid = (VectropyBidAction)parms.getLastBid();
 		boolean includeMoons = parms.getSettings().getIncludeMoons();
 		boolean includeStars = parms.getSettings().getIncludeStars();
 		
@@ -287,9 +288,9 @@ public class VectCpuStrategies
 		return Math.max(evFloor, 0);
 	}
 
-	private static VectropyBid opponentMinBidSuit(VectropyBid lastBid, Suit suit)
+	private static VectropyBidAction opponentMinBidSuit(VectropyBidAction lastBid, Suit suit)
 	{
-		return lastBid.incrementSuitAndGet(suit);
+		return lastBid.incrementSuit(suit);
 	}
 
 	private static void log(String text, boolean logging) {

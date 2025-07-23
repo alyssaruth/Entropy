@@ -2,6 +2,7 @@ package util;
 
 import java.util.*;
 
+import game.EntropyBidAction;
 import game.Suit;
 import object.Bid;
 import object.ChallengeBid;
@@ -64,7 +65,7 @@ public class EntCpuStrategies
 	private static Bid processMarkTurn(Player opponent, StrategyParams parms)
 	{
 		var settings = parms.getSettings();
-		EntropyBid bid = (EntropyBid)parms.getLastBid();
+		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
 		
 		Random rand = new Random();
 		List<String> hand = opponent.getHand();
@@ -103,8 +104,8 @@ public class EntCpuStrategies
 			//Set the 'hand' variable to be everything I can see.
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			
-			int bidAmountFacedWith = bid.getBidAmount();
-			var bidSuitFacedWith = bid.getBidSuit();
+			int bidAmountFacedWith = bid.getAmount();
+			var bidSuitFacedWith = bid.getSuit();
 			
 			int bidSuitCount = countSuit(bidSuitFacedWith, hand, jokerValue);
 			int minBiddableSuitCount = suitWrapper.getSuitsPossibleToMinBid().size();
@@ -299,7 +300,7 @@ public class EntCpuStrategies
 	{
 		//Parms
 		var settings = parms.getSettings();
-		EntropyBid bid = (EntropyBid)parms.getLastBid();
+		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
 		boolean includeMoons = settings.getIncludeMoons();
 		boolean includeStars = settings.getIncludeStars();
 		int jokerValue = settings.getJokerValue();
@@ -325,8 +326,8 @@ public class EntCpuStrategies
 			//Set the 'hand' variable to be everything I can see.
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			
-			int bidAmountFacedWith = bid.getBidAmount();
-			var bidSuitFacedWith = bid.getBidSuit();
+			int bidAmountFacedWith = bid.getAmount();
+			var bidSuitFacedWith = bid.getSuit();
 			
 			int bidSuitCount = countSuit(bidSuitFacedWith, hand, jokerValue);
 			double totalCards = parms.getCardsInPlay();
@@ -399,7 +400,7 @@ public class EntCpuStrategies
 	{
 		//Parms
 		var settings = parms.getSettings();
-		EntropyBid bid = (EntropyBid)parms.getLastBid();
+		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
 		int totalCards = parms.getCardsInPlay();
 		boolean includeMoons = settings.getIncludeMoons();
 		boolean includeStars = settings.getIncludeStars();
@@ -430,8 +431,8 @@ public class EntCpuStrategies
 			hand = CpuStrategies.getCombinedArrayOfCardsICanSee(hand, parms);
 			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
 			
-			int bidAmountFacedWith = bid.getBidAmount();
-			var bidSuitFacedWith = bid.getBidSuit();
+			int bidAmountFacedWith = bid.getAmount();
+			var bidSuitFacedWith = bid.getSuit();
 			double expectedValueForBid = hmEvBySuit.get(bidSuitFacedWith);
 			
 			log("EV calculation for bid of " + bidAmountFacedWith + " " + bidSuitFacedWith.getDescription(bidAmountFacedWith) + ": " + expectedValueForBid, logging);

@@ -23,6 +23,7 @@ public interface Registry
 
 	// shared
 	public static final String SHARED_STRING_LISTMODEL = "listmodel";
+	public static final String SHARED_STRING_LAST_BID = "lastbid";
 	public static final String SHARED_BOOLEAN_INCLUDE_MOONS = "includeMoons";
 	public static final String SHARED_BOOLEAN_INCLUDE_STARS = "includeStars";
 	public static final String SHARED_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
@@ -153,8 +154,6 @@ public interface Registry
 	public static final String SAVED_GAME_STRING_OPPONENT_TWO_NAME = "opponentTwoName";
 	public static final String SAVED_GAME_STRING_OPPONENT_ONE_NAME = "opponentOneName";
 	public static final String SAVED_GAME_STRING_PLAYER_NAME = "playerName";
-	public static final String SAVED_GAME_STRING_LISTMODEL = "listmodel";
-	public static final String SAVED_GAME_STRING_LAST_BID = "lastbid";
 	public static final String SAVED_GAME_STRING_FIRST_SUIT_BID = "firstSuitBid";
 	public static final String SAVED_GAME_STRING_PLAYER_REVEALED_CARD = "playerRevealedCard";
 	public static final String SAVED_GAME_STRING_OPPONENT_ONE_REVEALED_CARD = "opponentOneRevealedCard";
@@ -197,8 +196,6 @@ public interface Registry
 	public static final String SAVED_GAME_INT_CURRENT_PLAYER = "currentPlayer";
 	public static final String SAVED_GAME_INT_PERSON_TO_START = "personToStart";
 	public static final String SAVED_GAME_INT_MAX_BID = "maxBid";
-	public static final String SAVED_GAME_INT_LAST_BID_AMOUNT = "lastBidAmount";
-	public static final String SAVED_GAME_STRING_LAST_BID_SUIT_NAME = "lastBidSuitName";
 	public static final String SAVED_GAME_INT_HANDICAP_AMOUNT = "handicapAmount";
 	public static final String SAVED_GAME_INT_OPPONENT_THREE_NUMBER_OF_CARDS = "opponentThreeNumberOfCards";
 	public static final String SAVED_GAME_INT_OPPONENT_TWO_NUMBER_OF_CARDS = "opponentTwoNumberOfCards";

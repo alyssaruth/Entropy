@@ -1,5 +1,7 @@
 package game
 
+import utils.CoreGlobals
+
 data class EntropyBidAction(
     override val playerName: String,
     override val blind: Boolean,
@@ -31,4 +33,10 @@ data class EntropyBidAction(
 
     override fun htmlString() =
         "<font color=\"${suit.getColourHex()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"
+
+    companion object {
+        @JvmStatic
+        fun fromJson(jsonString: String): EntropyBidAction =
+            CoreGlobals.jsonMapper.readValue(jsonString, EntropyBidAction::class.java)
+    }
 }

@@ -328,10 +328,11 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 
 		setBidButtonColours();
 
-		lastBidAmount = savedGame.getInt(SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
-		var lastBid = savedGame.get(SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
-		if (lastBid != null) {
-			lastBidSuit = Suit.valueOf(lastBid);
+		var lastBidStr = savedGame.get(SHARED_STRING_LAST_BID, null);
+		if (lastBidStr != null) {
+			var lastBid = EntropyBidAction.fromJson(lastBidStr);
+			lastBidAmount = lastBid.getAmount();
+			lastBidSuit = lastBid.getSuit();
 		}
 
 		updateSelectionForLastBidSuit();

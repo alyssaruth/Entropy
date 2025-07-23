@@ -23,14 +23,14 @@ fun getEvMap(
 }
 
 fun getDifferenceMap(
-    bid: VectropyBid,
+    bid: VectropyBidAction,
     hand: List<String>,
     jokerValue: Int,
     includeMoons: Boolean,
     includeStars: Boolean,
 ): Map<Suit, Int> {
     val suits = Suit.filter(includeMoons, includeStars)
-    return suits.associateWith { countSuit(it, hand, jokerValue) - bid.getAmount(it) }
+    return suits.associateWith { countSuit(it, hand, jokerValue) - bid.getAmount(it)!! }
 }
 
 fun <T : Comparable<T>> getSuitWithMostPositiveValue(map: Map<Suit, T>) = map.maxBy { it.value }.key

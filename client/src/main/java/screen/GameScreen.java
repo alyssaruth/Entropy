@@ -835,8 +835,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Debug.append("Challenger: " + challenger, logging);
 
 		unlockPerfectBidAchievements();
-		
-		Player playerChallenged = lastBid.getPlayer();
+
 		if (!lastBid.isOverbid(getConcatenatedHands(), settings))
 		{
 			Debug.append("not an overbid", logging);
@@ -845,7 +844,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		else
 		{
 			Debug.append("overbid", logging);
-			setCardsToSubtract(playerChallenged);
+
+			setCardsToSubtract(getPlayer(lastBid));
 		}
 		
 		bidPanel.enableBidPanel(false);
@@ -858,8 +858,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		Debug.appendBanner("Processing Illegal", logging);
 		
 		unlockPerfectBidAchievements();
-		Player bidder = lastBid.getPlayer();
-		Debug.append("Bidder: " + bidder, logging);
+		Debug.append("Bidder: " + lastBid.getPlayerName(), logging);
 		
 		if (lastBid.isPerfect(getConcatenatedHands(), settings))
 		{
@@ -870,7 +869,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 				AchievementsUtil.unlockCitizensArrest();
 			}
 			
-			setCardsToSubtract(bidder);
+			setCardsToSubtract(getPlayer(lastBid));
 		}
 		else
 		{
@@ -893,6 +892,16 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		int gameSpeed = prefs.getInt(PREFERENCES_INT_GAME_SPEED, 1000);
 		
 		cpuTurn.schedule(new DelayedOpponentTurn(currentPlayer), gameSpeed);
+	}
+
+	private Player getPlayer(B bid) {
+		var name = bid.getPlayerName();
+		var found = Stream.of(player, opponentOne, opponentTwo, opponentThree).filter((p) -> p.getName().equals(name)).findFirst();
+		if (found.isEmpty()) {
+			throw new RuntimeException("Couldn't find player for bid. Player name: " + name);
+		}
+
+		return found.get();
 	}
 	
 	private Player getPlayer(int playerNumber)
@@ -1097,43 +1106,42 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			Debug.appendBanner("Opponent " + opponent, logging);
 			
 			StrategyParams parms = factoryStrategyParms(opponent);
-			Bid bid = CpuStrategies.processOpponentTurn(parms, opponent);
-			if (bid == null)
+			PlayerAction action = CpuStrategies.processOpponentTurn(parms, opponent);
+			if (action == null)
 			{
 				//Something's gone wrong - probably an API strategy that timed out or did something invalid. 
 				String info = opponent.getName() + " has had their strategy reset to "
 							+ CpuStrategies.STRATEGY_BASIC;
 				DialogUtil.showInfo(info);
 				opponent.setStrategy(CpuStrategies.STRATEGY_BASIC);
-				bid = CpuStrategies.processOpponentTurn(parms, opponent);
+				action = CpuStrategies.processOpponentTurn(parms, opponent);
 			}
 			
-			if (bid == null)
+			if (action == null)
 			{
 				//Something's gone very wrong...
 				handPanel.selectPlayerInAwtThread(opponent.getPlayerNumber(), false);
 				ScreenCache.get(MainScreen.class).enableNewGameOption(true);
 				return;
 			}
+
+			addToListmodel(action);
 			
-			bid.setPlayer(opponent);
-			addToListmodel(bid);
-			
-			if (bid.isChallenge())
+			if (action instanceof ChallengeAction)
 			{
 				processChallenge(opponent);
 			}
-			else if (bid.isIllegal())
+			else if (action instanceof IllegalAction)
 			{
 				processIllegal(opponent);
 			}
 			else
 			{
-				lastBid = bid;
+				lastBid = (B)action;
 				
 				if (settings.getCardReveal())
 				{
-					String card = bid.getCardToReveal();
+					String card = lastBid.getCardToReveal();
 					handPanel.revealCard(card);
 				}
 				

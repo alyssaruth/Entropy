@@ -1,7 +1,9 @@
 package util
 
+import game.BidAction
+import game.ChallengeAction
+import game.PlayerAction
 import game.createAndShuffleDeck
-import `object`.Bid
 import `object`.Player
 import screen.ScreenCache.get
 import screen.SimulationDialog
@@ -10,7 +12,7 @@ import utils.CoreGlobals.logger
 class GameSimulator(private val params: SimulationParams) {
     private var personToStart = 0
 
-    private var lastBid: Bid? = null
+    private var lastBid: BidAction<*>? = null
 
     val opponentZero: Player = Player(0, "").also { it.name = "0" }
     val opponentOne: Player = Player(1, "").also { it.name = "1" }
@@ -105,16 +107,18 @@ class GameSimulator(private val params: SimulationParams) {
         }
 
         val stratParms = getStrategyParms(opponent)
-        val action =
+        val action: PlayerAction =
             CpuStrategies.processOpponentTurn(stratParms, opponent)
                 ?: // Abort the simulation, something's gone wrong
                 throw SimulationException("Simulation error")
 
-        if (action.isChallenge) {
+        if (action is ChallengeAction) {
             processChallenge(opponent)
-        } else {
+        } else if (action is BidAction<*>) {
             lastBid = action
             processOpponentTurn(nextPlayer(opponent))
+        } else {
+            throw Exception("Unexpected action type: $action")
         }
     }
 
@@ -139,7 +143,7 @@ class GameSimulator(private val params: SimulationParams) {
         val allCards = allPlayers().flatMap { it.hand }
 
         val dialog = get(SimulationDialog::class.java)
-        if (!lastBid.isOverbid(allCards, params.settings.jokerValue)) {
+        if (!lastBid.isOverbid(allCards, params.settings)) {
             log("not overbid")
             dialog.recordChallenge(challenger.playerNumber, false)
 
@@ -150,7 +154,7 @@ class GameSimulator(private val params: SimulationParams) {
             log("overbid")
             dialog.recordChallenge(challenger.playerNumber, true)
 
-            val bidder = lastBid.player
+            val bidder = allPlayers().find { it.name == lastBid.playerName }!!
             bidder.cardsToSubtract = 1
             bidder.doSubtraction()
             personToStart = bidder.playerNumber

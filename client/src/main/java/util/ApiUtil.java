@@ -1,5 +1,6 @@
 package util;
 
+import game.BidAction;
 import game.GameMode;
 import game.GameSettings;
 import object.*;
@@ -146,7 +147,7 @@ public class ApiUtil implements Registry
 		boolean includeStars = settings.getIncludeStars();
 		boolean negativeJacks = settings.getNegativeJacks();
 		boolean cardReveal = settings.getCardReveal();
-		Bid lastBid = parms.getLastBid();
+		BidAction lastBid = parms.getLastBid();
 
 		rootElement.setAttribute("GameMode", gameMode.name());
 		
@@ -203,9 +204,7 @@ public class ApiUtil implements Registry
 		
 		if (lastBid != null)
 		{
-			Element bidElement = document.createElement("LastBid");
-			lastBid.populateXmlTag(bidElement);
-			rootElement.appendChild(bidElement);
+			rootElement.setAttribute("LastBid", lastBid.toJsonString());
 		}
 		
 		document.appendChild(rootElement);

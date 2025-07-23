@@ -1,5 +1,7 @@
 package game
 
+import utils.CoreGlobals
+
 data class VectropyBidAction(
     override val playerName: String,
     override val blind: Boolean,
@@ -36,6 +38,17 @@ data class VectropyBidAction(
     override fun plainString(): String {
         val suits = amounts.keys.sorted().map(::getAmount)
         return "(${suits.joinToString()})"
+    }
+
+    fun incrementSuit(suit: Suit): VectropyBidAction {
+        val current = amounts.getValue(suit)
+        return copy(amounts = amounts + (suit to current + 1))
+    }
+
+    companion object {
+        @JvmStatic
+        fun fromJson(jsonString: String): VectropyBidAction =
+            CoreGlobals.jsonMapper.readValue(jsonString, VectropyBidAction::class.java)
     }
 }
 

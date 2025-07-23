@@ -6,7 +6,6 @@ import game.EntropyBidAction;
 import game.GameMode;
 import game.Suit;
 import object.EntropyAchievementsTracker;
-import object.EntropyBid;
 import util.Registry;
 
 import static game.CardsUtilKt.countSuit;
@@ -71,8 +70,7 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, lastBid.getSuit().name());
-			savedGame.putInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, lastBid.getAmount());
+			savedGame.put(Registry.SHARED_STRING_LAST_BID, lastBid.toJsonString());
 		}
 			
 		//other booleans
@@ -93,12 +91,11 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 	@Override
 	public void loadLastBid()
 	{
-		String lastBidSuitName = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
-		int lastBidAmount = savedGame.getInt(Registry.SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
+		String lastBidStr = savedGame.get(Registry.SHARED_STRING_LAST_BID, null);
 		
-		if (lastBidSuitName != null)
+		if (lastBidStr != null)
 		{
-			lastBid = new EntropyBid(Suit.valueOf(lastBidSuitName), lastBidAmount);
+			lastBid = EntropyBidAction.fromJson(lastBidStr);
 		}
 	}
 	
