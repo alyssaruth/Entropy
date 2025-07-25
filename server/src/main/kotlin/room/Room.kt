@@ -1,7 +1,10 @@
 package room
 
 import auth.UserConnection
+import game.BidAction
 import game.GameSettings
+import game.LeaveAction
+import game.PlayerAction
 import game.createAndShuffleDeck
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
@@ -9,13 +12,10 @@ import http.dto.RoomStateResponse
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
-import `object`.Bid
 import `object`.BidHistory
 import `object`.ExtendedConcurrentHashMap
 import `object`.GameWrapper
 import `object`.HandDetails
-import `object`.LeftBid
-import `object`.Player
 import store.IHasId
 import util.ServerGlobals
 import util.ServerGlobals.roomStore
@@ -121,10 +121,7 @@ data class Room(
 
                 // There is a game in progress
                 if (currentGame.gameEndMillis == -1L) {
-                    val bid = LeftBid()
-                    val player = Player(playerNumber, getColourForPlayerNumber(playerNumber))
-                    player.name = username
-                    bid.player = player
+                    val bid = LeaveAction(username)
 
                     val history: BidHistory = currentGame.currentBidHistory
                     history.addBidForPlayer(playerNumber, bid)
@@ -256,12 +253,12 @@ data class Room(
         roundNumber: Int,
         playerNumber: Int,
         challengedNumber: Int,
-        bid: Bid,
+        bid: BidAction<*>,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
-        val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
-        if (bid.isOverbid(hmHandByPlayerNumber, settings.jokerValue)) {
+        val hands = details.hands.values.flatten()
+        if (bid.isOverbid(hands, settings)) {
             // bidder loses
             setUpNextRound(challengedNumber)
         } else {
@@ -275,12 +272,12 @@ data class Room(
         roundNumber: Int,
         playerNumber: Int,
         bidderNumber: Int,
-        bid: Bid,
+        bid: BidAction<*>,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
-        val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
-        if (bid.isPerfect(hmHandByPlayerNumber, settings)) {
+        val hands = details.hands.values.flatten()
+        if (bid.isPerfect(hands, settings)) {
             setUpNextRound(bidderNumber)
         } else {
             setUpNextRound(playerNumber)
@@ -428,7 +425,7 @@ data class Room(
         return currentGame
     }
 
-    fun getLastBidForPlayer(playerNumber: Int, roundNumber: Int): Bid? {
+    fun getLastBidForPlayer(playerNumber: Int, roundNumber: Int): PlayerAction? {
         if (playerNumber == -1) {
             return null
         }
@@ -441,7 +438,7 @@ data class Room(
         gameId: String,
         playerNumber: Int,
         roundNumber: Int,
-        newBid: Bid?,
+        newBid: PlayerAction,
     ): Boolean {
         val game = getGameForId(gameId)
 

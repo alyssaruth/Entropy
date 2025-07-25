@@ -1,5 +1,6 @@
 package object;
 
+import game.PlayerAction;
 import util.StringUtil;
 
 import java.awt.Component;
@@ -16,29 +17,29 @@ public class BidListCellRenderer extends DefaultListCellRenderer
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) 
 	{
-		Bid bid = (Bid)value;
+		PlayerAction bid = (PlayerAction)value;
 		String text = toHtmlString(bid);
 
 		return super.getListCellRendererComponent(list, text, index, isSelected,
 				cellHasFocus);
 	}
 
-	public String toHtmlString(Bid bid)
+	public String toHtmlString(PlayerAction bid)
 	{
-		String playerName = bid.getPlayer().getName();
+		String playerName = bid.getPlayerName();
 		playerName = StringUtil.escapeHtml(playerName);
 
 		String colour = bid.getPlayer().getColour();
 		String playerNamePrefix = playerName + ":&nbsp";
 
-		if (bid.isBlind())
+		if (bid.getBlind())
 		{
 			playerNamePrefix = "[" + playerName + "]:&nbsp";
 		}
 
 		String text = "<html><b><font color=\"" + colour + "\">" + playerNamePrefix;
 		text += "</b></font>";
-		text += bid.toHtmlStringSpecific();
+		text += bid.htmlString();
 
 		if (!bid.getCardToReveal().isEmpty()
 				&& !bid.isChallenge()

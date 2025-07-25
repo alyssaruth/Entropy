@@ -3,10 +3,12 @@ package util;
 import game.BidAction;
 import game.GameMode;
 import game.GameSettings;
+import game.PlayerAction;
 import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -45,7 +47,7 @@ public class ApiUtil implements Registry
 		sendWithCatch(messageString, port, true, true);
 	}
 	
-	public static Bid processApiTurn(StrategyParams parms, Player player)
+	public static PlayerAction processApiTurn(StrategyParams parms, Player player)
 	{
 		apiStrategy = getApiStrategy(player.getStrategy());
 		int port = apiStrategy.getPortNumber();
@@ -60,7 +62,7 @@ public class ApiUtil implements Registry
 			return null;
 		}
 		
-		return handleResponse(parms, responseString);
+		return handleResponse(responseString);
 	}
 	
 	private static String sendWithCatch(String messageString, int port, boolean logging, boolean testMode)
@@ -222,64 +224,12 @@ public class ApiUtil implements Registry
 		return null;
 	}
 	
-	private static Bid handleResponse(StrategyParams parms, String responseString)
+	private static PlayerAction handleResponse(String responseString)
 	{
-		Document xmlResponse = XmlUtil.getDocumentFromXmlString(responseString);
-		if (xmlResponse == null)
-		{
-			Debug.append("Received unparsable response via API: " + responseString);
+		try {
+			return CoreGlobals.jsonMapper.readValue(responseString, PlayerAction.class);
+		} catch (Exception e) {
 			showMalformedResponseError(responseString);
-			return null;
-		}
-		
-		Element root = xmlResponse.getDocumentElement();
-		String responseName = root.getNodeName();
-		
-		if (responseName.equals("Bid"))
-		{
-			Bid bid = factoryBid(parms.getSettings(), root, responseString);
-			String cardToShow = root.getAttribute("CardToShow");
-			bid.setCardToReveal(cardToShow);
-			return bid;
-		}
-		else if (responseName.equals("Challenge"))
-		{
-			return new ChallengeBid();
-		}
-		else if (responseName.equals("Illegal"))
-		{
-			return new IllegalBid();
-		}
-		else
-		{
-			showMalformedResponseError(responseString);
-			return null;
-		}
-	}
-	
-	private static Bid factoryBid(GameSettings settings, Element root, String responseString)
-	{
-		try
-		{
-			GameMode gameMode = settings.getMode();
-			if (gameMode == GameMode.Entropy)
-			{
-				return EntropyBid.factoryFromXmlTag(root);
-			}
-			else
-			{
-				return VectropyBid.factoryFromXmlTag(root, settings.getIncludeMoons(), settings.getIncludeStars());
-			}
-		}
-		catch (IOException ioe)
-		{
-			String message = "The third-party software returned a message that was not successfully parsed."
-					 	   + "\n\nMessage: " + responseString
-					 	   + "\n\nError: " + ioe.getMessage();
-			
-			saveStrategyErrorAndUnsetStrategies(apiStrategy, message);
-			
-			DialogUtilNew.showError(message);
 			return null;
 		}
 	}

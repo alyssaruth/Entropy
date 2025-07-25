@@ -5,10 +5,7 @@ import java.util.UUID;
 
 import game.EntropyBidAction;
 import game.GameSettings;
-import game.Suit;
-import object.Bid;
 import object.EntropyAchievementsTracker;
-import object.EntropyBid;
 import screen.EntropyBidPanel;
 import util.ClientUtil;
 import util.Registry;

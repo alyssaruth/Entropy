@@ -21,7 +21,7 @@ fun isCardRelevant(card: String, suit: Suit) = countContribution(suit, card, 1) 
 @JvmOverloads
 fun createAndShuffleDeck(settings: GameSettings, seed: Long? = null): List<String> {
     // Creating the pack of cards
-    val suits = Suit.filter(settings.includeMoons, settings.includeStars).map(Suit::letter)
+    val suits = Suit.filter(settings).map(Suit::letter)
 
     val jokers = (0..<settings.jokerQuantity).map { "Jo$it" }
 

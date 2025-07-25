@@ -3,7 +3,6 @@ package screen;
 import java.util.prefs.Preferences;
 
 import game.BidAction;
-import object.Bid;
 import util.BidListener;
 
 public abstract class BidPanel<B extends BidAction<B>> extends TransparentPanel

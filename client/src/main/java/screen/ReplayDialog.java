@@ -35,7 +35,6 @@ import javax.swing.text.StyledDocument;
 
 import game.PlayerAction;
 import game.Suit;
-import object.Bid;
 import object.BidListCellRenderer;
 import http.dto.OnlineMessage;
 import object.PlayerLabel;

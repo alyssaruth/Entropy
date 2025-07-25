@@ -26,8 +26,6 @@ import javax.swing.event.ChangeListener;
 
 import game.EntropyBidAction;
 import game.Suit;
-import object.Bid;
-import object.EntropyBid;
 import util.Debug;
 import util.Registry;
 

@@ -1,7 +1,6 @@
 package util;
 
 import game.BidAction;
-import object.Bid;
 
 public interface BidListener <B extends BidAction<B>>
 {

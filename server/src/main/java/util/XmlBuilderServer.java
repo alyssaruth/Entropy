@@ -1,12 +1,16 @@
 package util;
 
-import object.Bid;
+import game.BidAction;
+import game.ChallengeAction;
+import game.IllegalAction;
+import game.PlayerAction;
 import object.BidHistory;
 import object.GameWrapper;
 import object.HandDetails;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import room.Room;
+import utils.CoreGlobals;
 
 import java.util.List;
 
@@ -173,10 +177,10 @@ public class XmlBuilderServer implements XmlConstants
 		int numberOfPlayers = room.getCapacity();
 		for (int i=0; i<numberOfPlayers; i++)
 		{
-			Bid bid = room.getLastBidForPlayer(i, roundNumber);
+			PlayerAction bid = room.getLastBidForPlayer(i, roundNumber);
 			if (bid != null)
 			{
-				rootElement.setAttribute("LastBid-" + i, bid.toXmlString());
+				rootElement.setAttribute("LastBid-" + i, bid.toJsonString());
 			}
 		}
 	}
@@ -219,20 +223,18 @@ public class XmlBuilderServer implements XmlConstants
 	
 	public static Document getBidAck(Room room, String gameId, int roundNumber, String bidStr, int previousBidder)
 	{
-		boolean includeMoons = room.getSettings().getIncludeMoons();
-		boolean includeStars = room.getSettings().getIncludeStars();
-		
-		Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
+		var bid = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
+
 		int playerNumber = bid.getPlayer().getPlayerNumber();
 		boolean added = room.addBidForPlayer(gameId, playerNumber, roundNumber, bid);
-		
-		Bid previousBid = room.getLastBidForPlayer(previousBidder, roundNumber);
-		if (bid.isChallenge()
+
+		var previousBid = (BidAction)room.getLastBidForPlayer(previousBidder, roundNumber);
+		if (bid instanceof ChallengeAction
 		  && added)
 		{
 			room.handleChallenge(gameId, roundNumber, playerNumber, previousBidder, previousBid);
 		}
-		else if (bid.isIllegal()
+		else if (bid instanceof IllegalAction
 		  && added)
 		{
 			room.handleIllegal(gameId, roundNumber, playerNumber, previousBidder, previousBid);
@@ -241,14 +243,14 @@ public class XmlBuilderServer implements XmlConstants
 		return ACKNOWLEDGEMENT;
 	}
 	
-	public static String getBidNotification(String roomName, int playerNumber, Bid bid)
+	public static String getBidNotification(String roomName, int playerNumber, PlayerAction bid)
 	{
 		Document response = XmlUtil.factoryNewDocument();
 		Element rootElement = response.createElement(RESPONSE_TAG_BID_NOTIFICATION);
 		
 		rootElement.setAttribute("RoomName", roomName);
 		rootElement.setAttribute("PlayerNumber", "" + playerNumber);
-		rootElement.setAttribute("Bid", bid.toXmlString());
+		rootElement.setAttribute("Bid", bid.toJsonString());
 		
 		response.appendChild(rootElement);
 		return XmlUtil.getStringFromDocument(response);

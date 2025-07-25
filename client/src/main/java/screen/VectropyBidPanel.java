@@ -26,8 +26,6 @@ import javax.swing.event.ChangeListener;
 
 import game.Suit;
 import game.VectropyBidAction;
-import object.Bid;
-import object.VectropyBid;
 import util.Debug;
 import util.EntropyColour;
 import util.Registry;

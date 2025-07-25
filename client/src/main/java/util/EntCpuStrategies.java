@@ -2,11 +2,10 @@ package util;
 
 import java.util.*;
 
+import game.ChallengeAction;
 import game.EntropyBidAction;
+import game.PlayerAction;
 import game.Suit;
-import object.Bid;
-import object.ChallengeBid;
-import object.EntropyBid;
 import object.Player;
 import strategy.MarkStrategySuitWrapper;
 
@@ -33,12 +32,12 @@ public class EntCpuStrategies
 		return allStrategies;
 	}
 	
-	public static Bid processOpponentTurn(Player opponent, StrategyParams parms)
+	public static PlayerAction processOpponentTurn(Player opponent, StrategyParams parms)
 	{
 		String strategy = opponent.getStrategy();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
-	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
+	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
 	{
 		if (strategy.equals(CpuStrategies.STRATEGY_BASIC))
 		{
@@ -62,7 +61,7 @@ public class EntCpuStrategies
 		}
 	}
 	
-	private static Bid processMarkTurn(Player opponent, StrategyParams parms)
+	private static PlayerAction processMarkTurn(Player opponent, StrategyParams parms)
 	{
 		var settings = parms.getSettings();
 		EntropyBidAction bid = (EntropyBidAction)parms.getLastBid();
@@ -97,7 +96,7 @@ public class EntCpuStrategies
 			var suit = getSuitForMarkBid(suitWrapper, logging);
 			int bidAmount = markBid(halfThreshold, (int)totalCards, suitsInPlay);
 			
-			return new EntropyBid(suit, bidAmount);
+			return new EntropyBidAction(opponent.getName(), false, bidAmount, suit);
 		}
 		else
 		{
@@ -118,7 +117,7 @@ public class EntCpuStrategies
 				{
 					//0 or 1
 					log("One-upped (50%)", logging);
-					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 				else if (choice == 2)
 				{
@@ -126,19 +125,19 @@ public class EntCpuStrategies
 					if (bestSuit == bidSuitFacedWith)
 					{
 						log("BestSuit = bidSuitFacedWith = " + bestSuit + ". Bidding worstSuit: " + worstSuit, logging);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, worstSuit, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, worstSuit, logging);
 					}
 					else
 					{
 						log("Bidding bestSuit as it's different from what I'm faced with.", logging);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 				}
 				else
 				{
 					log("Minbid random middle suit (25%)", logging);
 					var suitToBid = suitWrapper.getRandomMiddleSuit();
-					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 				}
 			}
 			else if (minBiddableSuitCount >= 3)
@@ -150,13 +149,13 @@ public class EntCpuStrategies
 					if (choice <= 1)
 					{
 						log("One-upping (50%)", logging);
-						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
 						log("Bidding random other suit (50%)", logging);
 						var suitToBid = suitWrapper.randomSuitNot(bidSuitFacedWith);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 					}
 				}
 				else
@@ -165,13 +164,13 @@ public class EntCpuStrategies
 					if (choice <= 1)
 					{
 						log("Minbidding my best suit (50%)", logging);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 					else
 					{
 						log("Minbidding random other suit (50%)", logging);
 						var suitToBid = suitWrapper.randomSuitNot(bestSuit);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 					}
 				}
 			}
@@ -181,21 +180,21 @@ public class EntCpuStrategies
 				if (choice <= 1)
 				{
 					log("One-upping (50%)", logging);
-					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 				else
 				{
 					///minbid one of the two suits I can
 					log("Minbidding one of the two suits (50%)", logging);
 					var suitToBid = suitWrapper.randomSuitPossibleToMinBid();
-					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 				}
 			}
 			else if (minBiddableSuitCount == 1)
 			{
 				var suitToBid = suitWrapper.randomSuitPossibleToMinBid();
 				log("Could only minbid suit " + suitToBid + ", so minbidding that.", logging);
-				return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
+				return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suitToBid, logging);
 			}
 			else
 			{
@@ -207,12 +206,12 @@ public class EntCpuStrategies
 				if (bidAmountFacedWith > threshold)
 				{
 					log("Auto-challenging because " + bidAmountFacedWith + " > " + threshold, logging);
-					return new ChallengeBid();
+					return new ChallengeAction(opponent.getName(), false);
 				}
 				else if (bidAmountFacedWith > bestSuitCount + bidSuitCount + quarterThreshold)
 				{
 					log("Auto-challenging because bestSuitCount + bidSuitCount + quarterThreshold = " + (bestSuitCount + bidSuitCount + quarterThreshold), logging);
-					return new ChallengeBid();
+					return new ChallengeAction(opponent.getName(), false);
 				}
 				else if (bidAmountFacedWith > 1 + quarterThreshold)
 				{
@@ -220,12 +219,12 @@ public class EntCpuStrategies
 					if (choice <= 2)
 					{
 						log("One-upping (75%)", logging);
-						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
 						log("Challenging (25%)", logging);
-						return new ChallengeBid();
+						return new ChallengeAction(opponent.getName(), false);
 					}
 				}
 				else
@@ -234,12 +233,12 @@ public class EntCpuStrategies
 					if (choice <= 1)
 					{
 						log("One-upping (50%)", logging);
-						return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+						return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 					}
 					else
 					{
 						log("Minbidding my best suit (50%)", logging);
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, bestSuit, logging);
 					}
 				}
 			}
@@ -296,7 +295,7 @@ public class EntCpuStrategies
 		}
 	}
 	
-	private static Bid processBasicTurn(Player opponent, StrategyParams parms)
+	private static PlayerAction processBasicTurn(Player opponent, StrategyParams parms)
 	{
 		//Parms
 		var settings = parms.getSettings();
@@ -319,7 +318,7 @@ public class EntCpuStrategies
 			var suit = Suit.random(includeMoons, includeStars);
 			int bidAmount = Math.max(1, countSuit(suit, hand, jokerValue) + coin.nextInt(2));
 			
-			return new EntropyBid(suit, bidAmount);
+			return new EntropyBidAction(opponent.getName(), false, bidAmount, suit);
 		}
 		else
 		{
@@ -342,12 +341,12 @@ public class EntCpuStrategies
 				if (decisionTwo == 1)
 				{
 					log("Opponent " + opponent + " auto-minbid", logging);
-					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
 					log("Opponent " + opponent + " auto-oneupped", logging);
-					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 			else if (bidAmountFacedWith < bidSuitCount + thirdThreshold)
@@ -355,48 +354,48 @@ public class EntCpuStrategies
 				if (decisionTwo == 1)
 				{
 					log("Opponent " + opponent + " auto-minbid", logging);
-					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
 					log("Opponent " + opponent + " auto-oneupped", logging);
-					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 			else if (bidAmountFacedWith > halfThreshold)
 			{
 				log("Opponent " + opponent + " auto-challenged", logging);
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (decision == 0)
 			{
 				log("Opponent " + opponent + " flip-challenged", logging);
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
 				if (decisionTwo == 0)
 				{
 					log("Opponent " + opponent + " flip-minbid", logging);
-					return opponentMinBid(bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
+					return opponentMinBid(opponent, bidSuitFacedWith, bidAmountFacedWith, includeMoons, includeStars);
 				}
 				else
 				{
 					log("Opponent " + opponent + " flip-oneupped", logging);
-					return opponentOneUp(bidSuitFacedWith, bidAmountFacedWith, logging);
+					return opponentOneUp(opponent, bidSuitFacedWith, bidAmountFacedWith, logging);
 				}
 			}
 		}
 	}
 	
-	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
+	private static PlayerAction processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
 	{
-		Bid bid = processEvTurn(opponent, parms);
+		PlayerAction bid = processEvTurn(opponent, parms);
 		CpuStrategies.setCardToReveal(bid, parms.getSettings(), opponent);
 		return bid;
 	}
 	
-	private static Bid processEvTurn(Player opponent, StrategyParams parms)
+	private static PlayerAction processEvTurn(Player opponent, StrategyParams parms)
 	{
 		//Parms
 		var settings = parms.getSettings();
@@ -424,7 +423,7 @@ public class EntCpuStrategies
 			int randomAmount = coin.nextInt(5) - 4; //-4, -3, -2, 1, 0
 			int bidAmount = Math.max(1, suitEvRounded + randomAmount);
 			
-			return new EntropyBid(suit, bidAmount);
+			return new EntropyBidAction(opponent.getName(), false, bidAmount, suit);
 		}
 		else
 		{
@@ -442,7 +441,7 @@ public class EntCpuStrategies
 			
 			if (bidAmountFacedWith > expectedValueForBid + 1)
 			{
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
@@ -453,7 +452,7 @@ public class EntCpuStrategies
 
 				if (maxEv > bidAmountFacedWith - 1 && totalOpponentCards > 1)
 				{
-					return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suit, logging);
+					return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suit, logging);
 				}
 				else if (maxEv > bidAmountFacedWith - 1)
 				{
@@ -464,52 +463,43 @@ public class EntCpuStrategies
 					
 					if (amountRequiredInOneCard < 2)
 					{
-						return opponentMinBidSuit(bidSuitFacedWith, bidAmountFacedWith, suit, logging);
+						return opponentMinBidSuit(opponent, bidSuitFacedWith, bidAmountFacedWith, suit, logging);
 					}
 					else
 					{
 						log("Bidding would've needed >1 in one card, so challenged", logging);
-						return new ChallengeBid();
+						return new ChallengeAction(opponent.getName(), false);
 					}
 				}
 				else
 				{
 					log("Couldn't bid anything 'safely', so challenged.", logging);
-					return new ChallengeBid();
+					return new ChallengeAction(opponent.getName(), false);
 				}
 			}
 		}
 	}
 
-	private static EntropyBid opponentMinBid(Suit bidSuitFacedWith, int bidAmount,
+	private static EntropyBidAction opponentMinBid(Player opponent, Suit bidSuitFacedWith, int bidAmount,
 	  boolean includeMoons, boolean includeStars) 
 	{
 		var nextSuit = bidSuitFacedWith.next(includeMoons, includeStars);
 		var myAmount = nextSuit.lessThan(bidSuitFacedWith) ? bidAmount + 1 : bidAmount;
-		return new EntropyBid(nextSuit, myAmount);
+		return new EntropyBidAction(opponent.getName(), false, myAmount, nextSuit);
 	}
 
-	private static EntropyBid opponentOneUp(Suit bidSuitFacedWith, int bidAmount, boolean logging)
+	private static EntropyBidAction opponentOneUp(Player opponent, Suit bidSuitFacedWith, int bidAmount, boolean logging)
 	{
 		log("One Up", logging);
-		return new EntropyBid(bidSuitFacedWith, bidAmount + 1);
+		return new EntropyBidAction(opponent.getName(), false, bidAmount + 1, bidSuitFacedWith);
 	}
 
-	private static EntropyBid opponentMinBidSuit(Suit bidSuitFacedWith, int bidAmountFacedWith, Suit suitToBid, boolean logging)
+	private static EntropyBidAction opponentMinBidSuit(Player opponent, Suit bidSuitFacedWith, int bidAmountFacedWith, Suit suitToBid, boolean logging)
 	{
 		log("MinBidSuit " + suitToBid, logging);
 
-		int bidAmount = 0;
-		if (bidSuitFacedWith.lessThan(suitToBid))
-		{
-			bidAmount = bidAmountFacedWith;
-		}
-		else
-		{
-			bidAmount = bidAmountFacedWith + 1;
-		}
-		
-		return new EntropyBid(suitToBid, bidAmount);
+		int bidAmount = amountRequiredToBid(suitToBid, bidSuitFacedWith, bidAmountFacedWith);
+		return new EntropyBidAction(opponent.getName(), false, bidAmount, suitToBid);
 	}
 
 	private static void log(String text, boolean logging) {

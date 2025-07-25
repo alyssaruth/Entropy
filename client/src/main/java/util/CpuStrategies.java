@@ -108,7 +108,7 @@ public class CpuStrategies
 		return action;
 	}
 	
-	private static Bid getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
+	private static PlayerAction getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
 	{
 		if (opponent.isApiStrategy())
 		{
@@ -281,11 +281,13 @@ public class CpuStrategies
 	 * Used by EV strategies. Slightly more refined version of card reveal - this tries to show a card
 	 * which isn't an Ace or a Joker (as these reveal more information than average)
 	 */
-	public static void setCardToReveal(Bid bid, GameSettings settings, Player opponent)
+	public static void setCardToReveal(PlayerAction action, GameSettings settings, Player opponent)
 	{
-		if (!bid.isIllegal()
-		  && !bid.isChallenge()
-		  && settings.getCardReveal()
+		if (!(action instanceof BidAction bid)) {
+			return;
+		}
+
+        if (settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal())
 		{
 			ArrayList<String> cardsToChooseFrom = opponent.getCardsNotOnShow();

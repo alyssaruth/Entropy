@@ -4,7 +4,6 @@ import io.kotest.matchers.doubles.shouldBeBetween
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.maps.shouldNotContainKeys
 import io.kotest.matchers.shouldBe
-import `object`.VectropyBid
 import org.junit.jupiter.api.Test
 import testCore.makeGameSettings
 import util.AbstractClientTest
@@ -51,7 +50,7 @@ class StrategyUtilTest : AbstractClientTest() {
     @Test
     fun `Should compute the difference between a vectropy bid and what can be seen`() {
         val cards = listOf("Ac", "3d", "4h", "6h")
-        val bid = VectropyBid(0, 2, 1, 0, 2, 0, false, false)
+        val bid = VectropyBidAction("", false, 0, 2, 1, null, 2, null)
         val map = getDifferenceMap(bid, cards, 1, false, false)
         map.shouldContainAll(
             mapOf(Suit.Clubs to 2, Suit.Diamonds to 0, Suit.Hearts to 2, Suit.Spades to -1)
@@ -80,12 +79,13 @@ class StrategyUtilTest : AbstractClientTest() {
         val evs =
             mapOf(Suit.Clubs to 5.4, Suit.Diamonds to 8.8, Suit.Hearts to 3.7, Suit.Spades to 2.0)
 
-        val offInOneSuit = computeEvDifferences(VectropyBid(6, 0, 0, 0, 0, 0, false, false), evs)
+        val offInOneSuit =
+            computeEvDifferences(VectropyBidAction("", false, 6, 0, 0, null, 0, null), evs)
         shouldAutoChallengeForEvDiffOfIndividualSuit(offInOneSuit) shouldBe true
         shouldAutoChallengeForMultipleSuitsOverEv(offInOneSuit) shouldBe false
 
         val offInMultipleSuits =
-            computeEvDifferences(VectropyBid(0, 9, 4, 0, 0, 0, false, false), evs)
+            computeEvDifferences(VectropyBidAction("", false, 0, 9, 4, null, 0, null), evs)
         shouldAutoChallengeForEvDiffOfIndividualSuit(offInMultipleSuits) shouldBe false
         shouldAutoChallengeForMultipleSuitsOverEv(offInMultipleSuits) shouldBe true
     }
