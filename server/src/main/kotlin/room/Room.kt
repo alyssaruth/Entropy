@@ -62,13 +62,15 @@ data class Room(
     }
 
     fun getColourForPlayer(playerName: String): String {
-        val playerNumber =
-            hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
+        val playerNumber = getPlayerNumber(playerName)
 
         return if (playerNumber != null) {
             getColourForPlayerNumber(playerNumber)
         } else "gray"
     }
+
+    private fun getPlayerNumber(playerName: String): Int? =
+        hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
 
     fun attemptToSitDown(username: String, playerNumber: Int): Int? {
         synchronized(this) {
@@ -251,7 +253,7 @@ data class Room(
     fun handleChallenge(
         gameId: String,
         roundNumber: Int,
-        playerNumber: Int,
+        challenger: String,
         challengedNumber: Int,
         bid: BidAction<*>,
     ) {
@@ -263,14 +265,14 @@ data class Room(
             setUpNextRound(challengedNumber)
         } else {
             // challenger loses
-            setUpNextRound(playerNumber)
+            setUpNextRound(getPlayerNumber(challenger)!!)
         }
     }
 
     fun handleIllegal(
         gameId: String,
         roundNumber: Int,
-        playerNumber: Int,
+        illegallerName: String,
         bidderNumber: Int,
         bid: BidAction<*>,
     ) {
@@ -280,7 +282,7 @@ data class Room(
         if (bid.isPerfect(hands, settings)) {
             setUpNextRound(bidderNumber)
         } else {
-            setUpNextRound(playerNumber)
+            setUpNextRound(getPlayerNumber(illegallerName)!!)
         }
     }
 
@@ -436,11 +438,14 @@ data class Room(
 
     fun addBidForPlayer(
         gameId: String,
-        playerNumber: Int,
+        playerName: String,
         roundNumber: Int,
         newBid: PlayerAction,
     ): Boolean {
         val game = getGameForId(gameId)
+
+        val playerNumber =
+            getPlayerNumber(playerName) ?: throw Exception("Player $playerName not found")
 
         val history: BidHistory = game.getBidHistoryForRound(roundNumber)
         val added: Boolean = history.addBidForPlayer(playerNumber, newBid)

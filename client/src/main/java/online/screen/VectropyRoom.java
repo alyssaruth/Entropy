@@ -37,7 +37,7 @@ public class VectropyRoom extends GameRoom<VectropyBidAction>
 	public void resetBids()
 	{
 		lastBid = null;
-		hmBidByPlayerNumber.clear();
+		hmActionByPlayerNumber.clear();
 	}
 
 	@Override

@@ -1,18 +1,25 @@
 package object;
 
+import game.BidAction;
 import game.PlayerAction;
 import util.StringUtil;
 
 import java.awt.Component;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 import static game.RenderingUtilKt.getCardHtml;
 import static game.SuitKt.MOONS_SYMBOL;
+import static utils.ColourUtilKt.getColourForPlayerNumber;
 
 public class BidListCellRenderer extends DefaultListCellRenderer
 {
+	private Map<String, String> hmNameToColour = new HashMap<>();
+
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) 
@@ -24,27 +31,36 @@ public class BidListCellRenderer extends DefaultListCellRenderer
 				cellHasFocus);
 	}
 
-	public String toHtmlString(PlayerAction bid)
+	public void updateColours(Collection<Player> players) {
+		this.hmNameToColour.clear();
+
+		for (Player player : players) {
+			hmNameToColour.put(player.getName(), player.getColour());
+		}
+	}
+
+	public void updateColours(Map<String, String> map) {
+		this.hmNameToColour = map;
+	}
+
+	public String toHtmlString(PlayerAction action)
 	{
-		String playerName = bid.getPlayerName();
+		String playerName = action.getPlayerName();
 		playerName = StringUtil.escapeHtml(playerName);
 
-		String colour = bid.getPlayer().getColour();
+		String colour  = hmNameToColour.get(playerName);
 		String playerNamePrefix = playerName + ":&nbsp";
 
-		if (bid.getBlind())
+		if (action.getBlind())
 		{
 			playerNamePrefix = "[" + playerName + "]:&nbsp";
 		}
 
 		String text = "<html><b><font color=\"" + colour + "\">" + playerNamePrefix;
 		text += "</b></font>";
-		text += bid.htmlString();
+		text += action.htmlString();
 
-		if (!bid.getCardToReveal().isEmpty()
-				&& !bid.isChallenge()
-				&& !bid.isIllegal())
-		{
+		if (action instanceof BidAction<?> bid && bid.getCardToReveal() != null) {
 			text += "<i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font>";
 			text += getCardHtml(bid.getCardToReveal());
 			text += "<i><font color=\"#5C5C3D\">)</i></font>";
@@ -54,5 +70,4 @@ public class BidListCellRenderer extends DefaultListCellRenderer
 		text = text.replaceAll(MOONS_SYMBOL, "<font size=\"2\">&#127769</font>");
 		return text;
 	}
-
 }

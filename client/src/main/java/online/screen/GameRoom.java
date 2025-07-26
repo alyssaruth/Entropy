@@ -7,7 +7,6 @@ import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
 import screen.*;
 import util.*;
-import utils.CoreGlobals;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -65,7 +64,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	
 	private ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber = new ConcurrentHashMap<>();
 	public ConcurrentHashMap<Integer, List<String>> hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
-	public ConcurrentHashMap<Integer, B> hmBidByPlayerNumber = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<Integer, B> hmActionByPlayerNumber = new ConcurrentHashMap<>();
 	private int personToStartLocal = -1;
 	private int personToStart = -1;
 	public int lastPlayerToAct = 0;
@@ -147,13 +146,14 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		textPaneInfo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		textPaneInfo.setBackground(Color.WHITE);
 		textPaneInfo.setEditable(false);
-		bidBox.setCellRenderer(new BidListCellRenderer());
+		bidBox.setCellRenderer(bidRenderer);
 		
 		btnReplay.addActionListener(this);
 		btnStandUp.addActionListener(this);
 		addWindowListener(this);
 	}
-	
+
+	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
 	private final BackgroundPanel bgPanel = new BackgroundPanel();
 	private final JSplitPane splitPane = new JSplitPane();
 	private final TransparentPanel leftPane = new TransparentPanel();
@@ -338,7 +338,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		
 		hmPlayerByAdjustedPlayerNumber = new ConcurrentHashMap<>();
 		hmHandByAdjustedPlayerNumber = new ConcurrentHashMap<>();
-		hmBidByPlayerNumber = new ConcurrentHashMap<>();
+		hmActionByPlayerNumber = new ConcurrentHashMap<>();
 		totalNumberOfCards = players * 5;
 		waitingForPlayers();
 		gameInProgress = false;
@@ -428,6 +428,9 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		
 		//Remove players who we have as active but the server doesn't
 		processPlayersLeaving(serverHmPlayerByPlayerNumber);
+
+		// Update bid renderer
+		bidRenderer.updateColours(hmPlayerByAdjustedPlayerNumber.values());
 		
 		//Initialise a game if we've become full
 		int currentSize = hmPlayerByAdjustedPlayerNumber.size();
@@ -761,7 +764,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		handPanel.displayHandsOnline(hmHandByAdjustedPlayerNumber);
 		handPanel.setInitted(true);
 		
-		B lastBid = hmBidByPlayerNumber.get(lastPlayerToAct);
+		B lastBid = hmActionByPlayerNumber.get(lastPlayerToAct);
 		if (lastBid != null)
 		{
 			handleBid(lastPlayerToAct, lastBid);
@@ -794,7 +797,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		
 		lastPlayerToAct = playerNumber;
 		lastBid = (B)action;
-		hmBidByPlayerNumber.put(playerNumber, lastBid);
+		hmActionByPlayerNumber.put(playerNumber, lastBid);
 		
 		if (playerNumber != this.playerNumber
 		  && !observer)

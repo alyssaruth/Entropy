@@ -1,5 +1,6 @@
 package util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import game.BidAction;
 import game.ChallengeAction;
 import game.IllegalAction;
@@ -221,23 +222,21 @@ public class XmlBuilderServer implements XmlConstants
 		return response;
 	}
 	
-	public static Document getBidAck(Room room, String gameId, int roundNumber, String bidStr, int previousBidder)
-	{
+	public static Document getBidAck(Room room, String gameId, int roundNumber, String bidderName, String bidStr, int previousBidder) throws JsonProcessingException {
 		var bid = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
 
-		int playerNumber = bid.getPlayer().getPlayerNumber();
-		boolean added = room.addBidForPlayer(gameId, playerNumber, roundNumber, bid);
+		boolean added = room.addBidForPlayer(gameId, bidderName, roundNumber, bid);
 
 		var previousBid = (BidAction)room.getLastBidForPlayer(previousBidder, roundNumber);
 		if (bid instanceof ChallengeAction
 		  && added)
 		{
-			room.handleChallenge(gameId, roundNumber, playerNumber, previousBidder, previousBid);
+			room.handleChallenge(gameId, roundNumber, bidderName, previousBidder, previousBid);
 		}
 		else if (bid instanceof IllegalAction
 		  && added)
 		{
-			room.handleIllegal(gameId, roundNumber, playerNumber, previousBidder, previousBid);
+			room.handleIllegal(gameId, roundNumber, bidderName, previousBidder, previousBid);
 		}
 
 		return ACKNOWLEDGEMENT;

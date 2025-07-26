@@ -37,7 +37,7 @@ public class EntropyRoom extends GameRoom<EntropyBidAction>
 	public void resetBids()
 	{
 		lastBid = null;
-		hmBidByPlayerNumber.clear();
+		hmActionByPlayerNumber.clear();
 	}
 	
 	@Override

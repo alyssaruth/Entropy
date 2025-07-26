@@ -169,7 +169,7 @@ public final class MainScreen extends AbstractDevScreen
 		splitPane.setLeftComponent(leftPanel);
 		leftPanel.setLayout(new BorderLayout(0, 0));
 		leftPanel.add(commandBar, BorderLayout.SOUTH);
-		history.setCellRenderer(new BidListCellRenderer());
+		history.setCellRenderer(bidRenderer);
 
 		addKeyListener(this);
 		commandBar.setCheatListener(this);
@@ -180,6 +180,7 @@ public final class MainScreen extends AbstractDevScreen
 	}
 	
 	//Menu
+	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu mnFile = new JMenu("File");
 	private final JMenuItem mntmNewGame = new JMenuItem("New Game");
@@ -265,7 +266,7 @@ public final class MainScreen extends AbstractDevScreen
 				btnReplay.setEnabled(false);
 				btnNextRound.setVisible(false);
 				lblResult.setVisible(false);
-				gamePanel.startNewGame();
+				gamePanel.startNewGame(bidRenderer);
 			}
 		}
 		catch (Throwable e)
@@ -504,7 +505,7 @@ public final class MainScreen extends AbstractDevScreen
 			btnReplay.setVisible(true);
 			scrollPane.setVisible(true);
 			mntmContinueGame.setEnabled(false);
-			gamePanel.continueGame();
+			gamePanel.continueGame(bidRenderer);
 		}
 		catch (Throwable t)
 		{

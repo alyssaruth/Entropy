@@ -2,6 +2,7 @@ package screen;
 
 import achievement.AchievementSetting;
 import game.*;
+import object.BidListCellRenderer;
 import object.Player;
 import util.*;
 
@@ -70,7 +71,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	public abstract void setPerfectBidBooleans();
 	public abstract void updateAchievementVariables();
 	
-	public void startNewGame()
+	public void startNewGame(BidListCellRenderer bidRenderer)
 	{
 		Debug.appendBanner("New Game", logging);
 		cancelNewRound();
@@ -80,6 +81,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		ScreenCache.get(MainScreen.class).dismissCurrentReplay();
 
 		initVariablesForNewGame();
+		bidRenderer.updateColours(allPlayers());
 		initVariables();
 
 		startRound();
@@ -326,6 +328,8 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		opponentOne.setName(handPanel.getOpponentOneName());
 		opponentTwo.setName(handPanel.getOpponentTwoName());
 		opponentThree.setName(handPanel.getOpponentThreeName());
+
+
 	}
 	
 	private void initNumberOfCards() 
@@ -572,7 +576,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	/**
 	 * Continue Game
 	 */
-	public void continueGame()
+	public void continueGame(BidListCellRenderer bidRenderer)
 	{
 		try
 		{
@@ -595,6 +599,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 
 			setPlayerNames();
 			setPlayerHandsAndRevealedCards();
+			bidRenderer.updateColours(allPlayers());
 
 			//blind, handicap etc
 			playBlind = savedGame.getBoolean(SAVED_GAME_BOOLEAN_PLAY_BLIND, false);
@@ -887,6 +892,10 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		int gameSpeed = prefs.getInt(PREFERENCES_INT_GAME_SPEED, 1000);
 		
 		cpuTurn.schedule(new DelayedOpponentTurn(currentPlayer), gameSpeed);
+	}
+
+	private Collection<Player> allPlayers() {
+		return Stream.of(player, opponentOne, opponentTwo, opponentThree).toList();
 	}
 
 	private Player getPlayer(B bid) {

@@ -11,6 +11,7 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -46,6 +47,7 @@ import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.isCardRelevant;
 import static game.RegistryUtilKt.populateActions;
 import static game.RenderingUtilKt.getVectropyResult;
+import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
 public class ReplayDialog extends JFrame
@@ -263,7 +265,7 @@ public class ReplayDialog extends JFrame
 			starFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilter.png")));
 			starFilter.setBounds(828, 275, 40, 40);
 			getContentPane().add(starFilter);
-			history.setCellRenderer(new BidListCellRenderer());
+			history.setCellRenderer(bidRenderer);
 
 			initialiseListeners();
 		}
@@ -272,7 +274,8 @@ public class ReplayDialog extends JFrame
 			Debug.stackTrace(t);
 		}
 	}
-	
+
+	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
 	private final JSeparator separator = new JSeparator();
 	private final Panel panelOpponentCards = new Panel();
 	private final JLabel opponentCard5 = new JLabel();
@@ -544,6 +547,13 @@ public class ReplayDialog extends JFrame
 		lblOpponentOne.setText(opponentOneName + opponentOneStar);
 		lblOpponentTwo.setText(opponentTwoName + opponentTwoStar);
 		lblOpponentThree.setText(opponentThreeName + opponentThreeStar);
+
+		bidRenderer.updateColours(new HashMap<>() {{
+			put(playerName, getColourForPlayerNumber(0));
+			put(opponentOneName, getColourForPlayerNumber(1));
+			put(opponentTwoName, getColourForPlayerNumber(2));
+			put(opponentThreeName, getColourForPlayerNumber(3));
+		}});
 		
 		setLabelVisibility(lblPlayer, playerName, playerEnabled, REPLAY_STRING_PLAYER_COLOUR, "red");
 		setLabelVisibility(lblOpponentOne, opponentOneName, opponentOneEnabled, REPLAY_STRING_OPPONENT_ONE_COLOUR, "blue");

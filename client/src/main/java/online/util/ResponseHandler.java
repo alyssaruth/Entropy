@@ -150,11 +150,13 @@ public class ResponseHandler implements XmlConstants
 			{
 				continue;
 			}
-			
-			boolean includeMoons = room.getIncludeMoons();
-			boolean includeStars = room.getIncludeStars();
-			Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
-			room.hmBidByPlayerNumber.put(i, bid);
+
+			try {
+				PlayerAction bid = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
+				room.hmActionByPlayerNumber.put(i, bid);
+			} catch (Exception e) {
+				logger.error("parseError", "Failed to parse bid from string: " + bidStr, e);
+			}
 		}
 	}
 	
