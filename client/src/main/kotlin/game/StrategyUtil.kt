@@ -86,10 +86,15 @@ fun getBasicVectropyOpening(
     val map =
         suits.associateWith { suit ->
             val myCount = countSuit(suit, hand, settings.jokerValue)
-            maxOf(0, myCount + Random.nextInt(3))
+            maxOf(0, myCount + Random.nextInt(3) - 1)
         }
 
-    return VectropyBidAction(opponentName, false, map)
+    val bid = VectropyBidAction(opponentName, false, map)
+    if (bid.getTotal() > 0) {
+        return bid
+    }
+
+    return bid.incrementSuit(suits.random())
 }
 
 fun getEvVectropyOpening(
@@ -121,6 +126,11 @@ fun getEvVectropyOpening(
     val bid = VectropyBidAction(opponentName, false, map)
     if (bid.getTotal() > 0) {
         return bid
+    }
+
+    // Just bid 1 of something, leaning towards choosing our best suit
+    if (Random.nextInt(10) < 6) {
+        return bid.incrementSuit(getSuitWithMostPositiveValue(hmEvBySuit))
     }
 
     return bid.incrementSuit(suits.random())
