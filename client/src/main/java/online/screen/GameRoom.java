@@ -779,7 +779,6 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	public void handleBid(int playerNumber, PlayerAction action)
 	{	
 		int playerNumberAdjusted = adjustForMe(playerNumber);
-		Player player = hmPlayerByAdjustedPlayerNumber.get(playerNumberAdjusted);
 		
 		addBidToBidBox(action);
 		handPanel.selectPlayerInAwtThread(playerNumberAdjusted, false);
@@ -811,6 +810,8 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 			if (card != null)
 			{
 				handPanel.revealCard(card);
+
+				Player player = hmPlayerByAdjustedPlayerNumber.get(playerNumberAdjusted);
 				player.addRevealedCard(card);
 				
 				ArrayList<String> revealedCards = getOpponentsRevealedCards();
