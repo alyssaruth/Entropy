@@ -3,6 +3,8 @@ package game
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.random.Random
+import strategy.DefaultRandom
+import strategy.IRandom
 import util.StrategyParams
 
 fun getEvMap(
@@ -69,24 +71,26 @@ fun shouldAutoChallengeForEvDiffOfIndividualSuit(evDifferenceMap: Map<Suit, Doub
 fun shouldAutoChallengeForMultipleSuitsOverEv(evDifferenceMap: Map<Suit, Double>) =
     evDifferenceMap.count { it.value < 0 } > 1
 
+@JvmOverloads
 fun getBasicVectropyOpening(
     opponentName: String,
     hand: List<String>,
     strategyParams: StrategyParams,
+    random: IRandom = DefaultRandom(),
 ): VectropyBidAction {
     val settings = strategyParams.settings
     val suits = Suit.filter(settings)
 
     if (strategyParams.cardsInPlay <= 4) {
         val empty = suits.associateWith { 0 }
-        val suit = suits.random()
-        return VectropyBidAction(opponentName, false, empty).incrementSuit(suit)
+        val suitChoice = random.nextInt(suits.size)
+        return VectropyBidAction(opponentName, false, empty).incrementSuit(suits[suitChoice])
     }
 
     val map =
         suits.associateWith { suit ->
             val myCount = countSuit(suit, hand, settings.jokerValue)
-            maxOf(0, myCount + Random.nextInt(3) - 1)
+            maxOf(0, myCount + random.nextInt(3) - 1)
         }
 
     val bid = VectropyBidAction(opponentName, false, map)

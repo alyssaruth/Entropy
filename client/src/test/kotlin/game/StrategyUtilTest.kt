@@ -1,9 +1,11 @@
 package game
 
+import TestRandom
 import io.kotest.matchers.doubles.shouldBeBetween
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.maps.shouldNotContainKeys
 import io.kotest.matchers.shouldBe
+import makeStrategyParams
 import org.junit.jupiter.api.Test
 import testCore.makeGameSettings
 import util.AbstractClientTest
@@ -93,5 +95,19 @@ class StrategyUtilTest : AbstractClientTest() {
     /** Account for some double precision fun */
     private fun Map<Suit, Double>.assertEv(suit: Suit, expected: Double) {
         getValue(suit).shouldBeBetween(expected, expected, 0.00001)
+    }
+
+    @Test
+    fun `Basic Vectropy - Opening should bid 1 of random suit if 4 or less cards in play`() {
+        val strategyParams = makeStrategyParams(cardsInPlay = 4)
+        val random = TestRandom(0, 1)
+
+        val openingOne = getBasicVectropyOpening("Clive", emptyList(), strategyParams, random)
+        val openingTwo = getBasicVectropyOpening("Clive", emptyList(), strategyParams, random)
+
+        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+
+        openingOne shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Clubs to 1))
+        openingTwo shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Diamonds to 1))
     }
 }
