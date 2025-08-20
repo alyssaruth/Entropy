@@ -1,11 +1,13 @@
 package game
 
 import io.kotest.matchers.shouldBe
+import java.awt.Color
 import org.junit.jupiter.api.Test
 import testCore.AbstractTest
 import testCore.makeEntropyBidAction
 import testCore.makeGameSettings
 import utils.CoreGlobals
+import utils.toHexCode
 
 class EntropyBidActionTest : AbstractTest() {
     @Test
@@ -14,6 +16,8 @@ class EntropyBidActionTest : AbstractTest() {
         val json = CoreGlobals.jsonMapper.writeValueAsString(bid)
         val deserialized = CoreGlobals.jsonMapper.readValue(json, PlayerAction::class.java)
         deserialized shouldBe bid
+
+        EntropyBidAction.fromJson(json) shouldBe bid
     }
 
     @Test
@@ -60,5 +64,14 @@ class EntropyBidActionTest : AbstractTest() {
 
         twoDiamonds.higherThan(makeEntropyBidAction(2, Suit.Hearts)) shouldBe false
         twoDiamonds.higherThan(makeEntropyBidAction(3, Suit.Clubs)) shouldBe false
+    }
+
+    @Test
+    fun `Should have sensible description`() {
+        makeEntropyBidAction(1, Suit.Diamonds).plainString() shouldBe "1 diamond"
+        makeEntropyBidAction(3, Suit.Diamonds).plainString() shouldBe "3 diamonds"
+
+        makeEntropyBidAction(1, Suit.Hearts).htmlString() shouldBe
+            "<font color=\"${Color.red.toHexCode()}\" face=\"Segoe UI Symbol\">1♥</font>"
     }
 }

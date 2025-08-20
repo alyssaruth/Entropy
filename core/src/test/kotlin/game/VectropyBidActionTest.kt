@@ -14,6 +14,8 @@ class VectropyBidActionTest : AbstractTest() {
         val json = CoreGlobals.jsonMapper.writeValueAsString(action)
         val deserialized = CoreGlobals.jsonMapper.readValue(json, PlayerAction::class.java)
         deserialized shouldBe action
+
+        VectropyBidAction.fromJson(json) shouldBe action
     }
 
     @Test
@@ -107,5 +109,14 @@ class VectropyBidActionTest : AbstractTest() {
         val allSuits = coreSuits + mapOf(Suit.Moons to 7, Suit.Stars to 9)
         VectropyBidAction("", false, allSuits).plainString() shouldBe "(3, 0, 2, 7, 1, 9)"
         VectropyBidAction("", false, allSuits).htmlString() shouldBe "(3, 0, 2, 7, 1, 9)"
+    }
+
+    @Test
+    fun `Should allow incrementing a suit`() {
+        val start = mapOf(Suit.Clubs to 3, Suit.Diamonds to 0, Suit.Hearts to 2, Suit.Spades to 1)
+        val bid = VectropyBidAction("Alyssa", true, start)
+
+        val uppedDiamonds = bid.incrementSuit(Suit.Diamonds)
+        uppedDiamonds shouldBe VectropyBidAction("Alyssa", true, start + (Suit.Diamonds to 1))
     }
 }
