@@ -328,8 +328,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		opponentOne.setName(handPanel.getOpponentOneName());
 		opponentTwo.setName(handPanel.getOpponentTwoName());
 		opponentThree.setName(handPanel.getOpponentThreeName());
-
-
 	}
 	
 	private void initNumberOfCards() 

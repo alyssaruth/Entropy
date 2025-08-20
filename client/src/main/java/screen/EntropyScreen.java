@@ -22,7 +22,7 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 	public EntropyScreen()
 	{
 		setFocusable(true);
-		bidPanel = new EntropyBidPanel(player.getName(), handPanel);
+		bidPanel = new EntropyBidPanel(prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player"), handPanel);
 		bidPanel.showBidPanel(false);
 		
 		setLayout(new BorderLayout(0, 0));

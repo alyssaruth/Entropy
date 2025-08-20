@@ -26,7 +26,7 @@ public class VectropyScreen extends GameScreen
 			setLayout(new BorderLayout(0, 0));
 			add(handPanel, BorderLayout.CENTER);
 			handPanel.setOpaque(false);
-			bidPanel = new VectropyBidPanel(player.getName(), handPanel);
+			bidPanel = new VectropyBidPanel(prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player"), handPanel);
 			add(bidPanel, BorderLayout.SOUTH);
 			bidPanel.showBidPanel(false);
 			
