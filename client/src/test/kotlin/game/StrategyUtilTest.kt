@@ -5,6 +5,7 @@ import io.kotest.matchers.doubles.shouldBeBetween
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.maps.shouldNotContainKeys
 import io.kotest.matchers.shouldBe
+import kotlin.collections.plus
 import makeStrategyParams
 import org.junit.jupiter.api.Test
 import testCore.makeGameSettings
@@ -109,5 +110,81 @@ class StrategyUtilTest : AbstractClientTest() {
 
         openingOne shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Clubs to 1))
         openingTwo shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Diamonds to 1))
+    }
+
+    @Test
+    fun `Basic Vectropy - Opening should be based on hand count plus some randomness`() {
+        val strategyParams = makeStrategyParams(cardsInPlay = 5)
+        val random = TestRandom(1, 2, 0, 2)
+
+        val hand = listOf("2c", "As", "3d", "Ad")
+        val opening = getBasicVectropyOpening("Clive", hand, strategyParams, random)
+
+        val expected =
+            mapOf(
+                Suit.Clubs to 3, // 3 + 1 - 1
+                Suit.Diamonds to 5, // 4 + 2 - 1
+                Suit.Hearts to 1, // 2 + 0 - 1
+                Suit.Spades to 4, // 3 + 2 - 1
+            )
+
+        opening shouldBe VectropyBidAction("Clive", false, expected)
+    }
+
+    @Test
+    fun `Basic Vectropy - Opening should bid 1 of a random suit if bid would otherwise be empty`() {
+        val strategyParams = makeStrategyParams(cardsInPlay = 5)
+        val random = TestRandom(0, 0, 0, 0, 1)
+
+        val hand = listOf("4d")
+        val opening = getBasicVectropyOpening("Clive", hand, strategyParams, random)
+
+        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+        opening shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Diamonds to 1))
+    }
+
+    @Test
+    fun `EV Vectropy - Opening should be based on expected value plus some randomness`() {
+        val random = TestRandom(10, 5, 17, 19)
+
+        val cards = listOf("As", "Jo0", "3c")
+        val settings =
+            makeGameSettings(
+                jokerQuantity = 1,
+                jokerValue = 2,
+                includeMoons = false,
+                includeStars = false,
+            )
+
+        val strategyParams = makeStrategyParams(settings = settings, cardsInPlay = 11)
+
+        val opening = getEvVectropyOpening("Robert", cards, strategyParams, random)
+        val expected =
+            mapOf(
+                Suit.Clubs to 5, // floor(6.4) - 1
+                Suit.Diamonds to 4, // floor(5.56) - 1
+                Suit.Hearts to 3, // floor(5.56) - 2
+                Suit.Spades to 3, // floor(6.4) - 3
+            )
+
+        opening shouldBe VectropyBidAction("Robert", false, expected)
+    }
+
+    @Test
+    fun `EV Vectropy - Opening should bid 1 of something if default approach would result in empty bid`() {
+        val strategyParams = makeStrategyParams(cardsInPlay = 6)
+        val openings =
+            (0..9).map { finalChoice ->
+                val random = TestRandom(19, 19, 19, 19, finalChoice, 0)
+
+                getEvVectropyOpening("Robert", listOf("3h"), strategyParams, random)
+            }
+
+        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+        val randomSuit = VectropyBidAction("Robert", false, emptyBid + (Suit.Clubs to 1))
+        val strongestSuit = VectropyBidAction("Robert", false, emptyBid + (Suit.Hearts to 1))
+
+        openings.count() { it == randomSuit } shouldBe 4
+        openings.count { it == strongestSuit } shouldBe 6
     }
 }

@@ -2,7 +2,6 @@ package game
 
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.random.Random
 import strategy.DefaultRandom
 import strategy.IRandom
 import util.StrategyParams
@@ -90,6 +89,7 @@ fun getBasicVectropyOpening(
     val map =
         suits.associateWith { suit ->
             val myCount = countSuit(suit, hand, settings.jokerValue)
+            println(myCount)
             maxOf(0, myCount + random.nextInt(3) - 1)
         }
 
@@ -98,13 +98,15 @@ fun getBasicVectropyOpening(
         return bid
     }
 
-    return bid.incrementSuit(suits.random())
+    return bid.incrementSuit(suits[random.nextInt(suits.size)])
 }
 
+@JvmOverloads
 fun getEvVectropyOpening(
     opponentName: String,
     hand: List<String>,
     strategyParams: StrategyParams,
+    random: IRandom = DefaultRandom(),
 ): VectropyBidAction {
     val settings = strategyParams.settings
     val hmEvBySuit = getEvMap(hand, settings, strategyParams.cardsInPlay)
@@ -114,7 +116,7 @@ fun getEvVectropyOpening(
         suits.associateWith { suit ->
             val evFloor = floor(hmEvBySuit.getValue(suit)).toInt()
 
-            val adjustmentSwitch = Random.nextInt(20)
+            val adjustmentSwitch = random.nextInt(20)
             val adjusted =
                 if (adjustmentSwitch < 11) {
                     evFloor - 1
@@ -133,9 +135,9 @@ fun getEvVectropyOpening(
     }
 
     // Just bid 1 of something, leaning towards choosing our best suit
-    if (Random.nextInt(10) < 6) {
+    if (random.nextInt(10) < 6) {
         return bid.incrementSuit(getSuitWithMostPositiveValue(hmEvBySuit))
     }
 
-    return bid.incrementSuit(suits.random())
+    return bid.incrementSuit(suits[random.nextInt(suits.size)])
 }
