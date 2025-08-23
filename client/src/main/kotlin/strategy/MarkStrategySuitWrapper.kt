@@ -1,8 +1,8 @@
 package strategy
 
+import game.EntropyBidAction
 import game.Suit
 import game.countSuit
-import `object`.EntropyBid
 
 data class MarkStrategySuitWrapper(
     val applicableSuits: List<Suit>,
@@ -24,7 +24,7 @@ fun factoryMarkStrategySuitWrapper(
     jokerValue: Int,
     includeMoons: Boolean,
     includeStars: Boolean,
-    bid: EntropyBid?,
+    bid: EntropyBidAction?,
 ): MarkStrategySuitWrapper {
     val applicableSuits = Suit.filter(includeMoons, includeStars)
 
@@ -36,7 +36,7 @@ fun factoryMarkStrategySuitWrapper(
         else {
             applicableSuits.filter { suit ->
                 val myCount = countSuit(suit, hand, jokerValue)
-                myCount > bid.bidAmount || (myCount == bid.bidAmount && suit > bid.bidSuit)
+                myCount > bid.amount || (myCount == bid.amount && suit > bid.suit)
             }
         }
 

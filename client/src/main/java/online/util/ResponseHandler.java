@@ -1,7 +1,8 @@
 
 package online.util;
 
-import object.Bid;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import game.PlayerAction;
 import online.screen.EntropyLobby;
 import online.screen.GameRoom;
 import online.screen.Leaderboard;
@@ -11,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import screen.ScreenCache;
 import util.*;
+import utils.CoreGlobals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,11 +150,13 @@ public class ResponseHandler implements XmlConstants
 			{
 				continue;
 			}
-			
-			boolean includeMoons = room.getIncludeMoons();
-			boolean includeStars = room.getIncludeStars();
-			Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
-			room.hmBidByPlayerNumber.put(i, bid);
+
+			try {
+				PlayerAction bid = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
+				room.hmActionByPlayerNumber.put(i, bid);
+			} catch (Exception e) {
+				logger.error("parseError", "Failed to parse bid from string: " + bidStr, e);
+			}
 		}
 	}
 	
@@ -189,12 +193,13 @@ public class ResponseHandler implements XmlConstants
 		GameRoom gameRoom = lobby.getGameRoomForName(id);
 		int playerNumber = XmlUtil.getAttributeInt(root, "PlayerNumber");
 		String bidStr = root.getAttribute("Bid");
-		
-		boolean includeMoons = gameRoom.getIncludeMoons();
-		boolean includeStars = gameRoom.getIncludeStars();
-		Bid bid = Bid.factoryFromXmlString(bidStr, includeMoons, includeStars);
-		
-		gameRoom.handleBid(playerNumber, bid);
+
+		try {
+			PlayerAction action = CoreGlobals.jsonMapper.readValue(bidStr, PlayerAction.class);
+			gameRoom.handleBid(playerNumber, action);
+		} catch (JsonProcessingException jpe) {
+			throw new RuntimeException("Failed to deserialise bid " + bidStr, jpe);
+		}
 	}
 	
 	private static void handleGameOverResponse(Element root, EntropyLobby lobby)

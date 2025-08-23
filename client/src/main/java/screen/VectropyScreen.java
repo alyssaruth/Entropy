@@ -4,8 +4,7 @@ import java.awt.BorderLayout;
 
 import game.GameMode;
 import game.Suit;
-import object.Bid;
-import object.VectropyBid;
+import game.VectropyBidAction;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
@@ -27,7 +26,7 @@ public class VectropyScreen extends GameScreen
 			setLayout(new BorderLayout(0, 0));
 			add(handPanel, BorderLayout.CENTER);
 			handPanel.setOpaque(false);
-			bidPanel = new VectropyBidPanel();
+			bidPanel = new VectropyBidPanel(prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player"), handPanel);
 			add(bidPanel, BorderLayout.SOUTH);
 			bidPanel.showBidPanel(false);
 			
@@ -63,7 +62,7 @@ public class VectropyScreen extends GameScreen
 		//save bid amounts and bid suits
 		if (lastBid != null)
 		{
-			savedGame.put(Registry.SAVED_GAME_STRING_LAST_BID, lastBid.toXmlString());
+			savedGame.put(Registry.SHARED_STRING_LAST_BID, lastBid.toJsonString());
 		}
 
 		//other booleans
@@ -76,10 +75,10 @@ public class VectropyScreen extends GameScreen
 	@Override
 	public void loadLastBid()
 	{
-		String lastBidStr = savedGame.get(Registry.SAVED_GAME_STRING_LAST_BID, "");
+		String lastBidStr = savedGame.get(Registry.SHARED_STRING_LAST_BID, "");
 		if (!lastBidStr.isEmpty())
 		{
-			lastBid = Bid.factoryFromXmlString(lastBidStr, settings.getIncludeMoons(), settings.getIncludeStars());
+			lastBid = VectropyBidAction.fromJson(lastBidStr);
 		}
 	}
 	
@@ -119,11 +118,6 @@ public class VectropyScreen extends GameScreen
 	/*
 	 *  Get/sets
 	 */
-	public void setLastBid(VectropyBid lastBid)
-	{
-		this.lastBid = lastBid;
-	}
-
 	@Override
 	public GameMode getGameMode()
 	{

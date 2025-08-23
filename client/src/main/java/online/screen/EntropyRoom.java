@@ -3,19 +3,18 @@ package online.screen;
 import java.awt.BorderLayout;
 import java.util.UUID;
 
+import game.EntropyBidAction;
 import game.GameSettings;
-import game.Suit;
-import object.Bid;
 import object.EntropyAchievementsTracker;
-import object.EntropyBid;
 import screen.EntropyBidPanel;
+import util.ClientUtil;
 import util.Registry;
 import util.ReplayConstants;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.extractCards;
 
-public class EntropyRoom extends GameRoom
+public class EntropyRoom extends GameRoom<EntropyBidAction>
 {
 	private EntropyAchievementsTracker achievementTracker = new EntropyAchievementsTracker();
 	
@@ -23,7 +22,7 @@ public class EntropyRoom extends GameRoom
 	{
 		super(id, roomName, settings, players);
 		
-		bidPanel = new EntropyBidPanel();
+		bidPanel = new EntropyBidPanel(ClientUtil.getUsername(), handPanel);
 		leftPaneSouth.add(bidPanel, BorderLayout.CENTER);
 		bidPanel.addBidListener(this);
 	}
@@ -37,8 +36,8 @@ public class EntropyRoom extends GameRoom
 	@Override
 	public void resetBids()
 	{
-		lastBid = new EntropyBid(Suit.Clubs, 0);
-		hmBidByPlayerNumber.clear();
+		lastBid = null;
+		hmActionByPlayerNumber.clear();
 	}
 	
 	@Override
@@ -46,7 +45,7 @@ public class EntropyRoom extends GameRoom
 	{
 		if (isVisible())
 		{
-			var lastBidSuit = ((EntropyBid)lastBid).getBidSuit();
+			var lastBidSuit = lastBid.getSuit();
 			handPanel.displayAndHighlightHands(lastBidSuit);
 			
 			achievementTracker.unlockPerfectBidAchievements(earnedPsychic);
@@ -69,20 +68,20 @@ public class EntropyRoom extends GameRoom
 	{
 		int roundsSoFar = replay.getInt(Registry.REPLAY_INT_ROUNDS_SO_FAR, 0);
 		replay.putInt(Registry.REPLAY_INT_GAME_MODE, ReplayConstants.GAME_MODE_ENTROPY_ONLINE);
-		replay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, ((EntropyBid)lastBid).getBidSuit().name());
+		replay.put(roundsSoFar + Registry.REPLAY_STRING_LAST_BID_SUIT_NAME, lastBid.getSuit().name());
 		replayDialog.roundAdded();
 	}
 
 	@Override
-	public void updatePerfectBidVariables(Bid bid) 
+	public void updatePerfectBidVariables(EntropyBidAction action)
 	{
-		achievementTracker.updatePerfectBidVariables(bid);
+		achievementTracker.updatePerfectBidVariables(action);
 	}
 	
 	@Override
-	public void updateAchievementVariables(Bid bid)
+	public void updateAchievementVariables(EntropyBidAction action)
 	{
-		achievementTracker.update(bid);
+		achievementTracker.update(action);
 	}
 	
 	@Override

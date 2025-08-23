@@ -24,19 +24,16 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import game.EntropyBidAction;
 import game.Suit;
-import object.Bid;
-import object.EntropyBid;
 import util.Debug;
 import util.Registry;
 
-public class EntropyBidPanel extends BidPanel
+public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 							 implements ActionListener,
 							 			ChangeListener,
 							 			Registry
 {
-	private String suitSelected = Suit.Clubs.getUnicodeStr();
-	
 	private Suit bidSuit = Suit.Clubs;
 	private Suit lastBidSuit = Suit.Clubs;
 	private int lastBidAmount = 0;
@@ -44,9 +41,10 @@ public class EntropyBidPanel extends BidPanel
 	private boolean includeMoons = false;
 	private boolean includeStars = false;
 	private boolean online = false;
-	
-	public EntropyBidPanel() 
+
+	public EntropyBidPanel(String playerName, HandPanelMk2 handPanel)
 	{
+		super(playerName, handPanel);
 		setPreferredSize(new Dimension(550, 150));
 		bidGroup.add(btnClubs);
 		bidGroup.add(btnDiamonds);
@@ -179,9 +177,7 @@ public class EntropyBidPanel extends BidPanel
 		bidSlider.setValue(1);
 
 		btnClubs.setSelected(true);
-		suitSelected = Suit.Clubs.getUnicodeStr();
-		bidAmountDisplay.setText("1 " + suitSelected);
-		setBidAmountDisplayColour();
+		updateBidAmountDisplay();
 		setBidButtonColours();
 		
 		totalCardsLabel.setText("x " + totalNumberOfCards);
@@ -246,17 +242,16 @@ public class EntropyBidPanel extends BidPanel
 	}
 	
 	@Override
-	public void adjust(Bid bid)
+	public void adjust(EntropyBidAction bid)
 	{
-		EntropyBid entropyBid = (EntropyBid)bid;
-		int lastBidAmount = entropyBid.getBidAmount();
+		int lastBidAmount = bid.getAmount();
 		if (lastBidAmount == 0)
 		{
 			return;
 		}
-		
-		this.lastBidSuit = entropyBid.getBidSuit();
-		this.lastBidAmount = entropyBid.getBidAmount();
+
+		this.lastBidSuit = bid.getSuit();
+		this.lastBidAmount = bid.getAmount();
 
 		updateSelectionForLastBidSuit();
 	}
@@ -272,13 +267,15 @@ public class EntropyBidPanel extends BidPanel
 	{
 		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
-		
-		setBidAmountDisplayColour();
+
+		updateBidAmountDisplay();
 		setBidButtonColours();
 	}
 	
-	private void setBidAmountDisplayColour()
+	private void updateBidAmountDisplay()
 	{
+		String spaceStr = bidSuit == Suit.Moons ? "":" ";
+		bidAmountDisplay.setText(bidSlider.getValue() + spaceStr + bidSuit.getUnicodeStr());
 		bidAmountDisplay.setForeground(bidSuit.getColour());
 	}
 	
@@ -329,10 +326,11 @@ public class EntropyBidPanel extends BidPanel
 
 		setBidButtonColours();
 
-		lastBidAmount = savedGame.getInt(SAVED_GAME_INT_LAST_BID_AMOUNT, -1);
-		var lastBid = savedGame.get(SAVED_GAME_STRING_LAST_BID_SUIT_NAME, null);
-		if (lastBid != null) {
-			lastBidSuit = Suit.valueOf(lastBid);
+		var lastBidStr = savedGame.get(SHARED_STRING_LAST_BID, null);
+		if (lastBidStr != null) {
+			var lastBid = EntropyBidAction.fromJson(lastBidStr);
+			lastBidAmount = lastBid.getAmount();
+			lastBidSuit = lastBid.getSuit();
 		}
 
 		updateSelectionForLastBidSuit();
@@ -359,7 +357,7 @@ public class EntropyBidPanel extends BidPanel
 		{
 			if (listener != null)
 			{
-				EntropyBid bid = new EntropyBid(bidSuit, bidSlider.getValue());
+				var bid = new EntropyBidAction(playerName, handPanel.isPlayingBlind(), bidSlider.getValue(), bidSuit);
 				listener.bidMade(bid);
 			}
 		}
@@ -414,16 +412,13 @@ public class EntropyBidPanel extends BidPanel
 		{
 			bidSlider.setMinimum(lastBidAmount + 1);
 		}
-		suitSelected = suit.getUnicodeStr();
 
-		stateChanged(null);
-		setBidAmountDisplayColour();
+		updateBidAmountDisplay();
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent arg0) 
 	{
-		String spaceStr = bidSuit == Suit.Moons ? "":" ";
-		bidAmountDisplay.setText(bidSlider.getValue() + spaceStr + suitSelected);
+		updateBidAmountDisplay();
 	}
 }

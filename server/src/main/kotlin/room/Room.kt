@@ -1,7 +1,10 @@
 package room
 
 import auth.UserConnection
+import game.BidAction
 import game.GameSettings
+import game.LeaveAction
+import game.PlayerAction
 import game.createAndShuffleDeck
 import http.dto.JoinRoomResponse
 import http.dto.OnlineMessage
@@ -9,13 +12,10 @@ import http.dto.RoomStateResponse
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
-import `object`.Bid
 import `object`.BidHistory
 import `object`.ExtendedConcurrentHashMap
 import `object`.GameWrapper
 import `object`.HandDetails
-import `object`.LeftBid
-import `object`.Player
 import store.IHasId
 import util.ServerGlobals
 import util.ServerGlobals.roomStore
@@ -62,13 +62,15 @@ data class Room(
     }
 
     fun getColourForPlayer(playerName: String): String {
-        val playerNumber =
-            hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
+        val playerNumber = getPlayerNumber(playerName)
 
         return if (playerNumber != null) {
             getColourForPlayerNumber(playerNumber)
         } else "gray"
     }
+
+    private fun getPlayerNumber(playerName: String): Int? =
+        hmPlayerByPlayerNumber.filter { it.value == playerName }.keys.firstOrNull()
 
     fun attemptToSitDown(username: String, playerNumber: Int): Int? {
         synchronized(this) {
@@ -121,10 +123,7 @@ data class Room(
 
                 // There is a game in progress
                 if (currentGame.gameEndMillis == -1L) {
-                    val bid = LeftBid()
-                    val player = Player(playerNumber, getColourForPlayerNumber(playerNumber))
-                    player.name = username
-                    bid.player = player
+                    val bid = LeaveAction(username)
 
                     val history: BidHistory = currentGame.currentBidHistory
                     history.addBidForPlayer(playerNumber, bid)
@@ -254,36 +253,36 @@ data class Room(
     fun handleChallenge(
         gameId: String,
         roundNumber: Int,
-        playerNumber: Int,
+        challenger: String,
         challengedNumber: Int,
-        bid: Bid,
+        bid: BidAction<*>,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
-        val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
-        if (bid.isOverbid(hmHandByPlayerNumber, settings.jokerValue)) {
+        val hands = details.hands.values.flatten()
+        if (bid.isOverbid(hands, settings)) {
             // bidder loses
             setUpNextRound(challengedNumber)
         } else {
             // challenger loses
-            setUpNextRound(playerNumber)
+            setUpNextRound(getPlayerNumber(challenger)!!)
         }
     }
 
     fun handleIllegal(
         gameId: String,
         roundNumber: Int,
-        playerNumber: Int,
+        illegallerName: String,
         bidderNumber: Int,
-        bid: Bid,
+        bid: BidAction<*>,
     ) {
         val game = getGameForId(gameId)
         val details: HandDetails = game.getDetailsForRound(roundNumber)
-        val hmHandByPlayerNumber: ConcurrentHashMap<Int, List<String>> = details.hands
-        if (bid.isPerfect(hmHandByPlayerNumber, settings)) {
+        val hands = details.hands.values.flatten()
+        if (bid.isPerfect(hands, settings)) {
             setUpNextRound(bidderNumber)
         } else {
-            setUpNextRound(playerNumber)
+            setUpNextRound(getPlayerNumber(illegallerName)!!)
         }
     }
 
@@ -428,7 +427,7 @@ data class Room(
         return currentGame
     }
 
-    fun getLastBidForPlayer(playerNumber: Int, roundNumber: Int): Bid? {
+    fun getLastBidForPlayer(playerNumber: Int, roundNumber: Int): PlayerAction? {
         if (playerNumber == -1) {
             return null
         }
@@ -439,11 +438,14 @@ data class Room(
 
     fun addBidForPlayer(
         gameId: String,
-        playerNumber: Int,
+        playerName: String,
         roundNumber: Int,
-        newBid: Bid?,
+        newBid: PlayerAction,
     ): Boolean {
         val game = getGameForId(gameId)
+
+        val playerNumber =
+            getPlayerNumber(playerName) ?: throw Exception("Player $playerName not found")
 
         val history: BidHistory = game.getBidHistoryForRound(roundNumber)
         val added: Boolean = history.addBidForPlayer(playerNumber, newBid)

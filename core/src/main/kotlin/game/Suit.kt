@@ -51,6 +51,10 @@ enum class Suit(
 
     companion object {
         @JvmStatic
+        fun filter(settings: GameSettings) =
+            Suit.filter(settings.includeMoons, settings.includeStars)
+
+        @JvmStatic
         fun filter(includeMoons: Boolean, includeStars: Boolean) =
             Suit.entries.filter { (it != Moons || includeMoons) && (it != Stars || includeStars) }
 

@@ -1,8 +1,6 @@
 package util;
 
-import game.GameMode;
-import game.GameSettings;
-import game.Suit;
+import game.*;
 import object.*;
 
 import java.util.ArrayList;
@@ -62,37 +60,36 @@ public class CpuStrategies
 	/**
 	 * Entry-point for strategy code
 	 */
-	public static Bid processOpponentTurn(StrategyParams parms, Player opponent)
+	public static PlayerAction processOpponentTurn(StrategyParams parms, Player opponent)
 	{
 		var settings = parms.getSettings();
 		boolean entropy = settings.getMode() == GameMode.Entropy;
-		Bid bid = getOpponentBid(parms, opponent, entropy);
-		if (bid == null)
+		PlayerAction action = getOpponentBid(parms, opponent, entropy);
+		if (action == null)
 		{
-			return bid;
+			return action;
 		}
 		
 		//Set a card to reveal if we need to - specifying this is optional for the API
-		bid.setPlayer(opponent);
-		setRandomCardToRevealIfNecessary(opponent, bid, settings);
+		setRandomCardToRevealIfNecessary(opponent, action, settings);
 		
 		//validate the bid...
-		String error = validateBid(opponent, bid, parms);
+		String error = validateAction(opponent, action, parms);
 		if (error != null)
 		{
 			if (opponent.isApiStrategy())
 			{
 				//Show an error message to help diagnosing.
-				String msg = "The bid sent back by the third-party software [" + bid + "] "
+				String msg = "The action sent back by the third-party software [" + action + "] "
 				             + "failed validation with the following error:\n\n" + error;
 				
 				String strategyStr = opponent.getStrategy();
 				ApiUtil.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
-				DialogUtil.showError(msg);
+				DialogUtilNew.showError(msg);
 			}
 			else
 			{
-				logger.error("invalidBid", "Error validating bid [" + bid + "]. Error: " + error);
+				logger.error("invalidBid", "Error validating action [" + action + "]. Error: " + error);
 			}
 			
 			return null;
@@ -101,16 +98,17 @@ public class CpuStrategies
 		//Add the revealed card on the opponent object. Do this here so we don't have to duplicate the logic
 		//in the simulator & actual game
 		if (parms.getSettings().getCardReveal()
-		  && opponent.hasMoreCardsToReveal())
+		  && opponent.hasMoreCardsToReveal()
+		  && action instanceof BidAction)
 		{
-			String cardToReveal = bid.getCardToReveal();
+			String cardToReveal = ((BidAction)action).getCardToReveal();
 			opponent.addRevealedCard(cardToReveal);
 		}
 		
-		return bid;
+		return action;
 	}
 	
-	private static Bid getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
+	private static PlayerAction getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
 	{
 		if (opponent.isApiStrategy())
 		{
@@ -131,11 +129,16 @@ public class CpuStrategies
 	 * then just pick one at random. This is what most built-in strategies will do, and implementing for API too
 	 * so that worrying about revealing cards is optional.
 	 */
-	private static void setRandomCardToRevealIfNecessary(Player opponent, Bid bid, GameSettings settings)
+	private static void setRandomCardToRevealIfNecessary(Player opponent, PlayerAction action, GameSettings settings)
 	{
+		if (!(action instanceof BidAction)) {
+			return;
+		}
+
+		var bid = (BidAction)action;
 		if (settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal()
-		  && bid.getCardToReveal().isEmpty())
+		  && bid.getCardToReveal() == null)
 		{
 			//Pick a card at random to reveal. 
 			ArrayList<String> cardsNotOnShow = opponent.getCardsNotOnShow();
@@ -148,34 +151,36 @@ public class CpuStrategies
 		}
 	}
 	
-	private static String validateBid(Player opponent, Bid bid, StrategyParams params)
+	private static String validateAction(Player opponent, PlayerAction action, StrategyParams params)
 	{
 		var settings = params.getSettings();
-		if (bid.isChallenge()
-		  || bid.isIllegal())
+		if (action instanceof ChallengeAction
+		  || action instanceof IllegalAction)
 		{
-			return validateChallengeOrIllegal(bid, params);
+			return validateChallengeOrIllegal(action, params);
 		}
 		
-		if (bid instanceof EntropyBid)
+		if (action instanceof EntropyBidAction)
 		{
-			String error = validateEntropyBid((EntropyBid)bid, settings);
+			String error = validateEntropyBid((EntropyBidAction)action, settings);
 			if (error != null)
 			{
 				return error;
 			}
 		}
 		
-		if (bid instanceof VectropyBid)
+		if (action instanceof VectropyBidAction)
 		{
-			String error = validateVectropyBid((VectropyBid)bid);
+			String error = validateVectropyBid((VectropyBidAction)action);
 			if (error != null)
 			{
 				return error;
 			}
 		}
-		
-		Bid lastBid = params.getLastBid();
+
+		var bid = (BidAction)action;
+
+		BidAction lastBid = params.getLastBid();
 		if (lastBid != null
 		  && !bid.higherThan(lastBid))
 		{
@@ -187,7 +192,7 @@ public class CpuStrategies
 		  && opponent.hasMoreCardsToReveal())
 		{
 			String cardToReveal = bid.getCardToReveal();
-			if (cardToReveal.isEmpty())
+			if (cardToReveal == null)
 			{
 				return "A card was not specified to be revealed.";
 			}
@@ -207,27 +212,22 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateChallengeOrIllegal(Bid bid, StrategyParams parms)
+	private static String validateChallengeOrIllegal(PlayerAction action, StrategyParams parms)
 	{
-		Bid lastBid = parms.getLastBid();
+		var lastBid = parms.getLastBid();
 		if (lastBid == null)
 		{
-			if (bid.isChallenge())
-			{
-				return "Challenged as an opening bid.";
-			}
-			
-			return "Called 'Illegal!' as an opening bid.";
+			return "Called " + action.plainString() + " as an opening bid.";
 		}
 		
 		return null;
 	}
 	
-	private static String validateEntropyBid(EntropyBid bid, GameSettings settings)
+	private static String validateEntropyBid(EntropyBidAction bid, GameSettings settings)
 	{
-		Suit bidSuit = bid.getBidSuit();
+		Suit bidSuit = bid.getSuit();
 		
-		int bidAmount = bid.getBidAmount();
+		int bidAmount = bid.getAmount();
 		if (bidAmount < 1)
 		{
 			return "Invalid bidAmount: " + bidAmount;
@@ -248,21 +248,18 @@ public class CpuStrategies
 		return null;
 	}
 	
-	private static String validateVectropyBid(VectropyBid bid)
+	private static String validateVectropyBid(VectropyBidAction bid)
 	{
 		if (bid.getTotal() < 1)
 		{
 			return "Elements sum to less than 1.";
 		}
-		
-		if (bid.getClubs() < 0
-		  || bid.getDiamonds() < 0
-		  || bid.getHearts() < 0
-		  || bid.getMoons() < 0
-		  || bid.getSpades() < 0
-		  || bid.getStars() < 0)
-		{
-			return "Negative amount specified for a suit.";
+
+		for (var suit : Suit.getEntries()) {
+			var amount = bid.getAmount(suit);
+			if (amount != null && amount < 0) {
+				return "Negative amount specified for suit " + suit + ".";
+			}
 		}
 		
 		return null;
@@ -284,11 +281,13 @@ public class CpuStrategies
 	 * Used by EV strategies. Slightly more refined version of card reveal - this tries to show a card
 	 * which isn't an Ace or a Joker (as these reveal more information than average)
 	 */
-	public static void setCardToReveal(Bid bid, GameSettings settings, Player opponent)
+	public static void setCardToReveal(PlayerAction action, GameSettings settings, Player opponent)
 	{
-		if (!bid.isIllegal()
-		  && !bid.isChallenge()
-		  && settings.getCardReveal()
+		if (!(action instanceof BidAction bid)) {
+			return;
+		}
+
+        if (settings.getCardReveal()
 		  && opponent.hasMoreCardsToReveal())
 		{
 			ArrayList<String> cardsToChooseFrom = opponent.getCardsNotOnShow();

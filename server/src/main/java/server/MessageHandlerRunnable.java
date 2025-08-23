@@ -207,9 +207,10 @@ public class MessageHandlerRunnable implements ServerRunnable,
 			String gameId = root.getAttribute("GameId");
 			int roundNumber = XmlUtil.getAttributeInt(root, "RoundNumber");
 			String bidStr = root.getAttribute("Bid");
+			String bidder = root.getAttribute("Username");
 			int previousBidder = XmlUtil.getAttributeInt(root, "PreviousBidder", -1);
 			
-			return XmlBuilderServer.getBidAck(room, gameId, roundNumber, bidStr, previousBidder);
+			return XmlBuilderServer.getBidAck(room, gameId, roundNumber, bidder, bidStr, previousBidder);
 		}
 		else if (name.equals(ROOT_TAG_LEADERBOARD_REQUEST))
 		{

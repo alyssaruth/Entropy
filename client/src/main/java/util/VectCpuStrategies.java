@@ -2,13 +2,12 @@ package util;
 
 import java.util.*;
 
+import game.ChallengeAction;
+import game.PlayerAction;
 import game.Suit;
-import object.Bid;
-import object.ChallengeBid;
+import game.VectropyBidAction;
 import object.Player;
-import object.VectropyBid;
 
-import static game.CardsUtilKt.countSuit;
 import static game.StrategyUtilKt.*;
 import static utils.CoreGlobals.logger;
 
@@ -28,12 +27,12 @@ public class VectCpuStrategies
 		return allStrategies;
 	}
 	
-	public static Bid processOpponentTurn(Player opponent, StrategyParams parms)
+	public static PlayerAction processOpponentTurn(Player opponent, StrategyParams parms)
 	{
 		String strategy = opponent.getStrategy();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
-	private static Bid processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
+	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParams parms)
 	{
 		if (strategy.equals(CpuStrategies.STRATEGY_BASIC))
 		{
@@ -53,7 +52,7 @@ public class VectCpuStrategies
 		}
 	}
 
-	private static Bid processBasicTurn(Player opponent, StrategyParams parms)
+	private static PlayerAction processBasicTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		log("Basic strategy for this turn", logging);
@@ -62,60 +61,16 @@ public class VectCpuStrategies
 		//Get the variables we're interested in
 		var settings = parms.getSettings();
 		List<String> hand = opponent.getHand();
-		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
+		VectropyBidAction lastBid = (VectropyBidAction)parms.getLastBid();
 		double totalCards = parms.getCardsInPlay();
 		int jokerValue = settings.getJokerValue();
 		boolean includeMoons = settings.getIncludeMoons();
 		boolean includeStars = settings.getIncludeStars();
-		
-		int clubsCount = countSuit(Suit.Clubs, hand, jokerValue);
-		int diamondsCount = countSuit(Suit.Diamonds, hand, jokerValue);
-		int heartsCount = countSuit(Suit.Hearts, hand, jokerValue);
-		int moonsCount = countSuit(Suit.Moons, hand, jokerValue);
-		int spadesCount = countSuit(Suit.Spades, hand, jokerValue);
-		int starsCount = countSuit(Suit.Stars, hand, jokerValue);
 
 		if (lastBid == null)
 		{
 			log("Starting this round", logging);
-
-			if (totalCards <= 4)
-			{
-				VectropyBid bid = VectropyBid.factoryEmpty(includeMoons, includeStars);
-				return bid.incrementSuitAndGet(Suit.random(includeMoons, includeStars));
-			}
-			else
-			{
-				int clubsBid = Math.max(0, clubsCount + coin.nextInt(3) - 1);
-				int diamondsBid = Math.max(0, diamondsCount + coin.nextInt(3) - 1);
-				int heartsBid = Math.max(0, heartsCount + coin.nextInt(3) - 1);
-				
-				int moonsBid = 0;
-				if (includeMoons)
-				{
-					moonsBid = Math.max(0, moonsCount + coin.nextInt(3) - 1);
-				}
-				
-				int spadesBid = Math.max(0, spadesCount + coin.nextInt(3) - 1);
-				
-				int starsBid = 0;
-				if (includeStars)
-				{
-					starsBid = Math.max(0, starsCount + coin.nextInt(3) - 1);
-				}
-
-				VectropyBid bid = new VectropyBid(clubsBid, diamondsBid, heartsBid, moonsBid, spadesBid,
-												  starsBid, includeMoons, includeStars);
-
-				int newTotal = bid.getTotal();
-				if (newTotal == 0)
-				{
-					var suit = Suit.random(includeMoons, includeStars);
-					bid = bid.incrementSuitAndGet(suit);
-				}
-
-				return bid;
-			}
+			return getBasicVectropyOpening(opponent.getName(), hand, parms);
 		}
 		else
 		{
@@ -132,17 +87,17 @@ public class VectCpuStrategies
 			if (allNonNegative(diffMap))
 			{
 				log("Auto-minbid as I could see everything.", logging);
-				return opponentMinBidSuit(lastBid, Suit.random(includeMoons, includeStars));
+				return opponentMinBidSuit(opponent, lastBid, Suit.random(includeMoons, includeStars));
 			}
 			else if (shouldAutoChallengeForIndividualSuit(diffMap, thirdThreshold))
 			{
 				log("Auto-challenged for individual suit.", logging);
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (shouldAutoChallengeForOverall(diffMap, unseenCards))
 			{
 				log("Auto-challenged for overall.", logging);
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (bidIsSensible(diffMap, unseenCards))
 			{
@@ -150,11 +105,11 @@ public class VectCpuStrategies
 				
 				if (choice < 5) //0,2,3,4
 				{
-					return opponentMinBidSuit(lastBid, suitWithHighestDiff);
+					return opponentMinBidSuit(opponent, lastBid, suitWithHighestDiff);
 				}
 				else //5,6,7,8,9
 				{
-					return opponentMinBidSuit(lastBid, Suit.random(includeMoons, includeStars));
+					return opponentMinBidSuit(opponent, lastBid, Suit.random(includeMoons, includeStars));
 				}
 			}
 			else
@@ -163,69 +118,36 @@ public class VectCpuStrategies
 				int choice = coin.nextInt(2);
 				if (choice == 0)
 				{
-					return opponentMinBidSuit(lastBid, Suit.random(includeMoons, includeStars));
+					return opponentMinBidSuit(opponent, lastBid, Suit.random(includeMoons, includeStars));
 				}
 				else 
 				{
-					return new ChallengeBid();
+					return new ChallengeAction(opponent.getName(), false);
 				}
 			}
 		}
 	}
 	
-	private static Bid processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
+	private static PlayerAction processEvTurnAndRevealCard(Player opponent, StrategyParams parms)
 	{
-		Bid bid = processEvTurn(opponent, parms);
-		CpuStrategies.setCardToReveal(bid, parms.getSettings(), opponent);
-		return bid;
+		var action = processEvTurn(opponent, parms);
+		CpuStrategies.setCardToReveal(action, parms.getSettings(), opponent);
+		return action;
 	}
 	
-	private static Bid processEvTurn(Player opponent, StrategyParams parms)
+	private static PlayerAction processEvTurn(Player opponent, StrategyParams parms)
 	{
 		boolean logging = parms.getLogging();
 		log("EV strategy for this turn", logging);
-		Random coin = new Random();
 		List<String> hand = opponent.getHand();
 		
 		//Parms
-		VectropyBid lastBid = (VectropyBid)parms.getLastBid();
-		boolean includeMoons = parms.getSettings().getIncludeMoons();
-		boolean includeStars = parms.getSettings().getIncludeStars();
+		VectropyBidAction lastBid = (VectropyBidAction)parms.getLastBid();
 		
 		if (lastBid == null)
 		{
 			log("Starting this round", logging);
-			Map<Suit, Double> hmEvBySuit = getEvMap(hand, parms.getSettings(), parms.getCardsInPlay());
-			log("EV HashMap = " + hmEvBySuit, logging);
-			
-			int clubsBid = getOpeningBidForSuitBasedOnEv(Suit.Clubs, hmEvBySuit);
-			int diamondsBid = getOpeningBidForSuitBasedOnEv(Suit.Diamonds, hmEvBySuit);
-			int heartsBid = getOpeningBidForSuitBasedOnEv(Suit.Hearts, hmEvBySuit);
-			int moonsBid = getOpeningBidForSuitBasedOnEv(Suit.Moons, hmEvBySuit);
-			int spadesBid = getOpeningBidForSuitBasedOnEv(Suit.Spades, hmEvBySuit);
-			int starsBid = getOpeningBidForSuitBasedOnEv(Suit.Stars, hmEvBySuit);
-			
-			VectropyBid bid = new VectropyBid(clubsBid, diamondsBid, heartsBid, moonsBid, spadesBid,
-											  starsBid, includeMoons, includeStars);
-
-			int newTotal = bid.getTotal();
-			if (newTotal == 0)
-			{
-				int choice = coin.nextInt(10);
-				Suit suit;
-				if (choice < 6)
-				{
-					suit = getSuitWithMostPositiveValue(hmEvBySuit);
-				}
-				else
-				{
-					suit = Suit.random(includeMoons, includeStars);
-				}
-				
-				bid = bid.incrementSuitAndGet(suit);
-			}
-
-			return bid;
+			return getEvVectropyOpening(opponent.getName(), hand, parms);
 		}
 		else
 		{
@@ -242,54 +164,27 @@ public class VectCpuStrategies
 			if (belowEvInAllSuits(hmEvDifferenceBySuit))
 			{
 				log("Auto-minbid as bid is below EV in all suits.", logging);
-				return opponentMinBidSuit(lastBid, suitWithHighestDiff);
+				return opponentMinBidSuit(opponent, lastBid, suitWithHighestDiff);
 			}
 			else if (shouldAutoChallengeForEvDiffOfIndividualSuit(hmEvDifferenceBySuit))
 			{
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else if (shouldAutoChallengeForMultipleSuitsOverEv(hmEvDifferenceBySuit))
 			{
-				return new ChallengeBid();
+				return new ChallengeAction(opponent.getName(), false);
 			}
 			else
 			{
-				return opponentMinBidSuit(lastBid, suitWithHighestDiff);
+				return opponentMinBidSuit(opponent, lastBid, suitWithHighestDiff);
 			}
 		}
 	}
-	
-	private static int getOpeningBidForSuitBasedOnEv(Suit suit, Map<Suit, Double> hmEvBySuit)
-	{
-		if (!hmEvBySuit.containsKey(suit)) {
-			return 0;
-		}
 
-		double ev = hmEvBySuit.get(suit);
-		int evFloor = (int)Math.floor(ev);
-		
-		Random random = new Random();
-		int adjustmentChoice = random.nextInt(20);
-		
-		if (adjustmentChoice < 11)
-		{
-			evFloor -= 1;
-		}
-		else if (adjustmentChoice < 18)
-		{
-			evFloor -= 2;
-		}
-		else
-		{
-			evFloor -= 3;
-		}
-		
-		return Math.max(evFloor, 0);
-	}
-
-	private static VectropyBid opponentMinBidSuit(VectropyBid lastBid, Suit suit)
+	private static VectropyBidAction opponentMinBidSuit(Player opponent, VectropyBidAction lastBid, Suit suit)
 	{
-		return lastBid.incrementSuitAndGet(suit);
+		var map = lastBid.incrementSuit(suit).getAmounts();
+		return new VectropyBidAction(opponent.getName(), false, map);
 	}
 
 	private static void log(String text, boolean logging) {

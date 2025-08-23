@@ -2,6 +2,7 @@ import com.github.alyssaburlton.swingtest.findAll
 import com.github.alyssaburlton.swingtest.findWindow
 import com.github.alyssaburlton.swingtest.flushEdt
 import com.github.alyssaburlton.swingtest.getChild
+import game.BidAction
 import game.GameSettings
 import http.ApiResponse
 import http.ClientErrorCode
@@ -17,9 +18,11 @@ import javax.swing.SwingUtilities
 import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
 import online.screen.OnlineChatPanel
+import strategy.IRandom
 import testCore.makeGameSettings
 import util.CpuStrategies
 import util.SimulationParams
+import util.StrategyParams
 
 fun getInfoDialog() = getOptionPaneDialog("Information")
 
@@ -89,3 +92,26 @@ fun makeSimulationParams(
         randomiseOrder,
         forceStart,
     )
+
+fun makeStrategyParams(
+    settings: GameSettings = makeGameSettings(),
+    cardsInPlay: Int = 4,
+    opponentCardsOnPlay: List<String> = emptyList(),
+    lastBid: BidAction<*>? = null,
+    logging: Boolean = true,
+) = StrategyParams(settings, cardsInPlay, opponentCardsOnPlay, lastBid, logging)
+
+class TestRandom(vararg sequence: Int) : IRandom {
+    private val numbers = sequence.toMutableList()
+
+    override fun nextInt(until: Int): Int {
+        val result = numbers.removeFirst()
+        if (result >= until) {
+            throw IllegalStateException(
+                "Next choice is greater than passed limit: $result > $until"
+            )
+        }
+
+        return result
+    }
+}

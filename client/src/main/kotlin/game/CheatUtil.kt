@@ -1,7 +1,7 @@
 package game
 
 fun getMaxBidString(cards: List<String>, settings: GameSettings) =
-    Suit.filter(settings.includeMoons, settings.includeStars).joinToString { suit ->
+    Suit.filter(settings).joinToString { suit ->
         val amount = countSuit(suit, cards, settings.jokerValue)
         "$amount${suit.letter}"
     }

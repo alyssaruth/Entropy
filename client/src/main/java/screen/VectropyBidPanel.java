@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -24,25 +25,33 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import game.Suit;
-import object.Bid;
-import object.VectropyBid;
+import game.VectropyBidAction;
 import util.Debug;
 import util.EntropyColour;
 import util.Registry;
 
-public class VectropyBidPanel extends BidPanel
+public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 							  implements ActionListener,
 							             ChangeListener,
 							             Registry
 {
-	private VectropyBid lastBid = VectropyBid.factoryEmpty(false, false);
+	private VectropyBidAction lastBid = null;
 	private boolean illegalAllowed = false;
 	private boolean includeMoons = false;
 	private boolean includeStars = false;
 	private boolean online = false;
-	
-	public VectropyBidPanel()
+	private HashMap<Suit, JSpinner> suitSpinners = new HashMap<>() {{
+		put(Suit.Clubs, clubSpinner);
+		put(Suit.Diamonds, diamondSpinner);
+		put(Suit.Hearts, heartSpinner);
+		put(Suit.Spades, spadeSpinner);
+		put(Suit.Moons, moonSpinner);
+		put(Suit.Stars, starSpinner);
+	}};
+
+	public VectropyBidPanel(String playerName, HandPanelMk2 handPanel)
 	{
+		super(playerName, handPanel);
 		setLayout(new BorderLayout(0, 0));
 		updateSpinnerColours();
 		
@@ -224,30 +233,23 @@ public class VectropyBidPanel extends BidPanel
 		totalCardsLabel.setText("x " + totalNumberOfCards);
 		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
-		
-		lastBid = VectropyBid.factoryEmpty(includeMoons, includeStars);
+
+		lastBid = null;
 		adjust(lastBid);
 	}
 	
 	@Override
-	public void adjust(Bid bid)
+	public void adjust(VectropyBidAction bid)
 	{
-		VectropyBid lastBid = (VectropyBid)bid;
-		this.lastBid = lastBid;
-		
-		int clubs = lastBid.getClubs();
-		int diamonds = lastBid.getDiamonds();
-		int hearts = lastBid.getHearts();
-		int moons = lastBid.getMoons();
-		int spades = lastBid.getSpades();
-		int stars = lastBid.getStars();
-		
-		clubSpinner.setModel(new SpinnerNumberModel(clubs, clubs, maxBid, 1));
-		diamondSpinner.setModel(new SpinnerNumberModel(diamonds, diamonds, maxBid, 1));
-		heartSpinner.setModel(new SpinnerNumberModel(hearts, hearts, maxBid, 1));
-		moonSpinner.setModel(new SpinnerNumberModel(moons, moons, maxBid, 1));
-		spadeSpinner.setModel(new SpinnerNumberModel(spades, spades, maxBid, 1));
-		starSpinner.setModel(new SpinnerNumberModel(stars, stars, maxBid, 1));
+		this.lastBid = bid;
+
+		suitSpinners.forEach((suit, spinner) -> {
+			var amount = lastBid.getAmount(suit);
+			if (amount != null) {
+				int min = (int)amount;
+				spinner.setModel(new SpinnerNumberModel(min, min, maxBid, 1));
+			}
+		});
 	}
 	
 	private void setIllegalButtonState()
@@ -262,51 +264,28 @@ public class VectropyBidPanel extends BidPanel
 	
 	private void updateSpinnerColours()
 	{
-		String numberOfColoursStr = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-		boolean fourColours = (numberOfColoursStr.equals(Registry.FOUR_COLOURS));
-		
-		if (fourColours)
-		{
-			clubLabel.setForeground(EntropyColour.COLOUR_SUIT_GREEN);
-			diamondLabel.setForeground(Color.BLUE);
-			moonLabel.setForeground(EntropyColour.COLOUR_SUIT_PURPLE);
-		}
-		else
-		{
-			clubLabel.setForeground(Color.BLACK);
-			diamondLabel.setForeground(Color.RED);
-			moonLabel.setForeground(EntropyColour.COLOUR_SUIT_GOLD);
-		}
+		clubLabel.setForeground(Suit.Clubs.getColour());
+		diamondLabel.setForeground(Suit.Diamonds.getColour());
+		moonLabel.setForeground(Suit.Moons.getColour());
 	}
 	
 	private void setBidButtonState()
 	{
-		VectropyBid currentSelection = getBidFromSpinners();
+		VectropyBidAction currentSelection = getBidFromSpinners();
 		boolean enabled = currentSelection.higherThan(lastBid);
 		btnBid.setEnabled(enabled);
 	}
 	
-	private VectropyBid getBidFromSpinners()
+	private VectropyBidAction getBidFromSpinners()
 	{
-		int clubs = (int)clubSpinner.getValue();
-		int diamonds = (int)diamondSpinner.getValue();
-		int hearts = (int)heartSpinner.getValue();
-		
-		int moons = 0;
-		if (includeMoons)
-		{
-			moons = (int)moonSpinner.getValue();
-		}
-		
-		int spades = (int)spadeSpinner.getValue();
-		
-		int stars = 0;
-		if (includeStars)
-		{
-			stars = (int)starSpinner.getValue();
-		}
-		
-		return new VectropyBid(clubs, diamonds, hearts, moons, spades, stars, includeMoons, includeStars);
+		var map = new HashMap<Suit, Integer>();
+		var suits = Suit.filter(includeMoons, includeStars);
+		suits.forEach(suit -> {
+			var amount = (int)suitSpinners.get(suit).getValue();
+			map.put(suit, amount);
+		});
+
+		return new VectropyBidAction(playerName, handPanel.isPlayingBlind(), map);
 	}
 	
 	@Override

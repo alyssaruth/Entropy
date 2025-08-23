@@ -4,7 +4,7 @@ import achievement.AchievementSetting;
 import achievement.AchievementUtilKt;
 import bean.AbstractDevScreen;
 import game.GameMode;
-import object.Bid;
+import game.PlayerAction;
 import object.BidListCellRenderer;
 import object.Player;
 import online.screen.EntropyLobby;
@@ -169,7 +169,7 @@ public final class MainScreen extends AbstractDevScreen
 		splitPane.setLeftComponent(leftPanel);
 		leftPanel.setLayout(new BorderLayout(0, 0));
 		leftPanel.add(commandBar, BorderLayout.SOUTH);
-		history.setCellRenderer(new BidListCellRenderer());
+		history.setCellRenderer(bidRenderer);
 
 		addKeyListener(this);
 		commandBar.setCheatListener(this);
@@ -180,6 +180,7 @@ public final class MainScreen extends AbstractDevScreen
 	}
 	
 	//Menu
+	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu mnFile = new JMenu("File");
 	private final JMenuItem mntmNewGame = new JMenuItem("New Game");
@@ -199,9 +200,9 @@ public final class MainScreen extends AbstractDevScreen
 	private final JMenuItem mntmViewLogs = new JMenuItem("View logs...");
 	
 	//Screen
-	private final  DefaultListModel<Bid> listmodel = new DefaultListModel<>();
+	private final  DefaultListModel<PlayerAction> listmodel = new DefaultListModel<>();
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JList<Bid> history = new JList<>(listmodel);
+	private final JList<PlayerAction> history = new JList<>(listmodel);
 	private final JLabel lblBidHistory = new JLabel("Bid History");
 	private final JButton btnNextRound = new JButton("Next");
 	private final JTextPane lblResult = new JTextPane();
@@ -265,7 +266,7 @@ public final class MainScreen extends AbstractDevScreen
 				btnReplay.setEnabled(false);
 				btnNextRound.setVisible(false);
 				lblResult.setVisible(false);
-				gamePanel.startNewGame();
+				gamePanel.startNewGame(bidRenderer);
 			}
 		}
 		catch (Throwable e)
@@ -504,7 +505,7 @@ public final class MainScreen extends AbstractDevScreen
 			btnReplay.setVisible(true);
 			scrollPane.setVisible(true);
 			mntmContinueGame.setEnabled(false);
-			gamePanel.continueGame();
+			gamePanel.continueGame(bidRenderer);
 		}
 		catch (Throwable t)
 		{
@@ -798,7 +799,7 @@ public final class MainScreen extends AbstractDevScreen
 		}
 	}
 	
-	public DefaultListModel<Bid> getListmodel()
+	public DefaultListModel<PlayerAction> getListmodel()
 	{
 		return listmodel;
 	}

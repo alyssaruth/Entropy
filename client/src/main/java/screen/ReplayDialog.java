@@ -11,6 +11,7 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -33,8 +34,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import game.PlayerAction;
 import game.Suit;
-import object.Bid;
 import object.BidListCellRenderer;
 import http.dto.OnlineMessage;
 import object.PlayerLabel;
@@ -44,7 +45,9 @@ import util.*;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.isCardRelevant;
+import static game.RegistryUtilKt.populateActions;
 import static game.RenderingUtilKt.getVectropyResult;
+import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
 public class ReplayDialog extends JFrame
@@ -262,7 +265,7 @@ public class ReplayDialog extends JFrame
 			starFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilter.png")));
 			starFilter.setBounds(828, 275, 40, 40);
 			getContentPane().add(starFilter);
-			history.setCellRenderer(new BidListCellRenderer());
+			history.setCellRenderer(bidRenderer);
 
 			initialiseListeners();
 		}
@@ -271,7 +274,8 @@ public class ReplayDialog extends JFrame
 			Debug.stackTrace(t);
 		}
 	}
-	
+
+	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
 	private final JSeparator separator = new JSeparator();
 	private final Panel panelOpponentCards = new Panel();
 	private final JLabel opponentCard5 = new JLabel();
@@ -301,9 +305,9 @@ public class ReplayDialog extends JFrame
 	private final JLabel[] opponentTwoCards = {opponentTwoCard1, opponentTwoCard2, opponentTwoCard3, opponentTwoCard4, opponentTwoCard5};
 	private final JLabel[] opponentOneCards = {opponentCard1, opponentCard2, opponentCard3, opponentCard4, opponentCard5};
 	private final JLabel[] playerCards = {playerCard5, playerCard4, playerCard3, playerCard2, playerCard1};
-	private final  DefaultListModel<Bid> listmodel = new DefaultListModel<>();
+	private final  DefaultListModel<PlayerAction> listmodel = new DefaultListModel<>();
 	private final JScrollPane scrollPane = new JScrollPane();
-	private final JList<Bid> history = new JList<>(listmodel);
+	private final JList<PlayerAction> history = new JList<>(listmodel);
 	private final JLabel lblBidHistory = new JLabel("Bid History");
 	private final PlayerLabel lblOpponentOne = new PlayerLabel("Mark");
 	private final PlayerLabel lblPlayer = new PlayerLabel("Player");
@@ -543,6 +547,13 @@ public class ReplayDialog extends JFrame
 		lblOpponentOne.setText(opponentOneName + opponentOneStar);
 		lblOpponentTwo.setText(opponentTwoName + opponentTwoStar);
 		lblOpponentThree.setText(opponentThreeName + opponentThreeStar);
+
+		bidRenderer.updateColours(new HashMap<>() {{
+			put(playerName, getColourForPlayerNumber(0));
+			put(opponentOneName, getColourForPlayerNumber(1));
+			put(opponentTwoName, getColourForPlayerNumber(2));
+			put(opponentThreeName, getColourForPlayerNumber(3));
+		}});
 		
 		setLabelVisibility(lblPlayer, playerName, playerEnabled, REPLAY_STRING_PLAYER_COLOUR, "red");
 		setLabelVisibility(lblOpponentOne, opponentOneName, opponentOneEnabled, REPLAY_STRING_OPPONENT_ONE_COLOUR, "blue");
@@ -575,10 +586,10 @@ public class ReplayDialog extends JFrame
 	
 	private boolean playerLeftThisRound(String name)
 	{
-		int historySize = replay.getInt(roundNumber + REPLAY_INT_HISTORY_SIZE, 0);
+		int historySize = replay.getInt(roundNumber + SHARED_INT_HISTORY_SIZE, 0);
 		for (int i = 0; i < historySize; i++)
 		{
-			String modelItem = replay.get(roundNumber + REPLAY_STRING_LISTMODEL + i, "");
+			String modelItem = replay.get(roundNumber + SHARED_STRING_LISTMODEL + i, "");
 			if (modelItem.contains(name + " left"))
 			{
 				return true;
@@ -690,14 +701,7 @@ public class ReplayDialog extends JFrame
 	
 	private void populateBidHistory()
 	{
-		listmodel.clear();
-		int historySize = replay.getInt(roundNumber + REPLAY_INT_HISTORY_SIZE, 0);
-		for (int i = 0; i < historySize; i++)
-		{
-			String modelItem = replay.get(roundNumber + REPLAY_STRING_LISTMODEL + i, "");
-			Bid bid = Bid.factoryFromXmlString(modelItem, includeMoons, includeStars);
-			listmodel.addElement(bid);
-		}
+		populateActions(replay, listmodel, roundNumber);
 	}
 	
 	private void showResult(Suit suit)
