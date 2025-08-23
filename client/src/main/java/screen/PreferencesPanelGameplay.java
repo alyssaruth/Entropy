@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import achievement.Reward;
 import game.GameMode;
 import util.Debug;
 
@@ -254,12 +255,12 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 	
 	private void hideLockedFields()
 	{
-		toggleLockedComponent(cbNegativeJacks, REWARDS_BOOLEAN_NEGATIVE_JACKS);
-		toggleLockedComponent(cbPlayBlind, REWARDS_BOOLEAN_BLIND);
-		toggleLockedComponent(rdbtnVectropy, REWARDS_BOOLEAN_VECTROPY);
-		toggleLockedComponent(cbPlayersRevealCards, REWARDS_BOOLEAN_CARD_REVEAL);
-		toggleLockedComponent(cbIncludeMoons, REWARDS_BOOLEAN_EXTRA_SUITS);
-		toggleLockedComponent(cbIncludeStars, REWARDS_BOOLEAN_EXTRA_SUITS);
+		toggleLockedComponent(cbNegativeJacks, Reward.NegativeJacks);
+		toggleLockedComponent(cbPlayBlind, Reward.Blind);
+		toggleLockedComponent(rdbtnVectropy, Reward.Vectropy);
+		toggleLockedComponent(cbPlayersRevealCards, Reward.CardReveal);
+		toggleLockedComponent(cbIncludeMoons, Reward.ExtraSuits);
+		toggleLockedComponent(cbIncludeStars, Reward.ExtraSuits);
 	}
 	
 	@Override

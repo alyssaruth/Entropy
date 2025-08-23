@@ -1,6 +1,7 @@
 package screen
 
 import achievement.AchievementSetting
+import achievement.Reward
 import achievement.isUnlocked
 import help.FundamentalsGlossary
 import help.FundamentalsTheDeck
@@ -225,7 +226,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
             gameRules.add(entropyRules)
         }
 
-        if (Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_VECTROPY, false)) {
+        if (Reward.Vectropy.isUnlocked()) {
             val vectropyRules = DefaultMutableTreeNode("Vectropy")
             addNodeBasedOnString(vectropyRules, rulesVectropyIntroduction, searchStr)
             addNodeBasedOnString(vectropyRules, rulesVectropyBidding, searchStr)
@@ -236,7 +237,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
             }
         }
 
-        if (Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_ILLEGAL, false)) {
+        if (Reward.Illegal.isUnlocked()) {
             addNodeBasedOnString(gameRules, rulesIllegal, searchStr)
         }
 
@@ -262,7 +263,7 @@ class HelpDialog : JFrame(), TreeSelectionListener, WindowListener, Registry {
         addNodeBasedOnString(misc, miscBugReport, searchStr)
         addNodeBasedOnString(misc, miscClearingSaveData, searchStr)
 
-        if (Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_CHEATS, false)) {
+        if (Reward.Cheats.isUnlocked()) {
             addNodeBasedOnString(misc, miscCheatCodes, searchStr)
         }
 

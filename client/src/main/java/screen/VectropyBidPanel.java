@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import achievement.Reward;
 import game.Suit;
 import game.VectropyBidAction;
 import util.Debug;
@@ -256,7 +257,7 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 	{
 		if (!online)
 		{
-			illegalAllowed |= rewards.getBoolean(REWARDS_BOOLEAN_ILLEGAL, false);
+			illegalAllowed |= Reward.Illegal.isUnlocked();
 		}
 		
 		btnIllegal.setVisible(illegalAllowed);

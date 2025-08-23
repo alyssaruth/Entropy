@@ -1,12 +1,12 @@
 package help
 
+import achievement.Reward
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JTextPane
 import util.EntropyColour
-import util.Registry
 
-class RulesVectropyBidding : HelpPanel(), Registry {
+class RulesVectropyBidding : HelpPanel() {
     override val nodeName = "Bidding"
 
     private val title = JTextPane()
@@ -58,8 +58,6 @@ class RulesVectropyBidding : HelpPanel(), Registry {
     }
 
     private fun setPaneOneText() {
-        val extraSuits = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_EXTRA_SUITS, false)
-
         var text =
             "<html>A round starts with the first person to play bidding. At the start of a new game, "
         text +=
@@ -74,7 +72,7 @@ class RulesVectropyBidding : HelpPanel(), Registry {
             "(<font color=\"$clubsColour\">\u2663</font>,  <font color=\"$diamondsColour\">\u2666</font>, "
         text += "<font color=\"red\">\u2665</font>, \u2660). "
 
-        if (extraSuits) {
+        if (Reward.ExtraSuits.isUnlocked()) {
             text += "This vector naturally extends if additional suits are in play. "
         }
 

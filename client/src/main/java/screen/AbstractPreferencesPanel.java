@@ -1,11 +1,11 @@
 package screen;
 
-import java.awt.event.ActionListener;
-
-import javax.swing.AbstractButton;
-import javax.swing.JPanel;
-
+import achievement.Reward;
+import screen.preference.PreferencesDialog;
 import util.Registry;
+
+import javax.swing.*;
+import java.awt.event.ActionListener;
 
 public abstract class AbstractPreferencesPanel extends JPanel
 											   implements Registry, 
@@ -17,11 +17,11 @@ public abstract class AbstractPreferencesPanel extends JPanel
 	public abstract boolean valid();
 	public abstract void savePreferences();
 	
-	protected void toggleLockedComponent(AbstractButton c, String rewardsStr)
+	protected void toggleLockedComponent(AbstractButton c, Reward requiredReward)
 	{
-		boolean unlocked = rewards.getBoolean(rewardsStr, false);
+		boolean unlocked = requiredReward.isUnlocked();
 		String text = unlocked? c.getText() : "Locked";
-		String toolTipText = unlocked? c.getToolTipText() : "";
+		String toolTipText = unlocked? c.getToolTipText() : "Unlock at " + requiredReward.getThreshold() + " achievements";
 		
 		c.setText(text);
 		c.setToolTipText(toolTipText);

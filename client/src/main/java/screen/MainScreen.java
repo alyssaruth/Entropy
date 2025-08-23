@@ -2,6 +2,7 @@ package screen;
 
 import achievement.AchievementSetting;
 import achievement.AchievementUtilKt;
+import achievement.Reward;
 import bean.AbstractDevScreen;
 import game.GameMode;
 import game.PlayerAction;
@@ -11,6 +12,7 @@ import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import screen.preference.PreferencesDialog;
 import settings.Setting;
 import settings.SettingChangeListener;
 import util.*;
@@ -30,6 +32,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import static achievement.AchievementUtilKt.getAchievementsEarned;
+import static achievement.AchievementUtilKt.unlockRewards;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
 import static util.ClientGlobals.achievementStore;
@@ -648,7 +651,7 @@ public final class MainScreen extends AbstractDevScreen
 	public boolean commandsEnabled()
 	{
 		return ClientUtil.devMode
-		  || rewards.getBoolean(Registry.REWARDS_BOOLEAN_CHEATS, false);
+		  || Reward.Cheats.isUnlocked();
 	}
 	
 	@Override
@@ -688,6 +691,11 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			AchievementsUtil.unlockBlueScreenOfDeath();
 		}
+		else if (command.startsWith("unlock "))
+		{
+			var threshold = command.replace("unlock ", "");
+			unlockRewards(Integer.parseInt(threshold));
+		}
 		else 
 		{
 			textToShow = gamePanel.processCommand(command);
@@ -720,7 +728,7 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			int spaceIndex = command.indexOf(' ');
 			int achievements = Integer.parseInt(command.substring(spaceIndex+1));
-			AchievementsUtil.unlockRewards(achievements);
+			unlockRewards(achievements);
 		}
 		else if (command.equals("stacks"))
 		{
@@ -751,7 +759,7 @@ public final class MainScreen extends AbstractDevScreen
 		setViewLogsVisibility();
 		restartTimers();
 
-		AchievementsUtil.unlockRewards(getAchievementsEarned());
+		unlockRewards(getAchievementsEarned());
 	}
 	
 	private void cleanUpReplayNodes()

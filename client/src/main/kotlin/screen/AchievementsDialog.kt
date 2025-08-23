@@ -1,5 +1,6 @@
 package screen
 
+import achievement.Reward
 import achievement.getAchievementsEarned
 import bean.AchievementBadge
 import java.awt.Color
@@ -36,25 +37,16 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
     private val btnRight = JButton("\u25B6")
 
     private val testTube = JLabel("")
-    private val reward5: RewardStar =
-        RewardStar(5, "Four Colours", RewardDialog.REWARD_BANNER_FOUR_COLOUR)
-    private val reward10: RewardStar =
-        RewardStar(10, "Negative Jacks", RewardDialog.REWARD_BANNER_NEGATIVE_JACKS)
-    private val reward15: RewardStar =
-        RewardStar(15, "Blind Play", RewardDialog.REWARD_BANNER_BLIND)
-    private val reward20: RewardStar =
-        RewardStar(20, "New Deck Design", RewardDialog.REWARD_BANNER_MINIMALIST)
-    private val reward25: RewardStar =
-        RewardStar(25, "Vectropy", RewardDialog.REWARD_BANNER_VECTROPY)
-    private val reward30: RewardStar =
-        RewardStar(30, "Card Reveal", RewardDialog.REWARD_BANNER_CARD_REVEAL)
-    private val reward35: RewardStar =
-        RewardStar(35, "Extra Suits", RewardDialog.REWARD_BANNER_EXTRA_SUITS)
-    private val reward40: RewardStar =
-        RewardStar(40, "Illegal!", RewardDialog.REWARD_BANNER_ILLEGAL)
-    private val reward45: RewardStar =
-        RewardStar(45, "New Joker Design", RewardDialog.REWARD_BANNER_DEVELOPERS)
-    private val reward50: RewardStar = RewardStar(50, "Cheats", RewardDialog.REWARD_BANNER_CHEATS)
+    private val reward5: RewardStar = RewardStar("Four Colours", Reward.FourColours)
+    private val reward10: RewardStar = RewardStar("Negative Jacks", Reward.NegativeJacks)
+    private val reward15: RewardStar = RewardStar("Blind Play", Reward.Blind)
+    private val reward20: RewardStar = RewardStar("New Deck Design", Reward.MinimalistDeck)
+    private val reward25: RewardStar = RewardStar("Vectropy", Reward.Vectropy)
+    private val reward30: RewardStar = RewardStar("Card Reveal", Reward.CardReveal)
+    private val reward35: RewardStar = RewardStar("Extra Suits", Reward.ExtraSuits)
+    private val reward40: RewardStar = RewardStar("Illegal!", Reward.Illegal)
+    private val reward45: RewardStar = RewardStar("New Joker Design", Reward.DeveloperSet)
+    private val reward50: RewardStar = RewardStar("Cheats", Reward.Cheats)
 
     private val title = JLabel("")
     private val achievementName = JLabel("Achievement Name")
@@ -250,7 +242,7 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
     override fun mouseClicked(e: MouseEvent) {
         val c: RewardStar = e.component as RewardStar
         if (c.isUnlocked(getAchievementsEarned()) && !redrawing) {
-            RewardDialog.showDialog(c.imageName)
+            RewardDialog.showDialog(c.reward)
         }
     }
 

@@ -2,10 +2,11 @@ package achievement
 
 import javax.swing.ImageIcon
 import screen.AchievementsDialog
+import screen.HelpDialog
 import screen.MainScreen
+import screen.RewardDialog
 import screen.ScreenCache
 import settings.Setting
-import util.AchievementsUtil
 import util.ClientGlobals
 import util.ClientGlobals.achievementStore
 import util.ClientUtil
@@ -40,7 +41,21 @@ fun unlockAchievement(achievement: Achievement) {
         ClientGlobals.sessionApi.updateAchievementCount(achievementsEarned)
     }
 
-    AchievementsUtil.unlockRewards(achievementsEarned)
+    unlockRewards(achievementsEarned)
+}
+
+fun unlockRewards(achievementsEarned: Int) {
+    Reward.entries.forEach { reward ->
+        if (
+            achievementsEarned >= reward.threshold && !ClientGlobals.rewardStore.get(reward.setting)
+        ) {
+            ClientGlobals.rewardStore.save(reward.setting, true)
+            RewardDialog.showDialog(reward)
+        }
+    }
+
+    // Always refresh here in case there are new pages
+    ScreenCache.get<HelpDialog>().refreshNodes("")
 }
 
 fun updateAndUnlockVanity() {

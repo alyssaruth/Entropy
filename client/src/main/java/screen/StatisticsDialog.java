@@ -24,6 +24,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
 import achievement.AchievementSetting;
+import achievement.Reward;
 import util.DateUtil;
 import util.Debug;
 import util.Registry;
@@ -42,7 +43,7 @@ public class StatisticsDialog extends JDialog
 	{
 		try
 		{
-			vectropyUnlocked = rewards.getBoolean(REWARDS_BOOLEAN_VECTROPY, false);
+			vectropyUnlocked = Reward.Vectropy.isUnlocked();
 			getContentPane().setLayout(new BorderLayout(0, 0));
 			
 			panel_1 = new Panel();

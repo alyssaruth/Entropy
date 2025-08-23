@@ -26,6 +26,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultCaret;
 
+import achievement.Reward;
 import bean.ComboBoxItem;
 import object.DisabledComboBoxModel;
 import util.GameUtil;
@@ -225,9 +226,9 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	
 	private void hideLockedFields()
 	{
-		toggleLockedComponent(cbFourColour, REWARDS_BOOLEAN_FOUR_COLOURS);
-		toggleLockedComponent(rdbtnMinimalistDesign, REWARDS_BOOLEAN_MINIMALIST_DECK);
-		toggleLockedComponent(rdbtnDeveloperJokers, REWARDS_BOOLEAN_DEVELOPER_JOKERS);
+		toggleLockedComponent(cbFourColour, Reward.FourColours);
+		toggleLockedComponent(rdbtnMinimalistDesign, Reward.MinimalistDeck);
+		toggleLockedComponent(rdbtnDeveloperJokers, Reward.DeveloperSet);
 	}
 	
 	private void refreshDeckPreview()
@@ -277,30 +278,29 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 		backs.addElement(new ComboBoxItem<>(BACK_CODE_CLASSIC_BLUE, "Blue"));
 		backs.addElement(new ComboBoxItem<>("backRed", "Red"));
 		
-		addIfUnlocked(backs, new ComboBoxItem<>("backGreen", "Green"), 5, REWARDS_BOOLEAN_FOUR_COLOURS);
-		addIfUnlocked(backs, new ComboBoxItem<>("backPurple", "Purple"), 10, REWARDS_BOOLEAN_NEGATIVE_JACKS);
-		addIfUnlocked(backs, new ComboBoxItem<>("backOrange", "Orange"), 15, REWARDS_BOOLEAN_BLIND);
-		addIfUnlocked(backs, new ComboBoxItem<>("backLightBlue", "Light Blue"), 20, REWARDS_BOOLEAN_MINIMALIST_DECK);
-		addIfUnlocked(backs, new ComboBoxItem<>("backPink", "Pink"), 25, REWARDS_BOOLEAN_VECTROPY);
-		addIfUnlocked(backs, new ComboBoxItem<>("backSilver", "Silver"), 30, REWARDS_BOOLEAN_CARD_REVEAL);
-		addIfUnlocked(backs, new ComboBoxItem<>("backGold", "Gold"), 35, REWARDS_BOOLEAN_EXTRA_SUITS);
-		addIfUnlocked(backs, new ComboBoxItem<>("backMatrix", "Matrix"), 40, REWARDS_BOOLEAN_ILLEGAL);
-		addIfUnlocked(backs, new ComboBoxItem<>("backCosmic", "Cosmic"), 45, REWARDS_BOOLEAN_DEVELOPER_JOKERS);
-		addIfUnlocked(backs, new ComboBoxItem<>("backRainbow", "Rainbow"), 50, REWARDS_BOOLEAN_CHEATS);
+		addIfUnlocked(backs, new ComboBoxItem<>("backGreen", "Green"), Reward.FourColours);
+		addIfUnlocked(backs, new ComboBoxItem<>("backPurple", "Purple"), Reward.NegativeJacks);
+		addIfUnlocked(backs, new ComboBoxItem<>("backOrange", "Orange"), Reward.Blind);
+		addIfUnlocked(backs, new ComboBoxItem<>("backLightBlue", "Light Blue"), Reward.MinimalistDeck);
+		addIfUnlocked(backs, new ComboBoxItem<>("backPink", "Pink"), Reward.Vectropy);
+		addIfUnlocked(backs, new ComboBoxItem<>("backSilver", "Silver"), Reward.CardReveal);
+		addIfUnlocked(backs, new ComboBoxItem<>("backGold", "Gold"), Reward.ExtraSuits);
+		addIfUnlocked(backs, new ComboBoxItem<>("backMatrix", "Matrix"), Reward.Illegal);
+		addIfUnlocked(backs, new ComboBoxItem<>("backCosmic", "Cosmic"), Reward.DeveloperSet);
+		addIfUnlocked(backs, new ComboBoxItem<>("backRainbow", "Rainbow"), Reward.Cheats);
 		
 		return backs;
 	}
 	private void addIfUnlocked(Vector<ComboBoxItem<String>> backs, ComboBoxItem<String> item, 
-	  int achievementsRequired, String rewardStr)
+	  Reward reward)
 	{
-		boolean unlocked = rewards.getBoolean(rewardStr, false);
-		if (unlocked)
+		if (reward.isUnlocked())
 		{
 			backs.addElement(item);
 		}
 		else
 		{
-			ComboBoxItem<String> disabledItem = new ComboBoxItem<>("", achievementsRequired + " achievements to unlock");
+			ComboBoxItem<String> disabledItem = new ComboBoxItem<>("", reward.getThreshold() + " achievements to unlock");
 			disabledItem.setEnabled(false);
 			backs.addElement(disabledItem);
 		}

@@ -1,26 +1,26 @@
 package object;
 
+import achievement.Reward;
+
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class RewardStar extends JLabel 
 {
-	private int threshold;
 	private String hoverDesc;
-	private String imageName;
+	private Reward reward;
 	
-	public RewardStar(int threshold, String hoverDesc, String imageName)
+	public RewardStar(String hoverDesc, Reward reward)
 	{
 		super();
-		this.threshold = threshold;
 		this.hoverDesc = hoverDesc;
-		this.imageName = imageName;
+		this.reward = reward;
 	}
 	
 	public boolean isUnlocked(int achievementsEarned)
 	{
-		return achievementsEarned >= threshold;
+		return achievementsEarned >= reward.getThreshold();
 	}
 	
 	public String getHoverDesc()
@@ -28,9 +28,9 @@ public class RewardStar extends JLabel
 		return hoverDesc;
 	}
 	
-	public String getImageName()
+	public Reward getReward()
 	{
-		return imageName;
+		return reward;
 	}
 	
 	@Override

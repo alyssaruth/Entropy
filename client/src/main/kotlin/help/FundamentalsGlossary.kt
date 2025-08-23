@@ -1,12 +1,12 @@
 package help
 
+import achievement.Reward
 import java.awt.Color
 import java.awt.Font
 import javax.swing.JTextPane
 import util.EntropyColour
-import util.Registry
 
-class FundamentalsGlossary : HelpPanel(), Registry {
+class FundamentalsGlossary : HelpPanel() {
     override val nodeName = "Glossary"
 
     private val title = JTextPane()
@@ -31,11 +31,9 @@ class FundamentalsGlossary : HelpPanel(), Registry {
     override fun searchTermsToExclude() = listOf("perfect", "challenge")
 
     override fun refresh() {
-        val blindUnlocked = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_BLIND, false)
-
         var glossaryText = "<html>\r\n<ul style=\"margin-left:10px; padding:0px\">\r\n"
 
-        if (blindUnlocked) {
+        if (Reward.Blind.isUnlocked()) {
             glossaryText +=
                 "<li style=\"margin-bottom: 6px;\"><b>Blind:</b> Playing blind means not looking at your cards.</li>\r\n"
         }

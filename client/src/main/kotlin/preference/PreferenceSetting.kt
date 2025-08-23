@@ -1,0 +1,3 @@
+package preference
+
+object PreferenceSetting {}

@@ -1,5 +1,6 @@
 package online.screen;
 
+import achievement.Reward;
 import game.*;
 import http.dto.RoomSummary;
 import object.*;
@@ -212,15 +213,13 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	
 	private void setIcon()
 	{
-		boolean unlockedExtraSuits = rewards.getBoolean(REWARDS_BOOLEAN_EXTRA_SUITS, false);
-		
 		ArrayList<String> suits = new ArrayList<>();
 		suits.add("club");
 		suits.add("diamond");
 		suits.add("heart");
 		suits.add("spade");
 		
-		if (unlockedExtraSuits)
+		if (Reward.ExtraSuits.isUnlocked())
 		{
 			suits.add("moon");
 			suits.add("star");

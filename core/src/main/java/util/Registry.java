@@ -11,7 +11,6 @@ public interface Registry
 	//Actual preference wrappers
 	public static final Preferences savedGame = Preferences.userRoot().node("entropySavedgameNone");
 	public static final Preferences prefs = Preferences.userRoot().node("entropyPreferencesTuuug");
-	public static final Preferences rewards = Preferences.userRoot().node("entropyRewardsNone");
 	public static final Preferences inGameReplay = Preferences.userRoot().node("entropyReplayCurrent");
 	public static final Preferences fileReplay = Preferences.userRoot().node("entropyReplayFile");
 	public static final Preferences tempReplayStore = Preferences.userRoot().node("entropyTemp");
@@ -125,20 +124,6 @@ public interface Registry
 	public static final String REPLAY_INT_GAME_COMPLETE = "gameComplete";
 	public static final String REPLAY_INT_PLAYER_WON = "playerWon";
 	public static final String REPLAY_INT_GAME_MODE = "gameMode";
-	
-	//rewards
-	public static final String REWARDS_BOOLEAN_FOUR_COLOURS = "fourColours";
-	//public static final String REWARDS_BOOLEAN_JOKERS = "jokers";
-	public static final String REWARDS_BOOLEAN_NEGATIVE_JACKS = "negativeJacks";
-	public static final String REWARDS_BOOLEAN_MINIMALIST_DECK = "minimalist";
-	public static final String REWARDS_BOOLEAN_BLIND = "blind";
-	public static final String REWARDS_BOOLEAN_VECTROPY = "vectropy";
-	//public static final String REWARDS_BOOLEAN_HANDICAP = "handicap";
-	public static final String REWARDS_BOOLEAN_CARD_REVEAL = "cardReveal";
-	public static final String REWARDS_BOOLEAN_DEVELOPER_JOKERS = "developerSet";
-	public static final String REWARDS_BOOLEAN_ILLEGAL = "illegal";
-	public static final String REWARDS_BOOLEAN_EXTRA_SUITS = "extraSuits";
-	public static final String REWARDS_BOOLEAN_CHEATS = "cheats";
 	
 	//savedGame
 	public static final String SAVED_GAME_STRING_RESULT_TEXT = "resultText";

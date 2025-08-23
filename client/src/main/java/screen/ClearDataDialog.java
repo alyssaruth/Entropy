@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
 import static util.ClientGlobals.achievementStore;
+import static util.ClientGlobals.rewardStore;
 
 public class ClearDataDialog extends JDialog
 							 implements ActionListener,
@@ -109,7 +110,7 @@ public class ClearDataDialog extends JDialog
 			}
 
 			achievementStore.clear();
-			RegistryUtil.clearNode(rewards);
+			rewardStore.clear();
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();
 			DialogUtilNew.showInfo("Achievements and statistics were reset successfully.");
@@ -168,13 +169,7 @@ public class ClearDataDialog extends JDialog
 	private void removeStatisticsVariablesFromNode()
 	{
 		ScreenCache.get(MainScreen.class).resetStartTime();
-		achievementStore.delete(AchievementSetting.TimePlayed);
-		achievementStore.delete(AchievementSetting.BestStreak);
-		achievementStore.delete(AchievementSetting.CurrentStreak);
-		achievementStore.delete(AchievementSetting.EntropyGamesPlayed);
-		achievementStore.delete(AchievementSetting.VectropyGamesPlayed);
-		achievementStore.delete(AchievementSetting.EntropyGamesWon);
-		achievementStore.delete(AchievementSetting.VectropyGamesWon);
+		achievementStore.clear();
 	}
 	
 	private void resetPreferences()

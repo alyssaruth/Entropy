@@ -1,5 +1,7 @@
 package screen;
 
+import achievement.Reward;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,33 +22,20 @@ import javax.swing.SwingConstants;
 public class RewardDialog extends JDialog
 						  implements ActionListener
 {
-	public static final String REWARD_BANNER_FOUR_COLOUR = "rewardFourColour.png";
-	//public static final String REWARD_BANNER_JOKERS = "rewardJokers.png";
-	public static final String REWARD_BANNER_NEGATIVE_JACKS = "rewardNegativeJacks.png";
-	public static final String REWARD_BANNER_BLIND = "rewardBlind.png";
-	public static final String REWARD_BANNER_MINIMALIST = "rewardMinimalist.png";
-	public static final String REWARD_BANNER_VECTROPY = "rewardVectropy.png";
-	//public static final String REWARD_BANNER_HANDICAP = "rewardHandicap.png";
-	public static final String REWARD_BANNER_CARD_REVEAL = "rewardCardReveal.png";
-	public static final String REWARD_BANNER_DEVELOPERS = "rewardDevelopers.png";
-	public static final String REWARD_BANNER_ILLEGAL = "rewardIllegal.png";
-	public static final String REWARD_BANNER_EXTRA_SUITS = "rewardExtraSuits.png";
-	public static final String REWARD_BANNER_CHEATS = "rewardCheats.png";
-	
-	public RewardDialog(String imageName)
+	public RewardDialog(Reward reward)
 	{
 		topPanel.setLayout(new BorderLayout(0, 0));
 		rewardTitle.setFont(new Font("Tahoma", Font.BOLD, 16));
 		rewardTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		rewardTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		topPanel.add(rewardTitle, BorderLayout.NORTH);
-		ImageIcon banner = new ImageIcon(getClass().getResource("/rewards/" + imageName));
+		ImageIcon banner = new ImageIcon(getClass().getResource("/rewards/" + reward.getSettingName() + ".png"));
 		imageBanner.setHorizontalAlignment(SwingConstants.CENTER);
 		imageBanner.setIcon(banner);
 		topPanel.add(imageBanner, BorderLayout.SOUTH);
 		getContentPane().add(topPanel, BorderLayout.NORTH);
 		
-		setRewardDescriptionAndDialogSize(imageName);
+		setRewardDescriptionAndDialogSize(reward);
 		rewardDescription.setEditable(false);
 		rewardDescription.setOpaque(false);
 		rewardDescription.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
@@ -67,9 +56,9 @@ public class RewardDialog extends JDialog
 	private final JButton btnOk = new JButton("Ok");
 	
 	
-	public static void showDialog(String imageName)
+	public static void showDialog(Reward reward)
 	{
-		RewardDialog dialog = new RewardDialog(imageName);
+		RewardDialog dialog = new RewardDialog(reward);
 		
 		dialog.setLocationRelativeTo(null);
 		dialog.setResizable(false);
@@ -84,11 +73,11 @@ public class RewardDialog extends JDialog
 		setVisible(false);
 	}
 	
-	private void setRewardDescriptionAndDialogSize(String imageName)
+	private void setRewardDescriptionAndDialogSize(Reward reward)
 	{
 		String rewardStr = "";
 		
-		if (imageName.equals(REWARD_BANNER_BLIND))
+		if (reward == Reward.Blind)
 		{
 			rewardTitle.setText("Blind play unlocked!");
 			rewardStr = "Ramp up the challenge by making decisions without looking at your cards!"
@@ -99,7 +88,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 410));
 		}
-		else if (imageName.equals(REWARD_BANNER_DEVELOPERS))
+		else if (reward == Reward.DeveloperSet)
 		{
 			rewardTitle.setText("'Developers' joker set unlocked!");
 			rewardStr = "These jokers feature the faces of four people who helped to develop Entropy."
@@ -108,7 +97,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 330));
 		}
-		else if (imageName.equals(REWARD_BANNER_FOUR_COLOUR))
+		else if (reward == Reward.FourColours)
 		{
 			rewardTitle.setText("Four colour deck unlocked!");
 			rewardStr = "You can now play with a four-colour deck, where clubs are green and diamonds are blue."
@@ -117,7 +106,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 330));
 		}
-		else if (imageName.equals(REWARD_BANNER_CARD_REVEAL))
+		else if (reward == Reward.CardReveal)
 		{
 			rewardTitle.setText("Card reveal unlocked!");
 			rewardStr = "Add extra pressure to the game by forcing players to reveal their cards!"
@@ -128,7 +117,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 390));
 		}
-		else if (imageName.equals(REWARD_BANNER_NEGATIVE_JACKS))
+		else if (reward == Reward.NegativeJacks)
 		{
 			rewardTitle.setText("Negative jacks unlocked!");
 			rewardStr = "Spice up the deck by makings Jacks worth -1 of their suit!"
@@ -137,7 +126,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 310));
 		}
-		else if (imageName.equals(REWARD_BANNER_MINIMALIST))
+		else if (reward == Reward.MinimalistDeck)
 		{
 			rewardTitle.setText("'Minimalist' deck design unlocked!");
 			rewardStr = "Go for a more minimalist feel with this new deck design."
@@ -146,7 +135,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 310));
 		}
-		else if (imageName.equals(REWARD_BANNER_VECTROPY))
+		else if (reward == Reward.Vectropy)
 		{
 			rewardTitle.setText("Vectropy unlocked!");
 			rewardStr = "Vectropy is a variant where you have to bid in all four suits at once. "
@@ -156,7 +145,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 350));
 		}
-		else if (imageName.equals(REWARD_BANNER_ILLEGAL))
+		else if (reward == Reward.Illegal)
 		{
 			rewardTitle.setText("'Illegal' option unlocked!");
 			rewardStr = "You can now shout 'Illegal!' in response to a bid that you think is perfect! "
@@ -166,7 +155,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 370));
 		}
-		else if (imageName.equals(REWARD_BANNER_EXTRA_SUITS))
+		else if (reward == Reward.ExtraSuits)
 		{
 			rewardTitle.setText("Extra suits unlocked!");
 			rewardStr = "You can now play with Stars and Moons, making for up to 6 suits in total! "
@@ -176,7 +165,7 @@ public class RewardDialog extends JDialog
 			rewardDescription.setText(rewardStr);
 			setSize(new Dimension(400, 370));
 		}
-		else if (imageName.equals(REWARD_BANNER_CHEATS))
+		else if (reward == Reward.Cheats)
 		{
 			rewardTitle.setText("Cheats unlocked!");
 			rewardStr = "Now you can use certain codes to cheat on your opponents, and even access hidden screens!"

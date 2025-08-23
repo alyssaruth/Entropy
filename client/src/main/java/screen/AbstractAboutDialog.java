@@ -30,11 +30,11 @@ public abstract class AbstractAboutDialog extends JDialog
 		lblProductDesc.setBounds(15, 8, 184, 25);
 		lblProductDesc.setHorizontalAlignment(SwingConstants.CENTER);
 		getContentPane().add(lblProductDesc);
-		JLabel lblCreatedByAlex = new JLabel("Created by Alex Burlton");
-		lblCreatedByAlex.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblCreatedByAlex.setBounds(0, 29, 214, 25);
-		lblCreatedByAlex.setHorizontalAlignment(SwingConstants.CENTER);
-		getContentPane().add(lblCreatedByAlex);
+		JLabel lblCreatedBy = new JLabel("Created by Alyssa Burling");
+		lblCreatedBy.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblCreatedBy.setBounds(0, 29, 214, 25);
+		lblCreatedBy.setHorizontalAlignment(SwingConstants.CENTER);
+		getContentPane().add(lblCreatedBy);
 		lblViewChangelog.setBounds(65, 65, 84, 25);
 		lblViewChangelog.setForeground(Color.BLUE);
 		lblViewChangelog.setFont(new Font("Tahoma", Font.BOLD, 12));

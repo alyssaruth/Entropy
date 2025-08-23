@@ -24,6 +24,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import achievement.Reward;
 import game.EntropyBidAction;
 import game.Suit;
 import util.Debug;
@@ -189,7 +190,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	{
 		if (!online)
 		{
-			illegalAllowed |= rewards.getBoolean(REWARDS_BOOLEAN_ILLEGAL, false);
+			illegalAllowed |= Reward.Illegal.isUnlocked();
 		}
 		
 		btnIllegal.setVisible(illegalAllowed);
