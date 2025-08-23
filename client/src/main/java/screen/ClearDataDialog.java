@@ -1,6 +1,6 @@
 package screen;
 
-import achievement.AchievementSetting;
+import screen.achievement.AchievementsDialog;
 import util.*;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package screen
+package screen.achievement
 
 import achievement.unlockAchievement
 import bean.AchievementBadge

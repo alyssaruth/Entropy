@@ -4,6 +4,7 @@ import achievement.AchievementUtilKt;
 import bean.FileUploadListener;
 import bean.FileUploader;
 import object.ReplayTable;
+import screen.achievement.AchievementsDialog;
 import util.DialogUtil;
 import util.Registry;
 import util.ReplayFileUtil;

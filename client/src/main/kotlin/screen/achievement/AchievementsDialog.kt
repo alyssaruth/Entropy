@@ -1,4 +1,4 @@
-package screen
+package screen.achievement
 
 import achievement.Reward
 import achievement.getAchievementsEarned
@@ -8,9 +8,9 @@ import java.awt.Font
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JFrame
@@ -19,11 +19,9 @@ import javax.swing.JPanel
 import javax.swing.JSeparator
 import javax.swing.SwingConstants
 import javax.swing.border.EmptyBorder
-import `object`.RewardStar
-import util.Images
 import utils.getAllChildComponentsForType
 
-class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionListener {
+class AchievementsDialog : JFrame(), MouseMotionListener, ActionListener {
     private var currentPage = 0
     private var progressShowing = 0
 
@@ -129,7 +127,6 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
         }
 
         populateBadgeListAndAddMotionListeners()
-        populateStarListAndAddMouseListeners()
     }
 
     fun init() {
@@ -143,10 +140,6 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
 
     private fun populateBadgeListAndAddMotionListeners() {
         getAllChildComponentsForType<AchievementBadge>().forEach { it.addMouseMotionListener(this) }
-    }
-
-    private fun populateStarListAndAddMouseListeners() {
-        getAllChildComponentsForType<RewardStar>().forEach { it.addMouseListener(this) }
     }
 
     private fun animateTestTube() {
@@ -164,26 +157,11 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
     private fun updateTestTube() {
         progressShowing = getAchievementsEarned()
         testTube.icon = getTubeIconForIndex(getAchievementsEarned())
-        redrawStars()
     }
 
     private fun getTubeIconForIndex(i: Int): ImageIcon {
         val name = "t$i.png"
         return ImageIcon(AchievementsDialog::class.java.getResource("/tubes/$name"))
-    }
-
-    private fun redrawStars() {
-        getAllChildComponentsForType<RewardStar>().forEach { star ->
-            if (star.isUnlocked(getAchievementsEarned())) {
-                star.setIcon(Images.REWARD_UNLOCKED)
-                star.setToolTipText(star.hoverDesc)
-            } else {
-                star.setIcon(Images.REWARD_LOCKED)
-                star.setToolTipText("Locked")
-            }
-
-            star.repaint()
-        }
     }
 
     fun refresh(restartTube: Boolean) {
@@ -193,6 +171,7 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
             updateTestTube()
         }
 
+        getAllChildComponentsForType<RewardStar>().forEach { it.toggle() }
         getAllChildComponentsForType<AchievementBadge>().forEach { it.toggle() }
 
         updateTitle()
@@ -230,47 +209,11 @@ class AchievementsDialog : JFrame(), MouseMotionListener, MouseListener, ActionL
                 }
 
                 testTube.icon = getTubeIconForIndex(progressShowing)
-                redrawStars()
 
                 if (progressShowing == getAchievementsEarned()) {
                     redrawing = false
                 }
             }
-        }
-    }
-
-    override fun mouseClicked(e: MouseEvent) {
-        val c: RewardStar = e.component as RewardStar
-        if (c.isUnlocked(getAchievementsEarned()) && !redrawing) {
-            RewardDialog.showDialog(c.reward)
-        }
-    }
-
-    override fun mouseEntered(e: MouseEvent) {
-        val source: RewardStar = e.component as RewardStar
-        if (source.isUnlocked(progressShowing) && !redrawing) {
-            source.setIcon(Images.REWARD_UNLOCKED_HOVERED)
-        }
-    }
-
-    override fun mouseExited(e: MouseEvent) {
-        val source: RewardStar = e.component as RewardStar
-        if (source.isUnlocked(progressShowing) && !redrawing) {
-            source.setIcon(Images.REWARD_UNLOCKED)
-        }
-    }
-
-    override fun mousePressed(e: MouseEvent) {
-        val source: RewardStar = e.component as RewardStar
-        if (source.isUnlocked(getAchievementsEarned()) && !redrawing) {
-            source.setIcon(Images.REWARD_UNLOCKED_CLICKED)
-        }
-    }
-
-    override fun mouseReleased(e: MouseEvent) {
-        val source: RewardStar = e.component as RewardStar
-        if (source.isUnlocked(getAchievementsEarned()) && !redrawing) {
-            source.setIcon(Images.REWARD_UNLOCKED)
         }
     }
 

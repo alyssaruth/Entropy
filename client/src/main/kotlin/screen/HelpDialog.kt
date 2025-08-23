@@ -43,6 +43,7 @@ import javax.swing.tree.TreeNode
 import javax.swing.tree.TreePath
 import javax.swing.tree.TreeSelectionModel
 import kotlin.math.max
+import screen.achievement.AchievementsDialog
 import util.AchievementsUtil.UnlockAchievementTask
 import util.ClientGlobals.achievementStore
 import util.Registry

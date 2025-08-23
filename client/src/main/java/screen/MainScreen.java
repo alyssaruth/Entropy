@@ -12,6 +12,7 @@ import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import screen.achievement.AchievementsDialog;
 import screen.preference.PreferencesDialog;
 import settings.Setting;
 import settings.SettingChangeListener;

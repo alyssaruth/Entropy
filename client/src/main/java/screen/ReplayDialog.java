@@ -41,6 +41,7 @@ import http.dto.OnlineMessage;
 import object.PlayerLabel;
 import online.screen.GameRoom;
 import online.screen.OnlineChatPanel;
+import screen.achievement.AchievementsDialog;
 import util.*;
 
 import static game.CardsUtilKt.countSuit;
