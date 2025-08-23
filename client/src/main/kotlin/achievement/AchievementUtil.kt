@@ -46,10 +46,8 @@ fun unlockAchievement(achievement: Achievement) {
 
 fun unlockRewards(achievementsEarned: Int) {
     Reward.entries.forEach { reward ->
-        if (
-            achievementsEarned >= reward.threshold && !ClientGlobals.rewardStore.get(reward.setting)
-        ) {
-            ClientGlobals.rewardStore.save(reward.setting, true)
+        if (achievementsEarned >= reward.threshold && !reward.isUnlocked()) {
+            reward.unlock()
             RewardDialog.showDialog(reward)
         }
     }

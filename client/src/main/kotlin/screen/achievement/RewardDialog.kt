@@ -26,7 +26,7 @@ class RewardDialog(reward: Reward) : SimpleDialog(false) {
         rewardTitle.setHorizontalAlignment(SwingConstants.CENTER)
         rewardTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0))
         topPanel.add(rewardTitle, BorderLayout.NORTH)
-        val banner = ImageIcon(javaClass.getResource("/rewards/${reward.settingName}.png"))
+        val banner = ImageIcon(reward.getResource())
         imageBanner.setHorizontalAlignment(SwingConstants.CENTER)
         imageBanner.setIcon(banner)
         topPanel.add(imageBanner, BorderLayout.SOUTH)
@@ -48,7 +48,7 @@ class RewardDialog(reward: Reward) : SimpleDialog(false) {
     }
 
     private fun setRewardDescriptionAndDialogSize(reward: Reward) {
-        var rewardStr = ""
+        var rewardStr: String
 
         if (reward == Reward.Blind) {
             rewardTitle.setText("Blind play unlocked!")

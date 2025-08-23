@@ -1,5 +1,6 @@
 package achievement
 
+import java.net.URL
 import settings.Setting
 import util.ClientGlobals
 
@@ -15,7 +16,13 @@ enum class Reward(val settingName: String, val threshold: Int) {
     DeveloperSet("developerSet", 45),
     Cheats("cheats", 50);
 
-    val setting: Setting<Boolean> = Setting(settingName, false)
+    private val setting: Setting<Boolean> = Setting(settingName, false)
 
     fun isUnlocked() = ClientGlobals.rewardStore.get(setting)
+
+    fun unlock() {
+        ClientGlobals.rewardStore.save(setting, true)
+    }
+
+    fun getResource(): URL? = javaClass.getResource("/rewards/$settingName.png")
 }
