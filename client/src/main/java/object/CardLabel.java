@@ -3,12 +3,14 @@ package object;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import preference.PreferenceSetting;
 import screen.EntropyScreen;
 import util.GameUtil;
 import util.Registry;
 
+import static preference.PreferenceSettingKt.getPreference;
+
 public class CardLabel extends JLabel
-					   implements Registry
 {
 	private String card = "";
 	private boolean faceUp = false;
@@ -21,11 +23,11 @@ public class CardLabel extends JLabel
 		{
 			return;
 		}
-		
-		String deckDirectory = prefs.get(PREFERENCES_STRING_DECK_DIRECTORY, Registry.DECK_DIRECTORY_CLASSIC);
-		String jokerDirectory = prefs.get(PREFERENCES_STRING_JOKER_DIRECTORY, Registry.JOKER_DIRECTORY_CLASSIC);
-		String numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+
+		String deckDesign = getPreference(PreferenceSetting.DeckDesign);
+		String jokerDesign = getPreference(PreferenceSetting.JokerDesign);
+		String numberOfColours = getPreference(PreferenceSetting.NumberOfColours);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		if (faded)
 		{
 			back = "backFaded";
@@ -33,15 +35,15 @@ public class CardLabel extends JLabel
 		
 		if (!faceUp)
 		{
-			setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + ".png")));
+			setIcon(new ImageIcon(getClass().getResource("/backs/" + back + ".png")));
 		}
 		else if (faded)
 		{
-			setIcon(GameUtil.getFadedImageForCard(card, deckDirectory, jokerDirectory));
+			setIcon(GameUtil.getFadedImageForCard(card, deckDesign, jokerDesign));
 		}
 		else
 		{
-			setIcon(GameUtil.getImageForCard(card, deckDirectory, jokerDirectory, numberOfColours));
+			setIcon(GameUtil.getImageForCard(card, deckDesign, jokerDesign, numberOfColours));
 		}
 	}
 	

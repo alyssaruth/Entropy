@@ -19,23 +19,20 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
-import util.Debug;
-import util.DialogUtil;
-import util.Registry;
-import util.ReplayFileUtil;
+import preference.PreferenceSetting;
+import util.*;
+
+import static preference.PreferenceSettingKt.*;
+import static util.ClientGlobals.preferenceStore;
 
 public class PreferencesPanelMisc extends AbstractPreferencesPanel
 								  implements ItemListener
 {
-	private static final int GAME_SPEED_SLOW = 1500;
-	private static final int GAME_SPEED_MEDIUM = 1000;
-	private static final int GAME_SPEED_FAST = 500;
-	
 	private boolean autosave = false;
 	private int gameSpeed = GAME_SPEED_MEDIUM;
 	private boolean saveReplays = false;
 	private String replayDirectory = "";
-	private int replayDefault = OPEN_ON_FIRST_ROUND;
+	private boolean openReplayOnFirstRound = false;
 	private boolean autoStartNextRound = false;
 	private int autoStartSeconds = 2; //2 seconds
 	private boolean popUpRoomsOnline = true;
@@ -159,8 +156,8 @@ public class PreferencesPanelMisc extends AbstractPreferencesPanel
 		spinnerAutoStartSeconds.setEnabled(autoStartNextRound);
 		lblSeconds.setEnabled(autoStartNextRound);
 		spinnerAutoStartSeconds.setValue(autoStartSeconds);
-		rdbtnFirstRound.setSelected(replayDefault == Registry.OPEN_ON_FIRST_ROUND);
-		rdbtnLastRound.setSelected(replayDefault == Registry.OPEN_ON_LAST_ROUND);
+		rdbtnFirstRound.setSelected(openReplayOnFirstRound);
+		rdbtnLastRound.setSelected(!openReplayOnFirstRound);
 	}
 	
 	@Override
@@ -173,38 +170,38 @@ public class PreferencesPanelMisc extends AbstractPreferencesPanel
 	public void savePreferences()
 	{
 		autosave = chckbxAutosave.isSelected();
-		replayDefault = rdbtnFirstRound.isSelected() ? Registry.OPEN_ON_FIRST_ROUND:Registry.OPEN_ON_LAST_ROUND;
+		openReplayOnFirstRound = rdbtnFirstRound.isSelected();
 		autoStartSeconds = (int)spinnerAutoStartSeconds.getValue();
 		popUpRoomsOnline = chckbxPopUpRooms.isSelected();
 		checkForUpdates = chckbxCheckForUpdates.isSelected();
 		
-		prefs.putBoolean(PREFERENCES_BOOLEAN_SAVE_REPLAYS, saveReplays);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_AUTOSAVE, autosave);
-		prefs.put(PREFERENCES_STRING_REPLAY_DIRECTORY, replayDirectory);
-		prefs.putInt(PREFERENCES_INT_REPLAY_DEFAULT, replayDefault);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_AUTO_START_NEXT_ROUND, autoStartNextRound);
-		prefs.putInt(PREFERENCES_INT_AUTO_START_SECONDS, autoStartSeconds);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_POP_UP_ROOMS, popUpRoomsOnline);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES, checkForUpdates);
-		prefs.putInt(PREFERENCES_INT_GAME_SPEED, gameSpeed);
+		preferenceStore.save(PreferenceSetting.SaveReplays, saveReplays);
+		preferenceStore.save(PreferenceSetting.AutoSave, autosave);
+		preferenceStore.save(PreferenceSetting.ReplayDirectory, replayDirectory);
+		preferenceStore.save(PreferenceSetting.OpenReplayOnFirstRound, openReplayOnFirstRound);
+		preferenceStore.save(PreferenceSetting.AutoStartNextRound, autoStartNextRound);
+		preferenceStore.save(PreferenceSetting.AutoStartSeconds, autoStartSeconds);
+		preferenceStore.save(PreferenceSetting.PopUpRooms, popUpRoomsOnline);
+		preferenceStore.save(PreferenceSetting.CheckForUpdates, checkForUpdates);
+		preferenceStore.save(PreferenceSetting.GameSpeed, gameSpeed);
 	}
 	
 	private void getVariablesFromPrefs()
 	{
-		autosave = prefs.getBoolean(PREFERENCES_BOOLEAN_AUTOSAVE, false);
-		gameSpeed = prefs.getInt(PREFERENCES_INT_GAME_SPEED, GAME_SPEED_MEDIUM);
-		saveReplays = prefs.getBoolean(PREFERENCES_BOOLEAN_SAVE_REPLAYS, false);
-		replayDirectory = prefs.get(PREFERENCES_STRING_REPLAY_DIRECTORY, System.getProperty("user.dir"));
-		replayDefault = prefs.getInt(PREFERENCES_INT_REPLAY_DEFAULT, Registry.OPEN_ON_LAST_ROUND);
-		autoStartNextRound = prefs.getBoolean(PREFERENCES_BOOLEAN_AUTO_START_NEXT_ROUND, false);
-		autoStartSeconds = prefs.getInt(PREFERENCES_INT_AUTO_START_SECONDS, 2);
-		popUpRoomsOnline = prefs.getBoolean(PREFERENCES_BOOLEAN_POP_UP_ROOMS, true);
-		checkForUpdates = prefs.getBoolean(PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES, true);
+		autosave = getPreference(PreferenceSetting.AutoSave);
+		gameSpeed = getPreference(PreferenceSetting.GameSpeed);
+		saveReplays = getPreference(PreferenceSetting.SaveReplays);
+		replayDirectory = getPreference(PreferenceSetting.ReplayDirectory);
+		openReplayOnFirstRound = getPreference(PreferenceSetting.OpenReplayOnFirstRound);
+		autoStartNextRound = getPreference(PreferenceSetting.AutoStartNextRound);
+		autoStartSeconds = getPreference(PreferenceSetting.AutoStartSeconds);
+		popUpRoomsOnline = getPreference(PreferenceSetting.PopUpRooms);
+		checkForUpdates = getPreference(PreferenceSetting.CheckForUpdates);
 	}
 	
 	private boolean confirmChangeOfDirectory()
 	{
-		String originalReplayDirectory = prefs.get(PREFERENCES_STRING_REPLAY_DIRECTORY, System.getProperty("user.dir"));
+		String originalReplayDirectory = preferenceStore.get(PreferenceSetting.ReplayDirectory);
 		
 		File[] myExistingFiles = new File(originalReplayDirectory + "//Replays//" + ReplayFileUtil.FOLDER_PERSONAL_REPLAYS).listFiles();
 		int myExistingFilesLength = 0;

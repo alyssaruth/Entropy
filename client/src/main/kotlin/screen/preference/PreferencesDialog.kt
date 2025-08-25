@@ -14,10 +14,9 @@ import screen.PreferencesPanelMisc
 import screen.PreferencesPanelPlayers
 import screen.SimpleDialog
 import util.ApiUtil
-import util.Registry
 import utils.getAllChildComponentsForType
 
-class PreferencesDialog : SimpleDialog(), Registry {
+class PreferencesDialog : SimpleDialog() {
     private val tabbedPane = JTabbedPane(SwingConstants.TOP)
     private val gameplayPanel = PreferencesPanelGameplay()
     private val appearanceScrollPane = JScrollPane()

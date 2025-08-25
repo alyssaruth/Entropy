@@ -8,6 +8,8 @@ import object.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import preference.PreferenceSetting;
+import settings.Setting;
 import utils.CoreGlobals;
 
 import javax.swing.*;
@@ -20,6 +22,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.*;
+
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 
 public class ApiUtil implements Registry
 {
@@ -369,17 +374,17 @@ public class ApiUtil implements Registry
 		
 		saveApiStrategiesToPreferences(apiStrategies);
 		
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, name);
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, name);
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, name);
+		resetCpuStrategy(PreferenceSetting.OpponentOneStrategy, name);
+		resetCpuStrategy(PreferenceSetting.OpponentTwoStrategy, name);
+		resetCpuStrategy(PreferenceSetting.OpponentThreeStrategy, name);
 	}
 	
-	private static void resetCpuStrategy(String prefsKey, String apiName)
+	private static void resetCpuStrategy(Setting<String> strategySetting, String apiName)
 	{
-		String strategy = prefs.get(prefsKey, "");
+		String strategy = getPreference(strategySetting);
 		if (strategy.equals("API: " + apiName))
 		{
-			prefs.put(prefsKey, CpuStrategies.STRATEGY_BASIC);
+			preferenceStore.save(strategySetting, CpuStrategies.STRATEGY_BASIC);
 		}
 	}
 }

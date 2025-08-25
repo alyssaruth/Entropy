@@ -25,11 +25,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import achievement.Reward;
+import game.RenderingUtilKt;
 import game.Suit;
 import game.VectropyBidAction;
+import preference.PreferenceSetting;
 import util.Debug;
 import util.EntropyColour;
 import util.Registry;
+
+import static preference.PreferenceSettingKt.getPreference;
 
 public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 							  implements ActionListener,
@@ -232,7 +236,7 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 		starsPanel.setVisible(includeStars);
 		
 		totalCardsLabel.setText("x " + totalNumberOfCards);
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 
 		lastBid = null;
@@ -265,9 +269,9 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 	
 	private void updateSpinnerColours()
 	{
-		clubLabel.setForeground(Suit.Clubs.getColour());
-		diamondLabel.setForeground(Suit.Diamonds.getColour());
-		moonLabel.setForeground(Suit.Moons.getColour());
+		clubLabel.setForeground(RenderingUtilKt.getColour(Suit.Clubs));
+		diamondLabel.setForeground(RenderingUtilKt.getColour(Suit.Diamonds));
+		moonLabel.setForeground(RenderingUtilKt.getColour(Suit.Moons));
 	}
 	
 	private void setBidButtonState()
@@ -292,7 +296,7 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 	@Override
 	public void fireAppearancePreferencesChange()
 	{
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 		
 		updateSpinnerColours();
@@ -324,7 +328,7 @@ public class VectropyBidPanel extends BidPanel<VectropyBidAction>
 		String label = savedGame.get(SAVED_GAME_STRING_TOTAL_CARDS_LABEL, "0");
 		totalCardsLabel.setText(label);
 		
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 	}
 	

@@ -8,8 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public abstract class AbstractPreferencesPanel extends JPanel
-											   implements Registry, 
-														  ActionListener
+											   implements ActionListener
 {
 	protected PreferencesDialog parent = null;
 	

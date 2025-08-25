@@ -5,10 +5,13 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 
 import logging.LoggerUncaughtExceptionHandler;
+import preference.PreferenceSetting;
 import screen.MainScreen;
 import screen.ScreenCache;
 import util.*;
 
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 import static utils.CoreGlobals.logger;
 
 public class EntropyMain implements Registry
@@ -59,7 +62,7 @@ public class EntropyMain implements Registry
 		String lookAndFeel = null;
 		try 
 		{
-			lookAndFeel = prefs.get(PREFERENCES_STRING_LOOK_AND_FEEL, "Metal");
+			lookAndFeel = getPreference(PreferenceSetting.LookAndFeel);
 			if (ClientUtil.isAppleOs()
 			  && lookAndFeel.equals("Metal"))
 			{
@@ -80,7 +83,7 @@ public class EntropyMain implements Registry
 		{
 			logger.warn("laf.failed", "Failed to load LookAndFeel " + lookAndFeel + ". Caught " + e);
 		    DialogUtil.showError("Failed to load Look & Feel '" + lookAndFeel + "'. \nEntropy will use the default instead.");
-		    prefs.put(PREFERENCES_STRING_LOOK_AND_FEEL, "Metal");
+			preferenceStore.delete(PreferenceSetting.LookAndFeel);
 		}
 	}
 	
@@ -116,7 +119,7 @@ public class EntropyMain implements Registry
 	
 	private static void checkForUpdatesIfRequired()
 	{
-		boolean checkForUpdates = Registry.prefs.getBoolean(PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES, true);
+		boolean checkForUpdates = getPreference(PreferenceSetting.CheckForUpdates);
 		if (!checkForUpdates
 		  || ClientUtil.devMode)
 		{

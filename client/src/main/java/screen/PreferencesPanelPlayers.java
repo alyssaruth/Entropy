@@ -32,12 +32,16 @@ import javax.swing.table.TableRowSorter;
 import game.GameMode;
 import object.ApiStrategy;
 import object.LimitedDocument;
+import preference.PreferenceSetting;
 import util.ApiUtil;
 import util.CpuStrategies;
 import util.Debug;
 import util.DialogUtil;
 import util.TableUtil;
 import util.TableUtil.DefaultModel;
+
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 
 public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 									 implements MouseListener,
@@ -192,15 +196,15 @@ public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 		opponentTwoStrategy = (String) opponentTwoStrat.getSelectedItem();
 		opponentThreeStrategy = (String) opponentThreeStrat.getSelectedItem();
 		
-		prefs.put(PREFERENCES_STRING_PLAYER_NAME, playerName);
-		prefs.put(PREFERENCES_STRING_OPPONENT_ONE_NAME, opponentOneName);
-		prefs.put(PREFERENCES_STRING_OPPONENT_TWO_NAME, opponentTwoName);
-		prefs.put(PREFERENCES_STRING_OPPONENT_THREE_NAME, opponentThreeName);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED, opponentTwoEnabled);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_OPPONENT_THREE_ENABLED, opponentThreeEnabled);
-		prefs.put(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, opponentOneStrategy);
-		prefs.put(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, opponentTwoStrategy);
-		prefs.put(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, opponentThreeStrategy);
+		preferenceStore.save(PreferenceSetting.PlayerName, playerName);
+		preferenceStore.save(PreferenceSetting.OpponentOneName, opponentOneName);
+		preferenceStore.save(PreferenceSetting.OpponentTwoName, opponentTwoName);
+		preferenceStore.save(PreferenceSetting.OpponentThreeName, opponentThreeName);
+		preferenceStore.save(PreferenceSetting.OpponentTwoEnabled, opponentTwoEnabled);
+		preferenceStore.save(PreferenceSetting.OpponentThreeEnabled, opponentThreeEnabled);
+		preferenceStore.save(PreferenceSetting.OpponentOneStrategy, opponentOneStrategy);
+		preferenceStore.save(PreferenceSetting.OpponentTwoStrategy, opponentTwoStrategy);
+		preferenceStore.save(PreferenceSetting.OpponentThreeStrategy, opponentThreeStrategy);
 		
 		ApiUtil.saveApiStrategiesToPreferences(apiStrategies);
 	}
@@ -208,18 +212,18 @@ public class PreferencesPanelPlayers extends AbstractPreferencesPanel
 	
 	private void getVariablesFromPrefs()
 	{
-		playerName = prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player");
-		opponentOneName = prefs.get(PREFERENCES_STRING_OPPONENT_ONE_NAME, "Mark");
-		opponentTwoName = prefs.get(PREFERENCES_STRING_OPPONENT_TWO_NAME, "Dave");
-		opponentThreeName = prefs.get(PREFERENCES_STRING_OPPONENT_THREE_NAME, "Tom");
-		opponentTwoEnabled = prefs.getBoolean(PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED, true);
-		opponentThreeEnabled = prefs.getBoolean(PREFERENCES_BOOLEAN_OPPONENT_THREE_ENABLED, true);
-		opponentOneStrategy = prefs.get(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, "Basic");
-		opponentTwoStrategy = prefs.get(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, "Basic");
-		opponentThreeStrategy = prefs.get(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, "Basic");
+		playerName = getPreference(PreferenceSetting.PlayerName);
+		opponentOneName = getPreference(PreferenceSetting.OpponentOneName);
+		opponentTwoName = getPreference(PreferenceSetting.OpponentTwoName);
+		opponentThreeName = getPreference(PreferenceSetting.OpponentThreeName);
+		opponentTwoEnabled = getPreference(PreferenceSetting.OpponentTwoEnabled);
+		opponentThreeEnabled = getPreference(PreferenceSetting.OpponentThreeEnabled);
+		opponentOneStrategy = getPreference(PreferenceSetting.OpponentOneStrategy);
+		opponentTwoStrategy = getPreference(PreferenceSetting.OpponentTwoStrategy);
+		opponentThreeStrategy = getPreference(PreferenceSetting.OpponentThreeStrategy);
 		apiStrategies = ApiUtil.getApiStrategiesFromPreferences();
 		
-		gameMode = GameMode.valueOf(prefs.get(PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
+		gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode));
 	}
 	
 	private void setPlayerNames()

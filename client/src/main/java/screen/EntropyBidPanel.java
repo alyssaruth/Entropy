@@ -26,9 +26,14 @@ import javax.swing.event.ChangeListener;
 
 import achievement.Reward;
 import game.EntropyBidAction;
+import game.RenderingUtilKt;
 import game.Suit;
+import preference.PreferenceSetting;
 import util.Debug;
 import util.Registry;
+
+import static preference.PreferenceSettingKt.FOUR_COLOURS;
+import static preference.PreferenceSettingKt.getPreference;
 
 public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 							 implements ActionListener,
@@ -182,7 +187,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		setBidButtonColours();
 		
 		totalCardsLabel.setText("x " + totalNumberOfCards);
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 	}
 	
@@ -266,7 +271,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	@Override
 	public void fireAppearancePreferencesChange()
 	{
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 
 		updateBidAmountDisplay();
@@ -277,13 +282,13 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 	{
 		String spaceStr = bidSuit == Suit.Moons ? "":" ";
 		bidAmountDisplay.setText(bidSlider.getValue() + spaceStr + bidSuit.getUnicodeStr());
-		bidAmountDisplay.setForeground(bidSuit.getColour());
+		bidAmountDisplay.setForeground(RenderingUtilKt.getColour(bidSuit));
 	}
 	
 	private void setBidButtonColours()
 	{
-		String numberOfColoursStr = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-		boolean fourColours = (numberOfColoursStr.equals(Registry.FOUR_COLOURS));
+		String numberOfColoursStr = getPreference(PreferenceSetting.NumberOfColours);
+		boolean fourColours = (numberOfColoursStr.equals(FOUR_COLOURS));
 		
 		if (fourColours)
 		{
@@ -345,7 +350,7 @@ public class EntropyBidPanel extends BidPanel<EntropyBidAction>
 		String label = savedGame.get(SAVED_GAME_STRING_TOTAL_CARDS_LABEL, "0");
 		totalCardsLabel.setText(label);
 		
-		String back = prefs.get(PREFERENCES_STRING_CARD_BACKS, Registry.BACK_CODE_CLASSIC_BLUE);
+		String back = getPreference(PreferenceSetting.CardBacks);
 		smallCardIcon.setIcon(new ImageIcon(EntropyScreen.class.getResource("/backs/" + back + "Small.png")));
 	}
 

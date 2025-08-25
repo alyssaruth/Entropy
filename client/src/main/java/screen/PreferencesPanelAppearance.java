@@ -29,16 +29,20 @@ import javax.swing.text.DefaultCaret;
 import achievement.Reward;
 import bean.ComboBoxItem;
 import object.DisabledComboBoxModel;
+import preference.PreferenceSetting;
 import util.GameUtil;
+
+import static preference.PreferenceSettingKt.*;
+import static util.ClientGlobals.preferenceStore;
 
 public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 										implements ItemListener
 {
-	private String deckDirectory = DECK_DIRECTORY_CLASSIC;
-	private String jokerDirectory = JOKER_DIRECTORY_CLASSIC;
-	private String cardBacks = BACK_CODE_CLASSIC_BLUE;
-	private String numberOfColours = FOUR_COLOURS;
-	private String lookAndFeel = DEFAULT_LOOK_AND_FEEL;
+	private String deckDesign = "";
+	private String jokerDesign = "";
+	private String cardBacks = "";
+	private String numberOfColours = "";
+	private String lookAndFeel = "";
 	
 	public PreferencesPanelAppearance()
 	{
@@ -206,22 +210,22 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	@Override
 	public void savePreferences()
 	{
-		prefs.put(PREFERENCES_STRING_DECK_DIRECTORY, deckDirectory);
-		prefs.put(PREFERENCES_STRING_JOKER_DIRECTORY, jokerDirectory);
-		prefs.put(PREFERENCES_STRING_NUMBER_OF_COLOURS, numberOfColours);
-		prefs.put(PREFERENCES_STRING_CARD_BACKS, cardBacks);
-		prefs.put(PREFERENCES_STRING_LOOK_AND_FEEL, (String)comboBoxLookAndFeel.getSelectedItem());
+		preferenceStore.save(PreferenceSetting.DeckDesign, deckDesign);
+		preferenceStore.save(PreferenceSetting.JokerDesign, jokerDesign);
+		preferenceStore.save(PreferenceSetting.NumberOfColours, numberOfColours);
+		preferenceStore.save(PreferenceSetting.CardBacks, cardBacks);
+		preferenceStore.save(PreferenceSetting.LookAndFeel, (String)comboBoxLookAndFeel.getSelectedItem());
 		
 		ScreenCache.get(MainScreen.class).fireAppearancePreferencesChange();
 	}
 	
 	private void getVariablesFromPrefs()
 	{
-		deckDirectory = prefs.get(PREFERENCES_STRING_DECK_DIRECTORY, DECK_DIRECTORY_CLASSIC);
-		jokerDirectory = prefs.get(PREFERENCES_STRING_JOKER_DIRECTORY, JOKER_DIRECTORY_CLASSIC);
-		numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, TWO_COLOURS);
-		cardBacks = prefs.get(PREFERENCES_STRING_CARD_BACKS, BACK_CODE_CLASSIC_BLUE);
-		lookAndFeel = prefs.get(PREFERENCES_STRING_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
+		deckDesign = getPreference(PreferenceSetting.DeckDesign);
+		jokerDesign = getPreference(PreferenceSetting.JokerDesign);
+		numberOfColours = getPreference(PreferenceSetting.NumberOfColours);
+		cardBacks = getPreference(PreferenceSetting.CardBacks);
+		lookAndFeel = getPreference(PreferenceSetting.LookAndFeel);
 	}
 	
 	private void hideLockedFields()
@@ -233,10 +237,10 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	
 	private void refreshDeckPreview()
 	{
-		ImageIcon jackClubs = GameUtil.getImageForCard("Jc", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon queenDiamonds = GameUtil.getImageForCard("Qd", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon kingHearts = GameUtil.getImageForCard("Kh", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon aceSpades = GameUtil.getImageForCard("As", deckDirectory, jokerDirectory, numberOfColours);
+		ImageIcon jackClubs = GameUtil.getImageForCard("Jc", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon queenDiamonds = GameUtil.getImageForCard("Qd", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon kingHearts = GameUtil.getImageForCard("Kh", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon aceSpades = GameUtil.getImageForCard("As", deckDesign, jokerDesign, numberOfColours);
 		labelJc.setIcon(jackClubs);
 		labelQd.setIcon(queenDiamonds);
 		labelKh.setIcon(kingHearts);
@@ -245,10 +249,10 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	
 	private void refreshJokerPreview()
 	{
-		ImageIcon jo0 = GameUtil.getImageForCard("Jo0", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon jo1 = GameUtil.getImageForCard("Jo1", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon jo2 = GameUtil.getImageForCard("Jo2", deckDirectory, jokerDirectory, numberOfColours);
-		ImageIcon jo3 = GameUtil.getImageForCard("Jo3", deckDirectory, jokerDirectory, numberOfColours);
+		ImageIcon jo0 = GameUtil.getImageForCard("Jo0", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon jo1 = GameUtil.getImageForCard("Jo1", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon jo2 = GameUtil.getImageForCard("Jo2", deckDesign, jokerDesign, numberOfColours);
+		ImageIcon jo3 = GameUtil.getImageForCard("Jo3", deckDesign, jokerDesign, numberOfColours);
 		labelJo0.setIcon(jo0);
 		labelJo1.setIcon(jo1);
 		labelJo2.setIcon(jo2);
@@ -265,7 +269,7 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 		ComboBoxItem<String> selectedItem = getSelectedItemForCode(backs, cardBacks);
 		if (selectedItem == null)
 		{
-			selectedItem = new ComboBoxItem<>(BACK_CODE_CLASSIC_BLUE, "Blue");
+			selectedItem = new ComboBoxItem<>("backBlue", "Blue");
 		}
 		
 		comboBoxBacks.setSelectedItem(selectedItem);
@@ -275,7 +279,7 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	{
 		Vector<ComboBoxItem<String>> backs = new Vector<>();
 		
-		backs.addElement(new ComboBoxItem<>(BACK_CODE_CLASSIC_BLUE, "Blue"));
+		backs.addElement(new ComboBoxItem<>("backBlue", "Blue"));
 		backs.addElement(new ComboBoxItem<>("backRed", "Red"));
 		
 		addIfUnlocked(backs, new ComboBoxItem<>("backGreen", "Green"), Reward.FourColours);
@@ -343,7 +347,7 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 		ComboBoxItem<String> selection = (ComboBoxItem<String>)comboBoxBacks.getSelectedItem();
 		if (selection == null)
 		{
-			cardBacks = BACK_CODE_CLASSIC_BLUE;
+			cardBacks = comboBoxBacks.getItemAt(0).getHiddenData();
 		}
 		else
 		{
@@ -358,20 +362,20 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 	{
 		cbFourColour.setSelected(numberOfColours.equals(FOUR_COLOURS));
 		
-		if (deckDirectory.equals(DECK_DIRECTORY_CLASSIC))
+		if (deckDesign.equals(DECK_DESIGN_CLASSIC))
 		{
 			rdbtnClassicDesign.setSelected(true);
 		}
-		else if (deckDirectory.equals(DECK_DIRECTORY_ALTERNATE))
+		else if (deckDesign.equals(DECK_DESIGN_ALTERNATE))
 		{
 			rdbtnMinimalistDesign.setSelected(true);
 		}
 		
-		if (jokerDirectory.equals(JOKER_DIRECTORY_CLASSIC))
+		if (jokerDesign.equals(JOKER_DESIGN_CLASSIC))
 		{
 			rdbtnClassicJokers.setSelected(true);
 		}
-		else if (jokerDirectory.equals(JOKER_DIRECTORY_DEVELOPERS))
+		else if (jokerDesign.equals(JOKER_DESIGN_DEVELOPERS))
 		{
 			rdbtnDeveloperJokers.setSelected(true);
 		}
@@ -383,22 +387,22 @@ public class PreferencesPanelAppearance extends AbstractPreferencesPanel
 		Object source = arg0.getSource();
 		if (source == rdbtnClassicDesign)
 		{
-			deckDirectory = DECK_DIRECTORY_CLASSIC;
+			deckDesign = DECK_DESIGN_CLASSIC;
 			refreshDeckPreview();
 		}
 		else if (source == rdbtnMinimalistDesign)
 		{
-			deckDirectory = DECK_DIRECTORY_ALTERNATE;
+			deckDesign = DECK_DESIGN_ALTERNATE;
 			refreshDeckPreview();
 		}
 		else if (source == rdbtnClassicJokers)
 		{
-			jokerDirectory = JOKER_DIRECTORY_CLASSIC;
+			jokerDesign = JOKER_DESIGN_CLASSIC;
 			refreshJokerPreview();
 		}
 		else if (source == rdbtnDeveloperJokers)
 		{
-			jokerDirectory = JOKER_DIRECTORY_DEVELOPERS;
+			jokerDesign = JOKER_DESIGN_DEVELOPERS;
 			refreshJokerPreview();
 		}
 		else if (source == comboBoxBacks)

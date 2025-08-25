@@ -23,11 +23,17 @@ import javax.swing.event.ChangeListener;
 
 import achievement.Reward;
 import game.GameMode;
+import preference.PreferenceSetting;
 import util.Debug;
+import util.Registry;
+
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 
 public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 									  implements ChangeListener,
-									  			 ItemListener
+									  			 ItemListener,
+												 Registry
 {
 	private GameMode gameMode = GameMode.Entropy;
 	private boolean includeJokers = false;
@@ -205,13 +211,14 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		prefs.putBoolean(SHARED_BOOLEAN_NEGATIVE_JACKS, negativeJacks);
 		prefs.putInt(SHARED_INT_JOKER_QUANTITY, jokerQuantity);
 		prefs.putInt(SHARED_INT_JOKER_VALUE, jokerValue);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);
-		prefs.putInt(PREFERENCES_INT_HANDICAP_AMOUNT, handicapAmount);
-		prefs.putBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, playBlind);
+
+		preferenceStore.save(PreferenceSetting.PlayWithHandicap, playWithHandicap);
+		preferenceStore.save(PreferenceSetting.HandicapAmount, handicapAmount);
+		preferenceStore.save(PreferenceSetting.PlayBlind, playBlind);
 		prefs.putBoolean(SHARED_BOOLEAN_INCLUDE_STARS, includeStars);
 		prefs.putBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, includeMoons);
 		prefs.putBoolean(SHARED_BOOLEAN_CARD_REVEAL, cardReveal);
-		prefs.put(PREFERENCES_STRING_GAME_MODE, gameMode.name());
+		preferenceStore.save(PreferenceSetting.GameMode, gameMode.name());
 	}
 	
 	private void getVariablesFromPreferences()
@@ -220,14 +227,14 @@ public class PreferencesPanelGameplay extends AbstractPreferencesPanel
 		jokerQuantity = prefs.getInt(SHARED_INT_JOKER_QUANTITY, 2);
 		includeJokers = jokerQuantity > 0;
 		jokerValue = prefs.getInt(SHARED_INT_JOKER_VALUE, 2);
-		playWithHandicap = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, false);
-		handicapAmount = Math.max(prefs.getInt(PREFERENCES_INT_HANDICAP_AMOUNT, 1), 1);
-		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
+		playWithHandicap = getPreference(PreferenceSetting.PlayWithHandicap);
+		handicapAmount = getPreference(PreferenceSetting.HandicapAmount);
+		playBlind = getPreference(PreferenceSetting.PlayBlind);
 		includeStars = prefs.getBoolean(SHARED_BOOLEAN_INCLUDE_STARS, false);
 		includeMoons = prefs.getBoolean(SHARED_BOOLEAN_INCLUDE_MOONS, false);
 		negativeJacks = prefs.getBoolean(SHARED_BOOLEAN_NEGATIVE_JACKS, false);
 		cardReveal = prefs.getBoolean(SHARED_BOOLEAN_CARD_REVEAL, false);
-		gameMode = GameMode.valueOf(prefs.get(PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
+		gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode));
 	}
 	
 	private void adjustHandicapSpinner()

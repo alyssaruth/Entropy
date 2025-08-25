@@ -19,14 +19,6 @@ public class ReplayConverter implements Registry
 	
 	public static void startReplayConversionIfNecessary()
 	{
-		String replayDirectory = prefs.get(PREFERENCES_STRING_REPLAY_DIRECTORY, null);
-		if (replayDirectory == null)
-		{
-			//Never ok'd the preferences dialog - basically a clean install. Nothing to do.
-			instance.putInt(INSTANCE_INT_REPLAY_CONVERSION, REPLAY_VERSION);
-			return;
-		}
-		
 		int lastConvertedVersion = instance.getInt(INSTANCE_INT_REPLAY_CONVERSION, 0);
 		if (lastConvertedVersion >= REPLAY_VERSION)
 		{

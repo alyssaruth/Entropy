@@ -33,43 +33,6 @@ public interface Registry
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
 	
 	//prefs
-	public static final String PREFERENCES_STRING_REPLAY_DIRECTORY = "replayDirectory";
-	public static final String PREFERENCES_STRING_DECK_DIRECTORY = "deckDirectory";
-	public static final String PREFERENCES_STRING_JOKER_DIRECTORY = "jokerDirectory";
-	public static final String PREFERENCES_STRING_NUMBER_OF_COLOURS = "numberOfColours";
-	public static final String PREFERENCES_STRING_CARD_BACKS = "cardBacks";
-	public static final String PREFERENCES_STRING_LOOK_AND_FEEL = "lookAndFeel";
-	public static final String PREFERENCES_STRING_OPPONENT_THREE_STRATEGY = "opponentThreeStrategy";
-	public static final String PREFERENCES_STRING_OPPONENT_TWO_STRATEGY = "opponentTwoStrategy";
-	public static final String PREFERENCES_STRING_OPPONENT_ONE_STRATEGY = "opponentOneStrategy";
-	public static final String PREFERENCES_STRING_OPPONENT_THREE_NAME = "opponentThreeName";
-	public static final String PREFERENCES_STRING_OPPONENT_TWO_NAME = "opponentTwoName";
-	public static final String PREFERENCES_STRING_OPPONENT_ONE_NAME = "opponentOneName";
-	public static final String PREFERENCES_STRING_PLAYER_NAME = "playerName";
-	
-	public static final String PREFERENCES_BOOLEAN_SAVE_REPLAYS = "saveReplays";
-	public static final String PREFERENCES_BOOLEAN_AUTOSAVE = "autosave";
-	public static final String PREFERENCES_BOOLEAN_AUTO_START_NEXT_ROUND = "autoStart";
-	public static final String PREFERENCES_BOOLEAN_POP_UP_ROOMS = "popUp";
-	public static final String PREFERENCES_BOOLEAN_OPPONENT_THREE_ENABLED = "opponentThreeEnabled";
-	public static final String PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED = "opponentTwoEnabled";
-	public static final String PREFERENCES_BOOLEAN_PLAY_BLIND = "playBlind";
-	public static final String PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP = "playWithHandicap";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN = "includeMode";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN = "includeRounds";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN = "includePlayers";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_CARDS_COLUMN = "includeCards";
-	public static final String PREFERENCES_BOOLEAN_INCLUDE_ROOM_NAME_COLUMN = "includeRoomName";
-	public static final String PREFERENCES_BOOLEAN_CHECK_FOR_UPDATES = "checkForUpdates";
-	
-	public static final String PREFERENCES_INT_REPLAY_DEFAULT = "replayDefault";
-	public static final String PREFERENCES_INT_GAME_SPEED = "gameSpeed";
-	public static final String PREFERENCES_INT_AUTO_START_SECONDS = "autoStartMillis";
-	public static final String PREFERENCES_INT_HANDICAP_AMOUNT = "handicapAmount";
-	public static final String PREFERENCES_INT_REPLAY_VIEWER_HEIGHT = "rvheight";
-	public static final String PREFERENCES_INT_REPLAY_VIEWER_WIDTH = "rvwidth";
-	public static final String PREFERENCES_STRING_GAME_MODE = "gameMode";
-	
 	public static final String PREFERENCES_XML_API_SETTINGS = "apiSettings";
 	public static final String PREFERENCES_TAG_API = "Api";
 	public static final String PREFERENCES_ATTR_API_NAME = "ApiName";
@@ -189,14 +152,5 @@ public interface Registry
 	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
 
 	//statics for default values etc
-	public static final String TWO_COLOURS = "twocolour";
-	public static final String FOUR_COLOURS = "fourcolour";
-	public static final String DECK_DIRECTORY_CLASSIC = "classic";
-	public static final String DECK_DIRECTORY_ALTERNATE = "alternate";
-	public static final String JOKER_DIRECTORY_CLASSIC = "classic";
-	public static final String JOKER_DIRECTORY_DEVELOPERS = "developers";
 	public static final String BACK_CODE_CLASSIC_BLUE = "backBlue";
-	public static final String DEFAULT_LOOK_AND_FEEL = "Metal";
-	public static final int OPEN_ON_FIRST_ROUND = 0;
-	public static final int OPEN_ON_LAST_ROUND = 1;
 }

@@ -4,6 +4,7 @@ import game.Suit;
 import object.CardLabel;
 import object.PlayerLabel;
 import online.screen.EntropyLobby;
+import preference.PreferenceSetting;
 import util.*;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
 import static game.CardsUtilKt.isCardRelevant;
+import static preference.PreferenceSettingKt.getPreference;
 
 public class HandPanelMk2 extends TransparentPanel 
 						  implements ActionListener,
@@ -738,10 +740,10 @@ public class HandPanelMk2 extends TransparentPanel
 	
 	public void initPlayerNames()
 	{
-		playerName = prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player");
-		opponentOneName = prefs.get(PREFERENCES_STRING_OPPONENT_ONE_NAME, "Mark");
-		opponentTwoName = prefs.get(PREFERENCES_STRING_OPPONENT_TWO_NAME, "Dave");
-		opponentThreeName = prefs.get(PREFERENCES_STRING_OPPONENT_THREE_NAME, "Tom");
+		playerName = getPreference(PreferenceSetting.PlayerName);
+		opponentOneName = getPreference(PreferenceSetting.OpponentOneName);
+		opponentTwoName = getPreference(PreferenceSetting.OpponentTwoName);
+		opponentThreeName = getPreference(PreferenceSetting.OpponentThreeName);
 	}
 	
 	public void loadPlayerNames(Preferences savedGame)

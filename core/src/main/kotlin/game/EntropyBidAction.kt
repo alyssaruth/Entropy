@@ -31,9 +31,6 @@ data class EntropyBidAction(
 
     override fun plainString() = "$amount ${suit.getDescription(amount)}"
 
-    override fun htmlString() =
-        "<font color=\"${suit.getColourHex()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"
-
     companion object {
         @JvmStatic
         fun fromJson(jsonString: String): EntropyBidAction =

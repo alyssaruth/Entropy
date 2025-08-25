@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static achievement.AchievementUtilKt.unlockAchievement;
 import static util.ClientGlobals.achievementStore;
 
-public class AchievementsUtil implements Registry
+public class AchievementsUtil
 {
 	private static final int FULL_GAME_STARTING_CARDS = 5;
 	private static final int OMNISCIENT_THRESHOLD = 10;

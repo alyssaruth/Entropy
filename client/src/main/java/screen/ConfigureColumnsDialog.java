@@ -8,11 +8,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import preference.PreferenceSetting;
 import util.Debug;
 import util.Registry;
 
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
+
 public class ConfigureColumnsDialog extends JDialog
-									implements Registry
 {
 	private boolean showGameMode = false;
 	private boolean showRounds = false;
@@ -56,11 +59,11 @@ public class ConfigureColumnsDialog extends JDialog
 	
 	private void initVariables()
 	{
-		showGameMode = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN, true);
-		showRounds = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN, false);
-		showPlayers = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN, true);
-		showCards = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_CARDS_COLUMN, false);
-		showRoomName = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROOM_NAME_COLUMN, false);
+		showGameMode = getPreference(PreferenceSetting.IncludeGameModeColumn);
+		showRounds = getPreference(PreferenceSetting.IncludeRoundsColumn);
+		showPlayers = getPreference(PreferenceSetting.IncludePlayersColumn);
+		showCards = getPreference(PreferenceSetting.IncludeCardsColumn);
+		showRoomName = getPreference(PreferenceSetting.IncludeRoomNameColumn);
 		
 		chckbxGameMode.setSelected(showGameMode);
 		chckbxRounds.setSelected(showRounds);
@@ -71,11 +74,11 @@ public class ConfigureColumnsDialog extends JDialog
 	
 	private void saveSettings()
 	{
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN, chckbxGameMode.isSelected());
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROOM_NAME_COLUMN, chckbxRoomName.isSelected());
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN, chckbxRounds.isSelected());
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN, chckbxPlayers.isSelected());
-		prefs.putBoolean(PREFERENCES_BOOLEAN_INCLUDE_CARDS_COLUMN, chckbxCards.isSelected());
+		preferenceStore.save(PreferenceSetting.IncludeGameModeColumn, chckbxGameMode.isSelected());
+		preferenceStore.save(PreferenceSetting.IncludeRoomNameColumn, chckbxRoomName.isSelected());
+		preferenceStore.save(PreferenceSetting.IncludeRoundsColumn, chckbxRounds.isSelected());
+		preferenceStore.save(PreferenceSetting.IncludePlayersColumn, chckbxPlayers.isSelected());
+		preferenceStore.save(PreferenceSetting.IncludeCardsColumn, chckbxCards.isSelected());
 		
 		dispose();
 	}

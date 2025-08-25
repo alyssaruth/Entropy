@@ -5,10 +5,9 @@ import achievement.isUnlocked
 import java.awt.Dimension
 import javax.swing.JLabel
 import util.Images
-import util.Registry
 import utils.Achievement
 
-class AchievementBadge(private val achievement: Achievement) : JLabel(), Registry {
+class AchievementBadge(private val achievement: Achievement) : JLabel() {
     val explanation = achievement.explanation
     val description = achievement.description
 
