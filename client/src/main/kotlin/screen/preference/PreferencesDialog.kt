@@ -7,22 +7,17 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTabbedPane
 import javax.swing.SwingConstants
-import screen.AbstractPreferencesPanel
-import screen.PreferencesPanelAppearance
-import screen.PreferencesPanelGameplay
-import screen.PreferencesPanelMisc
-import screen.PreferencesPanelPlayers
 import screen.SimpleDialog
 import util.ApiUtil
 import utils.getAllChildComponentsForType
 
 class PreferencesDialog : SimpleDialog() {
     private val tabbedPane = JTabbedPane(SwingConstants.TOP)
-    private val gameplayPanel = PreferencesPanelGameplay()
+    private val gameplayPanel = PreferencesPanelGameplay(this)
     private val appearanceScrollPane = JScrollPane()
-    private val appearancePanel = PreferencesPanelAppearance()
-    private val playersPanel = PreferencesPanelPlayers()
-    private val miscPanel = PreferencesPanelMisc()
+    private val appearancePanel = PreferencesPanelAppearance(this)
+    private val playersPanel = PreferencesPanelPlayers(this)
+    private val miscPanel = PreferencesPanelMisc(this)
     private val okCancelPanel = JPanel()
 
     init {
@@ -41,10 +36,7 @@ class PreferencesDialog : SimpleDialog() {
         okCancelPanel.add(btnOk, BorderLayout.WEST)
         okCancelPanel.add(btnCancel, BorderLayout.EAST)
 
-        childPanels().forEach { panel ->
-            panel.setParent(this)
-            panel.initVariables()
-        }
+        childPanels().forEach { panel -> panel.initVariables() }
     }
 
     private fun valid(): Boolean {
@@ -58,15 +50,17 @@ class PreferencesDialog : SimpleDialog() {
         return true
     }
 
-    fun gameModeChanged(gameMode: GameMode?) {
+    fun gameModeChanged(gameMode: GameMode) {
         playersPanel.updateStrategySelection(gameMode)
     }
 
     private fun childPanels() = getAllChildComponentsForType<AbstractPreferencesPanel>()
 
     override fun okPressed() {
-        childPanels().forEach { it.savePreferences() }
-        closeDialog()
+        if (valid()) {
+            childPanels().forEach { it.savePreferences() }
+            closeDialog()
+        }
     }
 
     override fun cancelPressed() {

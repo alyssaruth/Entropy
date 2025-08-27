@@ -2,9 +2,9 @@ package util;
 
 import game.BidAction;
 import game.GameMode;
-import game.GameSettings;
 import game.PlayerAction;
-import object.*;
+import object.ApiStrategy;
+import object.Player;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -14,7 +14,6 @@ import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -321,7 +320,7 @@ public class ApiUtil implements Registry
 		return hmNameToApiStrategy.get(name);
 	}
 	
-	public static void saveApiStrategiesToPreferences(ArrayList<ApiStrategy> strategies)
+	public static void saveApiStrategiesToPreferences(List<ApiStrategy> strategies)
 	{
 		//Construct a document with any old root element
 		Document apiDoc = XmlUtil.factoryNewDocument();
