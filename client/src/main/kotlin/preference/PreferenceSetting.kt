@@ -23,6 +23,13 @@ object PreferenceSetting {
     @JvmField val PlayWithHandicap = Setting("playWithHandicap", false)
     @JvmField val HandicapAmount = Setting("handicapAmount", 1)
     @JvmField val PlayBlind = Setting("playBlind", false)
+    @JvmField val StartingCards = Setting("startingCards", 5)
+    @JvmField val JokerQuantity = Setting("jokerQuantity", 2)
+    @JvmField val JokerValue = Setting("jokerValue", 2)
+    @JvmField val NegativeJacks = Setting("negativeJacks", false)
+    @JvmField val IncludeMoons = Setting("includeMoons", false)
+    @JvmField val IncludeStars = Setting("includeStars", false)
+    @JvmField val CardReveal = Setting("cardReveal", false)
 
     // Players
     @JvmField val PlayerName = Setting("playerName", "Player")
@@ -34,6 +41,7 @@ object PreferenceSetting {
     @JvmField val OpponentThreeStrategy = Setting("opponentThreeStrategy", STRATEGY_BASIC)
     @JvmField val OpponentTwoEnabled = Setting("opponentTwoEnabled", false)
     @JvmField val OpponentThreeEnabled = Setting("opponentThreeEnabled", false)
+    @JvmField val ApiStrategies = Setting("apiStrategies", "")
 
     // Appearance
     @JvmField val DeckDesign = Setting("deckDesign", DECK_DESIGN_CLASSIC)

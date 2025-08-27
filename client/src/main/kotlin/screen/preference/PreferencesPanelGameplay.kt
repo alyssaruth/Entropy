@@ -205,33 +205,34 @@ class PreferencesPanelGameplay(parent: PreferencesDialog) :
         includeStars = cbIncludeStars.isSelected
         includeMoons = cbIncludeMoons.isSelected
 
-        Registry.prefs.putInt(Registry.SHARED_INT_NUMBER_OF_CARDS, numberOfCards)
-        Registry.prefs.putBoolean(Registry.SHARED_BOOLEAN_NEGATIVE_JACKS, negativeJacks)
-        Registry.prefs.putInt(Registry.SHARED_INT_JOKER_QUANTITY, jokerQuantity)
-        Registry.prefs.putInt(Registry.SHARED_INT_JOKER_VALUE, jokerValue)
+        preferenceStore.save(PreferenceSetting.StartingCards, numberOfCards)
+        preferenceStore.save(PreferenceSetting.StartingCards, numberOfCards)
+        preferenceStore.save(PreferenceSetting.NegativeJacks, negativeJacks)
+        preferenceStore.save(PreferenceSetting.JokerQuantity, jokerQuantity)
+        preferenceStore.save(PreferenceSetting.JokerValue, jokerValue)
 
         preferenceStore.save(PreferenceSetting.PlayWithHandicap, playWithHandicap)
         preferenceStore.save(PreferenceSetting.HandicapAmount, handicapAmount)
         preferenceStore.save(PreferenceSetting.PlayBlind, playBlind)
-        Registry.prefs.putBoolean(Registry.SHARED_BOOLEAN_INCLUDE_STARS, includeStars)
-        Registry.prefs.putBoolean(Registry.SHARED_BOOLEAN_INCLUDE_MOONS, includeMoons)
-        Registry.prefs.putBoolean(Registry.SHARED_BOOLEAN_CARD_REVEAL, cardReveal)
+        preferenceStore.save(PreferenceSetting.IncludeStars, includeStars)
+        preferenceStore.save(PreferenceSetting.IncludeMoons, includeMoons)
+        preferenceStore.save(PreferenceSetting.CardReveal, cardReveal)
         preferenceStore.save(PreferenceSetting.GameMode, gameMode.name)
     }
 
     private fun getVariablesFromPreferences() {
-        numberOfCards = Registry.prefs.getInt(Registry.SHARED_INT_NUMBER_OF_CARDS, 5)
-        jokerQuantity = Registry.prefs.getInt(Registry.SHARED_INT_JOKER_QUANTITY, 2)
+        numberOfCards = getPreference(PreferenceSetting.StartingCards)
+        jokerQuantity = getPreference(PreferenceSetting.JokerQuantity)
         includeJokers = jokerQuantity > 0
-        jokerValue = Registry.prefs.getInt(Registry.SHARED_INT_JOKER_VALUE, 2)
+        jokerValue = getPreference(PreferenceSetting.JokerValue)
         playWithHandicap = getPreference(PreferenceSetting.PlayWithHandicap)
         handicapAmount = getPreference(PreferenceSetting.HandicapAmount)
         playBlind = getPreference(PreferenceSetting.PlayBlind)
-        includeStars = Registry.prefs.getBoolean(Registry.SHARED_BOOLEAN_INCLUDE_STARS, false)
-        includeMoons = Registry.prefs.getBoolean(Registry.SHARED_BOOLEAN_INCLUDE_MOONS, false)
-        negativeJacks = Registry.prefs.getBoolean(Registry.SHARED_BOOLEAN_NEGATIVE_JACKS, false)
-        cardReveal = Registry.prefs.getBoolean(Registry.SHARED_BOOLEAN_CARD_REVEAL, false)
-        gameMode = GameMode.valueOf(getPreference<String>(PreferenceSetting.GameMode))
+        includeStars = getPreference(PreferenceSetting.IncludeStars)
+        includeMoons = getPreference(PreferenceSetting.IncludeMoons)
+        negativeJacks = getPreference(PreferenceSetting.NegativeJacks)
+        cardReveal = getPreference(PreferenceSetting.CardReveal)
+        gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode))
     }
 
     private fun adjustHandicapSpinner() {

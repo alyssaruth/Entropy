@@ -10,7 +10,6 @@ public interface Registry
 	
 	//Actual preference wrappers
 	public static final Preferences savedGame = Preferences.userRoot().node("entropySavedgameNone");
-	public static final Preferences prefs = Preferences.userRoot().node("entropyPreferencesTuuug");
 	public static final Preferences inGameReplay = Preferences.userRoot().node("entropyReplayCurrent");
 	public static final Preferences fileReplay = Preferences.userRoot().node("entropyReplayFile");
 	public static final Preferences tempReplayStore = Preferences.userRoot().node("entropyTemp");
@@ -31,16 +30,6 @@ public interface Registry
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
-	
-	//prefs
-	public static final String PREFERENCES_XML_API_SETTINGS = "apiSettings";
-	public static final String PREFERENCES_TAG_API = "Api";
-	public static final String PREFERENCES_ATTR_API_NAME = "ApiName";
-	public static final String PREFERENCES_ATTR_PORT_NUMNER = "PortNumber";
-	public static final String PREFERENCES_ATTR_MESSAGE_TYPE = "MessageType";
-	public static final String PREFERENCES_ATTR_SUPPORTS_ENTROPY = "Entropy";
-	public static final String PREFERENCES_ATTR_SUPPORTS_VECTROPY = "Vectropy";
-	public static final String PREFERENCES_ATTR_ERROR = "Error";
 	
 	//replay
 	public static final String REPLAY_STRING_OPPONENT_THREE_HAND = "opponentThreeHand";

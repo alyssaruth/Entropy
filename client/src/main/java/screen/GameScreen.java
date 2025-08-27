@@ -317,7 +317,16 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		opponentTwo.setStrategy(getPreference(PreferenceSetting.OpponentTwoStrategy));
 		opponentThree.setStrategy(getPreference(PreferenceSetting.OpponentThreeStrategy));
 
-		settings = GameSettings.fromRegistry(prefs, getGameMode());
+		settings = new GameSettings(
+				getGameMode(),
+				getPreference(PreferenceSetting.StartingCards),
+				getPreference(PreferenceSetting.JokerQuantity),
+				getPreference(PreferenceSetting.JokerValue),
+				getPreference(PreferenceSetting.IncludeMoons),
+				getPreference(PreferenceSetting.IncludeStars),
+				getPreference(PreferenceSetting.NegativeJacks),
+				getPreference(PreferenceSetting.CardReveal),
+				true);
 
 		handPanel.fireAppearancePreferencesChange();
 		handPanel.initPlayerNames();

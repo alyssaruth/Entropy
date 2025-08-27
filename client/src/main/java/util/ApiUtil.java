@@ -25,7 +25,7 @@ import java.util.*;
 import static preference.PreferenceSettingKt.getPreference;
 import static util.ClientGlobals.preferenceStore;
 
-public class ApiUtil implements Registry
+public class ApiUtil
 {
 	public static final String API_PREFIX = "API: ";
 	public static final String MESSAGE_TYPE_XML = "XML";
@@ -33,6 +33,14 @@ public class ApiUtil implements Registry
 	
 	private static final String ROOT_TAG_API_MESSAGE = "ApiMessage";
 	private static final InetAddress INET_ADDRESS_LOCALHOST = MessageUtil.factoryInetAddress("localhost");
+
+	private static final String PREFERENCES_TAG_API = "Api";
+	private static final String PREFERENCES_ATTR_API_NAME = "ApiName";
+	private static final String PREFERENCES_ATTR_PORT_NUMNER = "PortNumber";
+	private static final String PREFERENCES_ATTR_MESSAGE_TYPE = "MessageType";
+	private static final String PREFERENCES_ATTR_SUPPORTS_ENTROPY = "Entropy";
+	private static final String PREFERENCES_ATTR_SUPPORTS_VECTROPY = "Vectropy";
+	private static final String PREFERENCES_ATTR_ERROR = "Error";
 	
 	//Cache this for speed in the simulator
 	private static HashMap<String, ApiStrategy> hmNameToApiStrategy = null;
@@ -252,8 +260,13 @@ public class ApiUtil implements Registry
 	private static void initialiseStrategyHashMap()
 	{
 		HashMap<String, ApiStrategy> temp = new HashMap<>();
-		
-		Document apiXml = RegistryUtil.getAttributeXml(prefs, PREFERENCES_XML_API_SETTINGS);
+
+		String apiStrategies = getPreference(PreferenceSetting.ApiStrategies);
+		if (apiStrategies.isBlank()) {
+			return;
+		}
+
+		Document apiXml = XmlUtil.getDocumentFromXmlString(apiStrategies);
 		if (apiXml == null)
 		{
 			hmNameToApiStrategy = temp;
@@ -346,7 +359,8 @@ public class ApiUtil implements Registry
 		apiDoc.appendChild(rootElement);
 		
 		//Save to the Registry
-		RegistryUtil.setAttributeXml(prefs, PREFERENCES_XML_API_SETTINGS, apiDoc);
+		String xmlStr = XmlUtil.getStringFromDocument(apiDoc);
+		preferenceStore.save(PreferenceSetting.ApiStrategies, xmlStr);
 		
 		//Clear the cache
 		clearCache();
