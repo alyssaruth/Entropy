@@ -30,7 +30,7 @@ public interface Registry
 	public static final String SHARED_INT_JOKER_VALUE = "jokerValue";
 	public static final String SHARED_INT_JOKER_QUANTITY = "jokerQuantity";
 	public static final String SHARED_INT_NUMBER_OF_CARDS = "numberOfCards";
-	
+
 	//replay
 	public static final String REPLAY_STRING_OPPONENT_THREE_HAND = "opponentThreeHand";
 	public static final String REPLAY_STRING_OPPONENT_TWO_HAND = "opponentTwoHand";
@@ -139,7 +139,4 @@ public interface Registry
 	public static final String SAVED_GAME_INT_OPPONENT_ONE_NUMBER_OF_CARDS = "opponentOneNumberOfCards";
 	public static final String SAVED_GAME_INT_PLAYER_NUMBER_OF_CARDS = "playerNumberOfCards";
 	public static final String SAVED_GAME_STRING_GAME_MODE = "gameMode";
-
-	//statics for default values etc
-	public static final String BACK_CODE_CLASSIC_BLUE = "backBlue";
 }
