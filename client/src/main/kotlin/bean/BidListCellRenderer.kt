@@ -12,7 +12,7 @@ import `object`.Player
 import util.StringUtil
 
 class BidListCellRenderer : DefaultListCellRenderer() {
-    private var hmNameToColour: MutableMap<String?, String?> = HashMap<String?, String?>()
+    private var hmNameToColour: Map<String, String> = mapOf()
 
     override fun getListCellRendererComponent(
         list: JList<*>?,
@@ -28,14 +28,10 @@ class BidListCellRenderer : DefaultListCellRenderer() {
     }
 
     fun updateColours(players: MutableCollection<Player>) {
-        this.hmNameToColour.clear()
-
-        for (player in players) {
-            hmNameToColour.put(player.name, player.colour)
-        }
+        this.hmNameToColour = players.associate { it.name to it.colour }
     }
 
-    fun updateColours(map: MutableMap<String?, String?>) {
+    fun updateColours(map: Map<String, String>) {
         this.hmNameToColour = map
     }
 
@@ -44,10 +40,10 @@ class BidListCellRenderer : DefaultListCellRenderer() {
         playerName = StringUtil.escapeHtml(playerName)
 
         val colour = hmNameToColour.get(playerName)
-        var playerNamePrefix = playerName + ":&nbsp"
+        var playerNamePrefix = "$playerName:&nbsp"
 
         if (action.blind) {
-            playerNamePrefix = "[" + playerName + "]:&nbsp"
+            playerNamePrefix = "[$playerName]:&nbsp"
         }
 
         var text = "<html><b><font color=\"$colour\">$playerNamePrefix</b></font>"
@@ -62,6 +58,7 @@ class BidListCellRenderer : DefaultListCellRenderer() {
         // The unicode for a moon doesn't work in HTML. Also shrink to match the size of the other
         // suits.
         text = text.replace(MOONS_SYMBOL.toRegex(), "<font size=\"2\">&#127769</font>")
+        text += "</html>"
         return text
     }
 }

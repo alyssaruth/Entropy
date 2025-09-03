@@ -694,11 +694,6 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			AchievementsUtil.unlockBlueScreenOfDeath();
 		}
-		else if (command.startsWith("unlock "))
-		{
-			var threshold = command.replace("unlock ", "");
-			unlockRewards(Integer.parseInt(threshold));
-		}
 		else 
 		{
 			textToShow = gamePanel.processCommand(command);

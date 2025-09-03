@@ -1,8 +1,13 @@
 package game
 
 import io.kotest.matchers.shouldBe
+import java.awt.Color
 import org.junit.jupiter.api.Test
+import preference.FOUR_COLOURS
+import preference.PreferenceSetting
+import testCore.makeEntropyBidAction
 import util.AbstractClientTest
+import util.ClientGlobals
 
 class RenderingUtilTest : AbstractClientTest() {
     @Test
@@ -32,5 +37,25 @@ class RenderingUtilTest : AbstractClientTest() {
                 "<font color=\"${Suit.Moons.getColourHex()}\">2</font>, " +
                 "<font color=\"${Suit.Spades.getColourHex()}\">2</font>, " +
                 "<font color=\"${Suit.Stars.getColourHex()}\">3</font>)"
+    }
+
+    @Test
+    fun `HTML rendering for an entropy bid`() {
+        val bid = makeEntropyBidAction(suit = Suit.Diamonds, amount = 1)
+        bid.htmlString() shouldBe "<font color=\"#FF0000FF\" face=\"Segoe UI Symbol\">1♦</font>"
+
+        ClientGlobals.preferenceStore.save(PreferenceSetting.NumberOfColours, FOUR_COLOURS)
+        bid.htmlString() shouldBe "<font color=\"#0000FFFF\" face=\"Segoe UI Symbol\">1♦</font>"
+    }
+
+    @Test
+    fun `Should be able to get a suit colour`() {
+        Suit.Diamonds.getColour() shouldBe Color.red
+        Suit.Diamonds.getColourHex() shouldBe "#FF0000FF"
+
+        ClientGlobals.preferenceStore.save(PreferenceSetting.NumberOfColours, FOUR_COLOURS)
+
+        Suit.Diamonds.getColour() shouldBe Color.blue
+        Suit.Diamonds.getColourHex() shouldBe "#0000FFFF"
     }
 }

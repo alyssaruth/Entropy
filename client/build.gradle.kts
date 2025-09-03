@@ -39,3 +39,10 @@ tasks.withType<Test> {
 
     jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
 }
+
+task<Test>("updateScreenshots") {
+    group = "verification"
+    useJUnitPlatform()
+
+    jvmArgs = listOf("-DupdateSnapshots=true")
+}

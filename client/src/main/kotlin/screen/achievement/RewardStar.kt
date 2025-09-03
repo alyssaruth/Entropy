@@ -1,6 +1,7 @@
 package screen.achievement
 
 import achievement.Reward
+import java.awt.Dimension
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.JLabel
@@ -9,7 +10,9 @@ import util.Images
 class RewardStar(val hoverDesc: String, val reward: Reward) : JLabel(), MouseListener {
 
     init {
+        preferredSize = Dimension(17, 16)
         addMouseListener(this)
+        toggle()
     }
 
     fun toggle() {
