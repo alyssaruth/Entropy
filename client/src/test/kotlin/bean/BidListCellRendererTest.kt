@@ -6,8 +6,9 @@ import game.Suit
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import testCore.makeEntropyBidAction
+import util.AbstractClientTest
 
-class BidListCellRendererTest {
+class BidListCellRendererTest : AbstractClientTest() {
     @Test
     fun `HTML rendering - blind challenge`() {
         val challenge = ChallengeAction("Alyssa", true)
@@ -28,7 +29,7 @@ class BidListCellRendererTest {
 
         val result = makeRenderer().toHtmlString(bid)
         result shouldBe
-            "<html><b><font color=\"red\">Alyssa:&nbsp</b></font><font color=\"#000000FF\" face=\"Segoe UI Symbol\">2♠</font><i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font><font color=\"#008000FF\" face=\"Segoe UI Symbol\">Ac</font><i><font color=\"#5C5C3D\">)</i></font></html>"
+            "<html><b><font color=\"red\">Alyssa:&nbsp</b></font><font color=\"#000000FF\" face=\"Segoe UI Symbol\">2♠</font><i><font color=\"#5C5C3D\">&emsp(Shows:&nbsp</i></font><font color=\"#000000FF\" face=\"Segoe UI Symbol\">Ac</font><i><font color=\"#5C5C3D\">)</i></font></html>"
     }
 
     private fun makeRenderer() =
