@@ -77,6 +77,7 @@ class PreferencesPanelMisc(parent: PreferencesDialog) :
         add(lblOtherOptions)
         separator_3.setBounds(0, 38, 429, 2)
         add(separator_3)
+        chosenDirectory.name = "replayDirectory"
         chosenDirectory.setBounds(116, 67, 180, 22)
         chosenDirectory.setEditable(false)
         add(chosenDirectory)
