@@ -2,6 +2,7 @@ package utils
 
 import java.awt.Component
 import java.awt.Container
+import javax.swing.JComboBox
 
 /**
  * Recurses through all child components, returning an ArrayList of all children of the appropriate
@@ -32,3 +33,5 @@ fun <T> addComponents(ret: MutableList<T>, components: Array<Component>, desired
         }
     }
 }
+
+fun <E> JComboBox<E>.items() = (0 until itemCount).map { this.getItemAt(it) }

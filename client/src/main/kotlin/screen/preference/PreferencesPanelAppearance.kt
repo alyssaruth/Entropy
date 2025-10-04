@@ -93,6 +93,7 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         deckDesignPanel.setLayout(null)
         rdbtnClassicDesign.setBounds(6, 30, 72, 23)
         deckDesignPanel.add(rdbtnClassicDesign)
+        rdbtnMinimalistDesign.name = "MinimalistDesignRadio"
         rdbtnMinimalistDesign.setBounds(80, 30, 146, 23)
         deckDesignPanel.add(rdbtnMinimalistDesign)
         deckDesignPanel.add(lblCardDesign)
@@ -122,6 +123,7 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         add(jokerDesignPanel)
         rdbtnClassicJokers.setBounds(6, 30, 72, 23)
         jokerDesignPanel.add(rdbtnClassicJokers)
+        rdbtnDeveloperJokers.name = "DeveloperJokersRadio"
         rdbtnDeveloperJokers.setBounds(80, 30, 102, 23)
         jokerDesignPanel.add(rdbtnDeveloperJokers)
         separator_1.setBounds(0, 38, 429, 2)
@@ -141,6 +143,7 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         jokerPreviewPanel.add(labelJo1)
         labelJo3.setBounds(259, 20, 72, 96)
         jokerPreviewPanel.add(labelJo3)
+        cbFourColour.name = "FourColourCheckbox"
         cbFourColour.setBounds(17, 48, 135, 23)
         add(cbFourColour)
         backDesignPanel.setLayout(null)
@@ -151,8 +154,10 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         lblCardBacks.setFont(Font("Tahoma", Font.BOLD, 14))
         lblCardBacks.setBounds(127, 8, 102, 17)
         backDesignPanel.add(lblCardBacks)
+        labelBack.name = "BackPreview"
         labelBack.setBounds(23, 9, 72, 96)
         backDesignPanel.add(labelBack)
+        comboBoxBacks.name = "backs"
         comboBoxBacks.setBounds(121, 46, 190, 22)
         backDesignPanel.add(comboBoxBacks)
         panelLookAndFeel.setLayout(null)
@@ -260,52 +265,36 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         val model: ComboBoxModel<ComboBoxItem<String>> = DisabledComboBoxModel(backs)
         comboBoxBacks.setModel(model)
 
-        var selectedItem = getSelectedItemForCode(backs, cardBacks)
-        if (selectedItem == null) {
-            selectedItem = ComboBoxItem<String>("backBlue", "Blue")
-        }
-
+        val selectedItem = backs.firstOrNull { it.hiddenData == cardBacks } ?: backs.firstElement()
         comboBoxBacks.setSelectedItem(selectedItem)
     }
 
     private fun initialiseBacksVector(): Vector<ComboBoxItem<String>> {
         val backs = Vector<ComboBoxItem<String>>()
 
-        backs.addElement(ComboBoxItem<String>("backBlue", "Blue"))
-        backs.addElement(ComboBoxItem<String>("backRed", "Red"))
+        backs.addElement(ComboBoxItem("backBlue", "Blue", true))
+        backs.addElement(ComboBoxItem("backRed", "Red", true))
 
-        addIfUnlocked(backs, ComboBoxItem<String>("backGreen", "Green"), Reward.FourColours)
-        addIfUnlocked(backs, ComboBoxItem<String>("backPurple", "Purple"), Reward.NegativeJacks)
-        addIfUnlocked(backs, ComboBoxItem<String>("backOrange", "Orange"), Reward.Blind)
-        addIfUnlocked(
-            backs,
-            ComboBoxItem<String>("backLightBlue", "Light Blue"),
-            Reward.MinimalistDeck,
-        )
-        addIfUnlocked(backs, ComboBoxItem<String>("backPink", "Pink"), Reward.Vectropy)
-        addIfUnlocked(backs, ComboBoxItem<String>("backSilver", "Silver"), Reward.CardReveal)
-        addIfUnlocked(backs, ComboBoxItem<String>("backGold", "Gold"), Reward.ExtraSuits)
-        addIfUnlocked(backs, ComboBoxItem<String>("backMatrix", "Matrix"), Reward.Illegal)
-        addIfUnlocked(backs, ComboBoxItem<String>("backCosmic", "Cosmic"), Reward.DeveloperSet)
-        addIfUnlocked(backs, ComboBoxItem<String>("backRainbow", "Rainbow"), Reward.Cheats)
+        backs.addElement(makeComboBoxItem("backGreen", "Green", Reward.FourColours))
+        backs.addElement(makeComboBoxItem("backPurple", "Purple", Reward.NegativeJacks))
+        backs.addElement(makeComboBoxItem("backOrange", "Orange", Reward.Blind))
+        backs.addElement(makeComboBoxItem("backLightBlue", "Light Blue", Reward.MinimalistDeck))
+        backs.addElement(makeComboBoxItem("backPink", "Pink", Reward.Vectropy))
+        backs.addElement(makeComboBoxItem("backSilver", "Silver", Reward.CardReveal))
+        backs.addElement(makeComboBoxItem("backGold", "Gold", Reward.ExtraSuits))
+        backs.addElement(makeComboBoxItem("backMatrix", "Matrix", Reward.Illegal))
+        backs.addElement(makeComboBoxItem("backCosmic", "Cosmic", Reward.DeveloperSet))
+        backs.addElement(makeComboBoxItem("backRainbow", "Rainbow", Reward.Cheats))
 
         return backs
     }
 
-    private fun addIfUnlocked(
-        backs: Vector<ComboBoxItem<String>>,
-        item: ComboBoxItem<String>,
-        reward: Reward,
-    ) {
+    private fun makeComboBoxItem(assetName: String, displayName: String, reward: Reward) =
         if (reward.isUnlocked()) {
-            backs.addElement(item)
+            ComboBoxItem(assetName, displayName, true)
         } else {
-            val disabledItem =
-                ComboBoxItem("", reward.threshold.toString() + " achievements to unlock")
-            disabledItem.isEnabled = false
-            backs.addElement(disabledItem)
+            ComboBoxItem("", reward.threshold.toString() + " achievements to unlock", false)
         }
-    }
 
     private fun setLookAndFeelComboBoxModel() {
         val backs = Vector<String?>()
@@ -319,32 +308,15 @@ class PreferencesPanelAppearance(parent: PreferencesDialog) :
         comboBoxLookAndFeel.setSelectedItem(lookAndFeel)
     }
 
-    private fun getSelectedItemForCode(
-        backs: Vector<ComboBoxItem<String>>,
-        code: String?,
-    ): ComboBoxItem<String>? {
-        val size = backs.size
-        for (i in 0..<size) {
-            val back = backs.get(i)
-            val backCode = back.getHiddenData()
-
-            if (backCode == code) {
-                return back
-            }
-        }
-
-        return null
-    }
-
     private fun refreshCardBackPreview() {
         val selection = comboBoxBacks.selectedItem as ComboBoxItem<String>?
         if (selection == null) {
-            cardBacks = comboBoxBacks.getItemAt(0)!!.getHiddenData()
+            cardBacks = comboBoxBacks.getItemAt(0)!!.hiddenData
         } else {
-            cardBacks = selection.getHiddenData()
+            cardBacks = selection.hiddenData
         }
 
-        val back = ImageIcon(javaClass.getResource("/backs/" + cardBacks + ".png"))
+        val back = ImageIcon(javaClass.getResource("/backs/$cardBacks.png"))
         labelBack.setIcon(back)
     }
 
