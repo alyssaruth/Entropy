@@ -4,6 +4,8 @@ import achievement.AchievementUtilKt;
 import bean.FileUploadListener;
 import bean.FileUploader;
 import object.ReplayTable;
+import preference.PreferenceSetting;
+import screen.achievement.AchievementsDialog;
 import util.DialogUtil;
 import util.Registry;
 import util.ReplayFileUtil;
@@ -20,6 +22,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 import static utils.CoreGlobals.logger;
 
 public class ReplayInterface extends JFrame
@@ -189,7 +193,7 @@ public class ReplayInterface extends JFrame
 		}
 		else
 		{
-			if (!prefs.getBoolean(PREFERENCES_BOOLEAN_SAVE_REPLAYS, false)
+			if (!getPreference(PreferenceSetting.SaveReplays)
 			  && table.getFolder().equals(ReplayFileUtil.FOLDER_PERSONAL_REPLAYS))
 			{
 				replacementLabel.setText("Saving replays is currently disabled.");
@@ -320,8 +324,8 @@ public class ReplayInterface extends JFrame
 	public void windowClosing(WindowEvent e) 
 	{
 		Dimension dim = this.getSize();
-		prefs.putInt(PREFERENCES_INT_REPLAY_VIEWER_HEIGHT, dim.height);
-		prefs.putInt(PREFERENCES_INT_REPLAY_VIEWER_WIDTH, dim.width);
+		preferenceStore.save(PreferenceSetting.ReplayViewerHeight, dim.height);
+		preferenceStore.save(PreferenceSetting.ReplayViewerWidth, dim.width);
 	}
 
 	@Override

@@ -2,15 +2,19 @@ package screen;
 
 import achievement.AchievementSetting;
 import achievement.AchievementUtilKt;
+import achievement.Reward;
 import bean.AbstractDevScreen;
+import bean.BidListCellRenderer;
 import game.GameMode;
 import game.PlayerAction;
-import object.BidListCellRenderer;
 import object.Player;
 import online.screen.EntropyLobby;
 import online.screen.TestHarness;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import preference.PreferenceSetting;
+import screen.achievement.AchievementsDialog;
+import screen.preference.PreferencesDialog;
 import settings.Setting;
 import settings.SettingChangeListener;
 import util.*;
@@ -30,6 +34,8 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import static achievement.AchievementUtilKt.getAchievementsEarned;
+import static achievement.AchievementUtilKt.unlockRewards;
+import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
 import static util.ClientGlobals.achievementStore;
@@ -258,7 +264,7 @@ public final class MainScreen extends AbstractDevScreen
 		{	
 			if (overwriteSavedGame() && quitCurrentGame())
 			{
-				gameMode = GameMode.valueOf(prefs.get(Registry.PREFERENCES_STRING_GAME_MODE, GameMode.Entropy.name()));
+				gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode));
 				selectGameScreen(gameMode);
 				lblBidHistory.setVisible(true);
 				btnReplay.setVisible(true);
@@ -470,7 +476,7 @@ public final class MainScreen extends AbstractDevScreen
 	
 	private void saveGame() throws Throwable
 	{
-		boolean autosave = prefs.getBoolean(Registry.PREFERENCES_BOOLEAN_AUTOSAVE, false);
+		boolean autosave = getPreference(PreferenceSetting.AutoSave);
 
 		if (autosave)
 		{
@@ -648,7 +654,7 @@ public final class MainScreen extends AbstractDevScreen
 	public boolean commandsEnabled()
 	{
 		return ClientUtil.devMode
-		  || rewards.getBoolean(Registry.REWARDS_BOOLEAN_CHEATS, false);
+		  || Reward.Cheats.isUnlocked();
 	}
 	
 	@Override
@@ -720,7 +726,7 @@ public final class MainScreen extends AbstractDevScreen
 		{
 			int spaceIndex = command.indexOf(' ');
 			int achievements = Integer.parseInt(command.substring(spaceIndex+1));
-			AchievementsUtil.unlockRewards(achievements);
+			unlockRewards(achievements);
 		}
 		else if (command.equals("stacks"))
 		{
@@ -751,7 +757,7 @@ public final class MainScreen extends AbstractDevScreen
 		setViewLogsVisibility();
 		restartTimers();
 
-		AchievementsUtil.unlockRewards(getAchievementsEarned());
+		unlockRewards(getAchievementsEarned());
 	}
 	
 	private void cleanUpReplayNodes()
@@ -928,8 +934,8 @@ public final class MainScreen extends AbstractDevScreen
 		}
 		else if (source == mntmViewReplays)
 		{
-			int width = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_WIDTH, 875);
-			int height = prefs.getInt(Registry.PREFERENCES_INT_REPLAY_VIEWER_HEIGHT, 475);
+			int width = getPreference(PreferenceSetting.ReplayViewerWidth);
+			int height = getPreference(PreferenceSetting.ReplayViewerHeight);
 			
 			ReplayInterface replayInterface = ScreenCache.get(ReplayInterface.class);
 			replayInterface.setTitle("Replay Viewer");

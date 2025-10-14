@@ -19,7 +19,7 @@ import util.ClientGlobals
 class PlayOnlineDialogTest : AbstractTest() {
     @Test
     fun `Should not allow an empty name`() {
-        val dlg = PlayOnlineDialog()
+        val dlg = PlayOnlineDialog().also { it.isModal = false }
         dlg.isVisible = true
 
         dlg.clickOk(async = true)
@@ -32,7 +32,7 @@ class PlayOnlineDialogTest : AbstractTest() {
     fun `Should invoke the session API`() {
         ClientGlobals.sessionApi = mockk(relaxed = true)
 
-        val dlg = PlayOnlineDialog()
+        val dlg = PlayOnlineDialog().also { it.isModal = false }
         dlg.isVisible = true
         dlg.getChild<JTextField>().text = "Alyssa"
         dlg.clickOk()

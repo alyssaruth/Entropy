@@ -34,19 +34,23 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import bean.BidListCellRenderer;
 import game.PlayerAction;
 import game.Suit;
-import object.BidListCellRenderer;
 import http.dto.OnlineMessage;
 import object.PlayerLabel;
 import online.screen.GameRoom;
 import online.screen.OnlineChatPanel;
+import preference.PreferenceSetting;
+import screen.achievement.AchievementsDialog;
 import util.*;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CardsUtilKt.isCardRelevant;
 import static game.RegistryUtilKt.populateActions;
 import static game.RenderingUtilKt.getVectropyResult;
+import static preference.PreferenceSettingKt.*;
+import static util.ClientGlobals.preferenceStore;
 import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
@@ -56,9 +60,9 @@ public class ReplayDialog extends JFrame
 {	
 	public static final int RECENT_CHAT_MESSAGES_TO_SHOW = 10;
 	
-	private String deckDirectory = Registry.DECK_DIRECTORY_CLASSIC;
-	private String jokerDirectory = Registry.JOKER_DIRECTORY_CLASSIC;
-	private String numberOfColours = "";
+	private String deckDirectory = DECK_DESIGN_CLASSIC;
+	private String jokerDirectory = JOKER_DESIGN_CLASSIC;
+	private String numberOfColours = TWO_COLOURS;
 	
 	private int totalRounds = 0;
 	private int roundNumber = 0;
@@ -97,182 +101,175 @@ public class ReplayDialog extends JFrame
 
 	public ReplayDialog()
 	{
-		try
-		{
-			setSize(960, 480);
-			setLocationRelativeTo(null);
-			setResizable(false);
-			setIconImage(new ImageIcon(AchievementsDialog.class.getResource("/icons/replay.png")).getImage());
-			getContentPane().setBackground(new Color(169, 169, 169));
-			getContentPane().setLayout(null);
-			handsPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, SystemColor.scrollbar, new Color(105, 105, 105)));
-			handsPanel.setBackground(new Color(192, 192, 192));
-			handsPanel.setBounds(50, 11, 489, 365);
-			getContentPane().add(handsPanel);
-			handsPanel.setLayout(null);
-			lblPlayer.setBounds(162, 206, 163, 23);
-			handsPanel.add(lblPlayer);
-			lblPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lblPlayer.setHorizontalAlignment(SwingConstants.CENTER);
-			lblOpponentOne.setBounds(153, 10, 181, 23);
-			handsPanel.add(lblOpponentOne);
-			lblOpponentOne.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lblOpponentOne.setHorizontalAlignment(SwingConstants.CENTER);
-			lblOpponentTwo.setBounds(-1, 37, 129, 23);
-			handsPanel.add(lblOpponentTwo);
-			lblOpponentTwo.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lblOpponentTwo.setHorizontalAlignment(SwingConstants.CENTER);
-			lblOpponentThree.setBounds(358, 37, 129, 23);
-			handsPanel.add(lblOpponentThree);
-			lblOpponentThree.setHorizontalAlignment(SwingConstants.CENTER);
-			lblOpponentThree.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			panelOpponentTwoCards.setBounds(6, 67, 115, 232);
-			handsPanel.add(panelOpponentTwoCards);
-			panelOpponentTwoCards.setLayout(null);
-			opponentTwoCard5.setBounds(21, 117, 72, 96);
-			panelOpponentTwoCards.add(opponentTwoCard5);
-			opponentTwoCard4.setBounds(21, 92, 72, 96);
-			panelOpponentTwoCards.add(opponentTwoCard4);
-			opponentTwoCard3.setBounds(21, 67, 72, 96);
-			panelOpponentTwoCards.add(opponentTwoCard3);
-			opponentTwoCard2.setBounds(21, 42, 72, 96);
-			panelOpponentTwoCards.add(opponentTwoCard2);
-			opponentTwoCard1.setBounds(21, 17, 72, 96);
-			panelOpponentTwoCards.add(opponentTwoCard1);
-			panelOpponentThreeCards.setBounds(365, 67, 115, 232);
-			handsPanel.add(panelOpponentThreeCards);
-			panelOpponentThreeCards.setLayout(null);
-			opponentThreeCard5.setBounds(21, 117, 72, 96);
-			panelOpponentThreeCards.add(opponentThreeCard5);
-			opponentThreeCard4.setBounds(21, 92, 72, 96);
-			panelOpponentThreeCards.add(opponentThreeCard4);
-			opponentThreeCard3.setBounds(21, 67, 72, 96);
-			panelOpponentThreeCards.add(opponentThreeCard3);
-			opponentThreeCard2.setBounds(21, 42, 72, 96);
-			panelOpponentThreeCards.add(opponentThreeCard2);
-			opponentThreeCard1.setBounds(21, 17, 72, 96);
-			panelOpponentThreeCards.add(opponentThreeCard1);
-			panelOpponentCards.setBounds(127, 40, 232, 110);
-			handsPanel.add(panelOpponentCards);
-			panelOpponentCards.setLayout(new FlowLayout(FlowLayout.CENTER, -92, 5));
-			opponentCard5.setPreferredSize(new Dimension(72, 96));
-			panelOpponentCards.add(opponentCard5);
-			opponentCard4.setPreferredSize(new Dimension(72, 96));
-			panelOpponentCards.add(opponentCard4);
-			opponentCard3.setPreferredSize(new Dimension(72, 96));
-			panelOpponentCards.add(opponentCard3);
-			opponentCard2.setPreferredSize(new Dimension(72, 96));
-			panelOpponentCards.add(opponentCard2);
-			opponentCard1.setPreferredSize(new Dimension(72, 96));
-			panelOpponentCards.add(opponentCard1);
-			panelPlayerCards.setBounds(127, 235, 232, 110);
-			handsPanel.add(panelPlayerCards);
-			panelPlayerCards.setLayout(new FlowLayout(FlowLayout.CENTER, -92, 5));
-			playerCard1.setPreferredSize(new Dimension(72, 96));
-			panelPlayerCards.add(playerCard1);
-			playerCard2.setPreferredSize(new Dimension(72, 96));
-			panelPlayerCards.add(playerCard2);
-			playerCard3.setPreferredSize(new Dimension(72, 96));
-			panelPlayerCards.add(playerCard3);
-			playerCard4.setPreferredSize(new Dimension(72, 96));
-			panelPlayerCards.add(playerCard4);
-			playerCard5.setPreferredSize(new Dimension(72, 96));
-			panelPlayerCards.add(playerCard5);
-			lblOpponentOne.setVisible(false);
-			lblPlayer.setVisible(false);
-			separator.setBackground(SystemColor.scrollbar);
-			separator.setOrientation(1);
-			separator.setForeground(SystemColor.controlDkShadow);
-			separator.setBounds(589, 0, 10, 452);
-			getContentPane().add(separator);
-			lblBidHistory.setHorizontalAlignment(SwingConstants.CENTER);
-			lblBidHistory.setFont(new Font("Tahoma", Font.PLAIN, 17));
-			lblBidHistory.setBounds(723, 15, 97, 23);
-			getContentPane().add(lblBidHistory);
-			scrollPane.setBounds(674, 42, 194, 144);
-			getContentPane().add(scrollPane);
-			history.setBackground(SystemColor.control);
-			history.setLocation(0, 119);
-			scrollPane.setViewportView(history);
-			history.setVisibleRowCount(4);
-			lblResult.setContentType("text/html");
-			lblResult.setEditable(false);
-			lblResult.setFocusable(false);
-			lblResult.setFont(new Font("Tahoma", Font.PLAIN, 16));
-			lblResult.setBounds(655, 200, 232, 46);
-			lblResult.setOpaque(false);
-			lblResult.setBorder(BorderFactory.createEmptyBorder());
-			lblResult.setBackground(new Color(0,0,0,0));
-			getContentPane().add(lblResult);
-			nextRound.setBounds(303, 387, 49, 48);
-			getContentPane().add(nextRound);
-			nextRound.setToolTipText("Next Round");
-			previousRound.setBounds(244, 387, 49, 48);
-			getContentPane().add(previousRound);
-			previousRound.setToolTipText("Previous Round");
-			setFilterIcons();
-			clubFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/clubFilterGreen.png")));
-			clubFilter.setBackground(new Color(216, 191, 216));
-			clubFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-			clubFilter.setBounds(628, 275, 40, 40);
-			clubFilter.setMargin(new Insets(0, 0, 0, 0));
-			getContentPane().add(clubFilter);
-			diamondFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/diamondFilterBlue.png")));
-			diamondFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-			diamondFilter.setBounds(668, 275, 40, 40);
-			diamondFilter.setMargin(new Insets(0, 0, 0, 0));
-			getContentPane().add(diamondFilter);
-			heartFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-			heartFilter.setBounds(708, 275, 40, 40);
-			heartFilter.setMargin(new Insets(0, 0, 0, 0));
-			getContentPane().add(heartFilter);
-			spadeFilter.setBackground(new Color(216, 191, 216));
-			spadeFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-			spadeFilter.setBounds(788, 275, 40, 40);
-			spadeFilter.setMargin(new Insets(0, 0, 0, 0));
-			getContentPane().add(spadeFilter);
-			noFilter.setBackground(new Color(216, 191, 216));
-			noFilter.setFont(new Font("Times New Roman", Font.BOLD, 24));
-			noFilter.setBounds(868, 275, 40, 40);
-			noFilter.setMargin(new Insets(0, 0, 0, 0));
-			getContentPane().add(noFilter);
-			lblFilter.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			lblFilter.setHorizontalAlignment(SwingConstants.CENTER);
-			lblFilter.setBounds(741, 245, 60, 22);
-			getContentPane().add(lblFilter);
-			filterGroup.add(noFilter);
-			filterGroup.add(clubFilter);
-			filterGroup.add(diamondFilter);
-			filterGroup.add(heartFilter);
-			filterGroup.add(spadeFilter);
-			filterGroup.add(moonFilter);
-			filterGroup.add(starFilter);
-			firstRound.setToolTipText("Previous Round");
-			firstRound.setBounds(185, 387, 49, 48);
-			getContentPane().add(firstRound);
-			firstRound.setToolTipText("First Round");
-			lastRound.setToolTipText("Previous Round");
-			lastRound.setBounds(362, 387, 49, 48);
-			getContentPane().add(lastRound);
-			lastRound.setToolTipText("Last Round");
-			chatPanel.setBounds(598, 340, 327, 100);
-			chatPanel.setBackground(SystemColor.control);
-			getContentPane().add(chatPanel);
-			moonFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/moonFilterPurple.png")));
-			moonFilter.setBounds(748, 275, 40, 40);
-			getContentPane().add(moonFilter);
-			starFilter.setSelectedIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilterSelected.png")));
-			starFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilter.png")));
-			starFilter.setBounds(828, 275, 40, 40);
-			getContentPane().add(starFilter);
-			history.setCellRenderer(bidRenderer);
+		setSize(960, 480);
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setIconImage(new ImageIcon(AchievementsDialog.class.getResource("/icons/replay.png")).getImage());
+		getContentPane().setBackground(new Color(169, 169, 169));
+		getContentPane().setLayout(null);
+		handsPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, SystemColor.scrollbar, new Color(105, 105, 105)));
+		handsPanel.setBackground(new Color(192, 192, 192));
+		handsPanel.setBounds(50, 11, 489, 365);
+		getContentPane().add(handsPanel);
+		handsPanel.setLayout(null);
+		lblPlayer.setBounds(162, 206, 163, 23);
+		handsPanel.add(lblPlayer);
+		lblPlayer.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblPlayer.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOpponentOne.setBounds(153, 10, 181, 23);
+		handsPanel.add(lblOpponentOne);
+		lblOpponentOne.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblOpponentOne.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOpponentTwo.setBounds(-1, 37, 129, 23);
+		handsPanel.add(lblOpponentTwo);
+		lblOpponentTwo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblOpponentTwo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOpponentThree.setBounds(358, 37, 129, 23);
+		handsPanel.add(lblOpponentThree);
+		lblOpponentThree.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOpponentThree.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panelOpponentTwoCards.setBounds(6, 67, 115, 232);
+		handsPanel.add(panelOpponentTwoCards);
+		panelOpponentTwoCards.setLayout(null);
+		opponentTwoCard5.setBounds(21, 117, 72, 96);
+		panelOpponentTwoCards.add(opponentTwoCard5);
+		opponentTwoCard4.setBounds(21, 92, 72, 96);
+		panelOpponentTwoCards.add(opponentTwoCard4);
+		opponentTwoCard3.setBounds(21, 67, 72, 96);
+		panelOpponentTwoCards.add(opponentTwoCard3);
+		opponentTwoCard2.setBounds(21, 42, 72, 96);
+		panelOpponentTwoCards.add(opponentTwoCard2);
+		opponentTwoCard1.setBounds(21, 17, 72, 96);
+		panelOpponentTwoCards.add(opponentTwoCard1);
+		panelOpponentThreeCards.setBounds(365, 67, 115, 232);
+		handsPanel.add(panelOpponentThreeCards);
+		panelOpponentThreeCards.setLayout(null);
+		opponentThreeCard5.setBounds(21, 117, 72, 96);
+		panelOpponentThreeCards.add(opponentThreeCard5);
+		opponentThreeCard4.setBounds(21, 92, 72, 96);
+		panelOpponentThreeCards.add(opponentThreeCard4);
+		opponentThreeCard3.setBounds(21, 67, 72, 96);
+		panelOpponentThreeCards.add(opponentThreeCard3);
+		opponentThreeCard2.setBounds(21, 42, 72, 96);
+		panelOpponentThreeCards.add(opponentThreeCard2);
+		opponentThreeCard1.setBounds(21, 17, 72, 96);
+		panelOpponentThreeCards.add(opponentThreeCard1);
+		panelOpponentCards.setBounds(127, 40, 232, 110);
+		handsPanel.add(panelOpponentCards);
+		panelOpponentCards.setLayout(new FlowLayout(FlowLayout.CENTER, -92, 5));
+		opponentCard5.setPreferredSize(new Dimension(72, 96));
+		panelOpponentCards.add(opponentCard5);
+		opponentCard4.setPreferredSize(new Dimension(72, 96));
+		panelOpponentCards.add(opponentCard4);
+		opponentCard3.setPreferredSize(new Dimension(72, 96));
+		panelOpponentCards.add(opponentCard3);
+		opponentCard2.setPreferredSize(new Dimension(72, 96));
+		panelOpponentCards.add(opponentCard2);
+		opponentCard1.setPreferredSize(new Dimension(72, 96));
+		panelOpponentCards.add(opponentCard1);
+		panelPlayerCards.setBounds(127, 235, 232, 110);
+		handsPanel.add(panelPlayerCards);
+		panelPlayerCards.setLayout(new FlowLayout(FlowLayout.CENTER, -92, 5));
+		playerCard1.setPreferredSize(new Dimension(72, 96));
+		panelPlayerCards.add(playerCard1);
+		playerCard2.setPreferredSize(new Dimension(72, 96));
+		panelPlayerCards.add(playerCard2);
+		playerCard3.setPreferredSize(new Dimension(72, 96));
+		panelPlayerCards.add(playerCard3);
+		playerCard4.setPreferredSize(new Dimension(72, 96));
+		panelPlayerCards.add(playerCard4);
+		playerCard5.setPreferredSize(new Dimension(72, 96));
+		panelPlayerCards.add(playerCard5);
+		lblOpponentOne.setVisible(false);
+		lblPlayer.setVisible(false);
+		separator.setBackground(SystemColor.scrollbar);
+		separator.setOrientation(1);
+		separator.setForeground(SystemColor.controlDkShadow);
+		separator.setBounds(589, 0, 10, 452);
+		getContentPane().add(separator);
+		lblBidHistory.setHorizontalAlignment(SwingConstants.CENTER);
+		lblBidHistory.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblBidHistory.setBounds(723, 15, 97, 23);
+		getContentPane().add(lblBidHistory);
+		scrollPane.setBounds(674, 42, 194, 144);
+		getContentPane().add(scrollPane);
+		history.setBackground(SystemColor.control);
+		history.setLocation(0, 119);
+		scrollPane.setViewportView(history);
+		history.setVisibleRowCount(4);
+		lblResult.setContentType("text/html");
+		lblResult.setEditable(false);
+		lblResult.setFocusable(false);
+		lblResult.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblResult.setBounds(655, 200, 232, 46);
+		lblResult.setOpaque(false);
+		lblResult.setBorder(BorderFactory.createEmptyBorder());
+		lblResult.setBackground(new Color(0,0,0,0));
+		getContentPane().add(lblResult);
+		nextRound.setBounds(303, 387, 49, 48);
+		getContentPane().add(nextRound);
+		nextRound.setToolTipText("Next Round");
+		previousRound.setBounds(244, 387, 49, 48);
+		getContentPane().add(previousRound);
+		previousRound.setToolTipText("Previous Round");
+		setFilterIcons();
+		clubFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/clubFilterGreen.png")));
+		clubFilter.setBackground(new Color(216, 191, 216));
+		clubFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
+		clubFilter.setBounds(628, 275, 40, 40);
+		clubFilter.setMargin(new Insets(0, 0, 0, 0));
+		getContentPane().add(clubFilter);
+		diamondFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/diamondFilterBlue.png")));
+		diamondFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
+		diamondFilter.setBounds(668, 275, 40, 40);
+		diamondFilter.setMargin(new Insets(0, 0, 0, 0));
+		getContentPane().add(diamondFilter);
+		heartFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
+		heartFilter.setBounds(708, 275, 40, 40);
+		heartFilter.setMargin(new Insets(0, 0, 0, 0));
+		getContentPane().add(heartFilter);
+		spadeFilter.setBackground(new Color(216, 191, 216));
+		spadeFilter.setFont(new Font("Times New Roman", Font.PLAIN, 24));
+		spadeFilter.setBounds(788, 275, 40, 40);
+		spadeFilter.setMargin(new Insets(0, 0, 0, 0));
+		getContentPane().add(spadeFilter);
+		noFilter.setBackground(new Color(216, 191, 216));
+		noFilter.setFont(new Font("Times New Roman", Font.BOLD, 24));
+		noFilter.setBounds(868, 275, 40, 40);
+		noFilter.setMargin(new Insets(0, 0, 0, 0));
+		getContentPane().add(noFilter);
+		lblFilter.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFilter.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFilter.setBounds(741, 245, 60, 22);
+		getContentPane().add(lblFilter);
+		filterGroup.add(noFilter);
+		filterGroup.add(clubFilter);
+		filterGroup.add(diamondFilter);
+		filterGroup.add(heartFilter);
+		filterGroup.add(spadeFilter);
+		filterGroup.add(moonFilter);
+		filterGroup.add(starFilter);
+		firstRound.setToolTipText("Previous Round");
+		firstRound.setBounds(185, 387, 49, 48);
+		getContentPane().add(firstRound);
+		firstRound.setToolTipText("First Round");
+		lastRound.setToolTipText("Previous Round");
+		lastRound.setBounds(362, 387, 49, 48);
+		getContentPane().add(lastRound);
+		lastRound.setToolTipText("Last Round");
+		chatPanel.setBounds(598, 340, 327, 100);
+		chatPanel.setBackground(SystemColor.control);
+		getContentPane().add(chatPanel);
+		moonFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/moonFilterPurple.png")));
+		moonFilter.setBounds(748, 275, 40, 40);
+		getContentPane().add(moonFilter);
+		starFilter.setSelectedIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilterSelected.png")));
+		starFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/starFilter.png")));
+		starFilter.setBounds(828, 275, 40, 40);
+		getContentPane().add(starFilter);
+		history.setCellRenderer(bidRenderer);
 
-			initialiseListeners();
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
-		}
+		initialiseListeners();
 	}
 
 	private final BidListCellRenderer bidRenderer = new BidListCellRenderer();
@@ -434,22 +431,21 @@ public class ReplayDialog extends JFrame
 		includeMoons = replay.getBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, false);
 		includeStars = replay.getBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, false);
 		
-		deckDirectory = prefs.get(PREFERENCES_STRING_DECK_DIRECTORY, Registry.DECK_DIRECTORY_CLASSIC);
-		jokerDirectory = prefs.get(PREFERENCES_STRING_JOKER_DIRECTORY, Registry.JOKER_DIRECTORY_CLASSIC);
-		numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
+		deckDirectory = getPreference(PreferenceSetting.DeckDesign);
+		jokerDirectory = getPreference(PreferenceSetting.JokerDesign);
+		numberOfColours = getPreference(PreferenceSetting.NumberOfColours);
 	}
 	
 	private int getStartOrEndRoundNumber()
 	{
-		int openWhere = prefs.getInt(PREFERENCES_INT_REPLAY_DEFAULT, Registry.OPEN_ON_LAST_ROUND);
-
-		if (openWhere == Registry.OPEN_ON_LAST_ROUND)
+		boolean openOnFirstRound = getPreference(PreferenceSetting.OpenReplayOnFirstRound);
+		if (openOnFirstRound)
 		{
-			return totalRounds;
+			return 1;
 		}
 		else
 		{
-			return 1;
+			return totalRounds;
 		}
 	}
 	
@@ -646,9 +642,6 @@ public class ReplayDialog extends JFrame
 	
 	private void displayHands()
 	{
-		deckDirectory = prefs.get(PREFERENCES_STRING_DECK_DIRECTORY, Registry.DECK_DIRECTORY_CLASSIC);
-		numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-		
 		displayHand(playerCards, playerHand, playerNumberOfCards);
 		displayHand(opponentOneCards, opponentOneHand, opponentOneNumberOfCards);
 		displayHand(opponentTwoCards, opponentTwoHand, opponentTwoNumberOfCards);
@@ -868,35 +861,28 @@ public class ReplayDialog extends JFrame
 	
 	public void fireAppearancePreferencesChange()
 	{
-		try
+		deckDirectory = getPreference(PreferenceSetting.DeckDesign);
+		jokerDirectory = getPreference(PreferenceSetting.JokerDesign);
+		numberOfColours = getPreference(PreferenceSetting.NumberOfColours);
+
+		if (isVisible())
 		{
-			deckDirectory = prefs.get(PREFERENCES_STRING_DECK_DIRECTORY, Registry.DECK_DIRECTORY_CLASSIC);
-			jokerDirectory = prefs.get(PREFERENCES_STRING_JOKER_DIRECTORY, Registry.JOKER_DIRECTORY_CLASSIC);
-			numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-			
-			if (isVisible())
+			history.repaint();
+
+			Suit suitFiltered = getFilterSuitFromFilters();
+			setFilterIcons();
+			displayHands();
+			highlightHands(suitFiltered);
+
+			//if suitFiltered = -1, then show the result for lastBidSuitCode
+			if (suitFiltered == null)
 			{
-				history.repaint();
-				
-				Suit suitFiltered = getFilterSuitFromFilters();
-				setFilterIcons();
-				displayHands();
-				highlightHands(suitFiltered);
-				
-				//if suitFiltered = -1, then show the result for lastBidSuitCode
-				if (suitFiltered == null)
-				{
-					showResult(lastBidSuit);
-				}
-				else
-				{
-					showResult(suitFiltered);
-				}
+				showResult(lastBidSuit);
 			}
-		}
-		catch (Throwable t)
-		{
-			Debug.stackTrace(t);
+			else
+			{
+				showResult(suitFiltered);
+			}
 		}
 	}
 	
@@ -930,8 +916,7 @@ public class ReplayDialog extends JFrame
 	
 	private void setFilterIcons()
 	{
-		numberOfColours = prefs.get(PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS);
-		boolean fourColours = (numberOfColours.equals(Registry.FOUR_COLOURS));
+		boolean fourColours = (numberOfColours.equals(FOUR_COLOURS));
 		
 		heartFilter.setSelectedIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/heartFilterSelected.png")));
 		heartFilter.setIcon(new ImageIcon(ReplayDialog.class.getResource("/buttons/heartFilter.png")));
@@ -1004,64 +989,57 @@ public class ReplayDialog extends JFrame
 	@Override
 	public void actionPerformed(ActionEvent arg0) 
 	{
-		try
+		Component source = (Component)arg0.getSource();
+		if (source == firstRound)
 		{
-			Component source = (Component)arg0.getSource();
-			if (source == firstRound)
-			{
-				showFirstHand();
-			}
-			else if (source == lastRound)
-			{
-				showLastHand();
-			}
-			else if (source == nextRound)
-			{
-				showNextHand();
-			}
-			else if (source == previousRound)
-			{
-				showPreviousHand();
-			}
-			else if (source == clubFilter)
-			{
-				highlightHands(Suit.Clubs);
-				showResult(Suit.Clubs);
-			}
-			else if (source == diamondFilter)
-			{
-				highlightHands(Suit.Diamonds);
-				showResult(Suit.Diamonds);
-			}
-			else if (source == heartFilter)
-			{
-				highlightHands(Suit.Hearts);
-				showResult(Suit.Hearts);
-			}
-			else if (source == moonFilter)
-			{
-				highlightHands(Suit.Moons);
-				showResult(Suit.Moons);
-			}
-			else if (source == spadeFilter)
-			{
-				highlightHands(Suit.Spades);
-				showResult(Suit.Spades);
-			}
-			else if (source == starFilter)
-			{
-				highlightHands(Suit.Stars);
-				showResult(Suit.Stars);
-			}
-			else if (source == noFilter)
-			{
-				highlightHands(null);
-				showResult(lastBidSuit);
-			}
+			showFirstHand();
 		}
-		catch (Throwable t)
+		else if (source == lastRound)
 		{
-			Debug.stackTrace(t);
+			showLastHand();
+		}
+		else if (source == nextRound)
+		{
+			showNextHand();
+		}
+		else if (source == previousRound)
+		{
+			showPreviousHand();
+		}
+		else if (source == clubFilter)
+		{
+			highlightHands(Suit.Clubs);
+			showResult(Suit.Clubs);
+		}
+		else if (source == diamondFilter)
+		{
+			highlightHands(Suit.Diamonds);
+			showResult(Suit.Diamonds);
+		}
+		else if (source == heartFilter)
+		{
+			highlightHands(Suit.Hearts);
+			showResult(Suit.Hearts);
+		}
+		else if (source == moonFilter)
+		{
+			highlightHands(Suit.Moons);
+			showResult(Suit.Moons);
+		}
+		else if (source == spadeFilter)
+		{
+			highlightHands(Suit.Spades);
+			showResult(Suit.Spades);
+		}
+		else if (source == starFilter)
+		{
+			highlightHands(Suit.Stars);
+			showResult(Suit.Stars);
+		}
+		else if (source == noFilter)
+		{
+			highlightHands(null);
+			showResult(lastBidSuit);
 		}
 	}
 }

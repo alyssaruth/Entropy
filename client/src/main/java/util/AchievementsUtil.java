@@ -5,9 +5,7 @@ import game.GameMode;
 import game.PlayerAction;
 import object.Player;
 import online.screen.EntropyLobby;
-import screen.HelpDialog;
 import screen.MainScreen;
-import screen.RewardDialog;
 import screen.ScreenCache;
 import utils.Achievement;
 
@@ -20,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static achievement.AchievementUtilKt.unlockAchievement;
 import static util.ClientGlobals.achievementStore;
 
-public class AchievementsUtil implements Registry
+public class AchievementsUtil
 {
 	private static final int FULL_GAME_STARTING_CARDS = 5;
 	private static final int OMNISCIENT_THRESHOLD = 10;
@@ -447,32 +445,6 @@ public class AchievementsUtil implements Registry
 	public static void unlockBlueScreenOfDeath()
 	{
 		unlockAchievement(Achievement.BlueScreenOfDeath);
-	}
-	
-	public static void unlockRewards(int achievementsEarned)
-	{
-		unlockIfRequired(achievementsEarned, 5, REWARDS_BOOLEAN_FOUR_COLOURS, RewardDialog.REWARD_BANNER_FOUR_COLOUR);
-		unlockIfRequired(achievementsEarned, 10, REWARDS_BOOLEAN_NEGATIVE_JACKS, RewardDialog.REWARD_BANNER_NEGATIVE_JACKS);
-		unlockIfRequired(achievementsEarned, 15, REWARDS_BOOLEAN_BLIND, RewardDialog.REWARD_BANNER_BLIND);
-		unlockIfRequired(achievementsEarned, 20, REWARDS_BOOLEAN_MINIMALIST_DECK, RewardDialog.REWARD_BANNER_MINIMALIST);
-		unlockIfRequired(achievementsEarned, 25, REWARDS_BOOLEAN_VECTROPY, RewardDialog.REWARD_BANNER_VECTROPY);
-		unlockIfRequired(achievementsEarned, 30, REWARDS_BOOLEAN_CARD_REVEAL, RewardDialog.REWARD_BANNER_CARD_REVEAL);
-		unlockIfRequired(achievementsEarned, 35, REWARDS_BOOLEAN_EXTRA_SUITS, RewardDialog.REWARD_BANNER_EXTRA_SUITS);
-		unlockIfRequired(achievementsEarned, 40, REWARDS_BOOLEAN_ILLEGAL, RewardDialog.REWARD_BANNER_ILLEGAL);
-		unlockIfRequired(achievementsEarned, 45, REWARDS_BOOLEAN_DEVELOPER_JOKERS, RewardDialog.REWARD_BANNER_DEVELOPERS);
-		unlockIfRequired(achievementsEarned, 50, REWARDS_BOOLEAN_CHEATS, RewardDialog.REWARD_BANNER_CHEATS);
-		
-		//Always refresh here in case there are new pages
-		ScreenCache.get(HelpDialog.class).refreshNodes("");
-	}
-	private static void unlockIfRequired(int achievementsEarned, int threshold, String registryNode, String imageName)
-	{
-		if (achievementsEarned >= threshold
-		  && !rewards.getBoolean(registryNode, false))
-		{
-			rewards.putBoolean(registryNode, true);
-			RewardDialog.showDialog(imageName);
-		}
 	}
 
 	public static void updateAndUnlockSocial(ConcurrentHashMap<Integer, Player> hmPlayerByAdjustedPlayerNumber) 

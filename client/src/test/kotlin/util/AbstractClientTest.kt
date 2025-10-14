@@ -12,6 +12,8 @@ abstract class AbstractClientTest : AbstractTest() {
     @BeforeEach
     fun beforeEach() {
         ClientGlobals.achievementStore = InMemorySettingStore()
+        ClientGlobals.rewardStore = InMemorySettingStore()
+        ClientGlobals.preferenceStore = InMemorySettingStore()
         ScreenCache.emptyCache()
     }
 

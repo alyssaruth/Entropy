@@ -108,7 +108,6 @@ class VectropyBidActionTest : AbstractTest() {
 
         val allSuits = coreSuits + mapOf(Suit.Moons to 7, Suit.Stars to 9)
         VectropyBidAction("", false, allSuits).plainString() shouldBe "(3, 0, 2, 7, 1, 9)"
-        VectropyBidAction("", false, allSuits).htmlString() shouldBe "(3, 0, 2, 7, 1, 9)"
     }
 
     @Test

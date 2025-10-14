@@ -1,5 +1,6 @@
 package help
 
+import achievement.Reward
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Font
@@ -8,9 +9,8 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextPane
 import util.EntropyColour
-import util.Registry
 
-class ToolsGameplaySettings : HelpPanel(), Registry {
+class ToolsGameplaySettings : HelpPanel() {
     override val nodeName = "Gameplay Settings"
 
     private val title = JTextPane()
@@ -132,7 +132,7 @@ class ToolsGameplaySettings : HelpPanel(), Registry {
     }
 
     override fun refresh() {
-        val unlockedBlind = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_BLIND, false)
+        val unlockedBlind = Reward.Blind.isUnlocked()
         blindPanel.isVisible = unlockedBlind
 
         if (unlockedBlind) {

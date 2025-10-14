@@ -1,5 +1,6 @@
 package help
 
+import achievement.Reward
 import game.CLUBS_SYMBOL
 import game.DIAMONDS_SYMBOL
 import game.HEARTS_SYMBOL
@@ -12,9 +13,8 @@ import javax.swing.JLabel
 import javax.swing.JTextPane
 import javax.swing.SwingConstants
 import util.EntropyColour
-import util.Registry
 
-class FundamentalsTheDeck : HelpPanel(), Registry {
+class FundamentalsTheDeck : HelpPanel() {
     override val nodeName = "The Deck"
 
     private var clubString = "clubs (<font color = \"black\">${CLUBS_SYMBOL}</font>)"
@@ -102,7 +102,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
 
     override fun searchTermsToExclude() = listOf("bidding")
 
-    private fun setPaneOneText(moonsAndStars: Boolean) {
+    private fun setPaneOneText() {
         var paneOneText =
             ("<html>For the standard game, a normal deck of 52 cards is used. This deck is made up of four suits: " +
                 clubString +
@@ -111,7 +111,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
                 ", hearts (<font color=\"red\">${HEARTS_SYMBOL}</font>) and spades (${SPADES_SYMBOL}), " +
                 "each of 13 cards. ")
 
-        if (moonsAndStars) {
+        if (Reward.ExtraSuits.isUnlocked()) {
             paneOneText += "Two optional suits, $moonString and stars "
             paneOneText +=
                 "(<font color=\"CC9900\">" +
@@ -148,8 +148,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
                 MOONS_SYMBOL +
                 "</font>)"
 
-        val moonsAndStars = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_EXTRA_SUITS, false)
-        setPaneOneText(moonsAndStars)
+        setPaneOneText()
 
         if (fourColours) {
             clubLabel.foreground = Color(0, 128, 0)
@@ -163,9 +162,7 @@ class FundamentalsTheDeck : HelpPanel(), Registry {
     }
 
     private fun refreshSuitRankingVisibility() {
-        val moonsAndStars = Registry.rewards.getBoolean(Registry.REWARDS_BOOLEAN_EXTRA_SUITS, false)
-
-        if (moonsAndStars) {
+        if (Reward.ExtraSuits.isUnlocked()) {
             moonLabel.isVisible = true
             starLabel.isVisible = true
             rightmostLabel.isVisible = true

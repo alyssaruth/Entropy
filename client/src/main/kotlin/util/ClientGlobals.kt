@@ -25,4 +25,6 @@ object ClientGlobals {
     var updateManager = UpdateManager()
     val webSocketReceiver = WebSocketReceiver()
     @JvmField var achievementStore: AbstractSettingStore = DefaultSettingStore("achievements")
+    @JvmField var preferenceStore: AbstractSettingStore = DefaultSettingStore("preferences")
+    @JvmField var rewardStore: AbstractSettingStore = DefaultSettingStore("rewards")
 }

@@ -10,9 +10,11 @@ import javax.swing.JPanel
 import javax.swing.JTextPane
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter
 import javax.swing.text.Highlighter
+import preference.FOUR_COLOURS
+import preference.PreferenceSetting
 import screen.HelpDialog
 import screen.ScreenCache
-import util.Registry
+import util.ClientGlobals.preferenceStore
 import utils.CoreGlobals.logger
 import utils.getAllChildComponentsForType
 
@@ -223,8 +225,7 @@ abstract class HelpPanel : JPanel() {
     override fun toString() = nodeName
 
     protected fun useFourColours() =
-        Registry.prefs[Registry.PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS] ==
-            Registry.FOUR_COLOURS
+        preferenceStore.get(PreferenceSetting.NumberOfColours) == FOUR_COLOURS
 
     open fun refresh() {
         // to be overridden by any pages that have dynamic content

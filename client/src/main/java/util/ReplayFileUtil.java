@@ -5,6 +5,7 @@ import object.FlagImage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import preference.PreferenceSetting;
 import screen.ReplayDialog;
 
 import java.io.File;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
 
 public final class ReplayFileUtil implements Registry
 {
@@ -115,7 +119,7 @@ public final class ReplayFileUtil implements Registry
 	
 	private static void saveReplayToFile(Preferences replay)
 	{
-		boolean save = prefs.getBoolean(PREFERENCES_BOOLEAN_SAVE_REPLAYS, false);
+		boolean save = getPreference(PreferenceSetting.SaveReplays);
 		if (!save)
 		{
 			return;
@@ -353,7 +357,7 @@ public final class ReplayFileUtil implements Registry
 	
 	public static String getDirectoryFromPreferences()
 	{
-		return prefs.get(PREFERENCES_STRING_REPLAY_DIRECTORY, System.getProperty("user.dir"));
+		return preferenceStore.get(PreferenceSetting.ReplayDirectory);
 	}
 	
 	private static String factoryFileNameForReplay(Preferences replay)

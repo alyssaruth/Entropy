@@ -5,12 +5,14 @@ import java.awt.BorderLayout;
 import game.GameMode;
 import game.Suit;
 import game.VectropyBidAction;
+import preference.PreferenceSetting;
 import util.AchievementsUtil;
 import util.Debug;
 import util.Registry;
 
 import static game.CheatUtilKt.getMaxBidString;
 import static game.RenderingUtilKt.getVectropyResult;
+import static preference.PreferenceSettingKt.getPreference;
 
 public class VectropyScreen extends GameScreen
 {
@@ -26,7 +28,7 @@ public class VectropyScreen extends GameScreen
 			setLayout(new BorderLayout(0, 0));
 			add(handPanel, BorderLayout.CENTER);
 			handPanel.setOpaque(false);
-			bidPanel = new VectropyBidPanel(prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player"), handPanel);
+			bidPanel = new VectropyBidPanel(getPreference(PreferenceSetting.PlayerName), handPanel);
 			add(bidPanel, BorderLayout.SOUTH);
 			bidPanel.showBidPanel(false);
 			

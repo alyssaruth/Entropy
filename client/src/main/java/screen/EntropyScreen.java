@@ -6,12 +6,14 @@ import game.EntropyBidAction;
 import game.GameMode;
 import game.Suit;
 import object.EntropyAchievementsTracker;
+import preference.PreferenceSetting;
 import util.Registry;
 
 import static game.CardsUtilKt.countSuit;
 import static game.CheatUtilKt.getMaxBidString;
 import static game.EntropyUtilKt.perfectBidAmount;
 import static game.EntropyUtilKt.perfectBidSuit;
+import static preference.PreferenceSettingKt.getPreference;
 
 public class EntropyScreen extends GameScreen<EntropyBidAction>
 {
@@ -22,7 +24,7 @@ public class EntropyScreen extends GameScreen<EntropyBidAction>
 	public EntropyScreen()
 	{
 		setFocusable(true);
-		bidPanel = new EntropyBidPanel(prefs.get(PREFERENCES_STRING_PLAYER_NAME, "Player"), handPanel);
+		bidPanel = new EntropyBidPanel(getPreference(PreferenceSetting.PlayerName), handPanel);
 		bidPanel.showBidPanel(false);
 		
 		setLayout(new BorderLayout(0, 0));

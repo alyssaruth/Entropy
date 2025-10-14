@@ -36,10 +36,10 @@ abstract class AbstractSettingStore {
             return setting.default
         }
 
-        val raw = findRaw(setting) ?: return setting.default
-        return convertFromRaw(setting, raw)
+        return find(setting) ?: return setting.default
     }
 
+    // TODO - Replace with inline fns and json serialisation
     private fun <T> toRawValue(raw: T) = raw.toString()
 
     @Suppress("UNCHECKED_CAST")

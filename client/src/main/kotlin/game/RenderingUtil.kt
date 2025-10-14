@@ -1,5 +1,11 @@
 package game
 
+import java.awt.Color
+import preference.FOUR_COLOURS
+import preference.PreferenceSetting
+import util.ClientGlobals
+import utils.toHexCode
+
 fun getCardHtml(card: String): String {
     if (card.contains("Jo")) {
         return "<font color=\"#FF33CC\">Jo</font>"
@@ -26,3 +32,17 @@ fun getVectropyResult(
 
     return "(${htmlStrings.joinToString(", ")})"
 }
+
+fun PlayerAction.htmlString() =
+    when (this) {
+        is EntropyBidAction ->
+            "<font color=\"${suit.getColourHex()}\" face=\"Segoe UI Symbol\">$amount${suit.unicodeStr}</font>"
+        else -> plainString()
+    }
+
+fun Suit.getColour(): Color {
+    val numberOfColoursStr = ClientGlobals.preferenceStore.get(PreferenceSetting.NumberOfColours)
+    return if (numberOfColoursStr == FOUR_COLOURS) fourColour else twoColour
+}
+
+fun Suit.getColourHex() = getColour().toHexCode()

@@ -8,7 +8,7 @@ import javax.swing.JDialog
 import javax.swing.JPanel
 import utils.CoreGlobals.logger
 
-abstract class SimpleDialog : JDialog(), ActionListener {
+abstract class SimpleDialog(includeCancel: Boolean = true) : JDialog(), ActionListener {
     protected val panelOkCancel = JPanel()
     protected val btnOk = JButton("Ok")
     protected val btnCancel = JButton("Cancel")
@@ -19,10 +19,12 @@ abstract class SimpleDialog : JDialog(), ActionListener {
         isResizable = false
 
         panelOkCancel.add(btnOk)
-        panelOkCancel.add(btnCancel)
-
         btnOk.addActionListener(this)
-        btnCancel.addActionListener(this)
+
+        if (includeCancel) {
+            panelOkCancel.add(btnCancel)
+            btnCancel.addActionListener(this)
+        }
     }
 
     /** Abstract methods */

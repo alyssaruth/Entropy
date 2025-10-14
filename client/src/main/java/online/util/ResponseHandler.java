@@ -10,6 +10,7 @@ import online.screen.OnlineStatsPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import preference.PreferenceSetting;
 import screen.ScreenCache;
 import util.*;
 import utils.CoreGlobals;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static preference.PreferenceSettingKt.getPreference;
 import static utils.CoreGlobals.logger;
 
 public class ResponseHandler implements XmlConstants
@@ -233,7 +235,7 @@ public class ResponseHandler implements XmlConstants
 	 */
 	private static void pauseDuringChallenge()
 	{
-		int sleepMillis = 1000 * Registry.prefs.getInt(Registry.PREFERENCES_INT_AUTO_START_SECONDS, 2);
+		int sleepMillis = 1000 * getPreference(PreferenceSetting.AutoStartSeconds);
 		try { Thread.sleep(sleepMillis); } catch (Throwable t) {}
 	}
 	

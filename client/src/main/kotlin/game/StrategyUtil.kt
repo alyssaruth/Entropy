@@ -89,7 +89,6 @@ fun getBasicVectropyOpening(
     val map =
         suits.associateWith { suit ->
             val myCount = countSuit(suit, hand, settings.jokerValue)
-            println(myCount)
             maxOf(0, myCount + random.nextInt(3) - 1)
         }
 

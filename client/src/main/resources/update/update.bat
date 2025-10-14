@@ -7,11 +7,11 @@ REM %4 = assetId
 
 echo Performing download of %1 bytes (Version %2)
 
-curl -LJO -H "Accept: application/octet-stream" https://api.github.com/repos/alyssaburlton/Dartzee/releases/assets/%4
+curl -LJO -H "Accept: application/octet-stream" https://api.github.com/repos/alyssaruth/Entropy/releases/assets/%4
 
-ren Dartzee.jar Dartzee_OLD.jar
-ren %3 Dartzee.jar
-del Dartzee_OLD.jar
+ren Entropy.jar Entropy_OLD.jar
+ren %3 Entropy.jar
+del Entropy_OLD.jar
 
-start javaw -Xms256m -Xmx512m -jar Dartzee.jar justUpdated trueLaunch
+start javaw -Xms256m -Xmx512m -jar Entropy.jar justUpdated trueLaunch
 exit

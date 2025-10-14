@@ -31,7 +31,7 @@ public class DisabledComboBoxModel<E> extends DefaultComboBoxModel<ComboBoxItem<
 	{
 		if (comboBoxItem != null)
 		{
-			if (comboBoxItem.isEnabled())
+			if (comboBoxItem.getEnabled())
 			{
 				super.setSelectedItem(comboBoxItem);
 			}

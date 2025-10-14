@@ -2,17 +2,18 @@ package util;
 
 import game.BidAction;
 import game.GameMode;
-import game.GameSettings;
 import game.PlayerAction;
-import object.*;
+import object.ApiStrategy;
+import object.Player;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import preference.PreferenceSetting;
+import settings.Setting;
 import utils.CoreGlobals;
 
 import javax.swing.*;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -21,7 +22,10 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
-public class ApiUtil implements Registry
+import static preference.PreferenceSettingKt.getPreference;
+import static util.ClientGlobals.preferenceStore;
+
+public class ApiUtil
 {
 	public static final String API_PREFIX = "API: ";
 	public static final String MESSAGE_TYPE_XML = "XML";
@@ -29,6 +33,14 @@ public class ApiUtil implements Registry
 	
 	private static final String ROOT_TAG_API_MESSAGE = "ApiMessage";
 	private static final InetAddress INET_ADDRESS_LOCALHOST = MessageUtil.factoryInetAddress("localhost");
+
+	private static final String PREFERENCES_TAG_API = "Api";
+	private static final String PREFERENCES_ATTR_API_NAME = "ApiName";
+	private static final String PREFERENCES_ATTR_PORT_NUMNER = "PortNumber";
+	private static final String PREFERENCES_ATTR_MESSAGE_TYPE = "MessageType";
+	private static final String PREFERENCES_ATTR_SUPPORTS_ENTROPY = "Entropy";
+	private static final String PREFERENCES_ATTR_SUPPORTS_VECTROPY = "Vectropy";
+	private static final String PREFERENCES_ATTR_ERROR = "Error";
 	
 	//Cache this for speed in the simulator
 	private static HashMap<String, ApiStrategy> hmNameToApiStrategy = null;
@@ -248,8 +260,13 @@ public class ApiUtil implements Registry
 	private static void initialiseStrategyHashMap()
 	{
 		HashMap<String, ApiStrategy> temp = new HashMap<>();
-		
-		Document apiXml = RegistryUtil.getAttributeXml(prefs, PREFERENCES_XML_API_SETTINGS);
+
+		String apiStrategies = getPreference(PreferenceSetting.ApiStrategies);
+		if (apiStrategies.isBlank()) {
+			return;
+		}
+
+		Document apiXml = XmlUtil.getDocumentFromXmlString(apiStrategies);
 		if (apiXml == null)
 		{
 			hmNameToApiStrategy = temp;
@@ -316,7 +333,7 @@ public class ApiUtil implements Registry
 		return hmNameToApiStrategy.get(name);
 	}
 	
-	public static void saveApiStrategiesToPreferences(ArrayList<ApiStrategy> strategies)
+	public static void saveApiStrategiesToPreferences(List<ApiStrategy> strategies)
 	{
 		//Construct a document with any old root element
 		Document apiDoc = XmlUtil.factoryNewDocument();
@@ -342,7 +359,8 @@ public class ApiUtil implements Registry
 		apiDoc.appendChild(rootElement);
 		
 		//Save to the Registry
-		RegistryUtil.setAttributeXml(prefs, PREFERENCES_XML_API_SETTINGS, apiDoc);
+		String xmlStr = XmlUtil.getStringFromDocument(apiDoc);
+		preferenceStore.save(PreferenceSetting.ApiStrategies, xmlStr);
 		
 		//Clear the cache
 		clearCache();
@@ -369,17 +387,17 @@ public class ApiUtil implements Registry
 		
 		saveApiStrategiesToPreferences(apiStrategies);
 		
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, name);
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, name);
-		resetCpuStrategy(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, name);
+		resetCpuStrategy(PreferenceSetting.OpponentOneStrategy, name);
+		resetCpuStrategy(PreferenceSetting.OpponentTwoStrategy, name);
+		resetCpuStrategy(PreferenceSetting.OpponentThreeStrategy, name);
 	}
 	
-	private static void resetCpuStrategy(String prefsKey, String apiName)
+	private static void resetCpuStrategy(Setting<String> strategySetting, String apiName)
 	{
-		String strategy = prefs.get(prefsKey, "");
+		String strategy = getPreference(strategySetting);
 		if (strategy.equals("API: " + apiName))
 		{
-			prefs.put(prefsKey, CpuStrategies.STRATEGY_BASIC);
+			preferenceStore.save(strategySetting, CpuStrategies.STRATEGY_BASIC);
 		}
 	}
 }

@@ -19,6 +19,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
+import achievement.Reward;
 import object.FlagImage;
 import util.Debug;
 import util.DialogUtil;
@@ -225,7 +226,7 @@ public class ReplayFilterPanel extends JPanel
 	
 	public void setMoonAndStarVisibility()
 	{
-		boolean unlockedExtraSuits = rewards.getBoolean(REWARDS_BOOLEAN_EXTRA_SUITS, false);
+		boolean unlockedExtraSuits = Reward.ExtraSuits.isUnlocked();
 		GridLayout layout = (GridLayout)flagPanel.getLayout();
 		flagPanel.remove(moonPanel);
 		flagPanel.remove(starPanel);

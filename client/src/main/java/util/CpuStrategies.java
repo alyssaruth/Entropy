@@ -15,7 +15,7 @@ public class CpuStrategies
 	public static final String STRATEGY_BASIC = "Easy";
 	public static final String STRATEGY_EV = "Hard";
 	
-	public static Vector<String> getAllStrategies(boolean entropy, ArrayList<ApiStrategy> apiStrategies)
+	public static Vector<String> getAllStrategies(boolean entropy, List<ApiStrategy> apiStrategies)
 	{
 		Vector<String> allStrategies = getFixedStrategies(entropy);
 		
@@ -30,7 +30,7 @@ public class CpuStrategies
 	}
 	
 	private static void appendRelevantStrategies(Vector<String> allStrategies, 
-	  ArrayList<ApiStrategy> apiStrategies, boolean entropy)
+	  List<ApiStrategy> apiStrategies, boolean entropy)
 	{
 		int size = apiStrategies.size();
 		for (int i=0; i<size; i++)

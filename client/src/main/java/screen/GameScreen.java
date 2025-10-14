@@ -1,9 +1,10 @@
 package screen;
 
 import achievement.AchievementSetting;
+import bean.BidListCellRenderer;
 import game.*;
-import object.BidListCellRenderer;
 import object.Player;
+import preference.PreferenceSetting;
 import util.*;
 
 import javax.swing.*;
@@ -16,8 +17,10 @@ import static game.CardsUtilKt.createAndShuffleDeck;
 import static game.CheatUtilKt.containsNonJoker;
 import static game.RegistryUtilKt.populateActions;
 import static game.RegistryUtilKt.writeActions;
+import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
+import static util.ClientGlobals.preferenceStore;
 import static utils.CoreGlobals.logger;
 
 public abstract class GameScreen<B extends BidAction<B>> extends TransparentPanel
@@ -305,16 +308,25 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	
 	private void getNewGameVariablesFromRegistry()
 	{
-		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
-		playWithHandicap = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP, false);
-		handicapAmount = prefs.getInt(PREFERENCES_INT_HANDICAP_AMOUNT, 1);
-		opponentTwo.setEnabled(prefs.getBoolean(PREFERENCES_BOOLEAN_OPPONENT_TWO_ENABLED, true));
-		opponentThree.setEnabled(prefs.getBoolean(PREFERENCES_BOOLEAN_OPPONENT_THREE_ENABLED, true));
-		opponentOne.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_ONE_STRATEGY, "Basic"));
-		opponentTwo.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_TWO_STRATEGY, "Basic"));
-		opponentThree.setStrategy(prefs.get(PREFERENCES_STRING_OPPONENT_THREE_STRATEGY, "Basic"));
+		playBlind = getPreference(PreferenceSetting.PlayBlind);
+		playWithHandicap = getPreference(PreferenceSetting.PlayWithHandicap);
+		handicapAmount = getPreference(PreferenceSetting.HandicapAmount);
+		opponentTwo.setEnabled(getPreference(PreferenceSetting.OpponentTwoEnabled));
+		opponentThree.setEnabled(getPreference(PreferenceSetting.OpponentThreeEnabled));
+		opponentOne.setStrategy(getPreference(PreferenceSetting.OpponentOneStrategy));
+		opponentTwo.setStrategy(getPreference(PreferenceSetting.OpponentTwoStrategy));
+		opponentThree.setStrategy(getPreference(PreferenceSetting.OpponentThreeStrategy));
 
-		settings = GameSettings.fromRegistry(prefs, getGameMode());
+		settings = new GameSettings(
+				getGameMode(),
+				getPreference(PreferenceSetting.StartingCards),
+				getPreference(PreferenceSetting.JokerQuantity),
+				getPreference(PreferenceSetting.JokerValue),
+				getPreference(PreferenceSetting.IncludeMoons),
+				getPreference(PreferenceSetting.IncludeStars),
+				getPreference(PreferenceSetting.NegativeJacks),
+				getPreference(PreferenceSetting.CardReveal),
+				true);
 
 		handPanel.fireAppearancePreferencesChange();
 		handPanel.initPlayerNames();
@@ -430,12 +442,12 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		else
 		{
 			currentlyOnChallenge = true;
-			boolean autoStart = prefs.getBoolean(PREFERENCES_BOOLEAN_AUTO_START_NEXT_ROUND, false);
+			boolean autoStart = getPreference(PreferenceSetting.AutoStartNextRound);
 			
 			if (autoStart)
 			{
-				int seconds = prefs.getInt(PREFERENCES_INT_AUTO_START_SECONDS, 2);
-				nextRoundTimer.schedule(new NewRoundTask(), seconds * 1000);
+				int seconds = getPreference(PreferenceSetting.AutoStartSeconds);
+				nextRoundTimer.schedule(new NewRoundTask(), seconds * 1000L);
 			}
 			else
 			{
@@ -887,9 +899,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		handPanel.selectPlayerInAwtThread(opponentNumber, true);
 		bidPanel.enableBidPanel(false);
 		
-		int gameSpeed = prefs.getInt(PREFERENCES_INT_GAME_SPEED, 1000);
-		
-		cpuTurn.schedule(new DelayedOpponentTurn(currentPlayer), gameSpeed);
+		cpuTurn.schedule(new DelayedOpponentTurn(currentPlayer), getPreference(PreferenceSetting.GameSpeed));
 	}
 
 	private Collection<Player> allPlayers() {

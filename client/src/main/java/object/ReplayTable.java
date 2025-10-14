@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import preference.PreferenceSetting;
 import screen.ReplayDialog;
 import screen.ReplayFilterPanel;
 import screen.ScreenCache;
@@ -37,12 +38,12 @@ import util.ReplayFileUtil;
 import util.ReplayRowWrapper;
 import util.TableUtil;
 
+import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.FILE_REPLAY;
 import static utils.CoreGlobals.logger;
 
 public class ReplayTable extends JTable
-						 implements MouseListener,
-						 			Registry
+						 implements MouseListener
 {
 	private static final int INDEX_OF_DATETIME_COLUMN = 0;
 	private static final int INDEX_OF_NAME_COLUMN = INDEX_OF_DATETIME_COLUMN + 1;
@@ -167,11 +168,11 @@ public class ReplayTable extends JTable
 	    removeColumn(getColumnModel().getColumn(INDEX_OF_COMPLETED_COLUMN));
 	    removeColumn(getColumnModel().getColumn(INDEX_OF_FILENAME_COLUMN));
 
-	    boolean showGameMode = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_GAME_MODE_COLUMN, true);
-		boolean showRounds = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROUNDS_COLUMN, false);
-		boolean showPlayers = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_PLAYERS_COLUMN, true);
-		boolean showCards = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_CARDS_COLUMN, false);
-		boolean showRoomName = prefs.getBoolean(PREFERENCES_BOOLEAN_INCLUDE_ROOM_NAME_COLUMN, false);
+		boolean showGameMode = getPreference(PreferenceSetting.IncludeGameModeColumn);
+		boolean showRounds = getPreference(PreferenceSetting.IncludeRoundsColumn);
+		boolean showPlayers = getPreference(PreferenceSetting.IncludePlayersColumn);
+		boolean showCards = getPreference(PreferenceSetting.IncludeCardsColumn);
+		boolean showRoomName = getPreference(PreferenceSetting.IncludeRoomNameColumn);
 	    
 		if (!showCards)
 		{

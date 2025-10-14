@@ -22,7 +22,5 @@ abstract class PlayerAction {
 
     abstract fun plainString(): String
 
-    open fun htmlString() = plainString()
-
     fun toJsonString(): String = CoreGlobals.jsonMapper.writeValueAsString(this)
 }

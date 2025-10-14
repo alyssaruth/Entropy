@@ -1,6 +1,6 @@
 package screen;
 
-import achievement.AchievementSetting;
+import screen.achievement.AchievementsDialog;
 import util.*;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
-import static util.ClientGlobals.achievementStore;
+import static util.ClientGlobals.*;
 
 public class ClearDataDialog extends JDialog
 							 implements ActionListener,
@@ -109,7 +109,7 @@ public class ClearDataDialog extends JDialog
 			}
 
 			achievementStore.clear();
-			RegistryUtil.clearNode(rewards);
+			rewardStore.clear();
 			RegistryUtil.clearNode(savedGame);
 			resetPreferences();
 			DialogUtilNew.showInfo("Achievements and statistics were reset successfully.");
@@ -168,29 +168,12 @@ public class ClearDataDialog extends JDialog
 	private void removeStatisticsVariablesFromNode()
 	{
 		ScreenCache.get(MainScreen.class).resetStartTime();
-		achievementStore.delete(AchievementSetting.TimePlayed);
-		achievementStore.delete(AchievementSetting.BestStreak);
-		achievementStore.delete(AchievementSetting.CurrentStreak);
-		achievementStore.delete(AchievementSetting.EntropyGamesPlayed);
-		achievementStore.delete(AchievementSetting.VectropyGamesPlayed);
-		achievementStore.delete(AchievementSetting.EntropyGamesWon);
-		achievementStore.delete(AchievementSetting.VectropyGamesWon);
+		achievementStore.clear();
 	}
 	
 	private void resetPreferences()
 	{
-		prefs.remove(PREFERENCES_BOOLEAN_PLAY_BLIND);
-		prefs.remove(PREFERENCES_BOOLEAN_PLAY_WITH_HANDICAP);
-		prefs.remove(PREFERENCES_XML_API_SETTINGS);
-		prefs.remove(PREFERENCES_STRING_GAME_MODE);
-		prefs.remove(PREFERENCES_INT_HANDICAP_AMOUNT);
-		prefs.remove(SHARED_INT_JOKER_QUANTITY);
-		prefs.remove(SHARED_INT_JOKER_VALUE);
-		prefs.remove(PREFERENCES_STRING_CARD_BACKS);
-		prefs.remove(PREFERENCES_STRING_LOOK_AND_FEEL);
-		prefs.remove(PREFERENCES_STRING_DECK_DIRECTORY);
-		prefs.remove(PREFERENCES_STRING_JOKER_DIRECTORY);
-		prefs.remove(PREFERENCES_STRING_NUMBER_OF_COLOURS);
+		preferenceStore.clear();
 	}
 	
 	private void closeDialog()

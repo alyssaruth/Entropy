@@ -1,11 +1,9 @@
 package game
 
 import java.awt.Color
-import util.Registry
 import utils.COLOUR_SUIT_GOLD
 import utils.COLOUR_SUIT_GREEN
 import utils.COLOUR_SUIT_PURPLE
-import utils.toHexCode
 
 const val CLUBS_SYMBOL = "\u2663"
 const val DIAMONDS_SYMBOL = "\u2666"
@@ -32,14 +30,6 @@ enum class Suit(
         val lower = name.lowercase()
         return if (singular) lower.dropLast(1) else lower
     }
-
-    fun getColour(): Color {
-        val numberOfColoursStr =
-            Registry.prefs[Registry.PREFERENCES_STRING_NUMBER_OF_COLOURS, Registry.TWO_COLOURS]
-        return if (numberOfColoursStr == Registry.FOUR_COLOURS) fourColour else twoColour
-    }
-
-    fun getColourHex() = getColour().toHexCode()
 
     fun lessThan(other: Suit) = this < other
 

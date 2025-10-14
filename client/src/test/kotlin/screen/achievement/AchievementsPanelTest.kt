@@ -1,4 +1,4 @@
-package screen
+package screen.achievement
 
 import bean.AchievementBadge
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

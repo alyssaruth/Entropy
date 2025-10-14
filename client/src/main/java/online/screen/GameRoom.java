@@ -1,10 +1,13 @@
 package online.screen;
 
+import achievement.Reward;
+import bean.BidListCellRenderer;
 import game.*;
 import http.dto.RoomSummary;
 import object.*;
 import online.util.XmlBuilderClient;
 import org.w3c.dom.Document;
+import preference.PreferenceSetting;
 import screen.*;
 import util.*;
 
@@ -24,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
 import static game.RegistryUtilKt.writeActions;
+import static preference.PreferenceSettingKt.getPreference;
 import static utils.ColourUtilKt.getColourForPlayerNumber;
 import static utils.CoreGlobals.logger;
 
@@ -212,15 +216,13 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	
 	private void setIcon()
 	{
-		boolean unlockedExtraSuits = rewards.getBoolean(REWARDS_BOOLEAN_EXTRA_SUITS, false);
-		
 		ArrayList<String> suits = new ArrayList<>();
 		suits.add("club");
 		suits.add("diamond");
 		suits.add("heart");
 		suits.add("spade");
 		
-		if (unlockedExtraSuits)
+		if (Reward.ExtraSuits.isUnlocked())
 		{
 			suits.add("moon");
 			suits.add("star");
@@ -704,7 +706,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 		}
 		
 		adjustPlayersBasedOnHands();
-		playBlind = prefs.getBoolean(PREFERENCES_BOOLEAN_PLAY_BLIND, false);
+		playBlind = getPreference(PreferenceSetting.PlayBlind);
 		hasActedBlindThisGame = false;
 		handPanel.setHasViewedHandThisGame(false);
 		handPanel.setViewCardsVisibility(playBlind && playerIsEnabled(playerNumberLocal));
@@ -1349,7 +1351,7 @@ public abstract class GameRoom<B extends BidAction<B>> extends JFrame
 	@Override
 	public void requestFocus() 
 	{
-		boolean popUpRoom = prefs.getBoolean(PREFERENCES_BOOLEAN_POP_UP_ROOMS, true);
+		boolean popUpRoom = getPreference(PreferenceSetting.PopUpRooms);
 		
 		if (popUpRoom)
 		{
