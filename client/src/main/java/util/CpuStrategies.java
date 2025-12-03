@@ -2,6 +2,8 @@ package util;
 
 import game.*;
 import object.*;
+import strategy.ApiStrategy;
+import strategy.ApiUtilKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,31 +17,31 @@ public class CpuStrategies
 	public static final String STRATEGY_BASIC = "Easy";
 	public static final String STRATEGY_EV = "Hard";
 	
-	public static Vector<String> getAllStrategies(boolean entropy, List<ApiStrategy> apiStrategies)
+	public static Vector<String> getAllStrategies(GameMode gameMode, List<ApiStrategy> apiStrategies)
 	{
-		Vector<String> allStrategies = getFixedStrategies(entropy);
+		Vector<String> allStrategies = getFixedStrategies(gameMode);
 		
 		//Append the relevant API strategies
 		if (apiStrategies == null)
 		{
-			apiStrategies = ApiUtil.getApiStrategiesFromPreferences();
+			apiStrategies = ApiUtilKt.getApiStrategiesFromPreferences();
 		}
 		
-		appendRelevantStrategies(allStrategies, apiStrategies, entropy);
+		appendRelevantStrategies(allStrategies, apiStrategies, gameMode);
 		return allStrategies;
 	}
 	
 	private static void appendRelevantStrategies(Vector<String> allStrategies, 
-	  List<ApiStrategy> apiStrategies, boolean entropy)
+	  List<ApiStrategy> apiStrategies, GameMode gameMode)
 	{
 		int size = apiStrategies.size();
 		for (int i=0; i<size; i++)
 		{
 			ApiStrategy apiStrategy = apiStrategies.get(i);
-			boolean supportsMode = entropy ? apiStrategy.getEntropy():apiStrategy.getVectropy();
-			String error = apiStrategy.getError();
+			boolean supportsMode = apiStrategy.getSupportedModes().contains(gameMode);
+			String error = apiStrategy.getLastError();
 			if (supportsMode
-			  && error.isEmpty())
+			  && error == null)
 			{
 				String name = ApiUtil.API_PREFIX + apiStrategy.getName();
 				allStrategies.add(name);
@@ -47,9 +49,9 @@ public class CpuStrategies
 		}
 	}
 	
-	private static Vector<String> getFixedStrategies(boolean entropy)
+	private static Vector<String> getFixedStrategies(GameMode gameMode)
 	{
-		if (entropy)
+		if (gameMode == GameMode.Entropy)
 		{
 			return EntCpuStrategies.getAllStrategies();
 		}
@@ -84,7 +86,7 @@ public class CpuStrategies
 				             + "failed validation with the following error:\n\n" + error;
 				
 				String strategyStr = opponent.getStrategy();
-				ApiUtil.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
+				ApiUtilKt.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
 				DialogUtilNew.showError(msg);
 			}
 			else

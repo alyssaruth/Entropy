@@ -25,17 +25,18 @@ import javax.swing.SwingConstants
 import javax.swing.SwingUtilities
 import javax.swing.table.TableModel
 import javax.swing.table.TableRowSorter
-import `object`.ApiStrategy
 import `object`.LimitedDocument
 import preference.PreferenceSetting
 import preference.getPreference
 import screen.ApiAmendDialog
-import util.ApiUtil
+import strategy.ApiStrategy
+import strategy.getApiStrategiesFromPreferences
 import util.ClientGlobals.preferenceStore
 import util.CpuStrategies
 import util.DialogUtilNew
 import util.TableUtil.DefaultModel
 import util.TableUtil.SimpleRenderer
+import utils.CoreGlobals
 
 class PreferencesPanelPlayers(parent: PreferencesDialog) :
     AbstractPreferencesPanel(parent), MouseListener, ItemListener {
@@ -186,7 +187,10 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         preferenceStore.save(PreferenceSetting.OpponentTwoStrategy, opponentTwoStrategy)
         preferenceStore.save(PreferenceSetting.OpponentThreeStrategy, opponentThreeStrategy)
 
-        ApiUtil.saveApiStrategiesToPreferences(apiStrategies)
+        preferenceStore.save(
+            PreferenceSetting.ApiStrategies,
+            CoreGlobals.jsonMapper.writeValueAsString(apiStrategies),
+        )
     }
 
     private fun getVariablesFromPrefs() {
@@ -199,7 +203,8 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         opponentOneStrategy = getPreference(PreferenceSetting.OpponentOneStrategy)
         opponentTwoStrategy = getPreference(PreferenceSetting.OpponentTwoStrategy)
         opponentThreeStrategy = getPreference(PreferenceSetting.OpponentThreeStrategy)
-        apiStrategies = ApiUtil.getApiStrategiesFromPreferences()
+
+        apiStrategies = getApiStrategiesFromPreferences()
 
         gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode))
     }
@@ -237,12 +242,11 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         model.addColumn("Name")
         model.addColumn("Port")
         model.addColumn("Game")
-        model.addColumn("Messaging")
         model.addColumn("Enabled")
 
         // Centre rendering for everything but the last column
         for (i in 0..<model.columnCount - 1) {
-            tableApiStrategies.getColumnModel().getColumn(i).setCellRenderer(SimpleRenderer(null))
+            tableApiStrategies.columnModel.getColumn(i).setCellRenderer(SimpleRenderer(null))
         }
 
         // Sorting
@@ -250,16 +254,19 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         tableApiStrategies.setRowSorter(sorter)
 
         // Populate the rows
-        apiStrategies.forEach { model.addRow(it.tableModelRow) }
+        apiStrategies.forEach { model.addRow(it.getTableModelRow().toTypedArray()) }
 
         updateStrategySelection(gameMode)
+    }
+
+    private fun ApiStrategy.getTableModelRow(): List<Any> {
+        return listOf(name, port, supportedModes.joinToString(), lastError == null)
     }
 
     fun updateStrategySelection(gameMode: GameMode) {
         this.gameMode = gameMode
 
-        val allStrategies =
-            CpuStrategies.getAllStrategies(gameMode == GameMode.Entropy, apiStrategies)
+        val allStrategies = CpuStrategies.getAllStrategies(gameMode, apiStrategies)
 
         var comboModel: ComboBoxModel<String?> = DefaultComboBoxModel(allStrategies)
         opponentOneStrat.setModel(comboModel)
@@ -271,23 +278,29 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
 
     private fun enableApi(strategy: ApiStrategy) {
         val question =
-            "Strategy ${strategy.name} was disabled due to the following error:\n\n${strategy.error}\n\nWould you like to re-enable it?"
+            "Strategy ${strategy.name} was disabled due to the following error:\n\n${strategy.lastError}\n\nWould you like to re-enable it?"
 
         val option = DialogUtilNew.showQuestion(question, false)
         if (option == JOptionPane.YES_OPTION) {
-            strategy.error = ""
-            buildApiTable()
+            strategyUpdated(strategy, strategy.copy(lastError = null))
         }
     }
 
-    private fun amendApi(strategy: ApiStrategy?) {
-        ApiAmendDialog.amendStrategy(strategy)
+    private fun amendApi(strategy: ApiStrategy) {
+        val newStrategy = ApiAmendDialog.amendStrategy(strategy) ?: return
+
+        strategyUpdated(strategy, newStrategy)
+    }
+
+    private fun strategyUpdated(oldStrategy: ApiStrategy, newStrategy: ApiStrategy) {
+        apiStrategies = apiStrategies.map { if (it == oldStrategy) newStrategy else it }
+
         buildApiTable()
     }
 
     private fun deleteApi(strategy: ApiStrategy) {
-        val question = "Are you sure you want to delete the " + strategy.getName() + " strategy?"
-        val option = DialogUtilNew.showQuestion(question, false)
+        val question = "Are you sure you want to delete the " + strategy.name + " strategy?"
+        val option = DialogUtilNew.showQuestion(question, false, this)
         if (option == JOptionPane.YES_OPTION) {
             apiStrategies = apiStrategies - strategy
             buildApiTable()
@@ -338,15 +351,15 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
             }
 
             if (strategy != null) {
-                enableItem.setEnabled(!strategy.isEnabled)
+                enableItem.setEnabled(strategy.lastError != null)
 
                 // Show the popup menu
-                popupMenu.show(arg0.component, arg0.getX(), arg0.getY())
+                popupMenu.show(arg0.component, arg0.x, arg0.y)
             }
-        } else if (arg0.getClickCount() == 2) {
+        } else if (arg0.clickCount == 2) {
             // Double-click
             if (strategy != null) {
-                if (!strategy.isEnabled) {
+                if (strategy.lastError != null) {
                     enableApi(strategy)
                 } else {
                     amendApi(strategy)
@@ -362,7 +375,7 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     override fun mouseReleased(arg0: MouseEvent?) {}
 
     override fun itemStateChanged(arg0: ItemEvent) {
-        val source = arg0.getSource()
+        val source = arg0.source
         if (source === cbOpponentTwo) {
             opponentTwoEnabled = cbOpponentTwo.isSelected
             setOpponentEnablementAndStrategies()

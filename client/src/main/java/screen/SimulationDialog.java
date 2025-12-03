@@ -515,7 +515,7 @@ public class SimulationDialog extends JDialog
 	
 	private void updateStrategySelection()
 	{
-		Vector<String> allStrategies = CpuStrategies.getAllStrategies(rdbtnEntropy.isSelected(), null);
+		Vector<String> allStrategies = CpuStrategies.getAllStrategies(getSelectedGameMode(), null);
 			
 		ComboBoxModel<String> comboModel = new DefaultComboBoxModel<>(allStrategies);
 		opponentZeroStrat.setModel(comboModel);
@@ -526,14 +526,19 @@ public class SimulationDialog extends JDialog
 		comboModel = new DefaultComboBoxModel<>(allStrategies);
 		opponentThreeStrat.setModel(comboModel);
 	}
+
+	private GameMode getSelectedGameMode() {
+		if (rdbtnVectropy.isSelected())
+		{
+			return GameMode.Vectropy;
+		}
+
+		return GameMode.Entropy;
+	}
 	
 	private SimulationParams factorySimulationParms()
 	{
-		GameMode gameMode = GameMode.Entropy;
-		if (rdbtnVectropy.isSelected())
-		{
-			gameMode = GameMode.Vectropy;
-		}
+		GameMode gameMode = getSelectedGameMode();
 		
 		int numberOfCards = slider.getValue();
 		boolean includeJokers = cbIncludeJokers.isSelected();

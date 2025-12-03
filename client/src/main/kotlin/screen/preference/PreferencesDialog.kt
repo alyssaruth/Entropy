@@ -8,7 +8,6 @@ import javax.swing.JScrollPane
 import javax.swing.JTabbedPane
 import javax.swing.SwingConstants
 import screen.SimpleDialog
-import util.ApiUtil
 import utils.getAllChildComponentsForType
 
 class PreferencesDialog : SimpleDialog() {
@@ -68,7 +67,6 @@ class PreferencesDialog : SimpleDialog() {
     }
 
     private fun closeDialog() {
-        ApiUtil.clearCache()
         dispose()
     }
 }
