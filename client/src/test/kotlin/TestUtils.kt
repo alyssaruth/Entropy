@@ -19,10 +19,10 @@ import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
 import online.screen.OnlineChatPanel
 import strategy.IRandom
+import strategy.StrategyParams
 import testCore.makeGameSettings
 import util.CpuStrategies
 import util.SimulationParams
-import util.StrategyParams
 
 fun getInfoDialog() = getOptionPaneDialog("Information")
 

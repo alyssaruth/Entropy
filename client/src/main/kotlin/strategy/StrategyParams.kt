@@ -1,4 +1,4 @@
-package util
+package strategy
 
 import game.BidAction
 import game.GameSettings

@@ -4,7 +4,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import strategy.DefaultRandom
 import strategy.IRandom
-import util.StrategyParams
+import strategy.StrategyParams
 
 fun getEvMap(
     visibleCards: List<String>,

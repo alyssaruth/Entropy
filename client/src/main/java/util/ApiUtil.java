@@ -4,7 +4,8 @@ import game.PlayerAction;
 import object.Player;
 import org.w3c.dom.Document;
 import strategy.ApiStrategy;
-import strategy.ApiUtilKt;
+import strategy.StrategyParams;
+import strategy.StrategyUtilKt;
 import utils.CoreGlobals;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ApiUtil
 {
@@ -24,7 +26,6 @@ public class ApiUtil
 	
 	//Cache this for speed in the simulator
 	private static HashMap<String, ApiStrategy> hmNameToApiStrategy = null;
-	private static ApiStrategy apiStrategy = null;
 	
 	public static void sendTestMessage(int port, boolean xml)
 	{
@@ -36,27 +37,26 @@ public class ApiUtil
 		
 		Document xmlDoc = XmlUtil.factorySimpleMessage("ApiTest");
 		String messageString = XmlUtil.getStringFromDocument(xmlDoc);
-		sendWithCatch(messageString, port, true, true);
+		sendWithCatch(messageString, port, true, null);
 	}
 	
-	public static PlayerAction processApiTurn(StrategyParams parms, Player player)
+	public static PlayerAction processApiTurn(StrategyParams parms, ApiStrategy strategy)
 	{
-		apiStrategy = getApiStrategy(player.getStrategy());
-		int port = apiStrategy.getPort();
+		int port = strategy.getPort();
 		
 		String messageString = "some message TODO";
 		
-		String responseString = sendWithCatch(messageString, port, parms.getLogging(), false);
+		String responseString = sendWithCatch(messageString, port, parms.getLogging(), strategy.getId());
 		if (responseString == null)
 		{
 			//An error occurred which we'll already have caught.
 			return null;
 		}
 		
-		return handleResponse(responseString);
+		return handleResponse(responseString, strategy.getId());
 	}
 	
-	private static String sendWithCatch(String messageString, int port, boolean logging, boolean testMode)
+	private static String sendWithCatch(String messageString, int port, boolean logging, UUID id)
 	{
 		Debug.append("API OUT: " + messageString, logging);
 		
@@ -84,11 +84,11 @@ public class ApiUtil
 			int option = DialogUtilNew.showQuestion(question, false);
 			if (option == JOptionPane.YES_OPTION)
 			{
-				sendWithCatch(messageString, port, logging, testMode);
+				sendWithCatch(messageString, port, logging, id);
 			}
-			else if (!testMode)
+			else if (id != null)
 			{
-				ApiUtilKt.saveStrategyErrorAndUnsetStrategies(apiStrategy, "An error occurred connecting to the third party software.");
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, "An error occurred connecting to the third party software.");
 			}
 		}
 		catch (Throwable t)
@@ -102,8 +102,10 @@ public class ApiUtil
 			Debug.stackTrace(t);
 			DialogUtilNew.showError("A severe error occurred communicating with the third party software. "
 								+ "\n\nLogs have been sent for investigation.");
-			
-			ApiUtilKt.saveStrategyErrorAndUnsetStrategies(apiStrategy, "A severe error occurred communicating with the third party software.");
+
+			if (id != null) {
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, "A severe error occurred communicating with the third party software.");
+			}
 		}
 		finally
 		{
@@ -194,22 +196,22 @@ public class ApiUtil
 //		return XmlUtil.getStringFromDocument(document);
 //	}
 	
-	private static PlayerAction handleResponse(String responseString)
+	private static PlayerAction handleResponse(String responseString, UUID id)
 	{
 		try {
 			return CoreGlobals.jsonMapper.readValue(responseString, PlayerAction.class);
 		} catch (Exception e) {
-			showMalformedResponseError(responseString);
+			showMalformedResponseError(responseString, id);
 			return null;
 		}
 	}
 	
-	private static void showMalformedResponseError(String response)
+	private static void showMalformedResponseError(String response, UUID id)
 	{
 		String message = "The third-party software returned an unexpected message type:"
 					   + "\n\n" + response;
 		
-		ApiUtilKt.saveStrategyErrorAndUnsetStrategies(apiStrategy, message);
+		StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, message);
 		
 		message += "\n\nRefer to the API documentation to see the responses that are accepted.";
 		DialogUtilNew.showError(message);
@@ -219,7 +221,7 @@ public class ApiUtil
 	{
 		hmNameToApiStrategy = new HashMap<>();
 
-		var strategies = ApiUtilKt.getApiStrategiesFromPreferences();
+		var strategies = StrategyUtilKt.getApiStrategiesFromPreferences();
 		for (ApiStrategy strategy : strategies) {
 			hmNameToApiStrategy.put(strategy.getName(), strategy);
 		}

@@ -3,6 +3,7 @@ package screen;
 import bean.NumberField;
 import game.GameMode;
 import game.GameSettings;
+import strategy.IStrategy;
 import util.*;
 
 import javax.swing.*;
@@ -374,7 +375,7 @@ public class SimulationDialog extends JDialog
 		resultsTable.setFillsViewportHeight(true);
 	}
 	
-	private void addRowIfApplicable(Vector<Vector<String>> resultsData, String strategy, int opponentNumber)
+	private void addRowIfApplicable(Vector<Vector<String>> resultsData, IStrategy strategy, int opponentNumber)
 	{
 		SimulationResults results = hmSimulationResultsByOpponentNumber.get(opponentNumber);
 		if (results != null)

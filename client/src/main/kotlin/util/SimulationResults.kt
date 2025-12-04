@@ -1,6 +1,7 @@
 package util
 
 import java.util.Vector
+import strategy.IStrategy
 
 class SimulationResults {
     private var wins = 0.0
@@ -45,10 +46,10 @@ class SimulationResults {
         return MathsUtil.getPercentage(numerator, denominator, 2)
     }
 
-    fun generateRow(opponentNumber: Int, strategy: String, totalGames: Int): Vector<String> {
+    fun generateRow(opponentNumber: Int, strategy: IStrategy, totalGames: Int): Vector<String> {
         val row = Vector<String>()
         row.add("" + opponentNumber)
-        row.add(strategy)
+        row.add(strategy.name)
         row.add("" + getWinRate(totalGames))
         row.add("" + getChallengeRate())
         row.add("" + getChallengeSuccessRate())

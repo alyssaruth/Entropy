@@ -1,5 +1,6 @@
 package screen.preference
 
+import bean.ComboBoxItem
 import game.GameMode
 import java.awt.Font
 import java.awt.event.ActionEvent
@@ -7,7 +8,6 @@ import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import javax.swing.ComboBoxModel
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JButton
 import javax.swing.JCheckBox
@@ -30,9 +30,10 @@ import preference.PreferenceSetting
 import preference.getPreference
 import screen.ApiAmendDialog
 import strategy.ApiStrategy
+import strategy.IStrategy
+import strategy.getAllStrategies
 import strategy.getApiStrategiesFromPreferences
 import util.ClientGlobals.preferenceStore
-import util.CpuStrategies
 import util.DialogUtilNew
 import util.TableUtil.DefaultModel
 import util.TableUtil.SimpleRenderer
@@ -61,9 +62,9 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     private val opponentThreeNameField = JTextField()
     private val cbOpponentTwo = JCheckBox()
     private val cbOpponentThree = JCheckBox()
-    private val opponentOneStrat = JComboBox<String?>()
-    private val opponentTwoStrat = JComboBox<String?>()
-    private val opponentThreeStrat = JComboBox<String?>()
+    private val opponentOneStrat = JComboBox<ComboBoxItem<IStrategy>>()
+    private val opponentTwoStrat = JComboBox<ComboBoxItem<IStrategy>>()
+    private val opponentThreeStrat = JComboBox<ComboBoxItem<IStrategy>>()
     private val label = JLabel("Note: Changes will not take effect until you start a new game.")
     private val separator_4 = JSeparator()
     private val lblApiHeader = JLabel("API Options")
@@ -144,7 +145,6 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         cbOpponentThree.addItemListener(this)
     }
 
-    /** Abstract methods */
     override fun initVariables() {
         getVariablesFromPrefs()
 
@@ -266,14 +266,14 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     fun updateStrategySelection(gameMode: GameMode) {
         this.gameMode = gameMode
 
-        val allStrategies = CpuStrategies.getAllStrategies(gameMode, apiStrategies)
+        val allStrategies =
+            getAllStrategies(gameMode, apiStrategies)
+                .map { strategy -> ComboBoxItem(strategy, strategy.name, true) }
+                .toTypedArray()
 
-        var comboModel: ComboBoxModel<String?> = DefaultComboBoxModel(allStrategies)
-        opponentOneStrat.setModel(comboModel)
-        comboModel = DefaultComboBoxModel(allStrategies)
-        opponentTwoStrat.setModel(comboModel)
-        comboModel = DefaultComboBoxModel(allStrategies)
-        opponentThreeStrat.setModel(comboModel)
+        opponentOneStrat.setModel(DefaultComboBoxModel(allStrategies))
+        opponentTwoStrat.setModel(DefaultComboBoxModel(allStrategies))
+        opponentThreeStrat.setModel(DefaultComboBoxModel(allStrategies))
     }
 
     private fun enableApi(strategy: ApiStrategy) {

@@ -5,6 +5,7 @@ import bean.BidListCellRenderer;
 import game.*;
 import object.Player;
 import preference.PreferenceSetting;
+import strategy.StrategyParams;
 import util.*;
 
 import javax.swing.*;
@@ -20,7 +21,6 @@ import static game.RegistryUtilKt.writeActions;
 import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static util.ClientGlobals.achievementStore;
-import static util.ClientGlobals.preferenceStore;
 import static utils.CoreGlobals.logger;
 
 public abstract class GameScreen<B extends BidAction<B>> extends TransparentPanel

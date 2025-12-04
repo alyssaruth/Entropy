@@ -3,7 +3,8 @@ package util;
 import game.*;
 import object.*;
 import strategy.ApiStrategy;
-import strategy.ApiUtilKt;
+import strategy.StrategyParams;
+import strategy.StrategyUtilKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class CpuStrategies
 		//Append the relevant API strategies
 		if (apiStrategies == null)
 		{
-			apiStrategies = ApiUtilKt.getApiStrategiesFromPreferences();
+			apiStrategies = StrategyUtilKt.getApiStrategiesFromPreferences();
 		}
 		
 		appendRelevantStrategies(allStrategies, apiStrategies, gameMode);
@@ -79,14 +80,14 @@ public class CpuStrategies
 		String error = validateAction(opponent, action, parms);
 		if (error != null)
 		{
-			if (opponent.isApiStrategy())
+			var strategy = opponent.getStrategy();
+			if (strategy instanceof ApiStrategy)
 			{
 				//Show an error message to help diagnosing.
 				String msg = "The action sent back by the third-party software [" + action + "] "
 				             + "failed validation with the following error:\n\n" + error;
-				
-				String strategyStr = opponent.getStrategy();
-				ApiUtilKt.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
+
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(((ApiStrategy) strategy).getId(), msg);
 				DialogUtilNew.showError(msg);
 			}
 			else
@@ -112,9 +113,10 @@ public class CpuStrategies
 	
 	private static PlayerAction getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
 	{
-		if (opponent.isApiStrategy())
+		var strategy = opponent.getStrategy();
+		if (strategy instanceof ApiStrategy)
 		{
-			return ApiUtil.processApiTurn(parms, opponent);
+			return ApiUtil.processApiTurn(parms, (ApiStrategy) strategy);
 		}
 		else if (entropy)
 		{
