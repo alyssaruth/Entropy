@@ -5,6 +5,7 @@ import bean.BidListCellRenderer;
 import game.*;
 import object.Player;
 import preference.PreferenceSetting;
+import strategy.InBuiltStrategy;
 import strategy.StrategyParams;
 import util.*;
 
@@ -20,6 +21,7 @@ import static game.RegistryUtilKt.populateActions;
 import static game.RegistryUtilKt.writeActions;
 import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
+import static strategy.StrategyUtilKt.getStrategy;
 import static util.ClientGlobals.achievementStore;
 import static utils.CoreGlobals.logger;
 
@@ -313,9 +315,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		handicapAmount = getPreference(PreferenceSetting.HandicapAmount);
 		opponentTwo.setEnabled(getPreference(PreferenceSetting.OpponentTwoEnabled));
 		opponentThree.setEnabled(getPreference(PreferenceSetting.OpponentThreeEnabled));
-		opponentOne.setStrategy(getPreference(PreferenceSetting.OpponentOneStrategy));
-		opponentTwo.setStrategy(getPreference(PreferenceSetting.OpponentTwoStrategy));
-		opponentThree.setStrategy(getPreference(PreferenceSetting.OpponentThreeStrategy));
+		opponentOne.setStrategy(getStrategy(PreferenceSetting.OpponentOneStrategy));
+		opponentTwo.setStrategy(getStrategy(PreferenceSetting.OpponentTwoStrategy));
+		opponentThree.setStrategy(getStrategy(PreferenceSetting.OpponentThreeStrategy));
 
 		settings = new GameSettings(
 				getGameMode(),
@@ -459,9 +461,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 	protected void saveRoundForReplay()
 	{
 		inGameReplay.putInt(REPLAY_INT_GAME_MODE, ReplayConstantsKt.toReplayConstant(getGameMode()));
-		inGameReplay.put(REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOne.getStrategy());
-		inGameReplay.put(REPLAY_STRING_OPPONENT_TWO_STRATEGY, opponentTwo.getStrategy());
-		inGameReplay.put(REPLAY_STRING_OPPONENT_THREE_STRATEGY, opponentThree.getStrategy());		
 		
 		int roundsSoFar = inGameReplay.getInt(REPLAY_INT_ROUNDS_SO_FAR, 0) + 1;
 		inGameReplay.putInt(REPLAY_INT_ROUNDS_SO_FAR, roundsSoFar);
@@ -552,11 +551,6 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 		//save the current player
 		savedGame.putInt(SAVED_GAME_INT_CURRENT_PLAYER, currentPlayer.getPlayerNumber());
 		
-		//save strategies
-		savedGame.put(SAVED_GAME_STRING_OPPONENT_ONE_STRATEGY, opponentOne.getStrategy());
-		savedGame.put(SAVED_GAME_STRING_OPPONENT_TWO_STRATEGY, opponentTwo.getStrategy());
-		savedGame.put(SAVED_GAME_STRING_OPPONENT_THREE_STRATEGY, opponentThree.getStrategy());
-		
 		//exitedOnChallenge stuff
 		boolean exitedOnChallenge = currentlyOnChallenge;
 		
@@ -627,9 +621,9 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 			displayHands();
 
 			//set the strategies
-			opponentOne.setStrategy(savedGame.get(SAVED_GAME_STRING_OPPONENT_ONE_STRATEGY, "Basic"));
-			opponentTwo.setStrategy(savedGame.get(SAVED_GAME_STRING_OPPONENT_TWO_STRATEGY, "Basic"));
-			opponentThree.setStrategy(savedGame.get(SAVED_GAME_STRING_OPPONENT_THREE_STRATEGY, "Basic"));
+			opponentOne.setStrategy(getStrategy(PreferenceSetting.OpponentOneStrategy));
+			opponentTwo.setStrategy(getStrategy(PreferenceSetting.OpponentTwoStrategy));
+			opponentThree.setStrategy(getStrategy(PreferenceSetting.OpponentThreeStrategy));
 			
 			personToStart = savedGame.getInt(SAVED_GAME_INT_PERSON_TO_START, 0);
 			handPanel.assignAsteriskToStartingPlayer(personToStart);
@@ -1125,7 +1119,7 @@ public abstract class GameScreen<B extends BidAction<B>> extends TransparentPane
 				String info = opponent.getName() + " has had their strategy reset to "
 							+ CpuStrategies.STRATEGY_BASIC;
 				DialogUtil.showInfo(info);
-				opponent.setStrategy(CpuStrategies.STRATEGY_BASIC);
+				opponent.setStrategy(new InBuiltStrategy(CpuStrategies.STRATEGY_BASIC));
 				action = CpuStrategies.processOpponentTurn(parms, opponent);
 			}
 			

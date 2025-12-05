@@ -6,6 +6,7 @@ import makeSimulationParams
 import org.junit.jupiter.api.Test
 import screen.ScreenCache.get
 import screen.SimulationDialog
+import strategy.InBuiltStrategy
 import testCore.makeGameSettings
 
 class GameSimulatorBenchmarkTest : AbstractClientTest() {
@@ -17,8 +18,8 @@ class GameSimulatorBenchmarkTest : AbstractClientTest() {
                 settings,
                 opponentTwoEnabled = false,
                 opponentThreeEnabled = false,
-                opponentZeroStrategy = CpuStrategies.STRATEGY_BASIC,
-                opponentOneStrategy = CpuStrategies.STRATEGY_EV,
+                opponentZeroStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
+                opponentOneStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_EV),
                 randomiseOrder = true,
             )
 
@@ -41,8 +42,8 @@ class GameSimulatorBenchmarkTest : AbstractClientTest() {
                 settings,
                 opponentTwoEnabled = false,
                 opponentThreeEnabled = false,
-                opponentZeroStrategy = CpuStrategies.STRATEGY_BASIC,
-                opponentOneStrategy = CpuStrategies.STRATEGY_EV,
+                opponentZeroStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
+                opponentOneStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_EV),
                 randomiseOrder = true,
             )
 

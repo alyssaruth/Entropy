@@ -3,6 +3,7 @@ package util
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import strategy.InBuiltStrategy
 
 class SimulationResultsTest : AbstractClientTest() {
     @Test
@@ -57,7 +58,7 @@ class SimulationResultsTest : AbstractClientTest() {
         repeat(1011) { results.incrementTotalChallenges() }
         repeat(685) { results.incrementGoodChallenges() }
 
-        val row = results.generateRow(0, CpuStrategies.STRATEGY_BASIC, 10000)
+        val row = results.generateRow(0, InBuiltStrategy(CpuStrategies.STRATEGY_BASIC), 10000)
         row.shouldContainExactly(
             "0",
             CpuStrategies.STRATEGY_BASIC,

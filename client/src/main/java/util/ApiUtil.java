@@ -216,28 +216,4 @@ public class ApiUtil
 		message += "\n\nRefer to the API documentation to see the responses that are accepted.";
 		DialogUtilNew.showError(message);
 	}
-	
-	private static void initialiseStrategyHashMap()
-	{
-		hmNameToApiStrategy = new HashMap<>();
-
-		var strategies = StrategyUtilKt.getApiStrategiesFromPreferences();
-		for (ApiStrategy strategy : strategies) {
-			hmNameToApiStrategy.put(strategy.getName(), strategy);
-		}
-	}
-	
-	public static ApiStrategy getApiStrategy(String name)
-	{
-		if (hmNameToApiStrategy == null)
-		{
-			initialiseStrategyHashMap();
-		}
-
-		int prefixLength = API_PREFIX.length();
-		int totalLength = name.length();
-		name = name.substring(prefixLength, totalLength);
-		
-		return hmNameToApiStrategy.get(name);
-	}
 }

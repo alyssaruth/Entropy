@@ -1,9 +1,14 @@
 package strategy
 
-import com.fasterxml.jackson.module.kotlin.readValue
+import bean.ComboBoxItem
+import com.fasterxml.jackson.core.type.TypeReference
 import game.GameMode
 import java.util.UUID
+import javax.swing.ComboBoxModel
+import javax.swing.DefaultComboBoxModel
+import javax.swing.JComboBox
 import preference.PreferenceSetting
+import preference.findJsonPreference
 import preference.getPreference
 import settings.Setting
 import util.ClientGlobals.preferenceStore
@@ -11,6 +16,7 @@ import util.CpuStrategies
 import util.EntCpuStrategies
 import util.VectCpuStrategies
 import utils.CoreGlobals
+import utils.CoreGlobals.logger
 
 fun getAllStrategies(gameType: GameMode, apiStrategies: List<ApiStrategy>): List<IStrategy> {
     val inBuilt =
@@ -20,20 +26,42 @@ fun getAllStrategies(gameType: GameMode, apiStrategies: List<ApiStrategy>): List
     return apiStrategies + inBuilt.map(::InBuiltStrategy)
 }
 
-fun getApiStrategiesFromPreferences(): List<ApiStrategy> {
-    val apiStrategyJson = getPreference(PreferenceSetting.ApiStrategies)
-    if (apiStrategyJson.isEmpty()) {
-        return emptyList()
-    }
+@JvmOverloads
+fun getStrategiesComboBoxModel(
+    gameMode: GameMode,
+    apiStrategies: List<ApiStrategy> = getApiStrategiesFromPreferences(),
+): ComboBoxModel<ComboBoxItem<IStrategy>> {
+    val strategyArray =
+        getAllStrategies(gameMode, apiStrategies)
+            .map { strategy -> strategy.toComboBoxItem() }
+            .toTypedArray()
 
-    return CoreGlobals.jsonMapper.readValue<List<ApiStrategy>>(apiStrategyJson)
+    return DefaultComboBoxModel(strategyArray)
 }
 
+fun getSelectedStrategy(comboBox: JComboBox<ComboBoxItem<IStrategy>>): IStrategy {
+    val item = comboBox.getItemAt(comboBox.selectedIndex)
+    return item.hiddenData
+}
+
+fun getApiStrategiesFromPreferences() =
+    findJsonPreference<List<ApiStrategy>>(PreferenceSetting.ApiStrategies) ?: emptyList()
+
+fun getStrategy(setting: Setting<String>): IStrategy =
+    try {
+        findJsonPreference<IStrategy>(setting) ?: InBuiltStrategy(CpuStrategies.STRATEGY_BASIC)
+    } catch (e: Exception) {
+        logger.info(
+            "strategy.parseError",
+            "Caught $e trying to parse saved strategy. Raw value [${getPreference(setting)}], will revert to Basic.",
+        )
+        InBuiltStrategy(CpuStrategies.STRATEGY_BASIC)
+    }
+
 fun saveApiStrategiesToPreference(strategies: List<ApiStrategy>) {
-    preferenceStore.save(
-        PreferenceSetting.ApiStrategies,
-        CoreGlobals.jsonMapper.writeValueAsString(strategies),
-    )
+    val writer = CoreGlobals.jsonMapper.writerFor(object : TypeReference<List<ApiStrategy>>() {})
+
+    preferenceStore.save(PreferenceSetting.ApiStrategies, writer.writeValueAsString(strategies))
 }
 
 fun saveStrategyErrorAndUnsetStrategies(id: UUID, error: String?) {

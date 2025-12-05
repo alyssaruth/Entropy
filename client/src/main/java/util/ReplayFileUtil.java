@@ -65,9 +65,6 @@ public final class ReplayFileUtil implements Registry
 	public static final String XML_REPLAY_STRING_OPPONENT_ONE_NAME = "OpponentOneName";
 	public static final String XML_REPLAY_STRING_OPPONENT_TWO_NAME = "OpponentTwoName";
 	public static final String XML_REPLAY_STRING_OPPONENT_THREE_NAME = "OpponentThreeName";
-	public static final String XML_REPLAY_STRING_OPPONENT_ONE_STRATEGY = "OpponentOneStrategy";
-	public static final String XML_REPLAY_STRING_OPPONENT_TWO_STRATEGY = "OpponentTwoStrategy";
-	public static final String XML_REPLAY_STRING_OPPONENT_THREE_STRATEGY = "OpponentThreeStrategy";
 	public static final String XML_REPLAY_STRING_ROOM_NAME = "RoomName";
 	public static final String XML_REPLAY_BOOLEAN_PLAY_BLIND = "PlayBlind";
 	public static final String XML_REPLAY_BOOLEAN_PLAY_WITH_HANDICAP = "PlayWithHandicap";
@@ -248,9 +245,6 @@ public final class ReplayFileUtil implements Registry
 		boolean includeMoons = replay.getBoolean(REPLAY_BOOLEAN_INCLUDE_MOONS, false);
 		boolean includeStars = replay.getBoolean(REPLAY_BOOLEAN_INCLUDE_STARS, false);
 		boolean cheatUsed = replay.getBoolean(REPLAY_BOOLEAN_CHEAT_USED, false);
-		String opponentOneStrategy = replay.get(REPLAY_STRING_OPPONENT_ONE_STRATEGY, "");
-		String opponentTwoStrategy = replay.get(REPLAY_STRING_OPPONENT_TWO_STRATEGY, "");
-		String opponentThreeStrategy = replay.get(REPLAY_STRING_OPPONENT_THREE_STRATEGY, "");
 		String roomName = replay.get(REPLAY_STRING_ROOM_NAME, "");
 		
 		rootElement.setAttribute(XML_REPLAY_INT_GAME_MODE, "" + mode);
@@ -263,9 +257,6 @@ public final class ReplayFileUtil implements Registry
 		rootElement.setAttribute(XML_REPLAY_STRING_OPPONENT_TWO_NAME, opponentTwoName);
 		rootElement.setAttribute(XML_REPLAY_STRING_OPPONENT_THREE_NAME, opponentThreeName);
 		rootElement.setAttribute(XML_REPLAY_INT_HANDICAP_AMOUNT, "" + handicapAmount);
-		rootElement.setAttribute(XML_REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOneStrategy);
-		rootElement.setAttribute(XML_REPLAY_STRING_OPPONENT_TWO_STRATEGY, opponentTwoStrategy);
-		rootElement.setAttribute(XML_REPLAY_STRING_OPPONENT_THREE_STRATEGY, opponentThreeStrategy);
 		rootElement.setAttribute(XML_REPLAY_STRING_ROOM_NAME, roomName);
 		
 		rootElement.setAttribute(XML_REPLAY_INT_VERSION, "" + ReplayConverter.REPLAY_VERSION);
@@ -556,10 +547,7 @@ public final class ReplayFileUtil implements Registry
 		String opponentOneName = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_ONE_NAME);
 		String opponentTwoName = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_TWO_NAME);
 		String opponentThreeName = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_THREE_NAME);
-		
-		String opponentOneStrategy = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_ONE_STRATEGY);
-		String opponentTwoStrategy = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_TWO_STRATEGY);
-		String opponentThreeStrategy = rootElement.getAttribute(XML_REPLAY_STRING_OPPONENT_THREE_STRATEGY);
+
 		String roomName = rootElement.getAttribute(XML_REPLAY_STRING_ROOM_NAME);
 		
 		boolean playBlind = XmlUtil.getAttributeBoolean(rootElement, XML_REPLAY_BOOLEAN_PLAY_BLIND);
@@ -581,9 +569,6 @@ public final class ReplayFileUtil implements Registry
 			replay.put(REPLAY_STRING_OPPONENT_ONE_NAME, opponentOneName);
 			replay.put(REPLAY_STRING_OPPONENT_TWO_NAME, opponentTwoName);
 			replay.put(REPLAY_STRING_OPPONENT_THREE_NAME, opponentThreeName);
-			replay.put(REPLAY_STRING_OPPONENT_ONE_STRATEGY, opponentOneStrategy);
-			replay.put(REPLAY_STRING_OPPONENT_TWO_STRATEGY, opponentTwoStrategy);
-			replay.put(REPLAY_STRING_OPPONENT_THREE_STRATEGY, opponentThreeStrategy);
 			replay.put(REPLAY_STRING_ROOM_NAME, roomName);
 			replay.putBoolean(REPLAY_BOOLEAN_PLAY_BLIND, playBlind);
 			replay.putBoolean(REPLAY_BOOLEAN_PLAY_WITH_HANDICAP, playWithHandicap);

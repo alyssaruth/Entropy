@@ -1,5 +1,6 @@
 package strategy
 
+import bean.ComboBoxItem
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
@@ -12,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = InBuiltStrategy::class, name = "IN_BUILT"),
     JsonSubTypes.Type(value = ApiStrategy::class, name = "API"),
 )
-interface IStrategy {
-    val name: String
+abstract class IStrategy {
+    abstract val name: String
 }
+
+fun IStrategy.toComboBoxItem() = ComboBoxItem(this, this.name, true)

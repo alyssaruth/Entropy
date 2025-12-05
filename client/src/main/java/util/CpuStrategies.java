@@ -18,48 +18,6 @@ public class CpuStrategies
 	public static final String STRATEGY_BASIC = "Easy";
 	public static final String STRATEGY_EV = "Hard";
 	
-	public static Vector<String> getAllStrategies(GameMode gameMode, List<ApiStrategy> apiStrategies)
-	{
-		Vector<String> allStrategies = getFixedStrategies(gameMode);
-		
-		//Append the relevant API strategies
-		if (apiStrategies == null)
-		{
-			apiStrategies = StrategyUtilKt.getApiStrategiesFromPreferences();
-		}
-		
-		appendRelevantStrategies(allStrategies, apiStrategies, gameMode);
-		return allStrategies;
-	}
-	
-	private static void appendRelevantStrategies(Vector<String> allStrategies, 
-	  List<ApiStrategy> apiStrategies, GameMode gameMode)
-	{
-		int size = apiStrategies.size();
-		for (int i=0; i<size; i++)
-		{
-			ApiStrategy apiStrategy = apiStrategies.get(i);
-			boolean supportsMode = apiStrategy.getSupportedModes().contains(gameMode);
-			String error = apiStrategy.getLastError();
-			if (supportsMode
-			  && error == null)
-			{
-				String name = ApiUtil.API_PREFIX + apiStrategy.getName();
-				allStrategies.add(name);
-			}
-		}
-	}
-	
-	private static Vector<String> getFixedStrategies(GameMode gameMode)
-	{
-		if (gameMode == GameMode.Entropy)
-		{
-			return EntCpuStrategies.getAllStrategies();
-		}
-		
-		return VectCpuStrategies.getAllStrategies();
-	}
-	
 	/**
 	 * Entry-point for strategy code
 	 */
