@@ -9,7 +9,7 @@ import game.VectropyBidAction;
 import object.Player;
 import strategy.StrategyParams;
 
-import static game.StrategyUtilKt.*;
+import static strategy.StrategyUtilKt.*;
 import static utils.CoreGlobals.logger;
 
 public class VectCpuStrategies 

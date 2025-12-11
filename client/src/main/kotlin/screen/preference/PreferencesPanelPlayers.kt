@@ -254,9 +254,19 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     fun updateStrategySelection(gameMode: GameMode) {
         this.gameMode = gameMode
 
-        opponentOneStrat.setModel(getStrategiesComboBoxModel(gameMode, apiStrategies))
-        opponentTwoStrat.setModel(getStrategiesComboBoxModel(gameMode, apiStrategies))
-        opponentThreeStrat.setModel(getStrategiesComboBoxModel(gameMode, apiStrategies))
+        updateStrategySelection(gameMode, opponentOneStrat)
+        updateStrategySelection(gameMode, opponentTwoStrat)
+        updateStrategySelection(gameMode, opponentThreeStrat)
+    }
+
+    private fun updateStrategySelection(
+        gameMode: GameMode,
+        combo: JComboBox<ComboBoxItem<IStrategy>>,
+    ) {
+        val selection = if (combo.selectedIndex == -1) null else getSelectedStrategy(combo)
+
+        combo.setModel(getStrategiesComboBoxModel(gameMode, apiStrategies))
+        selection?.let { combo.selectedItem = selection.toComboBoxItem() }
     }
 
     private fun enableApi(strategy: ApiStrategy) {

@@ -21,11 +21,7 @@ import java.util.UUID;
 
 public class ApiUtil
 {
-	public static final String API_PREFIX = "API: ";
 	private static final InetAddress INET_ADDRESS_LOCALHOST = MessageUtil.factoryInetAddress("localhost");
-	
-	//Cache this for speed in the simulator
-	private static HashMap<String, ApiStrategy> hmNameToApiStrategy = null;
 	
 	public static void sendTestMessage(int port, boolean xml)
 	{

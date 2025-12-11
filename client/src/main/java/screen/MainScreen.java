@@ -678,6 +678,7 @@ public final class MainScreen extends AbstractDevScreen
 			ClientGlobals.INSTANCE.getDevApi().doServerCommand(serverCommand);
 		} else if (command.equals("clearprefs")) {
 			preferenceStore.clear();
+			logger.info("preferenceStore.cleared", "Cleared all preferences");
 		}
 		else if (command.equals("simulator"))
 		{

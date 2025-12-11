@@ -12,7 +12,7 @@ import strategy.StrategyParams;
 
 import static game.CardsUtilKt.countSuit;
 import static game.EntropyUtilKt.amountRequiredToBid;
-import static game.StrategyUtilKt.*;
+import static strategy.StrategyUtilKt.*;
 import static strategy.MarkStrategySuitWrapperKt.factoryMarkStrategySuitWrapper;
 import static utils.CoreGlobals.logger;
 
