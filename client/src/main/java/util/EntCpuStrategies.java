@@ -8,10 +8,11 @@ import game.PlayerAction;
 import game.Suit;
 import object.Player;
 import strategy.MarkStrategySuitWrapper;
+import strategy.StrategyParams;
 
 import static game.CardsUtilKt.countSuit;
 import static game.EntropyUtilKt.amountRequiredToBid;
-import static game.StrategyUtilKt.*;
+import static strategy.StrategyUtilKt.*;
 import static strategy.MarkStrategySuitWrapperKt.factoryMarkStrategySuitWrapper;
 import static utils.CoreGlobals.logger;
 
@@ -34,7 +35,7 @@ public class EntCpuStrategies
 	
 	public static PlayerAction processOpponentTurn(Player opponent, StrategyParams parms)
 	{
-		String strategy = opponent.getStrategy();
+		String strategy = opponent.getStrategy().getName();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
 	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParams parms)

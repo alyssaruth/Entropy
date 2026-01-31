@@ -1,8 +1,10 @@
 package preference
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import settings.Setting
 import util.ClientGlobals.preferenceStore
 import util.CpuStrategies.STRATEGY_BASIC
+import utils.CoreGlobals.jsonMapper
 
 const val TWO_COLOURS = "twocolour"
 const val FOUR_COLOURS = "fourcolour"
@@ -16,6 +18,24 @@ const val GAME_SPEED_MEDIUM = 1000
 const val GAME_SPEED_FAST = 500
 
 fun <T : Any> getPreference(setting: Setting<T>) = preferenceStore.get(setting)
+
+inline fun <reified T : Any> getJsonPreference(setting: Setting<String>): T? {
+    val raw = getPreference(setting)
+    return jsonMapper.readValue<T>(raw)
+}
+
+inline fun <reified T : Any> findJsonPreference(setting: Setting<String>): T? {
+    val raw = getPreference(setting)
+    if (raw.isEmpty()) {
+        return null
+    }
+
+    return jsonMapper.readValue<T>(raw)
+}
+
+fun saveJsonPreference(setting: Setting<String>, rawValue: Any) {
+    preferenceStore.save(setting, jsonMapper.writeValueAsString(rawValue))
+}
 
 object PreferenceSetting {
     // Gameplay

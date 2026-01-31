@@ -1,14 +1,11 @@
 package screen.preference
 
+import bean.ComboBoxItem
 import game.GameMode
 import java.awt.Font
 import java.awt.event.ActionEvent
-import java.awt.event.ItemEvent
-import java.awt.event.ItemListener
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import javax.swing.ComboBoxModel
-import javax.swing.DefaultComboBoxModel
 import javax.swing.JButton
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
@@ -25,29 +22,26 @@ import javax.swing.SwingConstants
 import javax.swing.SwingUtilities
 import javax.swing.table.TableModel
 import javax.swing.table.TableRowSorter
-import `object`.ApiStrategy
 import `object`.LimitedDocument
 import preference.PreferenceSetting
 import preference.getPreference
+import preference.saveJsonPreference
 import screen.ApiAmendDialog
-import util.ApiUtil
+import strategy.ApiStrategy
+import strategy.IStrategy
+import strategy.getApiStrategiesFromPreferences
+import strategy.getSelectedStrategy
+import strategy.getStrategiesComboBoxModel
+import strategy.getStrategy
+import strategy.saveApiStrategiesToPreference
+import strategy.toComboBoxItem
 import util.ClientGlobals.preferenceStore
-import util.CpuStrategies
 import util.DialogUtilNew
 import util.TableUtil.DefaultModel
 import util.TableUtil.SimpleRenderer
 
 class PreferencesPanelPlayers(parent: PreferencesDialog) :
-    AbstractPreferencesPanel(parent), MouseListener, ItemListener {
-    private var playerName = "Player"
-    private var opponentOneName = "Mark"
-    private var opponentTwoName = "Dave"
-    private var opponentThreeName = "Tom"
-    private var opponentTwoEnabled = false
-    private var opponentThreeEnabled = false
-    private var opponentOneStrategy: String = "Mark"
-    private var opponentTwoStrategy: String = "Basic"
-    private var opponentThreeStrategy: String = "Basic"
+    AbstractPreferencesPanel(parent), MouseListener {
     private var apiStrategies: List<ApiStrategy> = emptyList()
     private var gameMode: GameMode = GameMode.Entropy
 
@@ -60,9 +54,9 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     private val opponentThreeNameField = JTextField()
     private val cbOpponentTwo = JCheckBox()
     private val cbOpponentThree = JCheckBox()
-    private val opponentOneStrat = JComboBox<String?>()
-    private val opponentTwoStrat = JComboBox<String?>()
-    private val opponentThreeStrat = JComboBox<String?>()
+    private val opponentOneStrat = JComboBox<ComboBoxItem<IStrategy>>()
+    private val opponentTwoStrat = JComboBox<ComboBoxItem<IStrategy>>()
+    private val opponentThreeStrat = JComboBox<ComboBoxItem<IStrategy>>()
     private val label = JLabel("Note: Changes will not take effect until you start a new game.")
     private val separator_4 = JSeparator()
     private val lblApiHeader = JLabel("API Options")
@@ -89,7 +83,6 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         opponentThreeNameField.setDocument(LimitedDocument(10))
         opponentOneNameField.setBounds(60, 102, 86, 22)
         add(opponentOneNameField)
-        opponentOneNameField.text = opponentOneName
         opponentOneNameField.setColumns(10)
         cbOpponentTwo.setBounds(22, 143, 29, 23)
         add(cbOpponentTwo)
@@ -97,11 +90,9 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         add(cbOpponentThree)
         opponentTwoNameField.setBounds(60, 144, 86, 22)
         add(opponentTwoNameField)
-        opponentTwoNameField.text = opponentTwoName
         opponentTwoNameField.setColumns(10)
         opponentThreeNameField.setBounds(60, 186, 86, 22)
         add(opponentThreeNameField)
-        opponentThreeNameField.text = opponentThreeName
         opponentThreeNameField.setColumns(10)
         opponentTwoStrat.setBounds(172, 144, 197, 22)
         add(opponentTwoStrat)
@@ -139,17 +130,19 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         deleteItem.addActionListener(this)
         amendItem.addActionListener(this)
         tableApiStrategies.addMouseListener(this)
-        cbOpponentTwo.addItemListener(this)
-        cbOpponentThree.addItemListener(this)
+        cbOpponentTwo.addActionListener(this)
+        cbOpponentThree.addActionListener(this)
     }
 
-    /** Abstract methods */
     override fun initVariables() {
         getVariablesFromPrefs()
 
         buildApiTable()
         setPlayerNames()
-        setOpponentEnablementAndStrategies()
+        setOpponentEnablementAndStrategies(
+            getPreference(PreferenceSetting.OpponentTwoEnabled),
+            getPreference(PreferenceSetting.OpponentThreeEnabled),
+        )
         setOpponentStrategies()
     }
 
@@ -168,50 +161,44 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     }
 
     override fun savePreferences() {
-        playerName = playerNameField.getText()
-        opponentOneName = opponentOneNameField.getText()
-        opponentTwoName = opponentTwoNameField.getText()
-        opponentThreeName = opponentThreeNameField.getText()
-        opponentOneStrategy = opponentOneStrat.selectedItem as String
-        opponentTwoStrategy = opponentTwoStrat.selectedItem as String
-        opponentThreeStrategy = opponentThreeStrat.selectedItem as String
+        val playerName = playerNameField.getText()
+        val opponentOneName = opponentOneNameField.getText()
+        val opponentTwoName = opponentTwoNameField.getText()
+        val opponentThreeName = opponentThreeNameField.getText()
+        val opponentOneStrategy = getSelectedStrategy(opponentOneStrat)
+        val opponentTwoStrategy = getSelectedStrategy(opponentTwoStrat)
+        val opponentThreeStrategy = getSelectedStrategy(opponentThreeStrat)
 
         preferenceStore.save(PreferenceSetting.PlayerName, playerName)
         preferenceStore.save(PreferenceSetting.OpponentOneName, opponentOneName)
         preferenceStore.save(PreferenceSetting.OpponentTwoName, opponentTwoName)
         preferenceStore.save(PreferenceSetting.OpponentThreeName, opponentThreeName)
-        preferenceStore.save(PreferenceSetting.OpponentTwoEnabled, opponentTwoEnabled)
-        preferenceStore.save(PreferenceSetting.OpponentThreeEnabled, opponentThreeEnabled)
-        preferenceStore.save(PreferenceSetting.OpponentOneStrategy, opponentOneStrategy)
-        preferenceStore.save(PreferenceSetting.OpponentTwoStrategy, opponentTwoStrategy)
-        preferenceStore.save(PreferenceSetting.OpponentThreeStrategy, opponentThreeStrategy)
+        preferenceStore.save(PreferenceSetting.OpponentTwoEnabled, cbOpponentTwo.isSelected)
+        preferenceStore.save(PreferenceSetting.OpponentThreeEnabled, cbOpponentThree.isSelected)
 
-        ApiUtil.saveApiStrategiesToPreferences(apiStrategies)
+        saveJsonPreference(PreferenceSetting.OpponentOneStrategy, opponentOneStrategy)
+        saveJsonPreference(PreferenceSetting.OpponentTwoStrategy, opponentTwoStrategy)
+        saveJsonPreference(PreferenceSetting.OpponentThreeStrategy, opponentThreeStrategy)
+        saveApiStrategiesToPreference(apiStrategies)
     }
 
     private fun getVariablesFromPrefs() {
-        playerName = getPreference(PreferenceSetting.PlayerName)
-        opponentOneName = getPreference(PreferenceSetting.OpponentOneName)
-        opponentTwoName = getPreference(PreferenceSetting.OpponentTwoName)
-        opponentThreeName = getPreference(PreferenceSetting.OpponentThreeName)
-        opponentTwoEnabled = getPreference(PreferenceSetting.OpponentTwoEnabled)
-        opponentThreeEnabled = getPreference(PreferenceSetting.OpponentThreeEnabled)
-        opponentOneStrategy = getPreference(PreferenceSetting.OpponentOneStrategy)
-        opponentTwoStrategy = getPreference(PreferenceSetting.OpponentTwoStrategy)
-        opponentThreeStrategy = getPreference(PreferenceSetting.OpponentThreeStrategy)
-        apiStrategies = ApiUtil.getApiStrategiesFromPreferences()
+        apiStrategies = getApiStrategiesFromPreferences()
 
         gameMode = GameMode.valueOf(getPreference(PreferenceSetting.GameMode))
     }
 
     private fun setPlayerNames() {
-        playerNameField.text = playerName
-        opponentOneNameField.text = opponentOneName
-        opponentTwoNameField.text = opponentTwoName
-        opponentThreeNameField.text = opponentThreeName
+        playerNameField.text = getPreference(PreferenceSetting.PlayerName)
+        opponentOneNameField.text = getPreference(PreferenceSetting.OpponentOneName)
+        opponentTwoNameField.text = getPreference(PreferenceSetting.OpponentTwoName)
+        opponentThreeNameField.text = getPreference(PreferenceSetting.OpponentThreeName)
     }
 
-    private fun setOpponentEnablementAndStrategies() {
+    private fun setOpponentEnablementAndStrategies(
+        opponentTwoEnabled: Boolean,
+        opponentThreeEnabled: Boolean,
+    ) {
         cbOpponentThree.setEnabled(opponentTwoEnabled)
         cbOpponentTwo.setEnabled(!opponentThreeEnabled)
 
@@ -224,9 +211,15 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     }
 
     private fun setOpponentStrategies() {
-        opponentOneStrat.setSelectedItem(opponentOneStrategy)
-        opponentTwoStrat.setSelectedItem(opponentTwoStrategy)
-        opponentThreeStrat.setSelectedItem(opponentThreeStrategy)
+        opponentOneStrat.setSelectedItem(
+            getStrategy(PreferenceSetting.OpponentOneStrategy).toComboBoxItem()
+        )
+        opponentTwoStrat.setSelectedItem(
+            getStrategy(PreferenceSetting.OpponentTwoStrategy).toComboBoxItem()
+        )
+        opponentThreeStrat.setSelectedItem(
+            getStrategy(PreferenceSetting.OpponentThreeStrategy).toComboBoxItem()
+        )
     }
 
     private fun buildApiTable() {
@@ -237,12 +230,11 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         model.addColumn("Name")
         model.addColumn("Port")
         model.addColumn("Game")
-        model.addColumn("Messaging")
         model.addColumn("Enabled")
 
         // Centre rendering for everything but the last column
         for (i in 0..<model.columnCount - 1) {
-            tableApiStrategies.getColumnModel().getColumn(i).setCellRenderer(SimpleRenderer(null))
+            tableApiStrategies.columnModel.getColumn(i).setCellRenderer(SimpleRenderer(null))
         }
 
         // Sorting
@@ -250,44 +242,58 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
         tableApiStrategies.setRowSorter(sorter)
 
         // Populate the rows
-        apiStrategies.forEach { model.addRow(it.tableModelRow) }
+        apiStrategies.forEach { model.addRow(it.getTableModelRow().toTypedArray()) }
 
         updateStrategySelection(gameMode)
+    }
+
+    private fun ApiStrategy.getTableModelRow(): List<Any> {
+        return listOf(name, port, supportedModes.joinToString(), lastError == null)
     }
 
     fun updateStrategySelection(gameMode: GameMode) {
         this.gameMode = gameMode
 
-        val allStrategies =
-            CpuStrategies.getAllStrategies(gameMode == GameMode.Entropy, apiStrategies)
+        updateStrategySelection(gameMode, opponentOneStrat)
+        updateStrategySelection(gameMode, opponentTwoStrat)
+        updateStrategySelection(gameMode, opponentThreeStrat)
+    }
 
-        var comboModel: ComboBoxModel<String?> = DefaultComboBoxModel(allStrategies)
-        opponentOneStrat.setModel(comboModel)
-        comboModel = DefaultComboBoxModel(allStrategies)
-        opponentTwoStrat.setModel(comboModel)
-        comboModel = DefaultComboBoxModel(allStrategies)
-        opponentThreeStrat.setModel(comboModel)
+    private fun updateStrategySelection(
+        gameMode: GameMode,
+        combo: JComboBox<ComboBoxItem<IStrategy>>,
+    ) {
+        val selection = if (combo.selectedIndex == -1) null else getSelectedStrategy(combo)
+
+        combo.setModel(getStrategiesComboBoxModel(gameMode, apiStrategies))
+        selection?.let { combo.selectedItem = selection.toComboBoxItem() }
     }
 
     private fun enableApi(strategy: ApiStrategy) {
         val question =
-            "Strategy ${strategy.name} was disabled due to the following error:\n\n${strategy.error}\n\nWould you like to re-enable it?"
+            "Strategy ${strategy.name} was disabled due to the following error:\n\n${strategy.lastError}\n\nWould you like to re-enable it?"
 
         val option = DialogUtilNew.showQuestion(question, false)
         if (option == JOptionPane.YES_OPTION) {
-            strategy.error = ""
-            buildApiTable()
+            strategyUpdated(strategy, strategy.copy(lastError = null))
         }
     }
 
-    private fun amendApi(strategy: ApiStrategy?) {
-        ApiAmendDialog.amendStrategy(strategy)
+    private fun amendApi(strategy: ApiStrategy) {
+        val newStrategy = ApiAmendDialog.amendStrategy(strategy) ?: return
+
+        strategyUpdated(strategy, newStrategy)
+    }
+
+    private fun strategyUpdated(oldStrategy: ApiStrategy, newStrategy: ApiStrategy) {
+        apiStrategies = apiStrategies.map { if (it == oldStrategy) newStrategy else it }
+
         buildApiTable()
     }
 
     private fun deleteApi(strategy: ApiStrategy) {
-        val question = "Are you sure you want to delete the " + strategy.getName() + " strategy?"
-        val option = DialogUtilNew.showQuestion(question, false)
+        val question = "Are you sure you want to delete the " + strategy.name + " strategy?"
+        val option = DialogUtilNew.showQuestion(question, false, this)
         if (option == JOptionPane.YES_OPTION) {
             apiStrategies = apiStrategies - strategy
             buildApiTable()
@@ -321,6 +327,8 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
             getSelectedStrategyFromTable()?.let(::deleteApi)
         } else if (source === enableItem) {
             getSelectedStrategyFromTable()?.let(::enableApi)
+        } else if (source == cbOpponentTwo || source == cbOpponentThree) {
+            setOpponentEnablementAndStrategies(cbOpponentTwo.isSelected, cbOpponentThree.isSelected)
         }
     }
 
@@ -338,15 +346,15 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
             }
 
             if (strategy != null) {
-                enableItem.setEnabled(!strategy.isEnabled)
+                enableItem.setEnabled(strategy.lastError != null)
 
                 // Show the popup menu
-                popupMenu.show(arg0.component, arg0.getX(), arg0.getY())
+                popupMenu.show(arg0.component, arg0.x, arg0.y)
             }
-        } else if (arg0.getClickCount() == 2) {
+        } else if (arg0.clickCount == 2) {
             // Double-click
             if (strategy != null) {
-                if (!strategy.isEnabled) {
+                if (strategy.lastError != null) {
                     enableApi(strategy)
                 } else {
                     amendApi(strategy)
@@ -360,15 +368,4 @@ class PreferencesPanelPlayers(parent: PreferencesDialog) :
     override fun mouseEntered(arg0: MouseEvent?) {}
 
     override fun mouseReleased(arg0: MouseEvent?) {}
-
-    override fun itemStateChanged(arg0: ItemEvent) {
-        val source = arg0.getSource()
-        if (source === cbOpponentTwo) {
-            opponentTwoEnabled = cbOpponentTwo.isSelected
-            setOpponentEnablementAndStrategies()
-        } else if (source === cbOpponentThree) {
-            opponentThreeEnabled = cbOpponentThree.isSelected
-            setOpponentEnablementAndStrategies()
-        }
-    }
 }

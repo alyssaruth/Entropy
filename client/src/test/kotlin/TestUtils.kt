@@ -19,10 +19,12 @@ import kong.unirest.HttpMethod
 import kong.unirest.HttpStatus
 import online.screen.OnlineChatPanel
 import strategy.IRandom
+import strategy.IStrategy
+import strategy.InBuiltStrategy
+import strategy.StrategyParams
 import testCore.makeGameSettings
 import util.CpuStrategies
 import util.SimulationParams
-import util.StrategyParams
 
 fun getInfoDialog() = getOptionPaneDialog("Information")
 
@@ -72,10 +74,10 @@ fun makeSimulationParams(
     settings: GameSettings = makeGameSettings(),
     opponentTwoEnabled: Boolean = true,
     opponentThreeEnabled: Boolean = true,
-    opponentZeroStrategy: String = CpuStrategies.STRATEGY_BASIC,
-    opponentOneStrategy: String = CpuStrategies.STRATEGY_BASIC,
-    opponentTwoStrategy: String = CpuStrategies.STRATEGY_BASIC,
-    opponentThreeStrategy: String = CpuStrategies.STRATEGY_BASIC,
+    opponentZeroStrategy: IStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
+    opponentOneStrategy: IStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
+    opponentTwoStrategy: IStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
+    opponentThreeStrategy: IStrategy = InBuiltStrategy(CpuStrategies.STRATEGY_BASIC),
     enableLogging: Boolean = false,
     randomiseOrder: Boolean = false,
     forceStart: Boolean = false,

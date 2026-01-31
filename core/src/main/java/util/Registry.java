@@ -80,9 +80,6 @@ public interface Registry
 	//savedGame
 	public static final String SAVED_GAME_STRING_RESULT_TEXT = "resultText";
 	public static final String SAVED_GAME_STRING_TOTAL_CARDS_LABEL = "totalCardsLabel";
-	public static final String SAVED_GAME_STRING_OPPONENT_THREE_STRATEGY = "opponentThreeStrategy";
-	public static final String SAVED_GAME_STRING_OPPONENT_TWO_STRATEGY = "opponentTwoStrategy";
-	public static final String SAVED_GAME_STRING_OPPONENT_ONE_STRATEGY = "opponentOneStrategy";
 	public static final String SAVED_GAME_STRING_OPPONENT_THREE_HAND = "opponentThreeHand";
 	public static final String SAVED_GAME_STRING_OPPONENT_TWO_HAND = "opponentTwoHand";
 	public static final String SAVED_GAME_STRING_OPPONENT_ONE_HAND = "opponentOneHand";

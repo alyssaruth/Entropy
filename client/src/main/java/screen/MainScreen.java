@@ -39,6 +39,7 @@ import static preference.PreferenceSettingKt.getPreference;
 import static screen.ScreenCacheKt.IN_GAME_REPLAY;
 import static screen.online.PlayOnlineDialogKt.showPlayOnlineDialog;
 import static util.ClientGlobals.achievementStore;
+import static util.ClientGlobals.preferenceStore;
 import static utils.CoreGlobals.logger;
 import static utils.ThreadUtilKt.dumpThreadStacks;
 
@@ -675,9 +676,9 @@ public final class MainScreen extends AbstractDevScreen
 		} else if (command.startsWith("server ")) {
 			var serverCommand = command.replace("server ", "");
 			ClientGlobals.INSTANCE.getDevApi().doServerCommand(serverCommand);
-		} else if (command.equals("keygen")) {
-			var key = KeyGeneratorUtil.generateSymmetricKey();
-			textToShow = EncryptionUtil.convertSecretKeyToString(key);
+		} else if (command.equals("clearprefs")) {
+			preferenceStore.clear();
+			logger.info("preferenceStore.cleared", "Cleared all preferences");
 		}
 		else if (command.equals("simulator"))
 		{

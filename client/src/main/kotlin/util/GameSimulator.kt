@@ -7,6 +7,7 @@ import game.createAndShuffleDeck
 import `object`.Player
 import screen.ScreenCache.get
 import screen.SimulationDialog
+import strategy.StrategyParams
 import utils.CoreGlobals.logger
 
 class GameSimulator(private val params: SimulationParams) {

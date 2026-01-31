@@ -2,6 +2,9 @@ package util;
 
 import game.*;
 import object.*;
+import strategy.ApiStrategy;
+import strategy.StrategyParams;
+import strategy.StrategyUtilKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,48 +17,6 @@ public class CpuStrategies
 {
 	public static final String STRATEGY_BASIC = "Easy";
 	public static final String STRATEGY_EV = "Hard";
-	
-	public static Vector<String> getAllStrategies(boolean entropy, List<ApiStrategy> apiStrategies)
-	{
-		Vector<String> allStrategies = getFixedStrategies(entropy);
-		
-		//Append the relevant API strategies
-		if (apiStrategies == null)
-		{
-			apiStrategies = ApiUtil.getApiStrategiesFromPreferences();
-		}
-		
-		appendRelevantStrategies(allStrategies, apiStrategies, entropy);
-		return allStrategies;
-	}
-	
-	private static void appendRelevantStrategies(Vector<String> allStrategies, 
-	  List<ApiStrategy> apiStrategies, boolean entropy)
-	{
-		int size = apiStrategies.size();
-		for (int i=0; i<size; i++)
-		{
-			ApiStrategy apiStrategy = apiStrategies.get(i);
-			boolean supportsMode = entropy ? apiStrategy.getEntropy():apiStrategy.getVectropy();
-			String error = apiStrategy.getError();
-			if (supportsMode
-			  && error.isEmpty())
-			{
-				String name = ApiUtil.API_PREFIX + apiStrategy.getName();
-				allStrategies.add(name);
-			}
-		}
-	}
-	
-	private static Vector<String> getFixedStrategies(boolean entropy)
-	{
-		if (entropy)
-		{
-			return EntCpuStrategies.getAllStrategies();
-		}
-		
-		return VectCpuStrategies.getAllStrategies();
-	}
 	
 	/**
 	 * Entry-point for strategy code
@@ -77,14 +38,14 @@ public class CpuStrategies
 		String error = validateAction(opponent, action, parms);
 		if (error != null)
 		{
-			if (opponent.isApiStrategy())
+			var strategy = opponent.getStrategy();
+			if (strategy instanceof ApiStrategy)
 			{
 				//Show an error message to help diagnosing.
 				String msg = "The action sent back by the third-party software [" + action + "] "
 				             + "failed validation with the following error:\n\n" + error;
-				
-				String strategyStr = opponent.getStrategy();
-				ApiUtil.saveStrategyErrorAndUnsetStrategies(ApiUtil.getApiStrategy(strategyStr), msg);
+
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(((ApiStrategy) strategy).getId(), msg);
 				DialogUtilNew.showError(msg);
 			}
 			else
@@ -110,9 +71,10 @@ public class CpuStrategies
 	
 	private static PlayerAction getOpponentBid(StrategyParams parms, Player opponent, boolean entropy)
 	{
-		if (opponent.isApiStrategy())
+		var strategy = opponent.getStrategy();
+		if (strategy instanceof ApiStrategy)
 		{
-			return ApiUtil.processApiTurn(parms, opponent);
+			return ApiUtil.processApiTurn(parms, (ApiStrategy) strategy);
 		}
 		else if (entropy)
 		{

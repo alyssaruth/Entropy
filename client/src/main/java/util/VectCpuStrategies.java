@@ -7,8 +7,9 @@ import game.PlayerAction;
 import game.Suit;
 import game.VectropyBidAction;
 import object.Player;
+import strategy.StrategyParams;
 
-import static game.StrategyUtilKt.*;
+import static strategy.StrategyUtilKt.*;
 import static utils.CoreGlobals.logger;
 
 public class VectCpuStrategies 
@@ -29,7 +30,7 @@ public class VectCpuStrategies
 	
 	public static PlayerAction processOpponentTurn(Player opponent, StrategyParams parms)
 	{
-		String strategy = opponent.getStrategy();
+		String strategy = opponent.getStrategy().getName();
 		return processOpponentTurn(strategy, opponent, parms);
 	}
 	private static PlayerAction processOpponentTurn(String strategy, Player opponent, StrategyParams parms)

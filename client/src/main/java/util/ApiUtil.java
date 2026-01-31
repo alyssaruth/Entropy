@@ -1,15 +1,11 @@
 package util;
 
-import game.BidAction;
-import game.GameMode;
 import game.PlayerAction;
-import object.ApiStrategy;
 import object.Player;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import preference.PreferenceSetting;
-import settings.Setting;
+import strategy.ApiStrategy;
+import strategy.StrategyParams;
+import strategy.StrategyUtilKt;
 import utils.CoreGlobals;
 
 import javax.swing.*;
@@ -20,31 +16,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.*;
-
-import static preference.PreferenceSettingKt.getPreference;
-import static util.ClientGlobals.preferenceStore;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ApiUtil
 {
-	public static final String API_PREFIX = "API: ";
-	public static final String MESSAGE_TYPE_XML = "XML";
-	public static final String MESSAGE_TYPE_JSON = "JSON";
-	
-	private static final String ROOT_TAG_API_MESSAGE = "ApiMessage";
 	private static final InetAddress INET_ADDRESS_LOCALHOST = MessageUtil.factoryInetAddress("localhost");
-
-	private static final String PREFERENCES_TAG_API = "Api";
-	private static final String PREFERENCES_ATTR_API_NAME = "ApiName";
-	private static final String PREFERENCES_ATTR_PORT_NUMNER = "PortNumber";
-	private static final String PREFERENCES_ATTR_MESSAGE_TYPE = "MessageType";
-	private static final String PREFERENCES_ATTR_SUPPORTS_ENTROPY = "Entropy";
-	private static final String PREFERENCES_ATTR_SUPPORTS_VECTROPY = "Vectropy";
-	private static final String PREFERENCES_ATTR_ERROR = "Error";
-	
-	//Cache this for speed in the simulator
-	private static HashMap<String, ApiStrategy> hmNameToApiStrategy = null;
-	private static ApiStrategy apiStrategy = null;
 	
 	public static void sendTestMessage(int port, boolean xml)
 	{
@@ -56,28 +33,26 @@ public class ApiUtil
 		
 		Document xmlDoc = XmlUtil.factorySimpleMessage("ApiTest");
 		String messageString = XmlUtil.getStringFromDocument(xmlDoc);
-		sendWithCatch(messageString, port, true, true);
+		sendWithCatch(messageString, port, true, null);
 	}
 	
-	public static PlayerAction processApiTurn(StrategyParams parms, Player player)
+	public static PlayerAction processApiTurn(StrategyParams parms, ApiStrategy strategy)
 	{
-		apiStrategy = getApiStrategy(player.getStrategy());
-		int port = apiStrategy.getPortNumber();
-		String messageType = apiStrategy.getMessageType();
+		int port = strategy.getPort();
 		
-		String messageString = factoryApiMessage(parms, player, messageType);
+		String messageString = "some message TODO";
 		
-		String responseString = sendWithCatch(messageString, port, parms.getLogging(), false);
+		String responseString = sendWithCatch(messageString, port, parms.getLogging(), strategy.getId());
 		if (responseString == null)
 		{
 			//An error occurred which we'll already have caught.
 			return null;
 		}
 		
-		return handleResponse(responseString);
+		return handleResponse(responseString, strategy.getId());
 	}
 	
-	private static String sendWithCatch(String messageString, int port, boolean logging, boolean testMode)
+	private static String sendWithCatch(String messageString, int port, boolean logging, UUID id)
 	{
 		Debug.append("API OUT: " + messageString, logging);
 		
@@ -105,11 +80,11 @@ public class ApiUtil
 			int option = DialogUtilNew.showQuestion(question, false);
 			if (option == JOptionPane.YES_OPTION)
 			{
-				sendWithCatch(messageString, port, logging, testMode);
+				sendWithCatch(messageString, port, logging, id);
 			}
-			else if (!testMode)
+			else if (id != null)
 			{
-				saveStrategyErrorAndUnsetStrategies(apiStrategy, "An error occurred connecting to the third party software.");
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, "An error occurred connecting to the third party software.");
 			}
 		}
 		catch (Throwable t)
@@ -123,8 +98,10 @@ public class ApiUtil
 			Debug.stackTrace(t);
 			DialogUtilNew.showError("A severe error occurred communicating with the third party software. "
 								+ "\n\nLogs have been sent for investigation.");
-			
-			saveStrategyErrorAndUnsetStrategies(apiStrategy, "A severe error occurred communicating with the third party software.");
+
+			if (id != null) {
+				StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, "A severe error occurred communicating with the third party software.");
+			}
 		}
 		finally
 		{
@@ -137,267 +114,102 @@ public class ApiUtil
 		return responseString;
 	}
 	
-	private static String factoryApiMessage(StrategyParams parms, Player player, String messageType)
-	{
-		if (messageType.equals(MESSAGE_TYPE_XML))
-		{
-			return factoryXmlApiMessage(parms, player);
-		}
-		
-		return factoryJsonApiMessage(parms, player);
-	}
+//	private static String factoryXmlApiMessage(StrategyParams parms, Player player)
+//	{
+//		Document document = XmlUtil.factoryNewDocument();
+//		Element rootElement = document.createElement(ROOT_TAG_API_MESSAGE);
+//
+//		var settings = parms.getSettings();
+//		GameMode gameMode = settings.getMode();
+//		int totalCards = parms.getCardsInPlay();
+//		int jokerQuantity = settings.getJokerQuantity();
+//		int jokerValue = settings.getJokerValue();
+//		boolean includeMoons = settings.getIncludeMoons();
+//		boolean includeStars = settings.getIncludeStars();
+//		boolean negativeJacks = settings.getNegativeJacks();
+//		boolean cardReveal = settings.getCardReveal();
+//		BidAction lastBid = parms.getLastBid();
+//
+//		rootElement.setAttribute("GameMode", gameMode.name());
+//
+//		List<String> playerHand = player.getHand();
+//		Element handElement = document.createElement("PlayerHand");
+//		int length = playerHand.size();
+//		for (int i=0; i<length; i++)
+//		{
+//			handElement.setAttribute("Card-" + i, playerHand.get(i));
+//		}
+//
+//		rootElement.appendChild(handElement);
+//
+//		//add stuff
+//		rootElement.setAttribute("TotalCards", "" + totalCards);
+//
+//		if (jokerQuantity > 0)
+//		{
+//			rootElement.setAttribute("JokerQuantity", "" + jokerQuantity);
+//			rootElement.setAttribute("JokerValue", "" + jokerValue);
+//		}
+//
+//		XmlUtil.setAttributeBoolean(rootElement, "IncludeMoons", includeMoons);
+//		XmlUtil.setAttributeBoolean(rootElement, "IncludeStars", includeStars);
+//		XmlUtil.setAttributeBoolean(rootElement, "NegativeJacks", negativeJacks);
+//		XmlUtil.setAttributeBoolean(rootElement, "ShowCards", cardReveal);
+//
+//		if (cardReveal)
+//		{
+//			Element opponentCardsOnShow = document.createElement("OpponentCardsOnShow");
+//			List<String> cards = parms.getOpponentCardsOnShow();
+//			for (int i=0; i<cards.size(); i++)
+//			{
+//				opponentCardsOnShow.setAttribute("Card-" + i, cards.get(i));
+//			}
+//
+//			if (cards.size() > 0)
+//			{
+//				rootElement.appendChild(opponentCardsOnShow);
+//			}
+//
+//			Element myCardsAlreadyShowing = document.createElement("PlayerCardsOnShow");
+//			cards = player.getRevealedCards();
+//			for (int i=0; i<cards.size(); i++)
+//			{
+//				myCardsAlreadyShowing.setAttribute("Card-" + i, cards.get(i));
+//			}
+//
+//			if (cards.size() > 0)
+//			{
+//				rootElement.appendChild(myCardsAlreadyShowing);
+//			}
+//		}
+//
+//		if (lastBid != null)
+//		{
+//			rootElement.setAttribute("LastBid", lastBid.toJsonString());
+//		}
+//
+//		document.appendChild(rootElement);
+//		return XmlUtil.getStringFromDocument(document);
+//	}
 	
-	private static String factoryXmlApiMessage(StrategyParams parms, Player player)
-	{
-		Document document = XmlUtil.factoryNewDocument();
-		Element rootElement = document.createElement(ROOT_TAG_API_MESSAGE);
-
-		var settings = parms.getSettings();
-		GameMode gameMode = settings.getMode();
-		int totalCards = parms.getCardsInPlay();
-		int jokerQuantity = settings.getJokerQuantity();
-		int jokerValue = settings.getJokerValue();
-		boolean includeMoons = settings.getIncludeMoons();
-		boolean includeStars = settings.getIncludeStars();
-		boolean negativeJacks = settings.getNegativeJacks();
-		boolean cardReveal = settings.getCardReveal();
-		BidAction lastBid = parms.getLastBid();
-
-		rootElement.setAttribute("GameMode", gameMode.name());
-		
-		List<String> playerHand = player.getHand();
-		Element handElement = document.createElement("PlayerHand");
-		int length = playerHand.size();
-		for (int i=0; i<length; i++)
-		{
-			handElement.setAttribute("Card-" + i, playerHand.get(i));
-		}
-		
-		rootElement.appendChild(handElement);
-		
-		//add stuff
-		rootElement.setAttribute("TotalCards", "" + totalCards);
-		
-		if (jokerQuantity > 0)
-		{
-			rootElement.setAttribute("JokerQuantity", "" + jokerQuantity);
-			rootElement.setAttribute("JokerValue", "" + jokerValue);
-		}
-		
-		XmlUtil.setAttributeBoolean(rootElement, "IncludeMoons", includeMoons);
-		XmlUtil.setAttributeBoolean(rootElement, "IncludeStars", includeStars);
-		XmlUtil.setAttributeBoolean(rootElement, "NegativeJacks", negativeJacks);
-		XmlUtil.setAttributeBoolean(rootElement, "ShowCards", cardReveal);
-		
-		if (cardReveal)
-		{
-			Element opponentCardsOnShow = document.createElement("OpponentCardsOnShow");
-			List<String> cards = parms.getOpponentCardsOnShow();
-			for (int i=0; i<cards.size(); i++)
-			{
-				opponentCardsOnShow.setAttribute("Card-" + i, cards.get(i));
-			}
-			
-			if (cards.size() > 0)
-			{
-				rootElement.appendChild(opponentCardsOnShow);
-			}
-			
-			Element myCardsAlreadyShowing = document.createElement("PlayerCardsOnShow");
-			cards = player.getRevealedCards();
-			for (int i=0; i<cards.size(); i++)
-			{
-				myCardsAlreadyShowing.setAttribute("Card-" + i, cards.get(i));
-			}
-			
-			if (cards.size() > 0)
-			{
-				rootElement.appendChild(myCardsAlreadyShowing);
-			}
-		}
-		
-		if (lastBid != null)
-		{
-			rootElement.setAttribute("LastBid", lastBid.toJsonString());
-		}
-		
-		document.appendChild(rootElement);
-		return XmlUtil.getStringFromDocument(document);
-	}
-	
-	private static String factoryJsonApiMessage(StrategyParams parms, Player player)
-	{
-		if (parms == null
-		  || player == null)
-		{
-			//Empty if block to avoid warnings
-		}
-		
-		return null;
-	}
-	
-	private static PlayerAction handleResponse(String responseString)
+	private static PlayerAction handleResponse(String responseString, UUID id)
 	{
 		try {
 			return CoreGlobals.jsonMapper.readValue(responseString, PlayerAction.class);
 		} catch (Exception e) {
-			showMalformedResponseError(responseString);
+			showMalformedResponseError(responseString, id);
 			return null;
 		}
 	}
 	
-	private static void showMalformedResponseError(String response)
+	private static void showMalformedResponseError(String response, UUID id)
 	{
 		String message = "The third-party software returned an unexpected message type:"
 					   + "\n\n" + response;
 		
-		saveStrategyErrorAndUnsetStrategies(apiStrategy, message);
+		StrategyUtilKt.saveStrategyErrorAndUnsetStrategies(id, message);
 		
 		message += "\n\nRefer to the API documentation to see the responses that are accepted.";
 		DialogUtilNew.showError(message);
-	}
-	
-	private static void initialiseStrategyHashMap()
-	{
-		HashMap<String, ApiStrategy> temp = new HashMap<>();
-
-		String apiStrategies = getPreference(PreferenceSetting.ApiStrategies);
-		if (apiStrategies.isBlank()) {
-			return;
-		}
-
-		Document apiXml = XmlUtil.getDocumentFromXmlString(apiStrategies);
-		if (apiXml == null)
-		{
-			hmNameToApiStrategy = temp;
-			return;
-		}
-		
-		Element rootElement = apiXml.getDocumentElement();
-		NodeList strategyTags = rootElement.getElementsByTagName(PREFERENCES_TAG_API);
-		int size = strategyTags.getLength();
-		for (int i=0; i<size; i++)
-		{
-			Element strategyTag = (Element)strategyTags.item(i);
-			String name = strategyTag.getAttribute(PREFERENCES_ATTR_API_NAME);
-			String error = strategyTag.getAttribute(PREFERENCES_ATTR_ERROR);
-			int portNumber = XmlUtil.getAttributeInt(strategyTag, PREFERENCES_ATTR_PORT_NUMNER);
-			String messageType = strategyTag.getAttribute(PREFERENCES_ATTR_MESSAGE_TYPE);
-			boolean entropy = XmlUtil.getAttributeBoolean(strategyTag, PREFERENCES_ATTR_SUPPORTS_ENTROPY);
-			boolean vectropy = XmlUtil.getAttributeBoolean(strategyTag, PREFERENCES_ATTR_SUPPORTS_VECTROPY);
-			
-			ApiStrategy strategy = new ApiStrategy();
-			strategy.setName(name);
-			strategy.setError(error);
-			strategy.setPortNumber(portNumber);
-			strategy.setEntropy(entropy);
-			strategy.setVectropy(vectropy);
-			strategy.setMessageType(messageType);
-			
-			temp.put(name, strategy);
-		}
-		
-		hmNameToApiStrategy = temp;
-	}
-	
-	public static ArrayList<ApiStrategy> getApiStrategiesFromPreferences()
-	{
-		ArrayList<ApiStrategy> strategies = new ArrayList<>();
-		if (hmNameToApiStrategy == null)
-		{
-			initialiseStrategyHashMap();
-		}
-		
-		Iterator<Map.Entry<String, ApiStrategy>> it = hmNameToApiStrategy.entrySet().iterator();
-		for (; it.hasNext(); )
-		{
-			Map.Entry<String, ApiStrategy> entry = it.next();
-			ApiStrategy strategy = entry.getValue();
-			strategies.add(strategy);
-		}
-		
-		return strategies;
-	}
-	
-	public static ApiStrategy getApiStrategy(String name)
-	{
-		if (hmNameToApiStrategy == null)
-		{
-			initialiseStrategyHashMap();
-		}
-		
-		int prefixLength = API_PREFIX.length();
-		int totalLength = name.length();
-		name = name.substring(prefixLength, totalLength);
-		
-		return hmNameToApiStrategy.get(name);
-	}
-	
-	public static void saveApiStrategiesToPreferences(List<ApiStrategy> strategies)
-	{
-		//Construct a document with any old root element
-		Document apiDoc = XmlUtil.factoryNewDocument();
-		Element rootElement = apiDoc.createElement("ApiStrategies");
-		
-		int size = strategies.size();
-		for (int i=0; i<size; i++)
-		{
-			ApiStrategy strategy = strategies.get(i);
-			
-			Element strategyTag = apiDoc.createElement(PREFERENCES_TAG_API);
-			strategyTag.setAttribute(PREFERENCES_ATTR_API_NAME, strategy.getName());
-			strategyTag.setAttribute(PREFERENCES_ATTR_ERROR, strategy.getError());
-			strategyTag.setAttribute(PREFERENCES_ATTR_MESSAGE_TYPE, strategy.getMessageType());
-			strategyTag.setAttribute(PREFERENCES_ATTR_PORT_NUMNER, "" + strategy.getPortNumber());
-			XmlUtil.setAttributeBoolean(strategyTag, PREFERENCES_ATTR_SUPPORTS_ENTROPY, strategy.getEntropy());
-			XmlUtil.setAttributeBoolean(strategyTag, PREFERENCES_ATTR_SUPPORTS_VECTROPY, strategy.getVectropy());
-			
-			rootElement.appendChild(strategyTag);
-		}
-		
-		//Append the root, which has all the strategies within it
-		apiDoc.appendChild(rootElement);
-		
-		//Save to the Registry
-		String xmlStr = XmlUtil.getStringFromDocument(apiDoc);
-		preferenceStore.save(PreferenceSetting.ApiStrategies, xmlStr);
-		
-		//Clear the cache
-		clearCache();
-	}
-	
-	public static void clearCache()
-	{
-		hmNameToApiStrategy = null;
-	}
-	
-	public static void saveStrategyErrorAndUnsetStrategies(ApiStrategy strategy, String error)
-	{
-		//Something has gone wrong, so save the API strategy as disabled
-		String name = strategy.getName();
-		ArrayList<ApiStrategy> apiStrategies = getApiStrategiesFromPreferences();
-		for (int i=0; i<apiStrategies.size(); i++)
-		{
-			ApiStrategy savedStrategy = apiStrategies.get(i);
-			if (savedStrategy.getName().equals(name))
-			{
-				savedStrategy.setError(error);
-			}
-		}
-		
-		saveApiStrategiesToPreferences(apiStrategies);
-		
-		resetCpuStrategy(PreferenceSetting.OpponentOneStrategy, name);
-		resetCpuStrategy(PreferenceSetting.OpponentTwoStrategy, name);
-		resetCpuStrategy(PreferenceSetting.OpponentThreeStrategy, name);
-	}
-	
-	private static void resetCpuStrategy(Setting<String> strategySetting, String apiName)
-	{
-		String strategy = getPreference(strategySetting);
-		if (strategy.equals("API: " + apiName))
-		{
-			preferenceStore.save(strategySetting, CpuStrategies.STRATEGY_BASIC);
-		}
 	}
 }

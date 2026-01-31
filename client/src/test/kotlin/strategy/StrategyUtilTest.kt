@@ -1,11 +1,12 @@
-package game
+package strategy
 
 import TestRandom
+import game.Suit
+import game.VectropyBidAction
 import io.kotest.matchers.doubles.shouldBeBetween
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.maps.shouldNotContainKeys
 import io.kotest.matchers.shouldBe
-import kotlin.collections.plus
 import makeStrategyParams
 import org.junit.jupiter.api.Test
 import testCore.makeGameSettings
@@ -106,7 +107,7 @@ class StrategyUtilTest : AbstractClientTest() {
         val openingOne = getBasicVectropyOpening("Clive", emptyList(), strategyParams, random)
         val openingTwo = getBasicVectropyOpening("Clive", emptyList(), strategyParams, random)
 
-        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+        val emptyBid = Suit.Companion.filter(strategyParams.settings).associateWith { 0 }
 
         openingOne shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Clubs to 1))
         openingTwo shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Diamonds to 1))
@@ -139,7 +140,7 @@ class StrategyUtilTest : AbstractClientTest() {
         val hand = listOf("4d")
         val opening = getBasicVectropyOpening("Clive", hand, strategyParams, random)
 
-        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+        val emptyBid = Suit.Companion.filter(strategyParams.settings).associateWith { 0 }
         opening shouldBe VectropyBidAction("Clive", false, emptyBid + (Suit.Diamonds to 1))
     }
 
@@ -180,7 +181,7 @@ class StrategyUtilTest : AbstractClientTest() {
                 getEvVectropyOpening("Robert", listOf("3h"), strategyParams, random)
             }
 
-        val emptyBid = Suit.filter(strategyParams.settings).associateWith { 0 }
+        val emptyBid = Suit.Companion.filter(strategyParams.settings).associateWith { 0 }
         val randomSuit = VectropyBidAction("Robert", false, emptyBid + (Suit.Clubs to 1))
         val strongestSuit = VectropyBidAction("Robert", false, emptyBid + (Suit.Hearts to 1))
 

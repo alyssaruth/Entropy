@@ -1,5 +1,8 @@
 package object;
 
+import strategy.ApiStrategy;
+import strategy.IStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -13,7 +16,7 @@ public class Player
 	private int numberOfCards = -1;
 	private int cardsToSubtract = 0;
 	private boolean enabled = false;
-	private String strategy = null;
+	private IStrategy strategy = null;
 	private List<String> hand = null;
 	private ArrayList<String> revealedCards = new ArrayList<>();
 	
@@ -136,7 +139,7 @@ public class Player
 	
 	public boolean isApiStrategy()
 	{
-		return strategy.startsWith("API");
+		return strategy instanceof ApiStrategy;
 	}
 	
 	public String getName()
@@ -171,11 +174,11 @@ public class Player
 	{
 		this.enabled = enabled;
 	}
-	public String getStrategy()
+	public IStrategy getStrategy()
 	{
 		return strategy;
 	}
-	public void setStrategy(String strategy)
+	public void setStrategy(IStrategy strategy)
 	{
 		this.strategy = strategy;
 	}

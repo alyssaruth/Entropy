@@ -1,8 +1,10 @@
 package screen;
 
+import bean.ComboBoxItem;
 import bean.NumberField;
 import game.GameMode;
 import game.GameSettings;
+import strategy.IStrategy;
 import util.*;
 
 import javax.swing.*;
@@ -12,6 +14,8 @@ import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Vector;
 
+import static strategy.StrategyUtilKt.getSelectedStrategy;
+import static strategy.StrategyUtilKt.getStrategiesComboBoxModel;
 import static utils.CoreGlobals.logger;
 
 public class SimulationDialog extends JDialog
@@ -175,10 +179,10 @@ public class SimulationDialog extends JDialog
 	private final JPanel cpuPanel = new JPanel();
 	private final JCheckBox cbOpponentTwo = new JCheckBox();
 	private final JCheckBox cbOpponentThree = new JCheckBox();
-	private final JComboBox<String> opponentOneStrat = new JComboBox<>();
-	private final JComboBox<String> opponentTwoStrat = new JComboBox<>();
-	private final JComboBox<String> opponentThreeStrat = new JComboBox<>();
-	private final JComboBox<String> opponentZeroStrat = new JComboBox<>();
+	private final JComboBox<ComboBoxItem<IStrategy>> opponentOneStrat = new JComboBox<>();
+	private final JComboBox<ComboBoxItem<IStrategy>> opponentTwoStrat = new JComboBox<>();
+	private final JComboBox<ComboBoxItem<IStrategy>> opponentThreeStrat = new JComboBox<>();
+	private final JComboBox<ComboBoxItem<IStrategy>> opponentZeroStrat = new JComboBox<>();
 	private final JLabel lblTimeTaken = new JLabel("<Time Taken>");
 	private final Checkbox cbLogging = new Checkbox("Enable Logging");
 	private final Checkbox cbForceStart = new Checkbox("CPU 0 Starts");
@@ -374,7 +378,7 @@ public class SimulationDialog extends JDialog
 		resultsTable.setFillsViewportHeight(true);
 	}
 	
-	private void addRowIfApplicable(Vector<Vector<String>> resultsData, String strategy, int opponentNumber)
+	private void addRowIfApplicable(Vector<Vector<String>> resultsData, IStrategy strategy, int opponentNumber)
 	{
 		SimulationResults results = hmSimulationResultsByOpponentNumber.get(opponentNumber);
 		if (results != null)
@@ -515,25 +519,24 @@ public class SimulationDialog extends JDialog
 	
 	private void updateStrategySelection()
 	{
-		Vector<String> allStrategies = CpuStrategies.getAllStrategies(rdbtnEntropy.isSelected(), null);
-			
-		ComboBoxModel<String> comboModel = new DefaultComboBoxModel<>(allStrategies);
-		opponentZeroStrat.setModel(comboModel);
-		comboModel = new DefaultComboBoxModel<>(allStrategies);
-		opponentOneStrat.setModel(comboModel);
-		comboModel = new DefaultComboBoxModel<>(allStrategies);
-		opponentTwoStrat.setModel(comboModel);
-		comboModel = new DefaultComboBoxModel<>(allStrategies);
-		opponentThreeStrat.setModel(comboModel);
+		opponentZeroStrat.setModel(getStrategiesComboBoxModel(getSelectedGameMode()));
+		opponentOneStrat.setModel(getStrategiesComboBoxModel(getSelectedGameMode()));
+		opponentTwoStrat.setModel(getStrategiesComboBoxModel(getSelectedGameMode()));
+		opponentThreeStrat.setModel(getStrategiesComboBoxModel(getSelectedGameMode()));
+	}
+
+	private GameMode getSelectedGameMode() {
+		if (rdbtnVectropy.isSelected())
+		{
+			return GameMode.Vectropy;
+		}
+
+		return GameMode.Entropy;
 	}
 	
 	private SimulationParams factorySimulationParms()
 	{
-		GameMode gameMode = GameMode.Entropy;
-		if (rdbtnVectropy.isSelected())
-		{
-			gameMode = GameMode.Vectropy;
-		}
+		GameMode gameMode = getSelectedGameMode();
 		
 		int numberOfCards = slider.getValue();
 		boolean includeJokers = cbIncludeJokers.isSelected();
@@ -545,18 +548,16 @@ public class SimulationDialog extends JDialog
 		boolean cardReveal = chckbxCardReveal.isSelected();
 		boolean opponentTwoEnabled = cbOpponentTwo.isSelected();
 		boolean opponentThreeEnabled = cbOpponentThree.isSelected();
-		String opponentZeroStrategy = (String) opponentZeroStrat.getSelectedItem();
-		String opponentOneStrategy = (String) opponentOneStrat.getSelectedItem();
-		String opponentTwoStrategy = (String) opponentTwoStrat.getSelectedItem();
-		String opponentThreeStrategy = (String) opponentThreeStrat.getSelectedItem();
 		boolean forceStart = cbForceStart.getState();
 		boolean randomiseOrder = cbRandomiseOrder.getState();
 		boolean enableLogging = cbLogging.getState();
 
 		var settings = new GameSettings(gameMode, numberOfCards, jokerQuantity, jokerValue, includeMoons, includeStars, negativeJacks, cardReveal, false);
 
-		return new SimulationParams(settings, opponentTwoEnabled, opponentThreeEnabled, opponentZeroStrategy, opponentOneStrategy,
-				opponentTwoStrategy, opponentThreeStrategy, enableLogging, randomiseOrder, forceStart);
+		return new SimulationParams(settings, opponentTwoEnabled, opponentThreeEnabled,
+				getSelectedStrategy(opponentZeroStrat), getSelectedStrategy(opponentOneStrat),
+				getSelectedStrategy(opponentTwoStrat), getSelectedStrategy(opponentThreeStrat),
+				enableLogging, randomiseOrder, forceStart);
 	}
 	
 	private void dumpSimulationDetails(int i, int numberOfGames, SimulationParams parms)
