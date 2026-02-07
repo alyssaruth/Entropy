@@ -1,6 +1,6 @@
 # Event 1
 
-📆 08/11/2024
+📆 08/11/2025
 
 🕔 13:00 - 14:00
 
@@ -18,17 +18,12 @@
 |----------|----------------|-------|
 | 1st      | Alyssa Burling | +£60  |
 | 2nd      | Leah Burling   | +£20  |
-| 3rd      | Sara Ells      | -£20  |
+| 3rd      | Sara Fisher    | -£20  |
 | 4th      | Freddy Pitel   | -£20  |
 | 5th      | Mark Fisher    | -£20  |
 | 6th      | David Fox      | -£20  |
 
 ## Round breakdown
-
-♣️
-♦️
-♥️
-♠️
 
 <details>
 <summary>Hand 1</summary>
