@@ -241,14 +241,14 @@ Second reveal shows **3232**
 
 ### Results
 
-**3 5 6 4** < **7 6 10 7**, team 🛡️ wins
+**3 5 6 4** < **7 7 11 7**, team 🛡️ wins
 
-**Note:** Due to Leah's smaller starting stack, there should have been a side-pot of 75 split between Mark and David.
-This was overlooked on the day and the pot was split equally instead:
+**Note:** Leah was all-in for 525, so there should have been a side pot of 225 (75 each from Mark, David and Sara) split between Mark and David.
+This was overlooked on the day and the whole 2525 pot was split three ways: 845 to Leah (nearest the dealer) and 840 each to Mark and David.
 
-- Mark ➕265
-- Leah ➕265
-- David ➕270
+- Leah ➕320
+- Mark ➕240
+- David ➕240
 - Alyssa 🔻200
 - Sara 🔻600
 
@@ -261,11 +261,11 @@ This was overlooked on the day and the pot was split equally instead:
 
 | Player | Stack | Hand            | Bid 1     |
 |--------|-------|-----------------|-----------|
-| David  | 1975  | 9♥️ 9♠️ J♦️ 2♣️ | 4444      |
+| David  | 1945  | 9♥️ 9♠️ J♦️ 2♣️ | 4444      |
 | Sara   | 315   | 3♠️ 7♠️ J♠️ 4♦️ | 4445      |
-| Mark   | 1295  | 2♦️ A♣️ K♣️ 7♣️ | 5445      |
+| Mark   | 1270  | 2♦️ A♣️ K♣️ 7♣️ | 5445      |
 | Alyssa | 625   | 5♥️ A♠️ T♥️ 4♣️ | 5465      |
-| Leah   | 790   | A♥️ 3♦️ 5♠️ 8♠️ | Challenge |
+| Leah   | 845   | A♥️ 3♦️ 5♠️ 8♠️ | Challenge |
 
 ### Betting
 
@@ -300,10 +300,10 @@ First reveal shows **1242**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
-| Mark   | 1495  | Q♦️ Q♠️ A♥️ T♦️ | 2222  | 4544      |
+| Mark   | 1470  | Q♦️ Q♠️ A♥️ T♦️ | 2222  | 4544      |
 | Alyssa | 820   | 9♥️ Q♥️ 3♠️ J♥️ | 4422  | Challenge |
-| Leah   | 710   | Q♣️ 3♣️ 4♥️ 7♥️ | 4442  |           |
-| David  | 1975  | K♦️ K♣️ A♠️ 6♥️ | 4444  |           |
+| Leah   | 765   | Q♣️ 3♣️ 4♥️ 7♥️ | 4442  |           |
+| David  | 1945  | K♦️ K♣️ A♠️ 6♥️ | 4444  |           |
 
 ### Betting
 
@@ -320,8 +320,8 @@ First reveal shows **1210**
 Second reveal shows **3221**
 - 🛡️ Mark: **check**
 - (🛡️) David: **bet** 600
-- 🛡️ Mark: **raise all-in** to 1110
-- (🛡️) David: **call** 510
+- 🛡️ Mark: **raise all-in** to 1070
+- (🛡️) David: **call** 470
 
 
 ### Results
@@ -342,9 +342,9 @@ Second reveal shows **3221**
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
 | Alyssa | 720   | J♣️ 6♥️ 3♠️ T♣️ | 3333  | 4544      |
-| Leah   | 710   | 8♦️ A♦️ T♦️ 5♥️ | 3533  | 4644      |
-| David  | 2025  | J♥️ T♥️ 4♠️ 7♥️ | 3543  | Challenge |
-| Mark   | 1545  | 9♣️ A♠️ 6♣️ 5♦️ | 4543  |           |
+| Leah   | 765   | 8♦️ A♦️ T♦️ 5♥️ | 3533  | 4644      |
+| David  | 1995  | J♥️ T♥️ 4♠️ 7♥️ | 3543  | Challenge |
+| Mark   | 1520  | 9♣️ A♠️ 6♣️ 5♦️ | 4543  |           |
 
 ### Betting
 
@@ -356,17 +356,19 @@ First reveal shows **2110**
 - ❌ Mark: **fold**
 - (⚔️) Alyssa: **raise** to 300
 - 🛡️ Leah: **call** 180
-- ⚔️ David: **raise all-in** to 720
+- ⚔️ David: **raise all-in** to 1995
 - (⚔️) Alyssa: **call all-in** 420
-- 🛡️ Leah: **call all-in** 385
+- 🛡️ Leah: **call all-in** 465
 
 
 ### Results
 
 **4644** < **6675**, team 🛡️ wins
 
-- Leah ➕1440
-- David 🔻720
+David's uncalled 1230 is returned.
+
+- Leah ➕1485
+- David 🔻765
 - Alyssa 🔻720  ❌ Eliminated
 
 </details>
@@ -378,9 +380,9 @@ First reveal shows **2110**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
 |--------|-------|-----------------|-------|-------|-----------|
-| David  | 1305  | 7♦️ 9♦️ 6♣️ 2♥️ | 0005  | 2425  | Challenge |
-| Mark   | 1545  | 2♦️ 7♣️ T♦️ 2♠️ | 1115  | 3425  |           |
-| Leah   | 2150  | J♦️ A♥️ 5♦️ Q♣️ | 2325  | 3525  |           |
+| David  | 1230  | 7♦️ 9♦️ 6♣️ 2♥️ | 0005  | 2425  | Challenge |
+| Mark   | 1520  | 2♦️ 7♣️ T♦️ 2♠️ | 1115  | 3425  |           |
+| Leah   | 2250  | J♦️ A♥️ 5♦️ Q♣️ | 2325  | 3525  |           |
 
 ### Betting
 
@@ -410,9 +412,9 @@ First reveal shows **0300**
 
 | Player | Stack | Hand            | Bid 1     |
 |--------|-------|-----------------|-----------|
-| Mark   | 1545  | J♥️ A♠️ K♠️ 7♠️ | 0005      |
-| Leah   | 2000  | Q♠️ 7♣️ 7♦️ T♠️ | 1105      |
-| David  | 1455  | K♥️ 5♣️ 6♥️ J♣️ | Challenge |
+| Mark   | 1520  | J♥️ A♠️ K♠️ 7♠️ | 0005      |
+| Leah   | 2100  | Q♠️ 7♣️ 7♦️ T♠️ | 1105      |
+| David  | 1380  | K♥️ 5♣️ 6♥️ J♣️ | Challenge |
 
 ### Betting
 
@@ -424,17 +426,17 @@ First reveal shows **0021**
 - (🛡️) Mark: **call** 200
 - 🛡️ Leah: **check**
 - ⚔️ David: **raise** to 800
-- (🛡️) Mark: **raise all-in** to 1565
-- 🛡️ Leah: **call** 1365
-- ⚔️ David: **call all-in** 660
+- (🛡️) Mark: **raise all-in** to 1520
+- 🛡️ Leah: **call** 1320
+- ⚔️ David: **call all-in** 580
 
 ### Results
 
 **1105** < **4246**, team 🛡️ wins
 
-- Leah ➕730
-- Mark ➕725
-- David 🔻1455  ❌ Eliminated
+- Leah ➕690
+- Mark ➕690
+- David 🔻1380  ❌ Eliminated
 
 </details>
 
@@ -445,8 +447,8 @@ First reveal shows **0021**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
 |--------|-------|-----------------|-------|-------|-----------|
-| Leah   | 2730  | 8♥️ 5♦️ 6♠️ 7♠️ | 1112  | 1132  | Challenge |
-| Mark   | 2270  | 3♦️ 4♥️ A♥️ 3♠️ | 1122  | 1142  |           |
+| Leah   | 2790  | 8♥️ 5♦️ 6♠️ 7♠️ | 1112  | 1132  | Challenge |
+| Mark   | 2210  | 3♦️ 4♥️ A♥️ 3♠️ | 1122  | 1142  |           |
 
 ### Betting
 
@@ -478,8 +480,8 @@ Second reveal shows **0220**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
-| Mark   | 3620  | 2♣️ 8♠️ T♠️ 9♠️ | 1101  | Challenge |
-| Leah   | 1380  | 4♣️ K♦️ A♥️ Q♥️ | 1231  |           |
+| Mark   | 3560  | 2♣️ 8♠️ T♠️ 9♠️ | 1101  | Challenge |
+| Leah   | 1440  | 4♣️ K♦️ A♥️ Q♥️ | 1231  |           |
 
 ### Betting
 
@@ -493,15 +495,15 @@ First reveal shows **2000**
 - 🛡️ Leah: **call** 500
 
 Second reveal shows **2101**
-- 🛡️ Leah: **bet all-in** 555
-- ⚔️ Mark: **call** 555
+- 🛡️ Leah: **bet all-in** 640
+- ⚔️ Mark: **call** 640
 
 ### Results
 
-**1231** < **3233**, team 🛡️ wins
+**1231** < **3234**, team 🛡️ wins
 
-- Leah ➕1380
-- Mark 🔻1380
+- Leah ➕1440
+- Mark 🔻1440
 
 </details>
 
@@ -512,8 +514,8 @@ Second reveal shows **2101**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
 |--------|-------|-----------------|-------|-------|-----------|
-| Leah   | 2760  | 8♦️ 6♥️ 9♣️ 4♣️ | 2111  | 2131  | Challenge |
-| Mark   | 2240  | 2♥️ Q♦️ 5♣️ 9♥️ | 2121  | 2231  |           |
+| Leah   | 2880  | 8♦️ 6♥️ 9♣️ 4♣️ | 2111  | 2131  | Challenge |
+| Mark   | 2120  | 2♥️ Q♦️ 5♣️ 9♥️ | 2121  | 2231  |           |
 
 ### Betting
 
@@ -546,8 +548,8 @@ Second reveal shows **0220**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
 |--------|-------|-----------------|-------|-------|-----------|
-| Mark   | 1440  | 2♠️ A♣️ 7♥️ Q♠️ | 1111  | 1212  | 2222      |
-| Leah   | 3560  | 6♠️ 4♦️ T♦️ K♥️ | 1211  | 1222  | Challenge |
+| Mark   | 1320  | 2♠️ A♣️ 7♥️ Q♠️ | 1111  | 1212  | 2222      |
+| Leah   | 3680  | 6♠️ 4♦️ T♦️ K♥️ | 1211  | 1222  | Challenge |
 
 ### Betting
 
@@ -556,27 +558,31 @@ Second reveal shows **0220**
 First reveal shows **0002**
 - 🛡️ Mark: 400
 - ⚔️ Leah: 400
-- 🛡️ Mark: **raise all-in** to 1480
-- ⚔️ Leah: **call** 1080
+- 🛡️ Mark: **raise all-in** to 1320
+- ⚔️ Leah: **call** 920
 
 ### Results
 
 **2222** < **2334**, team 🛡️ wins
 
-- Mark ➕1440
-- Leah 🔻1440
+- Mark ➕1320
+- Leah 🔻1320
+
+**Note:** The sheet records Mark's all-in as 980 on top of his 400 ante, i.e. a stack of 1380.
 
 </details>
 
 <details>
 <summary>Hand 15</summary>
 
+Stacks are taken from the chip count on the day (Leah 2250, Mark 2750). The recorded bets give Leah 2360 and Mark 2640, 110 chips out; the source of the difference is unknown.
+
 ### Bids
 
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
-| Leah   | 2120  | Q♥️ J♥️ 4♥️ 6♥️ | 0220  | 0231      |
-| Mark   | 2880  | 4♣️ 5♠️ T♠️ 8♠️ | 0221  | Challenge |
+| Leah   | 2250  | Q♥️ J♥️ 4♥️ 6♥️ | 0220  | 0231      |
+| Mark   | 2750  | 4♣️ 5♠️ T♠️ 8♠️ | 0221  | Challenge |
 
 ### Betting
 
@@ -586,7 +592,7 @@ First reveal shows **1010**
 - 🛡️ Leah: 500
 - ⚔️ Mark: 500
 - 🛡️ Leah: **check**
-- ⚔️ Mark: **raise all-in** to 2040
+- ⚔️ Mark: **raise all-in** to 2750
 - ❌ Leah: **fold**
 
 ### Results
@@ -605,8 +611,8 @@ First reveal shows **1010**
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3     |
 |--------|-------|-----------------|-------|-------|-----------|
-| Mark   | 3380  | 4♠️ T♠️ K♥️ T♣️ | 2002  | 2112  | Challenge |
-| Leah   | 1620  | T♦️ 6♥️ 8♥️ 9♥️ | 2102  | 2122  |           |
+| Mark   | 3250  | 4♠️ T♠️ K♥️ T♣️ | 2002  | 2112  | Challenge |
+| Leah   | 1750  | T♦️ 6♥️ 8♥️ 9♥️ | 2102  | 2122  |           |
 
 ### Betting
 
@@ -630,14 +636,12 @@ First reveal shows **0101**
 <details>
 <summary>Hand 17</summary>
 
-Apparently stacks are 2250 vs 2750 here, IDK how
-
 ### Bids
 
 | Player | Stack | Hand            | Bid 1 | Bid 2 | Bid 3 | Bid 4     |
 |--------|-------|-----------------|-------|-------|-------|-----------|
-| Leah   | 2120  | 3♠️ A♥️ K♥️ T♥️ | 0022  | 0132  | 0143  | 1243      |
-| Mark   | 2880  | 3♦️ J♥️ 7♠️ 6♠️ | 0122  | 0133  | 1143  | Challenge |
+| Leah   | 2250  | 3♠️ A♥️ K♥️ T♥️ | 0022  | 0132  | 0143  | 1243      |
+| Mark   | 2750  | 3♦️ J♥️ 7♠️ 6♠️ | 0122  | 0133  | 1143  | Challenge |
 
 ### Betting
 
@@ -647,12 +651,14 @@ First reveal shows **0101**
 - 🛡️ Leah: 500
 - ⚔️ Mark: 500
 - 🛡️ Leah: **raise** to 1000
-- ⚔️ Mark: **raise all-in** to 2250 apparently?
-- 🛡️ Leah: **call** 1250
+- ⚔️ Mark: **raise all-in** to 2750
+- 🛡️ Leah: **call all-in** 1250
 
 ### Results
 
 **1243** < **1254**, team 🛡️ wins
+
+Mark's uncalled 500 is returned.
 
 - Leah ➕2250
 - Mark 🔻2250
@@ -737,7 +743,7 @@ First reveal shows **1001**
 Second reveal shows **1012**
 - 🛡️ Mark: **check**
 - ⚔️ Leah: **bet** 600
-- 🛡️ Mark: **call**
+- 🛡️ Mark: **call** 600
 
 ### Results
 

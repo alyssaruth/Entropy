@@ -179,7 +179,7 @@ There were 8 spades, team 🛡️ wins
 
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
-| Alyssa | 1005  | 7♠️ 3♠️ Q♦️ 8♦️ | 6♠️   | Challenge |
+| Alyssa | 1005  | 7♠️ 3♠️ 8♥️ Q♦️ | 6♠️   | Challenge |
 | Mark   | 980   | Q♠️ K♦️ 3♣️ 2♣️ | 7♣️   |           |
 | Leah   | 1050  | J♠️ T♦️ 9♦️ 8♦️ | 7♦️   |           |
 | Sara   | 1000  | A♠️ 9♠️ 2♦️ 9♣️ | 7♠️   |           |
@@ -202,7 +202,7 @@ There were 8 spades, team 🛡️ wins
 
 ### Results
 
-There were 6 spades, team ⚔️ wins
+There were 6 clubs, team ⚔️ wins
 
 - Alyssa ➕300
 - Mark 🔻100
@@ -563,7 +563,7 @@ There were 9 diamonds, team 🛡️ wins
 There were 7 diamonds, team ⚔️ wins
 
 - Sara ➕310
-- Leah 🔻 60
+- Leah 🔻60
 - David 🔻250
 
 </details>
@@ -602,7 +602,7 @@ There were 11 spades, team 🛡️ wins
 - Mark ➕240
 - Sara ➕240
 - Alyssa ➕240
-- Leah 🔻 360
+- Leah 🔻360
 - David 🔻360
 
 </details>
@@ -756,13 +756,13 @@ There were 6 clubs, team ⚔️ wins by default
 |--------|-------|-----------------|-------|-----------|
 | Mark   | 1310  | T♠️ 4♠️ 3♠️ 9♦️ | 4♣️   | Challenge |
 | Leah   | 520   | Q♠️ 4♥️ K♣️ 6♣️ | 6♣️   |           |
-| Sara   | 910   | Q♥️ 5♦️ 7♦️ J♣️ | 6♥️   |           |
+| Sara   | 910   | Q♥️ 5♥️ 7♦️ J♣️ | 6♥️   |           |
 | David  | 535   | J♠️ A♥️ 9♥️ 6♥️ | 7♥️   |           |
 | Alyssa | 1725  | 7♠️ 6♦️ 4♦️ 3♦️ | 8♦️   |           |
 
 ### Betting
 
-👀 Deck shows A♠️ 2♠️ 4♥️ K♦️ 5♦️ Q♣️
+👀 Deck shows 9♠️ 8♠️ K♦️ A♣️ T♣️ 7♣️
 
 - 🛡️ Alyssa: 100
 - ⚔️ Mark: 100
@@ -775,7 +775,7 @@ There were 6 clubs, team ⚔️ wins by default
 
 ### Results
 
-There were 7 diamonds, team ⚔️ wins
+There were 6 diamonds, team ⚔️ wins
 
 - Mark ➕200
 - Leah ➕200
@@ -790,7 +790,7 @@ There were 7 diamonds, team ⚔️ wins
 
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
-| Leah   | 720   | 9♦️ 6♦️ Q♣️ 6♣️ | 6♠️   | Challenge |
+| Leah   | 720   | 9♦️ 6♦️ Q♣️ 6♣️ | 6♣️   | Challenge |
 | Sara   | 910   | 4♥️ 4♦️ 3♣️ 2♣️ | 6♦️   |           |
 | David  | 535   | T♠️ 7♠️ A♥️ 9♥️ | 7♥️   |           |
 | Alyssa | 1325  | 7♥️ T♦️ 7♦️ 9♣️ | 7♠️   |           |
@@ -909,7 +909,7 @@ There were 4 hearts, team ⚔️ wins by default
 - (⚔️) Leah: **call** 300
 - (⚔️) Sara: **raise** to 600
 - ❌ David: **fold**
-- ⚔️ Alyssa: **call**
+- ⚔️ Alyssa: **call** 300
 - (⚔️) Leah: **call** 300
 
 ### Results
@@ -1155,7 +1155,7 @@ There were 7 diamonds, team 🛡️ wins
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
 | Leah   | 2480  | 5♠️ 3♠️ T♦️ 3♣️ | 3♠️   | Challenge |
-| David  | 615   | Q♥️ 2♥️ 5♦️ 2♣️ | 4♠️   |           |
+| David  | 615   | Q♥️ 2♥️ J♦️ 2♣️ | 4♠️   |           |
 | Alyssa | 1905  | 2♠️ 9♥️ A♣️ J♣️ | 5♣️   |           |
 
 ### Betting
@@ -1185,7 +1185,7 @@ There were 5 clubs, team 🛡️ wins
 | Player | Stack | Hand            | Bid 1 | Bid 2     |
 |--------|-------|-----------------|-------|-----------|
 | David  | 615   | J♠️ 9♠️ Q♥️ 6♦️ | 3♦️   | 4♠️       |
-| Alyssa | 2505  | 7♥️ 5♥️ 7♦️ 3♦️ | 3♥️   | Challenge |
+| Alyssa | 2505  | J♥️ 7♥️ 7♦️ 3♦️ | 3♥️   | Challenge |
 | Leah   | 1880  | 6♥️ K♦️ J♦️ 9♣️ | 4♦️   |           |
 
 ### Betting
