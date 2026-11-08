@@ -29,7 +29,7 @@
 
 | Player | Hand                | Bid 1 | Bid 2     |
 |--------|---------------------|-------|-----------|
-| Sara   | 6♥️ 2♥️ Q♥️ J♠️ J♦️ | 7♥️   | 10♥️  ❌   |
+| Sara   | 6♥️ 2♥️ Q♥️ J♣️ J♦️ | 7♥️   | 10♥️  ❌   |
 | Mark   | 3♥️ 7♥️ 6♠️ T♣️ 4♦️ | 7♠️   | Challenge |
 | David  | T♠️ J♠️ 4♠️ 8♥️ 5♥️ | 8♠️   |           |
 | Leah   | 7♣️ K♣️ 8♠️ 2♠️ 3♦️ | 9♠️   |           |
@@ -54,7 +54,7 @@
 | Player | Hand                | Bid 1  | Bid 2     |
 |--------|---------------------|--------|-----------|
 | Alyssa | 4♦️ Q♦️ Q♣️ J♣️     | 5♥️    | Challenge |
-| Sara   | 4♣️ J♣️ T♠️ 2♠️     | 5♠️    |           |
+| Sara   | 4♣️ J♠️ T♠️ 2♠️     | 5♠️    |           |
 | Mark   | 7♦️ 2♦️ A♣️ 9♣️ 5♣️ | 6♣️    |           |
 | David  | T♥️ 8♥️ 3♥️ 5♦️ 3♦️ | 7♥️    |           |
 | Leah   | A♦️ J♦️ 2♥️ K♠️ K♣️ | 8♥️  ❌ |           |
@@ -168,20 +168,7 @@
 | Leah   | 5♠️ 9♠️ 8♣️     |             |
 </details>
 
-<details>
-<summary>Hand 13</summary>
-
-| Player | Hand            | Bid 1       | 
-|--------|-----------------|-------------|
-| Mark   | T♥️ 7♦️         | Challenge ❌ |
-| David  | A♣️ 9♥️ T♦️     |             |
-| Leah   | 5♠️ 9♠️ 8♣️     |             |
-| Alyssa | 5♦️ 5♣️         | 4♠️         |
-| Sara   | 7♠️ K♠️ 2♠️ 4♣️ | 5♠️         |
-</details>
-
-<details>
-<summary>Hand 14 - ❌ Mark (5th)</summary>
+<summary>Hand 13 - ❌ Mark (5th)</summary>
 
 | Player | Hand            | Bid 1 | Bid 2     |
 |--------|-----------------|-------|-----------|
@@ -193,7 +180,7 @@
 </details>
 
 <details>
-<summary>Hand 15</summary>
+<summary>Hand 14</summary>
 
 | Player | Hand            | Bid 1     |
 |--------|-----------------|-----------|
@@ -204,7 +191,7 @@
 </details>
 
 <details>
-<summary>Hand 16</summary>
+<summary>Hand 15</summary>
 
 | Player | Hand            | Bid 1     |
 |--------|-----------------|-----------|
@@ -215,7 +202,7 @@
 </details>
 
 <details>
-<summary>Hand 17</summary>
+<summary>Hand 16</summary>
 
 | Player | Hand        | Bid 1     |
 |--------|-------------|-----------|
@@ -226,7 +213,7 @@
 </details>
 
 <details>
-<summary>Hand 18 - ❌ Alyssa (4th)</summary>
+<summary>Hand 17 - ❌ Alyssa (4th)</summary>
 
 | Player | Hand        | Bid 1       |
 |--------|-------------|-------------|
@@ -237,7 +224,7 @@
 </details>
 
 <details>
-<summary>Hand 19</summary>
+<summary>Hand 18</summary>
 
 | Player | Hand        | Bid 1 | Bid 2     |
 |--------|-------------|-------|-----------|
@@ -247,17 +234,17 @@
 </details>
 
 <details>
-<summary>Hand 20</summary>
+<summary>Hand 19</summary>
 
 | Player | Hand        | Bid 1     |
 |--------|-------------|-----------|
 | Sara   | K♥️ Q♥️     | 2♥️       |
-| David  | 5♠️ 6♠️ 3♦️ | 3♦️ ❌     |
+| David  | 5♠️ 6♠️ 3♦️ | 3♠️ ❌     |
 | Leah   | Q♦️ J♣️     | Challenge |
 </details>
 
 <details>
-<summary>Hand 21</summary>
+<summary>Hand 20</summary>
 
 | Player | Hand    | Bid 1 | Bid 2       |
 |--------|---------|-------|-------------|
@@ -267,7 +254,7 @@
 </details>
 
 <details>
-<summary>Hand 22 - ❌ Leah (3rd)</summary>
+<summary>Hand 21 - ❌ Leah (3rd)</summary>
 
 | Player | Hand    | Bid 1 | Bid 2       |
 |--------|---------|-------|-------------|
@@ -277,7 +264,7 @@
 </details>
 
 <details>
-<summary>Hand 23</summary>
+<summary>Hand 22</summary>
 
 | Player | Hand    | Bid 1     |
 |--------|---------|-----------|
@@ -286,7 +273,7 @@
 </details>
 
 <details>
-<summary>Hand 24 - ❌ Sara (2nd)</summary>
+<summary>Hand 23 - ❌ Sara (2nd)</summary>
 
 | Player | Hand    | Bid 1 | Bid 2       |
 |--------|---------|-------|-------------|
